@@ -1,37 +1,41 @@
 import React from 'react';
 import { findTag } from './tagmatcher';
 import tags from './tags';
-import { toJS } from 'mobx';
 
-export const renderChildren = (source: any, editor: any): any => {
+export const renderChildren = (source: any, editor: any, root?: any): any => {
   if (!source) return source;
   if (!source.children) return undefined;
+  const isroot = source.name === '--root--';
   const children = source.children;
-  if (!source.id) {
+  if (!source.id && !isroot) {
     source.id = '0';
   }
   let id = 0;
 
-  return children
-    .map((child: any, key: number) => {
-      const childRoot = findTag(child);
-      if (!childRoot) {
-        return null;
-      }
-      childRoot.id = `${source.id}_${id++}`;
-
-      const tag = tags[childRoot.name] as any;
-      if (tag) {
-        const Component = tag.element;
-        return (
-          <Component
-            {...childRoot.props}
-            key={key}
-            _cactiva={{ tag, source: childRoot, editor }}
-          />
-        );
-      }
+  return children.map((child: any, key: number) => {
+    const childRoot = findTag(child);
+    const childId = id++;
+    if (!childRoot) {
       return null;
-    })
-    .filter((item: any) => !!item);
+    }
+    childRoot.id = isroot ? `${id}` : `${source.id}_${childId}`;
+
+    const tag = tags[childRoot.name] as any;
+    if (tag) {
+      const Component = tag.element;
+      return (
+        <Component
+          {...childRoot.props}
+          key={key}
+          _cactiva={{
+            tag,
+            root: isroot ? childRoot : root,
+            source: childRoot,
+            editor
+          }}
+        />
+      );
+    }
+    return null;
+  });
 };

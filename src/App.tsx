@@ -17,7 +17,7 @@ export default observer(() => {
       <div className='cactiva-container'>
         <div className='cactiva-menu'></div>
         <Split
-          sizes={[15, 70, 15]}
+          sizes={[15, 40, 45]}
           minSize={100}
           expandToMin={false}
           gutterSize={5}
@@ -38,7 +38,12 @@ export default observer(() => {
             )}
           </div>
           <div className='cactiva-pane'>
-            <div>{current && JSON.stringify(current.selected)}</div>
+            {current && (
+              <pre style={{ fontSize: 8 }}>
+                {current.selected}
+                {JSON.stringify(current.source, null, 2)}
+              </pre>
+            )}
           </div>
         </Split>
       </div>

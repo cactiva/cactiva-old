@@ -10,6 +10,7 @@ export class SourceStore {
   historyState: any;
   history: any;
   @observable selected = null;
+  tempSelected = null;
 
   constructor(source: any) {
     this.source = source;

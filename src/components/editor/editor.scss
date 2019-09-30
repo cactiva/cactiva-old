@@ -15,7 +15,10 @@
   &.hover {
     border: 1px solid #3ba0fb;
   }
-
+  &.selected {
+    background: rgba(59, 160, 251, 0.05);
+    border: 1px solid #3ba0fb;
+  }
   &.horizontal {
     flex-direction: row;
     align-items: center;

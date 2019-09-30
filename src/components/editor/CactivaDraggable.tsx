@@ -1,6 +1,6 @@
-import { observer, useObservable } from 'mobx-react-lite';
+import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { DragSourceMonitor, useDrag } from 'react-dnd-cjs';
+import { useDrag } from 'react-dnd-cjs';
 
 export default observer(({ id, tag, children }: any) => {
   const dragHooks = useDrag({
@@ -9,15 +9,5 @@ export default observer(({ id, tag, children }: any) => {
       id
     }
   });
-  return (
-    <div
-      ref={dragHooks[1]}
-      onMouseOver={e => {}}
-      onMouseOut={e => {
-        e.stopPropagation();
-      }}
-    >
-      {children}
-    </div>
-  );
+  return <div ref={dragHooks[1]}>{children}</div>;
 });
