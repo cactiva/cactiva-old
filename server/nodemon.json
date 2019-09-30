@@ -1,0 +1,10 @@
+{
+    "verbose": false,
+    "ext": "ts js json yaml",
+    "watch": [
+        "server/**/*.ts",
+        "server/**/*.yaml"
+    ],
+    "ignore": [],
+    "exec": "node --inspect --require ./tshook.js ./src/start.ts"
+}
