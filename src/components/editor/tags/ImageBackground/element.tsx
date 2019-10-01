@@ -11,15 +11,12 @@ export default observer((props: any) => {
   const style = parseStyle(props.style);
   const meta = useObservable({ dropOver: false });
   return (
-    <CactivaDraggable tag={cactiva.tag} id={cactiva.source.id}>
+    <CactivaDraggable cactiva={cactiva}>
       <CactivaDroppable
-        tag={cactiva.tag}
-        root={cactiva.root}
-        editor={cactiva.editor}
-        id={cactiva.source.id}
+        cactiva={cactiva}
         onDropOver={(value: boolean) => (meta.dropOver = value)}
       >
-        <CactivaSelectable editor={cactiva.editor} source={cactiva.source}>
+        <CactivaSelectable cactiva={cactiva}>
           <div style={style}>
             {cactiva.tag.tagName}
             <div

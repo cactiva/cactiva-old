@@ -1,9 +1,18 @@
+interface ICactivaTraitField {
+  name: string;
+  kind: number;
+  default?: any;
+  options?: any;
+}
+export interface ICactivaTrait {
+  name: string;
+  fields: ICactivaTraitField[];
+}
 
-export interface ICactivaProp {}
 export abstract class CactivaTag {
   static tagName: string = '';
   static from: string = '';
-  static traits: { [key: string]: ICactivaProp } = {};
+  static traits: ICactivaTrait[] = [];
   static element: any;
 }
 

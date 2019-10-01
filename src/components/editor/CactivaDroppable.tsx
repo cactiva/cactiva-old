@@ -14,7 +14,9 @@ import {
 } from './utility/elements/tools';
 import { allTags } from './utility/tags';
 
-export default observer(({ children, root, onDropOver, id, editor }: any) => {
+export default observer(({ cactiva, children, onDropOver }: any) => {
+  const { root, source, editor } = cactiva;
+  const { id } = source;
   const [{ afterItem, afterOver }, afterDropRef] = useCactivaDrop(
     'after',
     allTags,

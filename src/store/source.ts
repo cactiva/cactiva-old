@@ -9,12 +9,7 @@ export class SourceStore {
   root = null;
 
   @observable selectedId = '';
-  @computed
-  get selected() {
-    if (this.selectedId) {
-      return findElementById(this.source, this.selectedId);
-    }
-  }
+  @observable selected: any;
 
   prevSource = null;
   history = {

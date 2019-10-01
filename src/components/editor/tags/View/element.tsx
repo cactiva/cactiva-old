@@ -6,33 +6,26 @@ import CactivaSelectable from '../../CactivaSelectable';
 import { parseStyle } from '../../utility/parser';
 import { renderChildren } from '../../utility/renderchild';
 
-import ErrorBoundary from 'react-error-boundary';
-
 export default observer((props: any) => {
   const cactiva = props._cactiva;
   const style = parseStyle(props.style);
   const meta = useObservable({ dropOver: false });
   return (
-    <ErrorBoundary>
-      <CactivaDraggable tag={cactiva.tag} id={cactiva.source.id}>
-        <CactivaDroppable
-          tag={cactiva.tag}
-          root={cactiva.root}
-          editor={cactiva.editor}
-          id={cactiva.source.id}
-          onDropOver={(value: boolean) => (meta.dropOver = value)}
-        >
-          <CactivaSelectable editor={cactiva.editor} source={cactiva.source}>
-            <div style={style}>
-              {cactiva.tag.tagName}
-              <div
-                className={`cactiva-drop-after ${meta.dropOver ? 'hover' : ''}`}
-              />
-              {renderChildren(cactiva.source, cactiva.editor, cactiva.root)}
-            </div>
-          </CactivaSelectable>
-        </CactivaDroppable>
-      </CactivaDraggable>
-    </ErrorBoundary>
+    <CactivaDraggable cactiva={cactiva}>
+      <CactivaDroppable
+        cactiva={cactiva}
+        onDropOver={(value: boolean) => (meta.dropOver = value)}
+      >
+        <CactivaSelectable cactiva={cactiva}>
+          <div style={style}>
+            {cactiva.tag.tagName}
+            <div
+              className={`cactiva-drop-after ${meta.dropOver ? 'hover' : ''}`}
+            />
+            {renderChildren(cactiva.source, cactiva.editor, cactiva.root)}
+          </div>
+        </CactivaSelectable>
+      </CactivaDroppable>
+    </CactivaDraggable>
   );
 });
