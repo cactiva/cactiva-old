@@ -25,6 +25,7 @@
     display: flex;
     padding: 5px 0px 5px 5px;
 
+    .cactiva-drop-child,
     .cactiva-drop-after {
       height: auto;
       width: 3px;
@@ -55,22 +56,29 @@
   }
 }
 
-.cactiva-drop-after {
-  height: 3px;
+.cactiva-drop-after,
+.cactiva-drop-child {
   width: auto;
-  padding: 0px 0px 3px 0px;
+  padding: 0px 0px 5px 0px;
   align-self: stretch;
   background: transparent;
+  &:before {
+    content: ' ';
+    margin-top: -1px;
+    border-bottom: 3px solid transparent;
+    position: absolute;
+    right: 5px;
+    left: 5px;
+  }
   &.hover {
     &:before {
-      content: ' ';
-      min-width: 3px;
-      min-height: 3px;
-      background: #3ba0fb;
+      border-color: #3ba0fb;
     }
   }
 }
 
-.dragging .cactiva-drop-after {
-  display: none;
+.cactiva-drop-child:before {
+  right: 1px;
+  left: 1px;
+  margin-top: 1px;
 }

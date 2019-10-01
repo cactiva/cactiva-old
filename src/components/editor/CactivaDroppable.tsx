@@ -13,7 +13,7 @@ import {
 import { allTags } from './utility/tags';
 
 export default observer(
-  ({ cactiva, children, onDropOver, canDropOver }: any) => {
+  ({ cactiva, children, onDropOver, canDropOver = true }: any) => {
     const { root, source, editor } = cactiva;
     const { id } = source;
     const [{ afterItem, afterOver }, afterDropRef] = useCactivaDrop(
@@ -50,7 +50,9 @@ export default observer(
     useEffect(() => {
       meta.canDropAfter = afterOver && canDrop(afterItem.id, id);
       meta.canDropChild = canDropOver && childOver && canDrop(childItem.id, id);
-
+      if (childItem) {
+        console.log(canDropOver, childOver, canDrop(childItem.id, id));
+      }
       if (onDropOver) {
         onDropOver(meta.canDropChild);
       }
