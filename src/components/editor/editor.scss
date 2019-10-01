@@ -42,9 +42,9 @@
   align-self: stretch;
   background: transparent;
   &:before {
-    content: ' ';
+    content: " ";
     margin-top: 1px;
-    border-bottom: 3px solid transparent;
+    border: 1px solid transparent;
     position: absolute;
     right: 5px;
     left: 5px;

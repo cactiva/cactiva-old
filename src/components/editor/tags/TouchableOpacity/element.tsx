@@ -1,34 +1,26 @@
 import { observer, useObservable } from 'mobx-react-lite';
 import React from 'react';
-import ErrorBoundary from 'react-error-boundary';
 import CactivaDraggable from '../../CactivaDraggable';
 import CactivaDroppable from '../../CactivaDroppable';
 import CactivaSelectable from '../../CactivaSelectable';
-import { parseProps } from '../../utility/parser';
+import { parseKind } from '../../utility/parser';
 import { renderChildren } from '../../utility/renderchild';
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  const tagProps = parseProps(props);
+  const style = parseKind(props.style);
   const meta = useObservable({ dropOver: false });
-  delete tagProps.onPress;
   return (
-    <ErrorBoundary>
+    <CactivaDroppable
+      cactiva={cactiva}
+      onDropOver={(value: boolean) => (meta.dropOver = value)}
+    >
       <CactivaDraggable cactiva={cactiva}>
-        <CactivaDroppable
-          cactiva={cactiva}
-          onDropOver={(value: boolean) => (meta.dropOver = value)}
-        >
-          <CactivaSelectable cactiva={cactiva}>
-            <div {...tagProps}>
-              <div
-                className={`cactiva-drop-child ${meta.dropOver && 'hover'}`}
-              />
-              {renderChildren(cactiva.source, cactiva.editor, cactiva.root)}
-            </div>
-          </CactivaSelectable>
-        </CactivaDroppable>
+        <CactivaSelectable cactiva={cactiva} style={style}>
+          <div className={`cactiva-drop-child ${meta.dropOver && 'hover'}`} />
+          {renderChildren(cactiva.source, cactiva.editor, cactiva.root)}
+        </CactivaSelectable>
       </CactivaDraggable>
-    </ErrorBoundary>
+    </CactivaDroppable>
   );
 });

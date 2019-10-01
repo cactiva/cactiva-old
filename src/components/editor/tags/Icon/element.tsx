@@ -1,3 +1,4 @@
+import * as IconSource from 'react-web-vector-icons';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import CactivaDraggable from '../../CactivaDraggable';
@@ -12,9 +13,34 @@ export default observer((props: any) => {
     <CactivaDroppable cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva} style={tagProps.style}>
-          <input className="rn-text-input" {...tagProps} />
+          <Icon {...tagProps} />
         </CactivaSelectable>
       </CactivaDraggable>
     </CactivaDroppable>
   );
 });
+
+interface IconProps {
+  source:
+    | 'AntDesign'
+    | 'Entypo'
+    | 'EvilIcons'
+    | 'Feather'
+    | 'FontAwesome'
+    | 'Foundation'
+    | 'Ionicons'
+    | 'MaterialCommunityIcons'
+    | 'MaterialIcons'
+    | 'Octicons'
+    | 'SimpleLineIcons'
+    | 'Zocial';
+  name: string;
+  size?: number;
+  color?: string;
+  style?: any;
+}
+const Icon = ({ source, name, size, color, style }: IconProps) => {
+  const Icon: any = (IconSource as any)[source];
+
+  return <Icon name={name} size={size} color={color} style={style} />;
+};

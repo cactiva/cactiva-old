@@ -8,7 +8,7 @@ export const parseKind = (node: any): any => {
     case SyntaxKind.NumericLiteral:
       return parseInt(node.value);
     case SyntaxKind.StringLiteral:
-      return `${JSON.parse(node.value)}`;
+      return node.value.substring(1, node.value.length - 1);
     case SyntaxKind.CallExpression:
       return node.value;
     case SyntaxKind.PropertyAccessExpression:
