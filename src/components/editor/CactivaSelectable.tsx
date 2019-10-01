@@ -1,5 +1,6 @@
 import { observer, useObservable } from 'mobx-react-lite';
 import React from 'react';
+import { Text } from 'evergreen-ui';
 export default observer(({ cactiva, children }: any) => {
   const { editor, source } = cactiva;
   const meta = useObservable({ hover: false });
@@ -28,7 +29,9 @@ export default observer(({ cactiva, children }: any) => {
       <div
         className={`cactiva-element-tag ${classes.hover} ${classes.selected}`}
       >
-        {cactiva.source.name}
+        <Text size={300} color={'white'}>
+          {cactiva.source.name}
+        </Text>
       </div>
       {children}
     </div>

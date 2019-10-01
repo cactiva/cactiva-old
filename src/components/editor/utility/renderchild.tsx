@@ -17,8 +17,7 @@ export const renderChildren = (source: any, editor: any, root?: any): any => {
     const childRoot = findTag(child);
     const childId = id++;
     if (!childRoot) {
-      console.log(children);
-      return parseKind(child);
+      return null;
     }
     childRoot.id = isroot ? `${id}` : `${source.id}_${childId}`;
 

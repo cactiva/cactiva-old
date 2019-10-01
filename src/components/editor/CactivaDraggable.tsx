@@ -5,11 +5,20 @@ import { useDrag } from 'react-dnd-cjs';
 export default observer(({ cactiva, children }: any) => {
   const { source, tag } = cactiva;
   const { id } = source;
-  const dragHooks = useDrag({
+  const [{ isDragging }, dragRef] = useDrag({
     item: {
       type: tag.tagName,
       id
+    },
+    collect: monitor => {
+      return {
+        isDragging: monitor.isDragging()
+      };
     }
   });
-  return <div ref={dragHooks[1]}>{children}</div>;
+  return (
+    <div ref={dragRef} className={`${isDragging ? 'dragging' : ''}`}>
+      {children}
+    </div>
+  );
 });

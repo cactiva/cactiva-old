@@ -10,7 +10,7 @@
   border: 1px dotted #999;
   min-height: 30px;
   min-width: 30px;
-  padding: 5px 5px 0px 5px;
+  padding: 0px 5px;
   position: relative;
   &.hover {
     border: 1px solid #3ba0fb;
@@ -38,30 +38,39 @@
   position: absolute;
   width: auto;
   height: auto;
-  top: 0;
-  right: 0;
+  top: -1px;
+  right: -1px;
   color: #fff;
   padding: 4px;
-  font-size: 11px;
+  font-size: 10px;
   display: none;
   z-index: 999;
 
   &.hover {
     display: block;
   }
+
+  > span {
+    font-size: 11px;
+  }
 }
 
 .cactiva-drop-after {
   height: 3px;
   width: auto;
-  padding: 2px 0px;
+  padding: 0px 0px 3px 0px;
   align-self: stretch;
+  background: transparent;
   &.hover {
     &:before {
-      content: " ";
+      content: ' ';
       min-width: 3px;
       min-height: 3px;
       background: #3ba0fb;
     }
   }
+}
+
+.dragging .cactiva-drop-after {
+  display: none;
 }

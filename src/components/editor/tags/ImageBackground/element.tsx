@@ -10,9 +10,6 @@ export default observer((props: any) => {
   const cactiva = props._cactiva;
   const tagProps = parseProps(props);
   const meta = useObservable({ dropOver: false });
-  if (!tagProps.style || !tagProps.source) {
-    tagProps.style.backgroundColor = '#F7F7F7';
-  }
   return (
     <CactivaDraggable cactiva={cactiva}>
       <CactivaDroppable
