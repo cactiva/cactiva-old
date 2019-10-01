@@ -3,6 +3,7 @@
     font-size: 11px;
   }
   .heading {
+    background: white;
     border-bottom: 1px solid #ddd;
     padding: 2px 5px;
     text-transform: capitalize;
@@ -19,16 +20,80 @@
     }
   }
   .cactiva-trait-field {
-    padding: 5px 0px;
+    padding: 5px 5px 5px 0px;
     flex-direction: row;
     align-items: center;
+    user-select: none;
     .label {
       padding: 0px 5px 0px 10px;
+      flex-basis: 60px;
       text-transform: capitalize;
-      width: 60px;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
     }
+  }
+  .cactiva-trait-input {
+    border-radius: 3px;
+    padding: 5px;
+    display: table-cell;
+    width: 100%;
+    border: 1px solid #ececeb;
+    font-size: 10px;
+    outline: none;
+    background-color: white;
+    &:focus,
+    &.focus {
+      border: 1px solid #3ba0fb;
+    }
+  }
+}
+
+.cactiva-trait-cmenu-heading {
+  display: flex !important;
+  border-bottom: 1px solid #ddd;
+  padding: 4px 7px;
+  text-transform: capitalize;
+  user-select: none;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+  > span {
+    color: #ccc;
+    display: block;
+    font-size: 10px;
+
+    &:nth-child(1) {
+      color: #666;
+      font-weight: bold;
+    }
+    &:nth-child(2) {
+      font-size: 9px;
+      max-width: 80px;
+      margin-top: 3px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+div[role='menuitem'] {
+  user-select: none;
+  background: #fafafa;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  > svg {
+    width: 14px;
+    height: 14px;
+    fill: #999 !important;
+  }
+  > span {
+    color: #999;
+    font-size: 12px;
+  }
+  &:hover {
+    background-color: #ececeb !important;
   }
 }

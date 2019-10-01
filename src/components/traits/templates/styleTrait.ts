@@ -11,6 +11,16 @@ const styleTrait: ICactivaTrait[] = [
         name: 'width',
         path: 'style.value.width',
         kind: SyntaxKind.NumericLiteral,
+        options: {
+          styles: {
+            root: {
+              // width: '100px'
+            },
+            field: {
+              maxWidth: '50px'
+            }
+          }
+        }
       }
     ]
   }

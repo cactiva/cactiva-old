@@ -66,7 +66,10 @@ export default observer(() => {
           )}
 
           {editor.status !== 'loading' ? (
-            <div className='cactiva-pane'>
+            <div
+              className='cactiva-pane'
+              onContextMenu={e => e.preventDefault()}
+            >
               <div className='cactiva-pane-inner'>
                 <div className='cactiva-pane-tab-header'>
                   <Tab
@@ -106,9 +109,9 @@ export default observer(() => {
                 {meta.currentPane === 'hooks' && (
                   <>
                     {current && current.source && current.selected && (
-                      <Text>
+                      <pre style={{ fontSize: 9 }}>
                         {JSON.stringify(current.selected.source, null, 2)}
-                      </Text>
+                      </pre>
                     )}
                   </>
                 )}

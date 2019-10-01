@@ -11,6 +11,7 @@ import {
   prepareChanges,
   commitChanges
 } from '../editor/utility/elements/tools';
+import { SyntaxKind } from '../editor/utility/syntaxkind';
 
 export default observer(({ source, editor }: any) => {
   const traits = _.get(editor, 'selected.tag.traits') as ICactivaTrait[];
@@ -46,37 +47,97 @@ export default observer(({ source, editor }: any) => {
             </div>
             {meta.expanded.indexOf(item.name) >= 0 &&
               item.fields.map((trait: ICactivaTraitField, key: number) => {
-                return (
-                  <CactivaTraitField
-                    key={key}
-                    {...trait}
-                    editor={editor}
-                    update={(value: any) => {
-                      prepareChanges(editor);
-                      const sp = selected.source.props;
-                      if (!sp[item.name] && item.kind && item.default) {
-                        sp[item.name] = generateValueByKind(
-                          item.kind,
-                          item.default
-                        );
-                      }
-
-                      const currentValue = _.get(
+                const currentValue = _.get(selected.source.props, trait.path);
+                const kind = _.get(currentValue, 'kind', trait.kind);
+                const resetValue = () => {
+                  const currentValue = _.get(selected.source.props, trait.path);
+                  if (currentValue) {
+                    prepareChanges(editor);
+                    const currentValueKeys = Object.keys(currentValue);
+                    if (currentValueKeys.indexOf('originalValue') >= 0) {
+                      _.set(
                         selected.source.props,
-                        trait.path
+                        trait.path,
+                        _.get(currentValue, 'originalValue')
                       );
+                    }
+                    commitChanges(editor);
+                  }
+                };
+                return (
+                  <React.Fragment key={key}>
+                    <CactivaTraitField
+                      key={key}
+                      {...trait}
+                      kind={kind || trait.kind}
+                      editor={editor}
+                      resetValue={resetValue}
+                      convertToCode={() => {
+                        prepareChanges(editor);
+                        const sp = selected.source.props;
 
-                      const kind = _.get(currentValue, 'kind', trait.kind);
-                      const valueByKind = generateValueByKind(
-                        kind,
-                        value || item.default
-                      );
-                      _.set(selected.source.props, trait.path, valueByKind);
-                      commitChanges(editor);
-                    }}
-                    source={selected.source}
-                    value={_.get(props, `${item.name}.${trait.name}`)}
-                  />
+                        if (!sp[item.name] && item.kind && item.default) {
+                          sp[item.name] = generateValueByKind(
+                            item.kind,
+                            item.default
+                          );
+                        }
+                        const currentValue = _.get(
+                          selected.source.props,
+                          trait.path
+                        );
+
+                        const valueByKind = generateValueByKind(
+                          SyntaxKind.CactivaCode,
+                          _.get(currentValue, 'value', currentValue)
+                        );
+
+                        if (valueByKind) {
+                          valueByKind.originalValue = _.get(
+                            currentValue,
+                            'originalValue',
+                            currentValue
+                          );
+                        }
+                        _.set(selected.source.props, trait.path, valueByKind);
+                        commitChanges(editor);
+                      }}
+                      update={(value: any) => {
+                        prepareChanges(editor);
+                        const sp = selected.source.props;
+
+                        if (!sp[item.name] && item.kind && item.default) {
+                          sp[item.name] = generateValueByKind(
+                            item.kind,
+                            item.default
+                          );
+                        }
+
+                        const currentValue = _.get(
+                          selected.source.props,
+                          trait.path
+                        );
+
+                        const kind = _.get(currentValue, 'kind', trait.kind);
+                        const valueByKind = generateValueByKind(
+                          kind,
+                          value || item.default
+                        );
+
+                        if (valueByKind) {
+                          valueByKind.originalValue = _.get(
+                            currentValue,
+                            'originalValue',
+                            currentValue
+                          );
+                        }
+                        _.set(selected.source.props, trait.path, valueByKind);
+                        commitChanges(editor);
+                      }}
+                      source={selected.source}
+                      value={_.get(props, `${item.name}.${trait.name}`)}
+                    />
+                  </React.Fragment>
                 );
               })}
           </React.Fragment>

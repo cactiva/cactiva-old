@@ -1,0 +1,32 @@
+.trait-numeric-literal {
+  .arrow {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    right: 1px;
+    color: #c2c2c2;
+    background: white;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-left: 1px solid #ececeb;
+    cursor: ns-resize;
+    user-select: none;
+    height: 18px;
+    margin-top: 1px;
+    .arrow-btn {
+      flex: 1;
+      align-items: center;
+      justify-content: center;
+      &:hover {
+        background: #ececeb;
+      }
+    }
+  }
+  &:hover .arrow,
+  &.clicked .arrow {
+    display: flex;
+  }
+  &.clicked .arrow {
+    color: #96a4c9;
+  }
+}

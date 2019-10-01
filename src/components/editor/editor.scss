@@ -1,5 +1,6 @@
 .cactiva-editor-container {
   margin-right: -4px;
+  overflow-x: hidden;
 }
 .cactiva-editor {
   flex: 1;
@@ -34,28 +35,6 @@
   }
 }
 
-.cactiva-element-tag {
-  background-color: #3ba0fb;
-  position: absolute;
-  width: auto;
-  height: auto;
-  top: -1px;
-  right: -1px;
-  color: #fff;
-  padding: 4px;
-  font-size: 10px;
-  display: none;
-  z-index: 999;
-
-  &.hover {
-    display: block;
-  }
-
-  > span {
-    font-size: 11px;
-  }
-}
-
 .cactiva-drop-after,
 .cactiva-drop-child {
   width: auto;
@@ -80,4 +59,26 @@
 .cactiva-drop-child:before {
   right: 1px;
   left: 1px;
+}
+
+.cactiva-element-tag {
+  background-color: #3ba0fb;
+  position: absolute;
+  width: auto;
+  height: auto;
+  top: -1px;
+  right: -1px;
+  color: #fff;
+  padding: 4px;
+  font-size: 10px;
+  display: none;
+  z-index: 9;
+
+  &.hover {
+    display: block;
+  }
+
+  > span {
+    font-size: 9px;
+  }
 }

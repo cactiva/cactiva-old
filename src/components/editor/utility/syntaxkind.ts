@@ -349,5 +349,6 @@ export enum SyntaxKind {
   FirstJSDocNode = 289,
   LastJSDocNode = 313,
   FirstJSDocTagNode = 301,
-  LastJSDocTagNode = 313
+  LastJSDocTagNode = 313,
+  CactivaCode = 999
 }

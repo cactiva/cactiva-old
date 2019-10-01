@@ -49,10 +49,16 @@ export const generateValueByKind = (kind: number, value: any): any => {
   switch (kind) {
     case SyntaxKind.NumericLiteral:
       if (typeof value !== 'number') {
-        return {
-          kind,
-          value: parseInt(value) || 0
-        };
+        try {
+          const tryValue = parseInt(value);
+          if (typeof value !== 'number') return undefined;
+          return {
+            kind,
+            value: tryValue
+          };
+        } catch (e) {
+          return undefined;
+        }
       }
       return {
         kind,

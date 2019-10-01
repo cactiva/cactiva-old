@@ -9,6 +9,10 @@ div {
   display: flex;
   flex-direction: column;
 }
+[evergreen-portal-container] div {
+  display: block;
+}
+
 #root {
   display: flex;
   width: 100%;
@@ -29,6 +33,9 @@ div {
       margin-right: -5px;
       .cactiva-pane-inner {
         margin-right: -8px;
+        background: #fbfbfb;
+        user-select: none;
+        height: 100%;
       }
 
       .cactiva-pane-tab-header {

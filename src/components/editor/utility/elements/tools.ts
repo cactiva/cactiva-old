@@ -93,9 +93,44 @@ export const commitChanges = (editor: any) => {
     editor.selectedId = editor.tempSelected.id;
     editor.tempSelected = undefined;
   }
-  editor.history.undoStack.push(
-    getDiff(toJS(editor.source), editor.prevSource)
-  );
+  const diff = getDiff(toJS(editor.source), editor.prevSource);
+
+  if (editor.history.undoStack.length > 2) {
+    const lastStack1 =
+      editor.history.undoStack[editor.history.undoStack.length - 1];
+    const lastStack2 =
+      editor.history.undoStack[editor.history.undoStack.length - 2];
+
+    if (
+      isUndoStackSimilar(lastStack1, diff) &&
+      isUndoStackSimilar(lastStack2, diff)
+    ) {
+      editor.history.undoStack[editor.history.undoStack.length - 1] = diff;
+      return;
+    }
+  }
+
+  editor.history.undoStack.push(diff);
+};
+
+const isUndoStackSimilar = (compare: any, diff: any) => {
+  if (compare && diff) {
+    const compareKeys = Object.keys(compare);
+    const diffKeys = Object.keys(diff);
+    if (compareKeys.length === diffKeys.length) {
+      for (let i in compareKeys) {
+        const compareKey = compareKeys[i];
+        const diffKey = diffKeys[i];
+        const compareValue = compare[compareKey];
+        const diffValue = diff[diffKey];
+        if (compareValue.operation !== diffValue.operation) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }
+  return false;
 };
 
 export function fastClone(clone: any, obj: any) {
