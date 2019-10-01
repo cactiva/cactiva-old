@@ -10,6 +10,7 @@ export const parseKind = (node: any): any => {
     case SyntaxKind.StringLiteral:
       return `${JSON.parse(node.value)}`;
     case SyntaxKind.CallExpression:
+      return node.value;
     case SyntaxKind.PropertyAccessExpression:
       return undefined;
     case SyntaxKind.ObjectLiteralExpression:
@@ -42,4 +43,25 @@ export const parseProps = (node: any): any => {
     return newNode;
   }
   return node;
+};
+
+export const generateValueByKind = (kind: number, value: any): any => {
+  switch (kind) {
+    case SyntaxKind.NumericLiteral:
+      if (typeof value !== 'number') {
+        return {
+          kind,
+          value: parseInt(value) || 0
+        };
+      }
+      return {
+        kind,
+        value
+      };
+  }
+
+  return {
+    kind,
+    value
+  };
 };

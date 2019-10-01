@@ -7,9 +7,9 @@ import kinds from './kinds';
 
 export interface ICactivaTraitFieldProps extends ICactivaTraitField {
   editor: any;
-  path: string[];
   source: any;
   value?: any;
+  update: (value: any) => void;
 }
 export default observer((trait: ICactivaTraitFieldProps) => {
   let kindName = '';

@@ -1,12 +1,15 @@
 export interface ICactivaTraitField {
   label?: string;
   name: string;
+  path: string;
   kind: number;
   default?: any;
   options?: any;
 }
 export interface ICactivaTrait {
   name: string;
+  kind?: number;
+  default?: any;
   fields: ICactivaTraitField[];
 }
 

@@ -7,9 +7,13 @@ import { toJS } from 'mobx';
 
 export default observer((trait: ICactivaTraitFieldProps) => {
   return (
-    <Text>
-      {JSON.stringify(trait.path)}
-      {JSON.stringify(trait.value)}
-    </Text>
+    <input
+      type='number'
+      value={trait.value || ''}
+      onChange={e => {
+        const value = e.target.value;
+        trait.update(value);
+      }}
+    />
   );
 });

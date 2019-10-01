@@ -78,9 +78,9 @@ export const isParentOf = (parentId: string, childId: string): boolean => {
   return false;
 };
 
-export const prepareChanges = (root: any, editor: any) => {
+export const prepareChanges = (editor: any) => {
   if (editor.selectedId) {
-    editor.tempSelected = findElementById(root, editor.selectedId);
+    editor.tempSelected = findElementById(editor.root, editor.selectedId);
   } else {
     editor.tempSelected = undefined;
   }

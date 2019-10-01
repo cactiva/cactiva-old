@@ -32,18 +32,18 @@ export default observer(() => {
   }, []);
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="cactiva-container">
-        <div className="cactiva-menu"></div>
+      <div className='cactiva-container'>
+        <div className='cactiva-menu'></div>
         <Split
           sizes={editor.status === 'loading' ? [15, 85] : [15, 70, 15]}
           minSize={100}
           expandToMin={false}
           gutterSize={5}
-          gutterAlign="center"
+          gutterAlign='center'
           snapOffset={30}
           dragInterval={1}
-          direction="horizontal"
-          className="cactiva-main"
+          direction='horizontal'
+          className='cactiva-main'
         >
           <div className='cactiva-pane'></div>
           {editor.status === 'loading' ? (
@@ -100,6 +100,15 @@ export default observer(() => {
                         />
                         <Text size={300}>Please select a component</Text>
                       </Pane>
+                    )}
+                  </>
+                )}
+                {meta.currentPane === 'hooks' && (
+                  <>
+                    {current && current.source && current.selected && (
+                      <Text>
+                        {JSON.stringify(current.selected.source, null, 2)}
+                      </Text>
                     )}
                   </>
                 )}

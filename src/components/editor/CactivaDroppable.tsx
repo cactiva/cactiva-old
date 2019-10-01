@@ -21,7 +21,7 @@ export default observer(
       allTags,
       (item: any) => {
         if (afterOver && meta.canDropAfter) {
-          prepareChanges(root, editor);
+          prepareChanges(editor);
           const child = findElementById(root, id);
           const el = removeElementById(root, afterItem.id);
           insertAfterElementId(root, child.id, el);
@@ -34,7 +34,7 @@ export default observer(
       allTags,
       () => {
         if (childOver && meta.canDropChild) {
-          prepareChanges(root, editor);
+          prepareChanges(editor);
           const child = findElementById(root, id);
           const el = removeElementById(root, childItem.id);
           addChildInId(root, child.id, el);

@@ -1,7 +1,6 @@
 import React from 'react';
 import { findTag } from './tagmatcher';
 import tags from './tags';
-import { parseKind } from './parser';
 
 export const renderChildren = (source: any, editor: any, root?: any): any => {
   if (!source) return source;
@@ -23,19 +22,18 @@ export const renderChildren = (source: any, editor: any, root?: any): any => {
 
     const tag = tags[childRoot.name] as any;
     if (tag) {
+      const cactiva = {
+        tag,
+        root: isroot ? childRoot : root,
+        source: childRoot,
+        editor
+      };
       const Component = tag.element;
-      return (
-        <Component
-          {...childRoot.props}
-          key={key}
-          _cactiva={{
-            tag,
-            root: isroot ? childRoot : root,
-            source: childRoot,
-            editor
-          }}
-        />
-      );
+      if (editor.selectedId === childRoot.id) {
+        editor.selected = cactiva;
+      }
+
+      return <Component {...childRoot.props} key={key} _cactiva={cactiva} />;
     }
     return null;
   });
