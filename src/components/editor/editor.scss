@@ -11,6 +11,7 @@
   min-height: 30px;
   min-width: 30px;
   padding: 5px 5px 0px 5px;
+  position: relative;
   &.hover {
     border: 1px solid #3ba0fb;
   }
@@ -32,6 +33,24 @@
   }
 }
 
+.cactiva-element-tag {
+  background-color: #3ba0fb;
+  position: absolute;
+  width: auto;
+  height: auto;
+  top: 0;
+  right: 0;
+  color: #fff;
+  padding: 4px;
+  font-size: 11px;
+  display: none;
+  z-index: 999;
+
+  &.hover {
+    display: block;
+  }
+}
+
 .cactiva-drop-after {
   height: 3px;
   width: auto;
@@ -39,7 +58,7 @@
   align-self: stretch;
   &.hover {
     &:before {
-      content: ' ';
+      content: " ";
       min-width: 3px;
       min-height: 3px;
       background: #3ba0fb;

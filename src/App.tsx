@@ -28,21 +28,21 @@ export default observer(() => {
   }, []);
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className='cactiva-container'>
-        <div className='cactiva-menu'></div>
+      <div className="cactiva-container">
+        <div className="cactiva-menu"></div>
         <Split
           sizes={[15, 70, 15]}
           minSize={100}
           expandToMin={false}
           gutterSize={5}
-          gutterAlign='center'
+          gutterAlign="center"
           snapOffset={30}
           dragInterval={1}
-          direction='horizontal'
-          className='cactiva-main'
+          direction="horizontal"
+          className="cactiva-main"
         >
-          <div className='cactiva-pane'></div>
-          <div className='cactiva-pane cactiva-editor-container'>
+          <div className="cactiva-pane"></div>
+          <div className="cactiva-pane cactiva-editor-container">
             {current && current.source ? (
               <>
                 <CactivaEditor source={current.source} editor={current} />
@@ -52,7 +52,7 @@ export default observer(() => {
             )}
           </div>
 
-          <div className='cactiva-pane'>
+          <div className="cactiva-pane">
             {current && current.source && (
               <CactivaTraits source={current.source} editor={current} />
             )}

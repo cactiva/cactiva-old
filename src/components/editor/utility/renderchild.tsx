@@ -1,6 +1,7 @@
 import React from 'react';
 import { findTag } from './tagmatcher';
 import tags from './tags';
+import { parseKind } from './parser';
 
 export const renderChildren = (source: any, editor: any, root?: any): any => {
   if (!source) return source;
@@ -16,7 +17,8 @@ export const renderChildren = (source: any, editor: any, root?: any): any => {
     const childRoot = findTag(child);
     const childId = id++;
     if (!childRoot) {
-      return null;
+      console.log(children);
+      return parseKind(child);
     }
     childRoot.id = isroot ? `${id}` : `${source.id}_${childId}`;
 
