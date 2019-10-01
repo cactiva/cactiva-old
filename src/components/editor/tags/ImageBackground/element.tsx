@@ -3,13 +3,16 @@ import React from 'react';
 import CactivaDraggable from '../../CactivaDraggable';
 import CactivaDroppable from '../../CactivaDroppable';
 import CactivaSelectable from '../../CactivaSelectable';
-import { parseStyle } from '../../utility/parser';
+import { parseProps } from '../../utility/parser';
 import { renderChildren } from '../../utility/renderchild';
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  const style = parseStyle(props.style);
+  const tagProps = parseProps(props);
   const meta = useObservable({ dropOver: false });
+  if (!tagProps.style || !tagProps.source) {
+    tagProps.style.backgroundColor = '#F7F7F7';
+  }
   return (
     <CactivaDraggable cactiva={cactiva}>
       <CactivaDroppable
@@ -17,8 +20,7 @@ export default observer((props: any) => {
         onDropOver={(value: boolean) => (meta.dropOver = value)}
       >
         <CactivaSelectable cactiva={cactiva}>
-          <div style={style}>
-            {cactiva.tag.tagName}
+          <div {...tagProps}>
             <div
               className={`cactiva-drop-after ${meta.dropOver ? 'hover' : ''}`}
             />

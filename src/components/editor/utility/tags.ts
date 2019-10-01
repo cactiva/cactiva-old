@@ -1,4 +1,5 @@
-interface ICactivaTraitField {
+export interface ICactivaTraitField {
+  label?: string;
   name: string;
   kind: number;
   default?: any;

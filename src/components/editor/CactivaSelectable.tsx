@@ -25,6 +25,11 @@ export default observer(({ cactiva, children }: any) => {
         editor.selected = cactiva;
       }}
     >
+      <div
+        className={`cactiva-element-tag ${classes.hover} ${classes.selected}`}
+      >
+        {cactiva.source.name}
+      </div>
       {children}
     </div>
   );
