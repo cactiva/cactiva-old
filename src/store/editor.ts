@@ -11,12 +11,15 @@ const baseUrl = 'http://localhost:8080/api';
 class EditorStore {
   sources: IEditorSources = {};
   @observable path = '';
+  @observable status = 'loading';
 
   async load(path: string) {
+    this.status = 'loading';
     const apiPath = '/project/read-source?path=';
     const res = await Axios.get(`${baseUrl}${apiPath}${path}`);
     this.sources[path] = new SourceStore(res.data);
     this.path = path;
+    this.status = 'ready';
   }
 
   @computed

@@ -1,6 +1,6 @@
 import '@src/App.scss';
 import CactivaEditor from '@src/components/editor/CactivaEditor';
-import { observer } from 'mobx-react-lite';
+import { observer, useObservable } from 'mobx-react-lite';
 import React from 'react';
 import { DndProvider } from 'react-dnd-cjs';
 import HTML5Backend from 'react-dnd-html5-backend-cjs';
@@ -9,9 +9,13 @@ import { useAsyncEffect } from 'use-async-effect';
 import CactivaTraits from './components/traits/CactivaTraits';
 import editor from './store/editor';
 import hotkeys from 'hotkeys-js';
+import { Spinner, Text, Tab, Pane } from 'evergreen-ui';
 
 export default observer(() => {
   const current = editor.current;
+  const meta = useObservable({
+    currentPane: 'props'
+  });
   useAsyncEffect(async () => {
     hotkeys('ctrl+z,command+z', (event, handler) => {
       event.preventDefault();
@@ -31,7 +35,7 @@ export default observer(() => {
       <div className='cactiva-container'>
         <div className='cactiva-menu'></div>
         <Split
-          sizes={[15, 70, 15]}
+          sizes={editor.status === 'loading' ? [15, 85] : [15, 70, 15]}
           minSize={100}
           expandToMin={false}
           gutterSize={5}
@@ -42,21 +46,68 @@ export default observer(() => {
           className='cactiva-main'
         >
           <div className='cactiva-pane'></div>
-          <div className='cactiva-pane cactiva-editor-container'>
-            {current && current.source ? (
-              <>
-                <CactivaEditor source={current.source} editor={current} />
-              </>
-            ) : (
-              <div>Please Choose A Component</div>
-            )}
-          </div>
+          {editor.status === 'loading' ? (
+            <div className='cactiva-editor-loading'>
+              <Spinner size={18} />
+              <Text color='muted' size={300} style={{ marginLeft: 8 }}>
+                Loading
+              </Text>
+            </div>
+          ) : (
+            <div className='cactiva-pane cactiva-editor-container'>
+              {current && current.source ? (
+                <>
+                  <CactivaEditor source={current.source} editor={current} />
+                </>
+              ) : (
+                <div>Please Choose A Component</div>
+              )}
+            </div>
+          )}
 
-          <div className='cactiva-pane'>
-            {current && current.source && (
-              <CactivaTraits source={current.source} editor={current} />
-            )}
-          </div>
+          {editor.status !== 'loading' ? (
+            <div className='cactiva-pane'>
+              <div className='cactiva-pane-inner'>
+                <div className='cactiva-pane-tab-header'>
+                  <Tab
+                    style={{ flex: 1 }}
+                    isSelected={meta.currentPane === 'props'}
+                    onSelect={() => (meta.currentPane = 'props')}
+                  >
+                    Props
+                  </Tab>
+                  <Tab
+                    style={{ flex: 1 }}
+                    isSelected={meta.currentPane === 'hooks'}
+                    onSelect={() => (meta.currentPane = 'hooks')}
+                  >
+                    Hooks
+                  </Tab>
+                </div>
+                {meta.currentPane === 'props' && (
+                  <>
+                    {current && current.source && current.selected ? (
+                      <CactivaTraits source={current.source} editor={current} />
+                    ) : (
+                      <Pane
+                        padding={10}
+                        alignItems='center'
+                        justifyContent='center'
+                      >
+                        <img
+                          src='/images/reindeer.svg'
+                          style={{ width: '50%', margin: 20, opacity: 0.4 }}
+                        />
+                        <Text size={300}>Please select a component</Text>
+                      </Pane>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div></div>
+          )}
         </Split>
       </div>
     </DndProvider>

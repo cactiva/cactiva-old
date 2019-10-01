@@ -27,10 +27,31 @@ div {
     flex-direction: row;
     > .cactiva-pane {
       margin-right: -5px;
+      .cactiva-pane-inner {
+        margin-right: -8px;
+      }
+
+      .cactiva-pane-tab-header {
+        flex-direction: row;
+        border-bottom: 1px solid #999;
+        > span {
+          box-shadow: none;
+          outline: 0;
+          font-size: 11px;
+          margin: 0;
+          border-radius: 0;
+        }
+      }
     }
     > div {
       display: block;
       height: 100%;
+    }
+    > .cactiva-editor-loading {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      justify-content: center;
     }
     .gutter {
       cursor: col-resize;

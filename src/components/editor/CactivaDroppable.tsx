@@ -1,17 +1,7 @@
-import { json } from '@src/libs/json-mobx';
-import { transaction, toJS } from 'mobx';
 import { observer, useObservable } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
 import { useDrop } from 'react-dnd-cjs';
-import {
-  addChildInId,
-  prepareChanges,
-  findElementById,
-  insertAfterElementId,
-  isParentOf,
-  removeElementById,
-  commitChanges
-} from './utility/elements/tools';
+import { addChildInId, commitChanges, findElementById, insertAfterElementId, isParentOf, prepareChanges, removeElementById } from './utility/elements/tools';
 import { allTags } from './utility/tags';
 
 export default observer(({ cactiva, children, onDropOver }: any) => {
