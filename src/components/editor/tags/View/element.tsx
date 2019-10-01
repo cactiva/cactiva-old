@@ -11,11 +11,11 @@ export default observer((props: any) => {
   const tagProps = parseProps(props);
   const meta = useObservable({ dropOver: false });
   return (
-    <CactivaDraggable cactiva={cactiva}>
-      <CactivaDroppable
-        cactiva={cactiva}
-        onDropOver={(value: boolean) => (meta.dropOver = value)}
-      >
+    <CactivaDroppable
+      cactiva={cactiva}
+      onDropOver={(value: boolean) => (meta.dropOver = value)}
+    >
+      <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva}>
           <div {...tagProps}>
             <div
@@ -24,7 +24,7 @@ export default observer((props: any) => {
             {renderChildren(cactiva.source, cactiva.editor, cactiva.root)}
           </div>
         </CactivaSelectable>
-      </CactivaDroppable>
-    </CactivaDraggable>
+      </CactivaDraggable>
+    </CactivaDroppable>
   );
 });

@@ -64,7 +64,7 @@
   background: transparent;
   &:before {
     content: ' ';
-    margin-top: -1px;
+    margin-top: 1px;
     border-bottom: 3px solid transparent;
     position: absolute;
     right: 5px;
@@ -80,5 +80,4 @@
 .cactiva-drop-child:before {
   right: 1px;
   left: 1px;
-  margin-top: 1px;
 }

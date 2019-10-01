@@ -6,12 +6,10 @@ import _ from 'lodash';
 import { toJS } from 'mobx';
 
 export default observer((trait: ICactivaTraitFieldProps) => {
-  const value = _.get(trait.source, trait.path);
-  console.log(toJS(trait.source));
   return (
     <Text>
       {JSON.stringify(trait.path)}
-      {JSON.stringify(value)}
+      {JSON.stringify(trait.value)}
     </Text>
   );
 });

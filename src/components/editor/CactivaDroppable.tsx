@@ -50,9 +50,6 @@ export default observer(
     useEffect(() => {
       meta.canDropAfter = afterOver && canDrop(afterItem.id, id);
       meta.canDropChild = canDropOver && childOver && canDrop(childItem.id, id);
-      if (childItem) {
-        console.log(canDropOver, childOver, canDrop(childItem.id, id));
-      }
       if (onDropOver) {
         onDropOver(meta.canDropChild);
       }

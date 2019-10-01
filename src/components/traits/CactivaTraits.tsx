@@ -5,6 +5,7 @@ import React from 'react';
 import { ICactivaTraitField } from '../editor/utility/tags';
 import CactivaTraitField from './CactivaTraitField';
 import './traits.scss';
+import { parseProps } from '../editor/utility/parser';
 import { toJS } from 'mobx';
 
 export default observer(({ source, editor }: any) => {
@@ -13,9 +14,10 @@ export default observer(({ source, editor }: any) => {
     expanded: ['attributes', 'style'] as string[]
   });
   const selected = editor.selected;
-  if (!traits) {
+  if (!traits || !selected) {
     return <Text>Trait not found...</Text>;
   }
+  const props = parseProps(selected.source.props);
   return (
     <div className='cactiva-traits-inner'>
       {traits.map((item: any, key: number) => {
@@ -45,8 +47,9 @@ export default observer(({ source, editor }: any) => {
                     key={key}
                     {...trait}
                     editor={editor}
-                    path={`props.${item.name}.${trait.name}`}
+                    path={[item.name, trait.name]}
                     source={selected.source}
+                    value={_.get(props, `${item.name}.${trait.name}`)}
                   />
                 );
               })}
