@@ -4,7 +4,6 @@ import CactivaDraggable from '../../CactivaDraggable';
 import CactivaDroppable from '../../CactivaDroppable';
 import CactivaSelectable from '../../CactivaSelectable';
 import { parseKind } from '../../utility/parser';
-import { renderChildren } from '../../utility/renderchild';
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
