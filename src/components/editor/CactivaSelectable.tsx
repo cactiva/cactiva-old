@@ -1,7 +1,7 @@
 import { observer, useObservable } from 'mobx-react-lite';
 import React from 'react';
 import { Text } from 'evergreen-ui';
-export default observer(({ cactiva, children, style }: any) => {
+export default observer(({ cactiva, children, className, style }: any) => {
   const { editor, source } = cactiva;
   const meta = useObservable({ hover: false });
   const classes = {
@@ -11,7 +11,7 @@ export default observer(({ cactiva, children, style }: any) => {
   return (
     <div
       style={style}
-      className={`cactiva-element ${classes.hover} ${classes.selected}`}
+      className={`cactiva-element ${className} ${classes.hover} ${classes.selected}`}
       onMouseOver={e => {
         e.stopPropagation();
         meta.hover = true;

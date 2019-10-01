@@ -6,7 +6,7 @@ interface IEditorSources {
   [key: string]: SourceStore;
 }
 
-const baseUrl = 'http://localhost:8080/api';
+export const baseUrl = 'http://localhost:8080/api';
 
 class EditorStore {
   sources: IEditorSources = {};

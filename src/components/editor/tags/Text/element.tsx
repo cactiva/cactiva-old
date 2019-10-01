@@ -1,26 +1,22 @@
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import ErrorBoundary from 'react-error-boundary';
 import CactivaDraggable from '../../CactivaDraggable';
 import CactivaDroppable from '../../CactivaDroppable';
 import CactivaSelectable from '../../CactivaSelectable';
-import { parseProps } from '../../utility/parser';
+import { parseKind } from '../../utility/parser';
 import { renderChildren } from '../../utility/renderchild';
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  const tagProps = parseProps(props);
+  const style = parseKind(props.style);
+  const children = parseKind(cactiva.source.children[0]);
   return (
-    <ErrorBoundary>
+    <CactivaDroppable cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
-        <CactivaDroppable cactiva={cactiva} canDropOver={false}>
-          <CactivaSelectable cactiva={cactiva}>
-            <div className="rn-text" {...tagProps}>
-              {renderChildren(cactiva.source, cactiva.editor, cactiva.root)}
-            </div>
-          </CactivaSelectable>
-        </CactivaDroppable>
+        <CactivaSelectable cactiva={cactiva} style={style} className="rn-text">
+          {children}
+        </CactivaSelectable>
       </CactivaDraggable>
-    </ErrorBoundary>
+    </CactivaDroppable>
   );
 });
