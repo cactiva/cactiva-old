@@ -3,14 +3,14 @@ import React from 'react';
 import CactivaDraggable from '../../CactivaDraggable';
 import CactivaDroppable from '../../CactivaDroppable';
 import CactivaSelectable from '../../CactivaSelectable';
-import { parseProp } from '../../utility/parser';
+import { parseStyle } from '../../utility/parser';
 import { renderChildren } from '../../utility/renderchild';
 
 import ErrorBoundary from 'react-error-boundary';
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  const style = parseProp(props.style);
+  const style = parseStyle(props.style);
   const meta = useObservable({ dropOver: false });
   return (
     <ErrorBoundary>
@@ -24,9 +24,9 @@ export default observer((props: any) => {
         >
           <CactivaSelectable editor={cactiva.editor} source={cactiva.source}>
             <div style={style}>
-              {cactiva.source.id} {cactiva.tag.tagName}
+              {cactiva.tag.tagName}
               <div
-                className={`cactiva-drop-after ${meta.dropOver && 'hover'}`}
+                className={`cactiva-drop-after ${meta.dropOver ? 'hover' : ''}`}
               />
               {renderChildren(cactiva.source, cactiva.editor, cactiva.root)}
             </div>

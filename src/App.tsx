@@ -5,19 +5,33 @@ import React from 'react';
 import { DndProvider } from 'react-dnd-cjs';
 import HTML5Backend from 'react-dnd-html5-backend-cjs';
 import Split from 'react-split';
-import editor from './store/editor';
 import { useAsyncEffect } from 'use-async-effect';
+import CactivaTraits from './components/traits/CactivaTraits';
+import editor from './store/editor';
+import hotkeys from 'hotkeys-js';
+
 export default observer(() => {
+  const current = editor.current;
   useAsyncEffect(async () => {
+    hotkeys('ctrl+z,command+z', (event, handler) => {
+      event.preventDefault();
+      if (editor.current) editor.current.history.undo();
+    });
+    hotkeys(
+      'ctrl+shift+z,command+shift+z, ctrl+y,command+y',
+      (event, handler) => {
+        event.preventDefault();
+        if (editor.current) editor.current.history.redo();
+      }
+    );
     editor.load('/src/Main/Home.tsx');
   }, []);
-  const current = editor.current;
   return (
     <DndProvider backend={HTML5Backend}>
       <div className='cactiva-container'>
         <div className='cactiva-menu'></div>
         <Split
-          sizes={[15, 40, 45]}
+          sizes={[15, 70, 15]}
           minSize={100}
           expandToMin={false}
           gutterSize={5}
@@ -37,12 +51,10 @@ export default observer(() => {
               <div>Please Choose A Component</div>
             )}
           </div>
+
           <div className='cactiva-pane'>
-            {current && (
-              <pre style={{ fontSize: 8 }}>
-                {current.selected}
-                {JSON.stringify(current.source, null, 2)}
-              </pre>
+            {current && current.source && (
+              <CactivaTraits source={current.source} editor={current} />
             )}
           </div>
         </Split>

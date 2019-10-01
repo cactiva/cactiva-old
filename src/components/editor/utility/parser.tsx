@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { SyntaxKind } from './syntaxkind';
 
-export const parseProp = (node: any): any => {
+export const parseStyle = (node: any): any => {
   if (!node) return node;
   const kind = node.kind;
   switch (kind) {
@@ -10,12 +10,12 @@ export const parseProp = (node: any): any => {
       return `${node.value}`;
     case SyntaxKind.CallExpression:
     case SyntaxKind.PropertyAccessExpression:
-      return node.value;
+      return undefined;
     case SyntaxKind.ObjectLiteralExpression:
       return (() => {
         const result: any = {};
         _.map(node.value, (e, key) => {
-          result[key] = parseProp(e);
+          result[key] = parseStyle(e);
         });
         return result;
       })();

@@ -1,14 +1,16 @@
+import { json } from '@src/libs/json-mobx';
+import { transaction, toJS } from 'mobx';
 import { observer, useObservable } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
 import { useDrop } from 'react-dnd-cjs';
 import {
+  addChildInId,
+  prepareChanges,
+  findElementById,
   insertAfterElementId,
   isParentOf,
   removeElementById,
-  addChildInId,
-  findElementById,
-  captureSelected,
-  restoreSelected
+  commitChanges
 } from './utility/elements/tools';
 import { allTags } from './utility/tags';
 
@@ -18,11 +20,11 @@ export default observer(({ children, root, onDropOver, id, editor }: any) => {
     allTags,
     (item: any) => {
       if (afterOver && meta.canDropAfter) {
-        captureSelected(root, editor);
+        prepareChanges(root, editor);
         const child = findElementById(root, id);
         const el = removeElementById(root, afterItem.id);
         insertAfterElementId(root, child.id, el);
-        restoreSelected(editor);
+        commitChanges(editor);
       }
     }
   );
@@ -31,11 +33,11 @@ export default observer(({ children, root, onDropOver, id, editor }: any) => {
     allTags,
     () => {
       if (childOver && meta.canDropChild) {
-        captureSelected(root, editor);
+        prepareChanges(root, editor);
         const child = findElementById(root, id);
         const el = removeElementById(root, childItem.id);
         addChildInId(root, child.id, el);
-        restoreSelected(editor);
+        commitChanges(editor);
       }
     }
   );
@@ -61,7 +63,7 @@ export default observer(({ children, root, onDropOver, id, editor }: any) => {
       <div
         ref={afterDropRef}
         onMouseOver={e => e.stopPropagation()}
-        className={`cactiva-drop-after ${meta.canDropAfter && 'hover'}`}
+        className={`cactiva-drop-after ${meta.canDropAfter ? 'hover' : ''}`}
       />
     </>
   );

@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { findTag } from '../tagmatcher';
 import { toJS } from 'mobx';
+import { getDiff } from 'recursive-diff';
 
 const getIds = (id: string | string[]) =>
   Array.isArray(id) ? _.clone(id) : id.split('_');
@@ -14,7 +14,7 @@ export const findElementById = (root: any, id: string | string[]): any => {
 
   for (let i in ids) {
     const cid = parseInt(ids[i]);
-    if (el && el.children && el.children[cid]) {
+    if (el && el.children && el.children.length > cid && el.children[cid]) {
       el = el.children[cid];
     }
   }
@@ -78,17 +78,31 @@ export const isParentOf = (parentId: string, childId: string): boolean => {
   return false;
 };
 
-export const captureSelected = (root: any, editor: any) => {
-  if (editor.selected) {
-    editor.tempSelected = findElementById(root, editor.selected);
+export const prepareChanges = (root: any, editor: any) => {
+  if (editor.selectedId) {
+    editor.tempSelected = findElementById(root, editor.selectedId);
   } else {
     editor.tempSelected = undefined;
   }
+  editor.history.redoStack.length = 0;
+  editor.prevSource = toJS(editor.source);
 };
 
-export const restoreSelected = (editor: any) => {
+export const commitChanges = (editor: any) => {
   if (editor.tempSelected && editor.tempSelected.id) {
-    editor.selected = editor.tempSelected.id;
+    editor.selectedId = editor.tempSelected.id;
     editor.tempSelected = undefined;
   }
+  editor.history.undoStack.push(
+    getDiff(toJS(editor.source), editor.prevSource)
+  );
 };
+
+export function fastClone(clone: any, obj: any) {
+  for (var i in obj)
+    clone[i] =
+      typeof obj[i] == 'object'
+        ? fastClone(obj[i].constructor(), obj[i])
+        : obj[i];
+  return clone;
+}

@@ -25,6 +25,7 @@ export class Undo implements Undo, Disposable {
   }
 
   private observe() {
+    console.log('changes');
     const newState = json.save(this.state);
     if (!this.enabled) {
       this.enabled = true;

@@ -11,7 +11,6 @@ export class ProjectController {
       return;
     }
     const result = Morph.getInstance().readTsx(req.query.path, false);
-
     res.status(200).json(result);
   }
 

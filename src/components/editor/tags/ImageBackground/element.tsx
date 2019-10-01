@@ -3,12 +3,12 @@ import React from 'react';
 import CactivaDraggable from '../../CactivaDraggable';
 import CactivaDroppable from '../../CactivaDroppable';
 import CactivaSelectable from '../../CactivaSelectable';
-import { parseProp } from '../../utility/parser';
+import { parseStyle } from '../../utility/parser';
 import { renderChildren } from '../../utility/renderchild';
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  const style = parseProp(props.style);
+  const style = parseStyle(props.style);
   const meta = useObservable({ dropOver: false });
   return (
     <CactivaDraggable tag={cactiva.tag} id={cactiva.source.id}>
@@ -21,8 +21,10 @@ export default observer((props: any) => {
       >
         <CactivaSelectable editor={cactiva.editor} source={cactiva.source}>
           <div style={style}>
-            {cactiva.source.id} {cactiva.tag.tagName}
-            <div className={`cactiva-drop-after ${meta.dropOver && 'hover'}`} />
+            {cactiva.tag.tagName}
+            <div
+              className={`cactiva-drop-after ${meta.dropOver ? 'hover' : ''}`}
+            />
             {renderChildren(cactiva.source, cactiva.editor, cactiva.root)}
           </div>
         </CactivaSelectable>

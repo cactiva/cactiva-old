@@ -1,6 +1,6 @@
+import Axios from 'axios';
 import { computed, observable } from 'mobx';
 import { SourceStore } from './source';
-import Axios from 'axios';
 
 interface IEditorSources {
   [key: string]: SourceStore;

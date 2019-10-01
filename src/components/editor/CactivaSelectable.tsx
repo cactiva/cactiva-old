@@ -2,10 +2,13 @@ import { observer, useObservable } from 'mobx-react-lite';
 import React from 'react';
 export default observer(({ editor, source, children }: any) => {
   const meta = useObservable({ hover: false });
+  const classes = {
+    hover: meta.hover ? 'hover' : '',
+    selected: editor.selectedId === source.id ? 'selected' : ''
+  };
   return (
     <div
-      className={`cactiva-element ${meta.hover && 'hover'} ${editor.selected ===
-        source.id && 'selected'}`}
+      className={`cactiva-element ${classes.hover} ${classes.selected}`}
       onMouseOver={e => {
         e.stopPropagation();
         meta.hover = true;
@@ -17,7 +20,7 @@ export default observer(({ editor, source, children }: any) => {
       onClick={e => {
         e.preventDefault();
         e.stopPropagation();
-        editor.selected = source.id;
+        editor.selectedId = source.id;
       }}
     >
       {children}
