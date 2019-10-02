@@ -10,10 +10,12 @@ export default observer((props: any) => {
   const cactiva = props._cactiva;
   const style = parseValue(props.style);
   return (
-    <CactivaDraggable cactiva={cactiva}>
-      <CactivaSelectable cactiva={cactiva} style={style} className="rn-text">
-        {renderChildren(cactiva.source, cactiva.editor, cactiva.root)}
-      </CactivaSelectable>
-    </CactivaDraggable>
+    <CactivaDroppable cactiva={cactiva} canDropOver={false}>
+      <CactivaDraggable cactiva={cactiva}>
+        <CactivaSelectable cactiva={cactiva} style={style} className="rn-text">
+          {renderChildren(cactiva.source, cactiva.editor, cactiva.root)}
+        </CactivaSelectable>
+      </CactivaDraggable>
+    </CactivaDroppable>
   );
 });

@@ -20,7 +20,6 @@ export default observer((props: any) => {
           <div
             className={`cactiva-drop-child ${meta.dropOver ? 'hover' : ''}`}
           />
-          {JSON.stringify(style)}
           {renderChildren(cactiva.source, cactiva.editor, cactiva.root)}
         </CactivaSelectable>
       </CactivaDraggable>

@@ -12,7 +12,6 @@ export default observer((props: any) => {
   const cactiva = props._cactiva;
   const style = {};
   const meta = useObservable({ dropOver: false });
-  console.log(toJS(props.renderItem));
   return (
     <CactivaDroppable
       cactiva={cactiva}
