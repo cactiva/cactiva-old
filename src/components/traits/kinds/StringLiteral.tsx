@@ -10,7 +10,6 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   });
 
   useEffect(() => {
-    console.log(trait);
     meta.value = trait.value;
   }, [trait.value]);
   return (
@@ -30,8 +29,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             e.target.select();
           }}
           onBlur={() => {
-            console.log(meta.value);
-            trait.update(meta.value);
+            trait.update(`"${meta.value}"`);
           }}
         />
       </div>

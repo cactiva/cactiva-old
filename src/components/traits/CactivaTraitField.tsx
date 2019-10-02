@@ -14,7 +14,7 @@ export interface ICactivaTraitFieldProps extends ICactivaTraitField {
   style?: any;
   convertToCode: any;
   defaultKind: number;
-  update: (value: any) => void;
+  update: (value: any, updatedKind?: SyntaxKind) => void;
 }
 export default observer((trait: ICactivaTraitFieldProps) => {
   let kindName = '';
@@ -104,7 +104,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             <div className='label' style={labelStyle}>
               <Text>{trait.name}</Text>
             </div>
-            <div ref={fieldRef}></div>
+            <div ref={fieldRef}/>
             <KindField
               {...trait}
               options={meta.options}

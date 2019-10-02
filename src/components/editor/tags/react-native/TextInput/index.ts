@@ -34,7 +34,7 @@ export default class extends CactivaTag {
         {
           name: 'Multiline',
           path: 'multiline',
-          kind: SyntaxKind.CactivaCode,
+          kind: SyntaxKind.FalseKeyword,
           options: {
             styles: styles
           }
@@ -50,7 +50,7 @@ export default class extends CactivaTag {
         {
           name: 'Editable',
           path: 'editable',
-          kind: SyntaxKind.CactivaCode,
+          kind: SyntaxKind.TrueKeyword,
           options: {
             styles: styles
           }

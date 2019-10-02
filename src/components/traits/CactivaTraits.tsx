@@ -22,7 +22,9 @@ export default observer(({ source, editor }: any) => {
   if (!traits || !selected) {
     return <Text>Trait not found...</Text>;
   }
+
   const props = parseProps(selected.source.props);
+
   return (
     <div className='cactiva-traits-inner'>
       {traits.map((item: ICactivaTrait, key: number) => {
@@ -132,11 +134,10 @@ export default observer(({ source, editor }: any) => {
                             return _.get(value, 'value', value);
                           }, SyntaxKind.CactivaCode);
                         }}
-                        update={value => {
-                          console.log(`${item.name}.${trait.name}`);
+                        update={(value, updatedKind?) => {
                           updateValue(
                             value === undefined ? item.default : value,
-                            _.get(currentValue, 'kind', trait.kind)
+                            updatedKind ? updatedKind : _.get(currentValue, 'kind', trait.kind)
                           );
                         }}
                         source={selected.source}
