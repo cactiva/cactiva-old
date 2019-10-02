@@ -5,7 +5,7 @@ import React from 'react';
 import { ICactivaTraitField, ICactivaTrait } from '../editor/utility/tags';
 import CactivaTraitField from './CactivaTraitField';
 import './traits.scss';
-import { parseProps, generateValueByKind } from '../editor/utility/parser';
+import {parseProps, generateValueByKind, parseKind} from '../editor/utility/parser';
 import { toJS } from 'mobx';
 import {
   prepareChanges,
@@ -133,13 +133,14 @@ export default observer(({ source, editor }: any) => {
                           }, SyntaxKind.CactivaCode);
                         }}
                         update={value => {
+                          console.log(`${item.name}.${trait.name}`);
                           updateValue(
                             value === undefined ? item.default : value,
                             _.get(currentValue, 'kind', trait.kind)
                           );
                         }}
                         source={selected.source}
-                        value={_.get(props, `${item.name}.${trait.name}`)}
+                        value={parseKind(_.get(props, `${trait.path}`))}
                       />
                     </React.Fragment>
                   );

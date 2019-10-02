@@ -1,6 +1,12 @@
-import { CactivaTag } from '@src/components/editor/utility/tags';
+import {CactivaTag} from '@src/components/editor/utility/tags';
 import styleTrait from '@src/components/traits/templates/styleTrait';
-import { SyntaxKind } from '../../../utility/syntaxkind';
+import {SyntaxKind} from '../../../utility/syntaxkind';
+
+const styles = {
+  root: {
+    flex: "1 1 100%"
+  }
+};
 
 export default class extends CactivaTag {
   static tagName = 'TouchableOpacity';
@@ -10,15 +16,11 @@ export default class extends CactivaTag {
       name: 'attributes',
       fields: [
         {
-          name: 'onPress',
+          name: 'On Press',
           path: 'onPress',
           kind: SyntaxKind.CactivaCode,
           options: {
-            styles: {
-              root: {
-                flex: 1
-              }
-            }
+            styles: styles
           }
         }
       ]
