@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { toJS } from 'mobx';
 import { getDiff } from 'recursive-diff';
+import { isTag } from '../tagmatcher';
 
 const getIds = (id: string | string[]) =>
   Array.isArray(id) ? _.clone(id) : id.split('_');
@@ -13,9 +14,13 @@ export const findElementById = (root: any, id: string | string[]): any => {
   let el = root;
 
   for (let i in ids) {
-    const cid = parseInt(ids[i]);
-    if (el && el.children && el.children.length > cid && el.children[cid]) {
-      el = el.children[cid];
+    if (isTag(el)) {
+      const cid = parseInt(ids[i]);
+      if (el && el.children && el.children.length > cid && el.children[cid]) {
+        el = el.children[cid];
+      }
+    } else {
+      el = el.value;
     }
   }
   if (el) {

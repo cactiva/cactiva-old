@@ -133,9 +133,9 @@ export default observer(() => {
                 )}
                 {meta.currentPane === 'hooks' && (
                   <>
-                    {current && current.source && current.selected && (
+                    {current && current.source && (
                       <pre style={{ fontSize: 9 }}>
-                        {JSON.stringify(current.selected.source, null, 2)}
+                        {JSON.stringify(current.source, null, 2)}
                       </pre>
                     )}
                   </>

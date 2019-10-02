@@ -5,24 +5,23 @@ import tags from './tags';
 import { toJS } from 'mobx';
 
 export const renderChildren = (source: any, editor: any, root?: any): any => {
+  let id = 0;
   if (!source) return source;
   if (!source.children) return undefined;
-  const isroot = source.name === '--root--';
+  const isRoot = source.name === '--root--';
   const children = source.children;
-  if (!source.id && !isroot) {
-    source.id = '0';
-  }
-  let id = 0;
-
   const result = children.map((child: any, key: number) => {
-    const childId = id++;
     if (typeof child === 'object') {
-      child.id = isroot ? `${id}` : `${source.id}_${childId}`;
+      if (!source.id && !isRoot) {
+        source.id = '0';
+      }
+      const childId = id++;
+      child.id = isRoot ? `${id - 1}` : `${source.id}_${childId}`;
 
       if (isTag(child)) {
-        return renderTag(child, editor, key, isroot ? child : root);
+        return renderTag(child, editor, key, isRoot ? child : root);
       }
-      return renderKind(child, editor, key, isroot ? child : root);
+      return renderKind(child, editor, key, isRoot ? child : root);
     }
     return child;
   });

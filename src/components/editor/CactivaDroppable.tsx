@@ -11,6 +11,7 @@ import {
   removeElementById
 } from './utility/elements/tools';
 import { allTags } from './utility/tags';
+import { isTag } from './utility/tagmatcher';
 
 export default observer(
   ({ cactiva, children, onDropOver, canDropOver = true }: any) => {
