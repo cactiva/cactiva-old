@@ -1,14 +1,12 @@
+import { renderChildren } from '@src/components/editor/utility/renderchild';
+import { SyntaxKind } from '@src/components/editor/utility/kinds';
+import { isTag } from '@src/components/editor/utility/tagmatcher';
+import { toJS } from 'mobx';
 import { observer, useObservable } from 'mobx-react-lite';
 import React from 'react';
 import CactivaDraggable from '../../../CactivaDraggable';
 import CactivaDroppable from '../../../CactivaDroppable';
 import CactivaSelectable from '../../../CactivaSelectable';
-import { parseKind } from '../../../utility/parser';
-import { renderChildren } from '@src/components/editor/utility/renderchild';
-import _ from 'lodash';
-import { toJS } from 'mobx';
-import { findTag } from '@src/components/editor/utility/tagmatcher';
-import { SyntaxKind } from '@src/components/editor/utility/syntaxkind';
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -29,7 +27,7 @@ export default observer((props: any) => {
             {
               kind: SyntaxKind.JsxElement,
               name: '--root--',
-              children: [findTag(props.renderItem.body[0])]
+              children: [isTag(props.renderItem.body[0])]
             },
             cactiva.editor,
             cactiva.root

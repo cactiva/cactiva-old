@@ -2,7 +2,7 @@ import { Alert, Menu, Pane, Popover, Text } from 'evergreen-ui';
 import _ from 'lodash';
 import { observer, useObservable } from 'mobx-react-lite';
 import React, { useRef } from 'react';
-import { SyntaxKind } from '../editor/utility/syntaxkind';
+import { SyntaxKind } from '../editor/utility/kinds';
 import { ICactivaTraitField } from '../editor/utility/tags';
 import kinds from './tags';
 

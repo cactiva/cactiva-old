@@ -1,3 +1,5 @@
+import { CactivaKind } from './tags';
+
 export enum SyntaxKind {
   Unknown = 0,
   EndOfFileToken = 1,
@@ -359,3 +361,17 @@ for (let k in SyntaxKind) {
   if (!kindNames[parseInt(SyntaxKind[k])])
     kindNames[parseInt(SyntaxKind[k])] = k;
 }
+
+const r = require.context('../kinds/', true, /.*\/index.ts$/, 'sync');
+export const allTags: string[] = [];
+const tags: {
+  [key: string]: CactivaKind;
+} = {};
+
+r.keys().forEach(key => {
+  const element = r(key).default;
+  const name = element.kindName;
+  tags[name] = element;
+  allTags.push(name);
+});
+export default tags;

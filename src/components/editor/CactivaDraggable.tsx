@@ -3,11 +3,11 @@ import React from 'react';
 import { useDrag } from 'react-dnd-cjs';
 
 export default observer(({ cactiva, children }: any) => {
-  const { source, tag } = cactiva;
+  const { source, tag, kind } = cactiva;
   const { id } = source;
   const [{ isDragging }, dragRef] = useDrag({
     item: {
-      type: tag.tagName,
+      type: kind ? kind.kindName : tag.tagName,
       id
     },
     collect: monitor => {

@@ -1,6 +1,6 @@
 import { CactivaTag } from '@src/components/editor/utility/tags';
 import styleTrait from '@src/components/traits/templates/styleTrait';
-import { SyntaxKind } from '../../../utility/syntaxkind';
+import { SyntaxKind } from '../../../utility/kinds';
 
 export default class extends CactivaTag {
   static tagName = 'View';

@@ -3,12 +3,12 @@ import React from 'react';
 import CactivaDraggable from '../../../CactivaDraggable';
 import CactivaDroppable from '../../../CactivaDroppable';
 import CactivaSelectable from '../../../CactivaSelectable';
-import { parseKind } from '../../../utility/parser';
+import { parseValue } from '../../../utility/parser';
 import { renderChildren } from '../../../utility/renderchild';
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  const style = parseKind(props.style);
+  const style = parseValue(props.style);
   const meta = useObservable({ dropOver: false });
   return (
     <CactivaDroppable

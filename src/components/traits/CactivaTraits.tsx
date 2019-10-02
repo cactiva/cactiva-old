@@ -5,13 +5,13 @@ import React from 'react';
 import { ICactivaTraitField, ICactivaTrait } from '../editor/utility/tags';
 import CactivaTraitField from './CactivaTraitField';
 import './traits.scss';
-import {parseProps, generateValueByKind, parseKind} from '../editor/utility/parser';
+import {parseProps, generateValueByKind, parseValue} from '../editor/utility/parser';
 import { toJS } from 'mobx';
 import {
   prepareChanges,
   commitChanges
 } from '../editor/utility/elements/tools';
-import { SyntaxKind } from '../editor/utility/syntaxkind';
+import { SyntaxKind } from '../editor/utility/kinds';
 
 export default observer(({ source, editor }: any) => {
   const traits = _.get(editor, 'selected.tag.traits') as ICactivaTrait[];
@@ -140,7 +140,7 @@ export default observer(({ source, editor }: any) => {
                           );
                         }}
                         source={selected.source}
-                        value={parseKind(_.get(props, `${trait.path}`))}
+                        value={parseValue(_.get(props, `${trait.path}`))}
                       />
                     </React.Fragment>
                   );

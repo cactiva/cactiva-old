@@ -1,5 +1,5 @@
 import { ControlledEditor } from '@monaco-editor/react';
-import { kindNames } from '@src/components/editor/utility/syntaxkind';
+import { kindNames } from '@src/components/editor/utility/kinds';
 import { Icon, Popover, Text } from 'evergreen-ui';
 import _ from 'lodash';
 import { observer, useObservable } from 'mobx-react-lite';

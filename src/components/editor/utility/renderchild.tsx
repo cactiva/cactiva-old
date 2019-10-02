@@ -1,8 +1,7 @@
 import React from 'react';
-import { findTag } from './tagmatcher';
+import { isTag } from './tagmatcher';
 import tags from './tags';
-import { SyntaxKind } from './syntaxkind';
-import { parseKind } from './parser';
+import kinds, { kindNames } from './kinds';
 import { toJS } from 'mobx';
 
 export const renderChildren = (source: any, editor: any, root?: any): any => {
@@ -16,30 +15,45 @@ export const renderChildren = (source: any, editor: any, root?: any): any => {
   let id = 0;
 
   return children.map((child: any, key: number) => {
-    const childRoot = findTag(child);
     const childId = id++;
-    if (!childRoot) {
-      const value = parseKind(child);
-      if (typeof value === 'string' || typeof value === 'number') return value;
-      return JSON.stringify(child);
+    if (isTag(child)) {
+      child.id = isroot ? `${id}` : `${source.id}_${childId}`;
+      return renderTag(child, editor, key, isroot ? child : root);
     }
-    childRoot.id = isroot ? `${id}` : `${source.id}_${childId}`;
-
-    const tag = tags[childRoot.name] as any;
-    if (tag) {
-      const cactiva = {
-        tag,
-        root: isroot ? childRoot : root,
-        source: childRoot,
-        editor
-      };
-      const Component = tag.element;
-      if (editor.selectedId === childRoot.id) {
-        editor.selected = cactiva;
-      }
-
-      return <Component {...childRoot.props} key={key} _cactiva={cactiva} />;
-    }
-    return null;
+    return renderKind(child, editor, key, isroot ? child : root);
   });
+};
+
+const renderKind = (source: any, editor: any, key: number, root: any): any => {
+  const kind = kinds[kindNames[source.kind]] as any;
+  if (kind) {
+    const cactiva = {
+      kind,
+      root: root,
+      source: source,
+      editor
+    };
+    const Component = kind.element;
+    return <Component {...source.props} key={key} _cactiva={cactiva} />;
+  }
+  return null;
+};
+
+const renderTag = (source: any, editor: any, key: number, root: any): any => {
+  const tag = tags[source.name] as any;
+  if (tag) {
+    const cactiva = {
+      tag,
+      root: root,
+      source: source,
+      editor
+    };
+    const Component = tag.element;
+    if (editor.selectedId === source.id) {
+      editor.selected = cactiva;
+    }
+
+    return <Component {...source.props} key={key} _cactiva={cactiva} />;
+  }
+  return null;
 };

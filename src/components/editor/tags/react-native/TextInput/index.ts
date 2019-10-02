@@ -1,5 +1,5 @@
 import {CactivaTag} from '@src/components/editor/utility/tags';
-import {SyntaxKind} from "@src/components/editor/utility/syntaxkind";
+import {SyntaxKind} from "@src/components/editor/utility/kinds";
 import styleTrait from "@src/components/traits/templates/styleTrait";
 
 const styles = {

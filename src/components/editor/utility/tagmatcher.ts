@@ -1,21 +1,19 @@
-import { SyntaxKind } from './syntaxkind';
+import { SyntaxKind } from './kinds';
 
-export const findTag = (s: any, tagName?: string): any => {
-  let tag: any = undefined;
+export const isTag = (s: any, tagName?: string): boolean => {
+  let tag: any = false;
 
   if (s.kind === SyntaxKind.JsxElement) {
-    tag = s;
+    tag = true;
   } else if (s.kind === SyntaxKind.JsxSelfClosingElement) {
-    tag = s;
-  } else if (s.kind === SyntaxKind.ParenthesizedExpression) {
-    tag = findTag(s.value, tagName);
+    tag = true;
   }
 
   if (tagName !== undefined) {
     if (tag && tag.name === tagName) {
-      return tag;
+      return true;
     }
-    return undefined;
+    return false;
   }
 
   return tag;

@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import { SyntaxKind } from './syntaxkind';
+import { SyntaxKind } from './kinds';
 
-export const parseKind = (node: any): any => {
+export const parseValue = (node: any): any => {
   if (!node) return node;
   const kind = node.kind;
   switch (kind) {
@@ -19,7 +19,7 @@ export const parseKind = (node: any): any => {
       return (() => {
         const result: any = {};
         _.map(node.value, (e, key) => {
-          result[key] = parseKind(e);
+          result[key] = parseValue(e);
         });
         return result;
       })();
@@ -35,7 +35,7 @@ export const parseProps = (node: any): any => {
     let newNode: any = {};
     _.map(node, (e, key) => {
       if (!!e && !e.kind) return;
-      newNode[key] = parseKind(e);
+      newNode[key] = parseValue(e);
     });
     return newNode;
   }

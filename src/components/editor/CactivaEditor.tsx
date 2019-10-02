@@ -3,14 +3,11 @@ import React from 'react';
 import './editor.scss';
 import './tags/tags.scss';
 import { renderChildren } from './utility/renderchild';
-import { findTag } from './utility/tagmatcher';
+import { isTag } from './utility/tagmatcher';
 export default observer(({ source, editor }: any) => {
   return (
-    <div className="cactiva-editor">
-      {renderChildren(
-        { name: '--root--', children: [findTag(source)] },
-        editor
-      )}
+    <div className='cactiva-editor'>
+      {renderChildren({ name: '--root--', children: [source] }, editor)}
     </div>
   );
 });
