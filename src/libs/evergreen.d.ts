@@ -536,7 +536,7 @@ declare module 'evergreen-ui' {
       | ((props: {
           toggle: () => void;
           getRef: (ref: React.RefObject) => void;
-          isShow: NonNullable<PopoverProps['isShown']>;
+          isShown: NonNullable<PopoverProps['isShown']>;
         }) => React.ReactNode)
       | React.ReactNode;
     display?: string;

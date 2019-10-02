@@ -5,6 +5,8 @@ export const parseKind = (node: any): any => {
   if (!node) return node;
   const kind = node.kind;
   switch (kind) {
+    case SyntaxKind.CactivaCode:
+      return node.value;
     case SyntaxKind.NumericLiteral:
       return parseInt(node.value);
     case SyntaxKind.StringLiteral:
@@ -47,6 +49,11 @@ export const parseProps = (node: any): any => {
 
 export const generateValueByKind = (kind: number, value: any): any => {
   switch (kind) {
+    case SyntaxKind.CactivaCode:
+      if (typeof value !== 'string') {
+        value = JSON.stringify(value) || "";
+      }
+      break;
     case SyntaxKind.NumericLiteral:
       if (typeof value !== 'number') {
         try {

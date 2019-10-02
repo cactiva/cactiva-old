@@ -1,4 +1,5 @@
 .trait-numeric-literal {
+  display: flex;
   .arrow {
     display: none;
     position: absolute;
@@ -14,6 +15,8 @@
     height: 18px;
     margin-top: 1px;
     .arrow-btn {
+      display: flex;
+      flex-direction: column;
       flex: 1;
       align-items: center;
       justify-content: center;

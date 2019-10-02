@@ -45,101 +45,106 @@ export default observer(({ source, editor }: any) => {
                 }
               />
             </div>
-            {meta.expanded.indexOf(item.name) >= 0 &&
-              item.fields.map((trait: ICactivaTraitField, key: number) => {
-                const currentValue = _.get(selected.source.props, trait.path);
-                const kind = _.get(currentValue, 'kind', trait.kind);
-                const resetValue = () => {
+            <div className='cactiva-trait-body'>
+              {meta.expanded.indexOf(item.name) >= 0 &&
+                item.fields.map((trait: ICactivaTraitField, key: number) => {
                   const currentValue = _.get(selected.source.props, trait.path);
-                  if (currentValue) {
+                  const kind = _.get(currentValue, 'kind', trait.kind);
+                  const resetValue = () => {
+                    const currentValue = _.get(
+                      selected.source.props,
+                      trait.path
+                    );
+                    if (currentValue) {
+                      prepareChanges(editor);
+                      const currentValueKeys = Object.keys(currentValue);
+                      const originalValue = _.get(
+                        currentValue,
+                        'originalValue'
+                      );
+                      if (currentValueKeys.indexOf('originalValue') >= 0) {
+                        _.set(
+                          selected.source.props,
+                          trait.path,
+                          originalValue === '--undefined--'
+                            ? undefined
+                            : originalValue
+                        );
+                      }
+                      commitChanges(editor);
+                    }
+                  };
+                  const updateValue = (value: any, kind: any) => {
                     prepareChanges(editor);
-                    const currentValueKeys = Object.keys(currentValue);
-                    if (currentValueKeys.indexOf('originalValue') >= 0) {
-                      _.set(
-                        selected.source.props,
-                        trait.path,
-                        _.get(currentValue, 'originalValue')
+                    const sp = selected.source.props;
+
+                    if (!sp[item.name] && item.kind && item.default) {
+                      sp[item.name] = generateValueByKind(
+                        item.kind,
+                        item.default
                       );
                     }
+
+                    const currentValue = _.get(
+                      selected.source.props,
+                      trait.path
+                    );
+
+                    let valueByKind = null;
+                    if (typeof value === 'function') {
+                      valueByKind = generateValueByKind(
+                        kind,
+                        value(currentValue)
+                      );
+                    } else {
+                      valueByKind = generateValueByKind(kind, value);
+                    }
+
+                    const shouldSetOriginalValue =
+                      ((typeof currentValue === 'object' &&
+                        Object.keys(currentValue).indexOf('originalValue') <
+                          0) ||
+                        typeof currentValue !== 'object') &&
+                      valueByKind;
+
+                    if (shouldSetOriginalValue) {
+                      valueByKind.originalValue =
+                        currentValue || '--undefined--';
+                    } else {
+                      if (currentValue && currentValue.originalValue)
+                        valueByKind.originalValue = currentValue.originalValue;
+                    }
+
+                    _.set(selected.source.props, trait.path, valueByKind);
                     commitChanges(editor);
-                  }
-                };
-                return (
-                  <React.Fragment key={key}>
-                    <CactivaTraitField
-                      key={key}
-                      {...trait}
-                      kind={kind || trait.kind}
-                      editor={editor}
-                      resetValue={resetValue}
-                      convertToCode={() => {
-                        prepareChanges(editor);
-                        const sp = selected.source.props;
-
-                        if (!sp[item.name] && item.kind && item.default) {
-                          sp[item.name] = generateValueByKind(
-                            item.kind,
-                            item.default
+                  };
+                  return (
+                    <React.Fragment key={key}>
+                      <CactivaTraitField
+                        key={key}
+                        {...trait}
+                        kind={kind || trait.kind}
+                        defaultKind={trait.kind}
+                        editor={editor}
+                        resetValue={resetValue}
+                        convertToCode={() => {
+                          updateValue((value: any) => {
+                            return _.get(value, 'value', value);
+                          }, SyntaxKind.CactivaCode);
+                        }}
+                        update={value => {
+                          updateValue(
+                            value === undefined ? item.default : value,
+                            _.get(currentValue, 'kind', trait.kind)
                           );
-                        }
-                        const currentValue = _.get(
-                          selected.source.props,
-                          trait.path
-                        );
-
-                        const valueByKind = generateValueByKind(
-                          SyntaxKind.CactivaCode,
-                          _.get(currentValue, 'value', currentValue)
-                        );
-
-                        if (valueByKind) {
-                          valueByKind.originalValue = _.get(
-                            currentValue,
-                            'originalValue',
-                            currentValue
-                          );
-                        }
-                        _.set(selected.source.props, trait.path, valueByKind);
-                        commitChanges(editor);
-                      }}
-                      update={(value: any) => {
-                        prepareChanges(editor);
-                        const sp = selected.source.props;
-
-                        if (!sp[item.name] && item.kind && item.default) {
-                          sp[item.name] = generateValueByKind(
-                            item.kind,
-                            item.default
-                          );
-                        }
-
-                        const currentValue = _.get(
-                          selected.source.props,
-                          trait.path
-                        );
-
-                        const kind = _.get(currentValue, 'kind', trait.kind);
-                        const valueByKind = generateValueByKind(
-                          kind,
-                          value || item.default
-                        );
-
-                        if (valueByKind) {
-                          valueByKind.originalValue = _.get(
-                            currentValue,
-                            'originalValue',
-                            currentValue
-                          );
-                        }
-                        _.set(selected.source.props, trait.path, valueByKind);
-                        commitChanges(editor);
-                      }}
-                      source={selected.source}
-                      value={_.get(props, `${item.name}.${trait.name}`)}
-                    />
-                  </React.Fragment>
-                );
-              })}
+                        }}
+                        source={selected.source}
+                        value={_.get(props, `${item.name}.${trait.name}`)}
+                      />
+                    </React.Fragment>
+                  );
+                })}
+            </div>
           </React.Fragment>
         );
       })}

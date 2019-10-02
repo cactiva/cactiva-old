@@ -1,8 +1,11 @@
 .cactiva-traits-inner {
+  display: flex;
+  flex-direction: column;
   span {
     font-size: 11px;
   }
   .heading {
+    display: flex;
     background: white;
     border-bottom: 1px solid #ddd;
     padding: 2px 5px;
@@ -19,7 +22,14 @@
       opacity: 0.3;
     }
   }
+
+  .cactiva-trait-body {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
   .cactiva-trait-field {
+    display: flex;
     padding: 5px 5px 5px 0px;
     flex-direction: row;
     align-items: center;

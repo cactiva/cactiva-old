@@ -352,3 +352,10 @@ export enum SyntaxKind {
   LastJSDocTagNode = 313,
   CactivaCode = 999
 }
+
+export const kindNames: { [key: number]: string } = {};
+
+for (let k in SyntaxKind) {
+  if (!kindNames[parseInt(SyntaxKind[k])])
+    kindNames[parseInt(SyntaxKind[k])] = k;
+}

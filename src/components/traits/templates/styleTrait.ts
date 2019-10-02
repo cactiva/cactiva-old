@@ -14,7 +14,24 @@ const styleTrait: ICactivaTrait[] = [
         options: {
           styles: {
             root: {
-              // width: '100px'
+              flex: '0 0 50%',
+              paddingRight: 0
+            },
+            field: {
+              maxWidth: '50px'
+            }
+          }
+        }
+      },
+      {
+        name: 'height',
+        path: 'style.value.height',
+        kind: SyntaxKind.NumericLiteral,
+        options: {
+          styles: {
+            root: {
+              flex: '0 0 50%',
+              paddingRight: 0
             },
             field: {
               maxWidth: '50px'

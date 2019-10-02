@@ -10,11 +10,13 @@ import CactivaTraits from './components/traits/CactivaTraits';
 import editor from './store/editor';
 import hotkeys from 'hotkeys-js';
 import { Spinner, Text, Tab, Pane } from 'evergreen-ui';
+import { ControlledEditor } from '@monaco-editor/react';
 
 export default observer(() => {
   const current = editor.current;
   const meta = useObservable({
-    currentPane: 'props'
+    currentPane: 'props',
+    value: 'yo'
   });
   useAsyncEffect(async () => {
     hotkeys('ctrl+z,command+z', (event, handler) => {
@@ -45,7 +47,28 @@ export default observer(() => {
           direction='horizontal'
           className='cactiva-main'
         >
-          <div className='cactiva-pane'></div>
+          <div className='cactiva-pane'>
+            {current && current.source && current.selected && (
+              <div
+                style={{
+                  overflow: 'auto',
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  top: 0
+                }}
+              >
+                <pre
+                  style={{
+                    fontSize: 9
+                  }}
+                >
+                  {JSON.stringify(current.selected.source, null, 2)}
+                </pre>
+              </div>
+            )}
+          </div>
           {editor.status === 'loading' ? (
             <div className='cactiva-editor-loading'>
               <Spinner size={18} />
@@ -93,6 +116,8 @@ export default observer(() => {
                       <CactivaTraits source={current.source} editor={current} />
                     ) : (
                       <Pane
+                        display='flex'
+                        flexDirection='column'
                         padding={10}
                         alignItems='center'
                         justifyContent='center'

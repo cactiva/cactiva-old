@@ -1,10 +1,10 @@
 import { Alert, Menu, Pane, Popover, Text } from 'evergreen-ui';
 import _ from 'lodash';
-import { observer } from 'mobx-react-lite';
+import { observer, useObservable } from 'mobx-react-lite';
 import React, { useRef } from 'react';
 import { SyntaxKind } from '../editor/utility/syntaxkind';
 import { ICactivaTraitField } from '../editor/utility/tags';
-import kinds from './kinds';
+import kinds from './tags';
 
 export interface ICactivaTraitFieldProps extends ICactivaTraitField {
   editor: any;
@@ -13,6 +13,7 @@ export interface ICactivaTraitFieldProps extends ICactivaTraitField {
   resetValue: any;
   style?: any;
   convertToCode: any;
+  defaultKind: number;
   update: (value: any) => void;
 }
 export default observer((trait: ICactivaTraitFieldProps) => {
@@ -39,6 +40,9 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   const fieldStyle = _.get(trait, `options.styles.field`, {});
   const labelStyle = _.get(trait, `options.styles.label`, {});
   const rootStyle = _.get(trait, `options.styles.root`, {});
+  const meta = useObservable({
+    options: { ...trait.options }
+  });
   return (
     <Popover
       position='right'
@@ -49,15 +53,28 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             <Text size={300}>{kindName}</Text>
           </div>
           <Menu>
-            <Menu.Item
-              icon='code'
-              onSelect={() => {
-                trait.convertToCode();
-                close();
-              }}
-            >
-              Convert to Code
-            </Menu.Item>
+            {trait.kind !== SyntaxKind.CactivaCode ? (
+              <Menu.Item
+                icon='code'
+                onSelect={() => {
+                  meta.options.open = true;
+                  trait.convertToCode();
+                  close();
+                }}
+              >
+                Convert to Code
+              </Menu.Item>
+            ) : (
+              <Menu.Item
+                icon='code'
+                onSelect={() => {
+                  meta.options.open = true;
+                  close();
+                }}
+              >
+                Open Code Editor
+              </Menu.Item> 
+            )}
             <Menu.Item
               icon='undo'
               onSelect={() => {
@@ -90,6 +107,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             <div ref={fieldRef}></div>
             <KindField
               {...trait}
+              options={meta.options}
               style={{
                 flex: 1,
                 height: '20px',

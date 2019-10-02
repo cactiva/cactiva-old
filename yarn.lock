@@ -1265,6 +1265,11 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
+"@monaco-editor/react@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@monaco-editor/react/-/react-1.2.1.tgz#8fc824dedcec21464738e7cbc0c5c989933b1c05"
+  integrity sha512-BGCFs+GUTbnNA1lH0l+ZYGvqyV1z+DB1uXEv9kXlgOQFNlLySOJE87yyutBfrr5jfRNrwcl8Co4GXztpGm0u4g==
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
