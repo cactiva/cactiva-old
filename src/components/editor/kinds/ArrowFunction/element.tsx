@@ -7,10 +7,12 @@ import { renderChildren } from '../../utility/renderchild';
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
+
   return (
-    <CactivaDroppable cactiva={cactiva}>
+    <CactivaDroppable cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva}>
+          <div className="kind-jsxexpression">{'fx Arrow Function'}</div>
           {renderChildren(
             { name: '--kind--', children: [cactiva.source.value] },
             cactiva.editor,

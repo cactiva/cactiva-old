@@ -12,6 +12,7 @@ export default observer((props: any) => {
   const cactiva = props._cactiva;
   const style = {};
   const meta = useObservable({ dropOver: false });
+  console.log(props.renderItem);
   return (
     <CactivaDroppable
       cactiva={cactiva}
@@ -26,7 +27,7 @@ export default observer((props: any) => {
             {
               kind: SyntaxKind.JsxElement,
               name: '--root--',
-              children: [isTag(props.renderItem.body[0])]
+              children: props.renderItem.body
             },
             cactiva.editor,
             cactiva.root

@@ -14,7 +14,13 @@ import { allTags } from './utility/tags';
 import { isTag } from './utility/tagmatcher';
 
 export default observer(
-  ({ cactiva, children, onDropOver, canDropOver = true }: any) => {
+  ({
+    cactiva,
+    children,
+    onDropOver,
+    canDropOver = true,
+    canDropAfter = true
+  }: any) => {
     const dropAfter = () => {
       prepareChanges(editor);
       const child = findElementById(root, id);
@@ -37,7 +43,7 @@ export default observer(
       'child',
       allTags,
       () => {
-        if (!canDropOver) {
+        if (canDropAfter && !canDropOver) {
           if (childOver && meta.canDropAfter) {
             dropAfter();
           }
@@ -58,8 +64,9 @@ export default observer(
     });
 
     useEffect(() => {
-      meta.canDropAfter = afterOver && canDrop(afterItem.id, id);
-      if (canDropOver) {
+      meta.canDropAfter =
+        canDropAfter && afterOver && canDrop(afterItem.id, id);
+      if (canDropOver || !canDropAfter) {
         meta.canDropChild = childOver && canDrop(childItem.id, id);
       } else if (!meta.canDropAfter) {
         meta.canDropAfter = childOver && canDrop(childItem.id, id);

@@ -2,20 +2,22 @@ import { observer, useObservable } from 'mobx-react-lite';
 import React from 'react';
 import { Text } from 'evergreen-ui';
 import _ from 'lodash';
-export default observer(({ cactiva, children, className, style }: any) => {
+export default observer(({ cactiva, children, className = '', style }: any) => {
   const { editor, source } = cactiva;
   const meta = useObservable({ hover: false });
   const classes = {
     hover: meta.hover ? 'hover' : '',
     selected: editor.selectedId === source.id ? 'selected' : '',
-    horizontal: _.get(style, 'flexDirection') === 'row' ? 'horizontal' : ''
+    horizontal: _.get(style, 'flexDirection') === 'row' ? 'horizontal' : '',
+    kind: cactiva.kind ? 'kind' : ''
   };
+  const name = cactiva.kind ? cactiva.kind.kindName : cactiva.tag.tagName;
   return (
     <div
       style={style}
-      className={`cactiva-element ${className || ''} ${classes.hover} ${
-        classes.selected
-      } ${classes.horizontal}`}
+      className={`cactiva-element ${Object.values(classes).join(
+        ' '
+      )} ${className}`}
       onMouseOver={e => {
         e.stopPropagation();
         meta.hover = true;
@@ -34,7 +36,7 @@ export default observer(({ cactiva, children, className, style }: any) => {
         className={`cactiva-element-tag ${classes.hover} ${classes.selected}`}
       >
         <Text size={300} color={'white'}>
-          {cactiva.source.name}
+          {name}
         </Text>
       </div>
       {children}
