@@ -20,7 +20,9 @@ export const findElementById = (root: any, id: string | string[]): any => {
         el = el.children[cid];
       }
     } else {
-      el = el.value;
+      if (!!el && !!el.value) {
+        el = el.value;
+      }
     }
   }
   if (el) {

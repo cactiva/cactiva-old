@@ -1,8 +1,8 @@
-import {observer, useObservable} from 'mobx-react-lite';
-import React, {useEffect} from 'react';
-import {ICactivaTraitFieldProps} from '../CactivaTraitField';
+import { observer, useObservable } from 'mobx-react-lite';
+import React, { useEffect } from 'react';
+import { ICactivaTraitFieldProps } from '../CactivaTraitField';
 import './StringLiteral.scss';
-
+import { SelectMenu } from 'evergreen-ui';
 export default observer((trait: ICactivaTraitFieldProps) => {
   const meta = useObservable({
     value: trait.value
@@ -16,7 +16,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
       {!trait.mode && (
         <div
           className={`trait-string-literal`}
-          style={{...trait.style, flexDirection: 'row'}}
+          style={{ ...trait.style, flexDirection: 'row' }}
         >
           <input
             className={`cactiva-trait-input`}
@@ -35,22 +35,35 @@ export default observer((trait: ICactivaTraitFieldProps) => {
         </div>
       )}
 
-      {trait.mode && trait.mode === "select" && trait.options && trait.options.items && (
-        <div
-          className={`trait-string-literal`}
-          style={{...trait.style, flexDirection: 'row'}}
-        >
-          <select className={`cactiva-trait-select`} value={meta.value} onChange={(e) => {
-            meta.value = e.target.value;
-            trait.update(`"${meta.value}"`);
-          }}>
-            <option disabled={meta.value} value={""}>Select ...</option>
-            {trait.options.items.map((item: any, i: number) => {
-              return <option key={i} value={`${item.value}`}>{item.label}</option>
-            })}
-          </select>
-        </div>
-      )}
+      {trait.mode &&
+        trait.mode === 'select' &&
+        trait.options &&
+        trait.options.items && (
+          <div
+            className={`trait-string-literal`}
+            style={{ ...trait.style, flexDirection: 'row' }}
+          >
+            <select
+              className={`cactiva-trait-select`}
+              value={meta.value}
+              onChange={e => {
+                meta.value = e.target.value;
+                trait.update(`"${meta.value}"`);
+              }}
+            >
+              <option disabled={meta.value} value={''}>
+                Select ...
+              </option>
+              {trait.options.items.map((item: any, i: number) => {
+                return (
+                  <option key={i} value={`${item.value}`}>
+                    {item.label}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+        )}
     </>
   );
 });

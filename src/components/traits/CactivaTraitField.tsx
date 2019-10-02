@@ -12,6 +12,7 @@ export interface ICactivaTraitFieldProps extends ICactivaTraitField {
   value?: any;
   resetValue: any;
   style?: any;
+  mode?: string | 'select' & undefined;
   convertToCode: any;
   defaultKind: number;
   update: (value: any, updatedKind?: SyntaxKind) => void;
@@ -73,7 +74,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                 }}
               >
                 Open Code Editor
-              </Menu.Item> 
+              </Menu.Item>
             )}
             <Menu.Item
               icon='undo'
@@ -104,7 +105,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             <div className='label' style={labelStyle}>
               <Text>{trait.name}</Text>
             </div>
-            <div ref={fieldRef}/>
+            <div ref={fieldRef} />
             <KindField
               {...trait}
               options={meta.options}

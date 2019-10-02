@@ -2,16 +2,19 @@ import { Icon, Text } from 'evergreen-ui';
 import _ from 'lodash';
 import { observer, useObservable } from 'mobx-react-lite';
 import React from 'react';
-import { ICactivaTraitField, ICactivaTrait } from '../editor/utility/tags';
-import CactivaTraitField from './CactivaTraitField';
-import './traits.scss';
-import {parseProps, generateValueByKind, parseValue} from '../editor/utility/parser';
-import { toJS } from 'mobx';
 import {
-  prepareChanges,
-  commitChanges
+  commitChanges,
+  prepareChanges
 } from '../editor/utility/elements/tools';
 import { SyntaxKind } from '../editor/utility/kinds';
+import {
+  generateValueByKind,
+  parseProps,
+  parseValue
+} from '../editor/utility/parser';
+import { ICactivaTrait, ICactivaTraitField } from '../editor/utility/tags';
+import CactivaTraitField from './CactivaTraitField';
+import './traits.scss';
 
 export default observer(({ source, editor }: any) => {
   const traits = _.get(editor, 'selected.tag.traits') as ICactivaTrait[];
@@ -22,8 +25,6 @@ export default observer(({ source, editor }: any) => {
   if (!traits || !selected) {
     return <Text>Trait not found...</Text>;
   }
-
-  const props = parseProps(selected.source.props);
 
   return (
     <div className='cactiva-traits-inner'>
@@ -137,11 +138,15 @@ export default observer(({ source, editor }: any) => {
                         update={(value, updatedKind?) => {
                           updateValue(
                             value === undefined ? item.default : value,
-                            updatedKind ? updatedKind : _.get(currentValue, 'kind', trait.kind)
+                            updatedKind
+                              ? updatedKind
+                              : _.get(currentValue, 'kind', trait.kind)
                           );
                         }}
                         source={selected.source}
-                        value={parseValue(_.get(props, `${trait.path}`))}
+                        value={parseValue(
+                          _.get(selected.source.props, `${trait.path}`)
+                        )}
                       />
                     </React.Fragment>
                   );

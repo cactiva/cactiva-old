@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import { ICactivaTraitFieldProps } from '../CactivaTraitField';
 import _ from 'lodash';
 import './NumericLiteral.scss';
+import { toJS } from 'mobx';
 
 export default observer((trait: ICactivaTraitFieldProps) => {
   const meta = useObservable({
@@ -22,6 +23,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   const maxValue = _.get(trait, 'options.maxValue', undefined);
   useEffect(() => {
     meta.value = trait.value;
+    console.log(toJS(trait));
   }, [trait.value]);
   return (
     <>
