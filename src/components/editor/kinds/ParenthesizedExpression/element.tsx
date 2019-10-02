@@ -1,4 +1,3 @@
-import { baseUrl } from '@src/store/editor';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import CactivaDraggable from '../../CactivaDraggable';
@@ -14,7 +13,11 @@ export default observer((props: any) => {
     <CactivaDroppable cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva} style={tagProps.style}>
-          {renderChildren(cactiva.source.value, cactiva.editor, cactiva.root)}
+          {renderChildren(
+            { name: '--kind--', children: [cactiva.source.value] },
+            cactiva.editor,
+            cactiva.root
+          )}
         </CactivaSelectable>
       </CactivaDraggable>
     </CactivaDroppable>

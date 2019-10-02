@@ -1,7 +1,7 @@
 import React from 'react';
+import kinds, { kindNames, SyntaxKind } from './kinds';
 import { isTag } from './tagmatcher';
 import tags from './tags';
-import kinds, { kindNames } from './kinds';
 import { toJS } from 'mobx';
 
 export const renderChildren = (source: any, editor: any, root?: any): any => {
@@ -14,17 +14,33 @@ export const renderChildren = (source: any, editor: any, root?: any): any => {
   }
   let id = 0;
 
-  return children.map((child: any, key: number) => {
+  const result = children.map((child: any, key: number) => {
     const childId = id++;
-    if (isTag(child)) {
+    if (typeof child === 'object') {
       child.id = isroot ? `${id}` : `${source.id}_${childId}`;
-      return renderTag(child, editor, key, isroot ? child : root);
+
+      if (isTag(child)) {
+        return renderTag(child, editor, key, isroot ? child : root);
+      }
+      return renderKind(child, editor, key, isroot ? child : root);
     }
-    return renderKind(child, editor, key, isroot ? child : root);
+    return child;
   });
+  return result;
 };
 
 const renderKind = (source: any, editor: any, key: number, root: any): any => {
+  switch (source.kind) {
+    case SyntaxKind.StringLiteral:
+    case SyntaxKind.JsxText:
+    case SyntaxKind.NumericLiteral:
+      return source.value;
+    case SyntaxKind.TrueKeyword:
+      return 'true';
+    case SyntaxKind.FalseKeyword:
+      return 'false';
+  }
+
   const kind = kinds[kindNames[source.kind]] as any;
   if (kind) {
     const cactiva = {
