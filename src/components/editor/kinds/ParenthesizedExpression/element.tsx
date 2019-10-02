@@ -8,11 +8,10 @@ import { renderChildren } from '../../utility/renderchild';
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  const tagProps = parseProps(props);
   return (
     <CactivaDroppable cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
-        <CactivaSelectable cactiva={cactiva} style={tagProps.style}>
+        <CactivaSelectable cactiva={cactiva}>
           {renderChildren(
             { name: '--kind--', children: [cactiva.source.value] },
             cactiva.editor,
