@@ -1,8 +1,7 @@
 import React from 'react';
+import kinds, { kindNames } from './kinds';
 import { isTag } from './tagmatcher';
 import tags from './tags';
-import kinds, { kindNames } from './kinds';
-import { toJS } from 'mobx';
 
 export const renderChildren = (source: any, editor: any, root?: any): any => {
   if (!source) return source;

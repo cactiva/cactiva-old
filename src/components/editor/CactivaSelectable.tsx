@@ -13,7 +13,7 @@ export default observer(({ cactiva, children, className, style }: any) => {
   return (
     <div
       style={style}
-      className={`cactiva-element ${className} ${classes.hover} ${classes.selected} ${classes.horizontal}`}
+      className={`cactiva-element ${className || ''} ${classes.hover} ${classes.selected} ${classes.horizontal}`}
       onMouseOver={e => {
         e.stopPropagation();
         meta.hover = true;
