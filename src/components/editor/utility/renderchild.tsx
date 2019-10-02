@@ -16,11 +16,15 @@ export const renderChildren = (source: any, editor: any, root?: any): any => {
 
   const result = children.map((child: any, key: number) => {
     const childId = id++;
-    child.id = isroot ? `${id}` : `${source.id}_${childId}`;
-    if (isTag(child)) {
-      return renderTag(child, editor, key, isroot ? child : root);
+    if (typeof child === 'object') {
+      child.id = isroot ? `${id}` : `${source.id}_${childId}`;
+
+      if (isTag(child)) {
+        return renderTag(child, editor, key, isroot ? child : root);
+      }
+      return renderKind(child, editor, key, isroot ? child : root);
     }
-    return renderKind(child, editor, key, isroot ? child : root);
+    return child;
   });
   return result;
 };
