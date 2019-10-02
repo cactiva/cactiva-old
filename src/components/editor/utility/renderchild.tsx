@@ -1,5 +1,5 @@
 import React from 'react';
-import kinds, { kindNames } from './kinds';
+import kinds, { kindNames, SyntaxKind } from './kinds';
 import { isTag } from './tagmatcher';
 import tags from './tags';
 
@@ -26,6 +26,16 @@ export const renderChildren = (source: any, editor: any, root?: any): any => {
 const renderKind = (source: any, editor: any, key: number, root: any): any => {
   const kind = kinds[kindNames[source.kind]] as any;
   if (kind) {
+    switch (source.kind) {
+      case SyntaxKind.StringLiteral:
+      case SyntaxKind.NumericLiteral:
+        return source.value;
+      case SyntaxKind.TrueKeyword:
+        return 'true';
+      case SyntaxKind.FalseKeyword:
+        return 'false';
+    }
+
     const cactiva = {
       kind,
       root: root,

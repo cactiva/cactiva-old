@@ -14,7 +14,7 @@ export default observer((props: any) => {
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva} style={tagProps.style}>
           {renderChildren(
-            { name: '--root--', children: [cactiva.source.value] },
+            { name: '--kind--', children: [cactiva.source.value] },
             cactiva.editor,
             cactiva.root
           )}
