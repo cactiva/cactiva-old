@@ -14,6 +14,13 @@ import { allTags } from './utility/tags';
 
 export default observer(
   ({ cactiva, children, onDropOver, canDropOver = true }: any) => {
+    const dropAfter = () => {
+      prepareChanges(editor);
+      const child = findElementById(root, id);
+      const el = removeElementById(root, afterItem.id);
+      insertAfterElementId(root, child.id, el);
+      commitChanges(editor);
+    };
     const { root, source, editor } = cactiva;
     const { id } = source;
     const [{ afterItem, afterOver }, afterDropRef] = useCactivaDrop(
@@ -21,11 +28,7 @@ export default observer(
       allTags,
       (item: any) => {
         if (afterOver && meta.canDropAfter) {
-          prepareChanges(editor);
-          const child = findElementById(root, id);
-          const el = removeElementById(root, afterItem.id);
-          insertAfterElementId(root, child.id, el);
-          commitChanges(editor);
+          dropAfter();
         }
       }
     );
@@ -33,12 +36,18 @@ export default observer(
       'child',
       allTags,
       () => {
-        if (childOver && meta.canDropChild) {
-          prepareChanges(editor);
-          const child = findElementById(root, id);
-          const el = removeElementById(root, childItem.id);
-          addChildInId(root, child.id, el);
-          commitChanges(editor);
+        if (!canDropOver) {
+          if (childOver && meta.canDropAfter) {
+            dropAfter();
+          }
+        } else {
+          if (childOver && meta.canDropChild) {
+            prepareChanges(editor);
+            const child = findElementById(root, id);
+            const el = removeElementById(root, childItem.id);
+            addChildInId(root, child.id, el);
+            commitChanges(editor);
+          }
         }
       }
     );
@@ -49,7 +58,11 @@ export default observer(
 
     useEffect(() => {
       meta.canDropAfter = afterOver && canDrop(afterItem.id, id);
-      meta.canDropChild = canDropOver && childOver && canDrop(childItem.id, id);
+      if (canDropOver) {
+        meta.canDropChild = childOver && canDrop(childItem.id, id);
+      } else if (!meta.canDropAfter) {
+        meta.canDropAfter = childOver && canDrop(childItem.id, id);
+      }
       if (onDropOver) {
         onDropOver(meta.canDropChild);
       }

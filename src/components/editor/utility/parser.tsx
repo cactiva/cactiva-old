@@ -23,11 +23,6 @@ export const parseKind = (node: any): any => {
         });
         return result;
       })();
-    case SyntaxKind.ArrowFunction:
-      return new Function(
-        ...node.params,
-        Object.values(parseProps(node.body)).join('')
-      );
   }
 
   if (typeof node === 'object' && node.value) return node.value;
@@ -51,7 +46,7 @@ export const generateValueByKind = (kind: number, value: any): any => {
   switch (kind) {
     case SyntaxKind.CactivaCode:
       if (typeof value !== 'string') {
-        value = JSON.stringify(value) || "";
+        value = JSON.stringify(value) || '';
       }
       break;
     case SyntaxKind.NumericLiteral:

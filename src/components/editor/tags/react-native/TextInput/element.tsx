@@ -12,7 +12,7 @@ export default observer((props: any) => {
     <CactivaDroppable cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva} style={tagProps.style}>
-          <input className="rn-text-input" {...tagProps} />
+          <input className="rn-text-input" />
         </CactivaSelectable>
       </CactivaDraggable>
     </CactivaDroppable>
