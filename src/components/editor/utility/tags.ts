@@ -4,14 +4,17 @@ export interface ICactivaTraitField {
   path: string;
   kind: number;
   default?: any;
+  mode?: string;
   options?: {
     styles?: {
       root?: any;
       label?: any;
       field?: any;
     };
+    items?: { label: string, value: string | number }[]
   } & any;
 }
+
 export interface ICactivaTrait {
   name: string;
   kind?: number;
