@@ -1,6 +1,9 @@
 import React from 'react';
 import { findTag } from './tagmatcher';
 import tags from './tags';
+import { SyntaxKind } from './syntaxkind';
+import { parseKind } from './parser';
+import { toJS } from 'mobx';
 
 export const renderChildren = (source: any, editor: any, root?: any): any => {
   if (!source) return source;
@@ -16,7 +19,9 @@ export const renderChildren = (source: any, editor: any, root?: any): any => {
     const childRoot = findTag(child);
     const childId = id++;
     if (!childRoot) {
-      return null;
+      const value = parseKind(child);
+      if (typeof value === 'string' || typeof value === 'number') return value;
+      return JSON.stringify(child);
     }
     childRoot.id = isroot ? `${id}` : `${source.id}_${childId}`;
 

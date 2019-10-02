@@ -14,11 +14,11 @@
   padding: 0px 5px;
   position: relative;
   &.hover {
-    border: 1px solid #3ba0fb;
+    box-shadow: 0 0 0 1px #3ba0fb;
   }
   &.selected {
     background: rgba(59, 160, 251, 0.05);
-    border: 1px solid #3ba0fb;
+    box-shadow: 0 0 0 1px #3ba0fb;
   }
   &.horizontal {
     flex-direction: row;
@@ -31,6 +31,16 @@
       height: auto;
       width: 3px;
       padding: 0px 2px;
+
+      &:before {
+        content: ' ';
+        margin-top: 1px;
+        position: absolute;
+        right: auto;
+        left: auto;
+        top: 0px;
+        bottom: 0px;
+      }
     }
   }
 }
@@ -42,18 +52,21 @@
   align-self: stretch;
   background: transparent;
   &:before {
-    content: " ";
+    content: ' ';
     margin-top: 1px;
-    border: 1px solid transparent;
+    box-shadow: 0 0 0 1px transparent;
     position: absolute;
     right: 5px;
     left: 5px;
   }
   &.hover {
     &:before {
-      border-color: #3ba0fb;
+      box-shadow: 0 0 0 1px #3ba0fb;
     }
   }
+}
+.cactiva-drop-after:last-child {
+  flex: 1;
 }
 
 .cactiva-drop-child:before {
