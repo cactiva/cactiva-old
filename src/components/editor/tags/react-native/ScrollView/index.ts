@@ -1,5 +1,6 @@
-import { CactivaTag } from '@src/components/editor/utility/tags';
+import {CactivaTag} from '@src/components/editor/utility/tags';
 import styleTrait from '@src/components/traits/templates/styleTrait';
+import {SyntaxKind} from "@src/components/editor/utility/kinds";
 
 const styles = {
   root: {
@@ -13,7 +14,24 @@ export default class extends CactivaTag {
   static traits = [
     {
       name: 'attributes',
-      fields: []
+      fields: [
+        {
+          name: 'Horizontal',
+          path: 'horizontal',
+          kind: SyntaxKind.FalseKeyword,
+          options: {
+            styles: styles
+          }
+        },
+        {
+          name: 'On Scroll',
+          path: 'onScroll',
+          kind: SyntaxKind.CactivaCode,
+          options: {
+            styles: styles
+          }
+        }
+      ]
     },
     ...styleTrait
   ];

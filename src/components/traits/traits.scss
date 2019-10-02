@@ -57,6 +57,20 @@
       border: 1px solid #3ba0fb;
     }
   }
+  .cactiva-trait-select {
+    border-radius: 3px;
+    padding: 0 5px;
+    display: table-cell;
+    width: 100%;
+    border: 1px solid #ececeb;
+    font-size: 10px;
+    outline: none;
+    background-color: white;
+    &:focus,
+    &.focus {
+      border: 1px solid #3ba0fb;
+    }
+  }
 }
 
 .cactiva-trait-cmenu-heading {

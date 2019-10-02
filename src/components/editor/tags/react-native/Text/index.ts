@@ -18,7 +18,7 @@ export default class extends CactivaTag {
         {
           name: 'Disabled',
           path: 'disabled',
-          kind: SyntaxKind.CactivaCode,
+          kind: SyntaxKind.FalseKeyword,
           options: {
             styles: styles
           }
@@ -26,9 +26,16 @@ export default class extends CactivaTag {
         {
           name: 'Ellipsize Mode',
           path: 'ellipsizeMode',
-          kind: SyntaxKind.CactivaCode,
+          kind: SyntaxKind.StringLiteral,
+          mode: "select",
           options: {
-            styles: styles
+            styles: styles,
+            items: [
+              {value: "head", label: "Head"},
+              {value: "middle", label: "Middle"},
+              {value: "tail", label: "Tail"},
+              {value: "chip", label: "Chip"}
+            ]
           }
         }
       ]
