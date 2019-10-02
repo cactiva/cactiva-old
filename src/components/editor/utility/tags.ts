@@ -4,7 +4,13 @@ export interface ICactivaTraitField {
   path: string;
   kind: number;
   default?: any;
-  options?: any;
+  options?: {
+    styles?: {
+      root?: any;
+      label?: any;
+      field?: any;
+    };
+  } & any;
 }
 export interface ICactivaTrait {
   name: string;
@@ -27,12 +33,9 @@ const tags: {
 } = {};
 
 r.keys().forEach(key => {
-  let name = key.substr(2);
-  name = name.substr(0, name.length - 9);
-
-  if (!!name) {
-    tags[name] = r(key).default;
-    allTags.push(name);
-  }
+  const element = r(key).default;
+  const name = element.tagName;
+  tags[name] = element;
+  allTags.push(name);
 });
 export default tags;

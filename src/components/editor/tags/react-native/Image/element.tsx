@@ -1,10 +1,10 @@
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import ErrorBoundary from 'react-error-boundary';
-import CactivaDraggable from '../../CactivaDraggable';
-import CactivaDroppable from '../../CactivaDroppable';
-import CactivaSelectable from '../../CactivaSelectable';
-import { parseProps } from '../../utility/parser';
+import CactivaDraggable from '../../../CactivaDraggable';
+import CactivaDroppable from '../../../CactivaDroppable';
+import CactivaSelectable from '../../../CactivaSelectable';
+import { parseProps } from '../../../utility/parser';
 import { baseUrl } from '@src/store/editor';
 
 export default observer((props: any) => {

@@ -90,7 +90,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             <div
               className={`cactiva-trait-input`}
               style={{
-                height: '20px',
+                height: '18px',
                 padding: '0px 0px',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
@@ -120,7 +120,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                   color={isShown ? '#fff' : '#666'}
                 />
                 <Text size={300} color={isShown ? '#fff' : '#666'}>
-                  Code
+                  Code 
                 </Text>
               </div>
             </div>

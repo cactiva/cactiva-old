@@ -1,10 +1,10 @@
 import { observer, useObservable } from 'mobx-react-lite';
 import React from 'react';
-import CactivaDraggable from '../../CactivaDraggable';
-import CactivaDroppable from '../../CactivaDroppable';
-import CactivaSelectable from '../../CactivaSelectable';
-import { parseKind } from '../../utility/parser';
-import { renderChildren } from '../../utility/renderchild';
+import CactivaDraggable from '../../../CactivaDraggable';
+import CactivaDroppable from '../../../CactivaDroppable';
+import CactivaSelectable from '../../../CactivaSelectable';
+import { parseKind } from '../../../utility/parser';
+import { renderChildren } from '../../../utility/renderchild';
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -17,7 +17,9 @@ export default observer((props: any) => {
     >
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva} style={style}>
-          <div className={`cactiva-drop-child ${meta.dropOver && 'hover'}`} />
+          <div
+            className={`cactiva-drop-after ${meta.dropOver ? 'hover' : ''}`}
+          />
           {renderChildren(cactiva.source, cactiva.editor, cactiva.root)}
         </CactivaSelectable>
       </CactivaDraggable>

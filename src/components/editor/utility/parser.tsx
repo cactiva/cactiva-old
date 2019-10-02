@@ -39,7 +39,7 @@ export const parseProps = (node: any): any => {
   if (typeof node === 'object') {
     let newNode: any = {};
     _.map(node, (e, key) => {
-      if (!e.kind) return;
+      if (!!e && !e.kind) return;
       newNode[key] = parseKind(e);
     });
     return newNode;

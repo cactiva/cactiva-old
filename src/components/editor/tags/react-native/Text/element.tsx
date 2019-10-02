@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import CactivaDraggable from '../../CactivaDraggable';
-import CactivaDroppable from '../../CactivaDroppable';
-import CactivaSelectable from '../../CactivaSelectable';
-import { parseKind } from '../../utility/parser';
+import CactivaDraggable from '../../../CactivaDraggable';
+import CactivaDroppable from '../../../CactivaDroppable';
+import CactivaSelectable from '../../../CactivaSelectable';
+import { parseKind } from '../../../utility/parser';
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;

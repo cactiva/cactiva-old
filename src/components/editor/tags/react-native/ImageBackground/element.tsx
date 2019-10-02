@@ -1,10 +1,10 @@
 import { observer, useObservable } from 'mobx-react-lite';
 import React from 'react';
-import CactivaDraggable from '../../CactivaDraggable';
-import CactivaDroppable from '../../CactivaDroppable';
-import CactivaSelectable from '../../CactivaSelectable';
-import { parseProps } from '../../utility/parser';
-import { renderChildren } from '../../utility/renderchild';
+import CactivaDraggable from '../../../CactivaDraggable';
+import CactivaDroppable from '../../../CactivaDroppable';
+import CactivaSelectable from '../../../CactivaSelectable';
+import { parseProps } from '../../../utility/parser';
+import { renderChildren } from '../../../utility/renderchild';
 import { baseUrl } from '@src/store/editor';
 
 export default observer((props: any) => {
