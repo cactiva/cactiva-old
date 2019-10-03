@@ -66,17 +66,37 @@
 
   .breadcrumb-tag {
     position: relative;
-    transition: 0.3s ease;
     background-color: #fbfbfb;
     cursor: pointer;
 
-    &:hover {
+    div {
+      span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+        font-size: 12px;
+        line-height: 15px;
+        color: #425a70;
+        transition: max-width 0.5s ease;
+        max-width: 40px;
+        padding: 5px 10px 5px 15px;
+        text-decoration: none;
+        background: #fbfbfb;
+        border: 1px solid #eaeaea;
+        font-family: 'SF UI Text', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+          Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji',
+          'Segoe UI Emoji', 'Segoe UI Symbol';
+      }
+    }
+    &:hover,
+    &.selected {
       &:before {
         border-left: 10px solid #ececeb;
       }
       div {
         span {
-          max-width: none;
+          max-width: 999px;
           background: #ececeb;
         }
       }
@@ -91,7 +111,6 @@
       border-left: 10px solid #fbfbfb;
       border-top: 13px solid transparent;
       border-bottom: 13px solid transparent;
-      transition: 0.3s ease;
     }
 
     &:after {
@@ -103,15 +122,13 @@
       border-left: 10px solid #eaeaea;
       border-top: 13px solid transparent;
       border-bottom: 13px solid transparent;
-      transition: 0.3s ease;
     }
 
-    &:last-child {
+    &.selected {
       div {
         span {
           color: #1070ca;
           background: #e5eef6;
-          transition: 0.3s ease;
         }
       }
       &:before {
@@ -123,26 +140,6 @@
       border-left: none;
       // font-size: 18px;
       // border-radius: 5px 0px 0px 5px;
-    }
-    div {
-      span {
-        max-width: 60px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: block;
-        font-size: 12px;
-        line-height: 15px;
-        color: #425a70;
-        padding: 5px 10px 5px 15px;
-        text-decoration: none;
-        background: #fbfbfb;
-        border: 1px solid #eaeaea;
-        transition: 0.3s ease;
-        font-family: 'SF UI Text', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-          Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji',
-          'Segoe UI Emoji', 'Segoe UI Symbol';
-      }
     }
   }
 }

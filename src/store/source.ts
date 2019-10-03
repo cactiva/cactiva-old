@@ -30,6 +30,7 @@ export class SourceStore {
       this.history.swap(this.history.redoStack, this.history.undoStack);
     }
   };
+  cactivaRefs: any = {};
 
   constructor(source: any) {
     this.source = source;

@@ -6,27 +6,43 @@ import { kindNames } from './utility/kinds';
 import CactivaDraggable from './CactivaDraggable';
 import { isTag } from './utility/tagmatcher';
 import { toJS } from 'mobx';
+import CactivaSelectable from './CactivaSelectable';
 
 export default observer(({ source, editor }: any) => {
   const meta = useObservable({
-    nav: []
+    nav: [],
+    shouldUpdateNav: true
   });
   useEffect(() => {
+    if (!meta.shouldUpdateNav) {
+      meta.shouldUpdateNav = true;
+      return;
+    }
     meta.nav = generatePath(editor, source);
-  }, [editor.selectedId]);
+  }, [editor.selectedId, editor.history.undoStack]);
   return (
-    <div className="cactiva-breadcrumb">
+    <div className='cactiva-breadcrumb'>
       {_.map(meta.nav, (v: any, i) => {
+        const cactiva = editor.cactivaRefs[v.source.id];
         return (
-          <div key={i} className="breadcrumb-tag">
-            <CactivaDraggable
-              cactiva={{
-                editor,
-                source: v.source,
-                tag: isTag(v.source)
-              }}
-            >
-              <span>{v.name}</span>
+          <div
+            key={i}
+            className={`breadcrumb-tag ${
+              editor.selectedId === v.source.id ? 'selected' : ''
+            }`}
+          >
+            <CactivaDraggable cactiva={cactiva}>
+              <CactivaSelectable
+                cactiva={cactiva}
+                style={{}}
+                className=''
+                showElementTag={false}
+                onBeforeSelect={() => {
+                  meta.shouldUpdateNav = false;
+                }}
+              >
+                <span>{v.name}</span>
+              </CactivaSelectable>
             </CactivaDraggable>
           </div>
         );

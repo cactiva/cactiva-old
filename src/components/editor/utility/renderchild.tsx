@@ -20,6 +20,11 @@ export const renderChildren = (
   if (!source.children) return undefined;
   const isRoot = source.name === '--root--';
   const children = source.children;
+
+  if (isRoot) {
+    editor.cactivaRefs = {};
+  }
+
   const result = children.map((child: any, key: number) => {
     if (typeof child === 'object') {
       if (!source.id && !isRoot) {
@@ -71,6 +76,7 @@ const renderKind = (source: any, editor: any, key: number, root: any): any => {
       source: source,
       editor
     };
+    editor.cactivaRefs[source.id] = cactiva;
     const Component = kind.element;
     return <Component {...source.props} key={key} _cactiva={cactiva} />;
   }
@@ -93,6 +99,7 @@ const renderTag = (
       editor,
       parentInfo: parentInfo
     };
+    editor.cactivaRefs[source.id] = cactiva;
     const Component = tag.element;
     if (editor.selectedId === source.id) {
       editor.selected = cactiva;

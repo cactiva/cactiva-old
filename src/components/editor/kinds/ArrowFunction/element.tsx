@@ -12,7 +12,7 @@ export default observer((props: any) => {
     <CactivaDropChild cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva}>
-          <div className="kind-jsxexpression">{'fx Arrow Function'}</div>
+          <div className="cactiva-element kind-jsxexpression">{'fx Arrow Function'}</div>
           {renderChildren(
             { name: '--kind--', children: [cactiva.source.value] },
             cactiva.editor,

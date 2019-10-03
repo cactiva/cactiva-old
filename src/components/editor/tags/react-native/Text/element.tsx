@@ -12,7 +12,7 @@ export default observer((props: any) => {
   return (
     <CactivaDropChild cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
-        <CactivaSelectable cactiva={cactiva} style={style} className='rn-text'>
+        <CactivaSelectable cactiva={cactiva} style={style} className='cactiva-element rn-text'>
           {renderChildren(cactiva.source, cactiva.editor, cactiva.root)}
         </CactivaSelectable>
       </CactivaDraggable>
