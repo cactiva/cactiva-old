@@ -12,7 +12,7 @@
 .cactiva-canvas {
   flex: 1 1 1px;
   padding: 5px;
-  overflow-x: auto;
+  overflow-y: auto;
   background: #fff;
 }
 
@@ -159,7 +159,7 @@
   flex-direction: column;
   display: flex;
   padding: 2px;
-  overflow-x: auto;
+  overflow-y: scroll;
   margin-right: -15px;
 
   .divider {
