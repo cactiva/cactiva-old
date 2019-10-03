@@ -3,7 +3,7 @@ import { toJS } from 'mobx';
 import { getDiff } from 'recursive-diff';
 import { isTag } from '../tagmatcher';
 
-const getIds = (id: string | string[]) =>
+export const getIds = (id: string | string[]) =>
   Array.isArray(id) ? _.clone(id) : id.split('_');
 
 export const findElementById = (root: any, id: string | string[]): any => {
