@@ -8,6 +8,12 @@
   flex-direction: column;
 }
 
+.cactiva-canvas {
+  flex: 1 1 1px;
+  padding: 5px;
+  overflow-x: auto;
+}
+
 .cactiva-element {
   border: 1px dotted #aaa;
   display: flex;
@@ -55,14 +61,10 @@
   }
 }
 
-.cactiva-canvas {
-  flex: 1;
-  padding: 5px;
-}
-
 .cactiva-breadcrumb {
   display: flex;
   flex-direction: row;
+  background: #fbfbfb;
 
   .breadcrumb-tag {
     position: relative;

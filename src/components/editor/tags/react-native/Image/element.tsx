@@ -15,7 +15,7 @@ export default observer((props: any) => {
     '/assets/' +
     tagProps.source
       .replace("require('", '')
-      .replace('@src/assets/images', '')
+      .replace('@src/assets/images/', '')
       .replace("')", '');
   return (
     <CactivaDropChild cactiva={cactiva} canDropOver={false}>

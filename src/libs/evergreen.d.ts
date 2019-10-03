@@ -419,6 +419,8 @@ declare module 'evergreen-ui' {
 
   export class Card extends React.PureComponent<PaneProps> {}
 
+  export class Dialog extends React.PureComponent<any> {}
+
   export interface IconProps {
     color?: string;
     icon: IconNameTypes;
