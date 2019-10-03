@@ -8,10 +8,12 @@
   flex-direction: column;
 }
 
+.cactiva-wrapper,
 .cactiva-canvas {
   flex: 1 1 1px;
   padding: 5px;
   overflow-x: auto;
+  background: #fff;
 }
 
 .cactiva-element {
@@ -144,5 +146,32 @@
       // font-size: 18px;
       // border-radius: 5px 0px 0px 5px;
     }
+  }
+}
+
+.cactiva-wrapper {
+  padding: 0;
+  display: flex;
+}
+
+.cactiva-toolbar {
+  background: #fbfbfb;
+  flex-direction: column;
+  display: flex;
+  padding: 2px;
+  overflow-x: auto;
+  margin-right: -15px;
+
+  .divider {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ebebeb;
+    margin: 4px 0;
+    padding: 0;
+  }
+
+  .btn-toolbar {
+    padding: 5px;
   }
 }

@@ -1,4 +1,4 @@
-import { Dialog, IconButton, Pane, Icon } from 'evergreen-ui';
+import { Dialog, IconButton, Pane, Icon, Tooltip } from 'evergreen-ui';
 import { observer, useObservable } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
 import './ImageBrowser.scss';
@@ -95,7 +95,6 @@ export default observer(({ value, onChange }: any) => {
                           alt={file.name}
                         />
                       </div>
-
                       <IconButton
                         className="btn-delete"
                         icon="trash"
@@ -117,15 +116,17 @@ export default observer(({ value, onChange }: any) => {
           </div>
         </div>
       </Dialog>
-      <IconButton
-        icon="folder-open"
-        height={24}
-        paddingLeft={6}
-        paddingRight={6}
-        onClick={() => {
-          meta.isShown = true;
-        }}
-      />
+      <Tooltip content="Browse" position="bottom">
+        <IconButton
+          icon="folder-open"
+          height={24}
+          paddingLeft={6}
+          paddingRight={6}
+          onClick={() => {
+            meta.isShown = true;
+          }}
+        />
+      </Tooltip>
     </>
   );
 });
