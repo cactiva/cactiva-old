@@ -6,7 +6,7 @@ import {
   commitChanges,
   prepareChanges
 } from '../editor/utility/elements/tools';
-import { SyntaxKind } from '../editor/utility/kinds';
+import { SyntaxKind, kindNames } from '../editor/utility/kinds';
 import {
   generateValueByKind,
   parseProps,
@@ -15,6 +15,7 @@ import {
 import { ICactivaTrait, ICactivaTraitField } from '../editor/utility/tags';
 import CactivaTraitField from './CactivaTraitField';
 import './traits.scss';
+import { isTag } from '../editor/utility/tagmatcher';
 
 export default observer(({ source, editor }: any) => {
   const traits = _.get(editor, 'selected.tag.traits') as ICactivaTrait[];
@@ -22,13 +23,17 @@ export default observer(({ source, editor }: any) => {
     expanded: ['attributes', 'style'] as string[]
   });
   const selected = editor.selected;
-  if (!traits || !selected) {
-    return <Text>Trait not found...</Text>;
-  }
 
   return (
     <div className='cactiva-traits-inner'>
-      {traits.map((item: ICactivaTrait, key: number) => {
+      <div className='cactiva-traits-kind-name'>
+        <Text>
+          {isTag(selected.source)
+            ? selected.source.name
+            : kindNames[selected.source.kind]}
+        </Text>
+      </div>
+      {(traits || []).map((item: ICactivaTrait, key: number) => {
         return (
           <React.Fragment key={key}>
             <div

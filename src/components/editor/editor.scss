@@ -78,7 +78,7 @@
         font-size: 12px;
         line-height: 15px;
         color: #425a70;
-        transition: max-width 0.5s ease;
+        transition: max-width 1.6s ease-out;
         max-width: 40px;
         padding: 5px 10px 5px 15px;
         text-decoration: none;
@@ -96,7 +96,8 @@
       }
       div {
         span {
-          max-width: 999px;
+          max-width: 120px;
+          transition: max-width 0.3s;
           background: #ececeb;
         }
       }

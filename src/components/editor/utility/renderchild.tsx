@@ -78,6 +78,10 @@ const renderKind = (source: any, editor: any, key: number, root: any): any => {
     };
     editor.cactivaRefs[source.id] = cactiva;
     const Component = kind.element;
+    if (editor.selectedId === source.id) {
+      editor.selected = cactiva;
+    }
+    
     return <Component {...source.props} key={key} _cactiva={cactiva} />;
   }
   return null;
