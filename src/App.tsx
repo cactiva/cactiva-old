@@ -77,7 +77,12 @@ export default observer(() => {
               </Text>
             </div>
           ) : (
-            <div className='cactiva-pane cactiva-editor-container'>
+            <div
+              className='cactiva-pane cactiva-editor-container'
+              onContextMenu={(e: any) => {
+                e.preventDefault();
+              }}
+            >
               {current && current.source ? (
                 <>
                   <CactivaEditor source={current.source} editor={current} />

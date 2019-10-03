@@ -2,7 +2,7 @@ import { Alert, Menu, Pane, Popover, Text } from 'evergreen-ui';
 import _ from 'lodash';
 import { observer, useObservable } from 'mobx-react-lite';
 import React, { useRef } from 'react';
-import { SyntaxKind } from '../editor/utility/kinds';
+import { SyntaxKind, kindNames } from '../editor/utility/kinds';
 import { ICactivaTraitField } from '../editor/utility/tags';
 import kinds from './tags';
 
@@ -18,24 +18,8 @@ export interface ICactivaTraitFieldProps extends ICactivaTraitField {
   update: (value: any, updatedKind?: SyntaxKind) => void;
 }
 export default observer((trait: ICactivaTraitFieldProps) => {
-  let kindName = '';
-  for (let k in SyntaxKind) {
-    const skind = parseInt(SyntaxKind[k]);
-    if (skind === trait.kind) {
-      kindName = k;
-      break;
-    }
-  }
+  let kindName = kindNames[trait.kind];
   const KindField = kinds[kindName];
-  if (!KindField) {
-    return (
-      <Alert
-        intent='warning'
-        title={`Trait field: ${kindName} not found!`}
-        marginBottom={32}
-      />
-    );
-  }
 
   const fieldRef = useRef(null);
   const fieldStyle = _.get(trait, `options.styles.field`, {});
@@ -44,6 +28,16 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   const meta = useObservable({
     options: { ...trait.options }
   });
+
+  if (!KindField) {
+    return (
+      <Alert
+        ref={fieldRef}
+        intent='warning'
+        title={`Trait field error: ${kindName} not found!`}
+      />
+    );
+  }
   return (
     <Popover
       position='right'
@@ -93,6 +87,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
         if (fieldRef.current) {
           getRef(fieldRef.current);
         }
+
         return (
           <div
             className='cactiva-trait-field'
