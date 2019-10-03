@@ -23,7 +23,6 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   const maxValue = _.get(trait, 'options.maxValue', undefined);
   useEffect(() => {
     meta.value = trait.value;
-    console.log(toJS(trait));
   }, [trait.value]);
   return (
     <>

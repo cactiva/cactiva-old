@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 import ErrorBoundary from 'react-error-boundary';
 import CactivaDraggable from '../../../CactivaDraggable';
-import CactivaDroppable from '../../../CactivaDroppable';
+import CactivaDropChild from '../../../CactivaDroppable';
 import CactivaSelectable from '../../../CactivaSelectable';
 import { parseProps } from '../../../utility/parser';
 import { baseUrl } from '@src/store/editor';
@@ -18,12 +18,12 @@ export default observer((props: any) => {
       .replace('@src/assets/images', '')
       .replace("')", '');
   return (
-    <CactivaDroppable cactiva={cactiva} canDropOver={false}>
+    <CactivaDropChild cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva} style={tagProps.style}>
           <img {...tagProps} />
         </CactivaSelectable>
       </CactivaDraggable>
-    </CactivaDroppable>
+    </CactivaDropChild>
   );
 });

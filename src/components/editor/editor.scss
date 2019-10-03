@@ -8,16 +8,18 @@
 }
 
 .cactiva-element {
-  box-shadow: 0 0 0 1px #eee;
+  border: 1px dotted #aaa;
+  display: flex;
+  flex-direction: column;
   min-height: 30px;
   min-width: 30px;
   padding: 0px 5px;
   position: relative;
   &.hover {
-    box-shadow: 0 0 0 1px #3ba0fb;
+    border: 1px solid #3ba0fb;
   }
   &.selected {
-    box-shadow: 0 0 0 1px #3ba0fb;
+    border: 1px solid #3ba0fb;
   }
   &.kind {
     padding: 0;
@@ -26,54 +28,8 @@
     flex-direction: row;
     align-items: center;
     display: flex;
-    padding: 5px 0px 5px 5px;
-
-    .cactiva-drop-child,
-    .cactiva-drop-after {
-      height: auto;
-      width: 3px;
-      padding: 0px 2px;
-
-      &:before {
-        content: ' ';
-        margin-top: 1px;
-        position: absolute;
-        right: auto;
-        left: auto;
-        top: 0px;
-        bottom: 0px;
-      }
-    }
+    padding: 5px 0px;
   }
-}
-
-.cactiva-drop-after,
-.cactiva-drop-child {
-  width: auto;
-  padding: 0px 0px 5px 0px;
-  align-self: stretch;
-  background: transparent;
-  &:before {
-    content: ' ';
-    margin-top: 1px;
-    box-shadow: 0 0 0 1px transparent;
-    position: absolute;
-    right: 5px;
-    left: 5px;
-  }
-  &.hover {
-    &:before {
-      box-shadow: 0 0 0 1px #3ba0fb;
-    }
-  }
-}
-.cactiva-drop-after:last-child {
-  flex: 1;
-}
-
-.cactiva-drop-child:before {
-  right: 1px;
-  left: 1px;
 }
 
 .cactiva-element-tag {

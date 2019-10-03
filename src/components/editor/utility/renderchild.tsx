@@ -2,9 +2,19 @@ import React from 'react';
 import kinds, { kindNames, SyntaxKind } from './kinds';
 import { isTag } from './tagmatcher';
 import tags from './tags';
-import { toJS } from 'mobx';
 
-export const renderChildren = (source: any, editor: any, root?: any): any => {
+export const renderChildren = (
+  source: any,
+  editor: any,
+  root?: any,
+  parentInfo?: (cactiva: {
+    isLastChild: boolean;
+    child: any;
+    editor: any;
+    key: number;
+    root: any;
+  }) => any
+): any => {
   let id = 0;
   if (!source) return source;
   if (!source.children) return undefined;
@@ -19,7 +29,20 @@ export const renderChildren = (source: any, editor: any, root?: any): any => {
       child.id = isRoot ? `${id - 1}` : `${source.id}_${childId}`;
 
       if (isTag(child)) {
-        return renderTag(child, editor, key, isRoot ? child : root);
+        return renderTag(
+          child,
+          editor,
+          key,
+          isRoot ? child : root,
+          parentInfo &&
+            parentInfo({
+              isLastChild: key === children.length - 1,
+              child,
+              editor,
+              key,
+              root: isRoot ? child : root
+            })
+        );
       }
       return renderKind(child, editor, key, isRoot ? child : root);
     }
@@ -29,7 +52,6 @@ export const renderChildren = (source: any, editor: any, root?: any): any => {
 };
 
 const renderKind = (source: any, editor: any, key: number, root: any): any => {
-  console.log(toJS(source));
   switch (source.kind) {
     case SyntaxKind.StringLiteral:
     case SyntaxKind.JsxText:
@@ -55,14 +77,21 @@ const renderKind = (source: any, editor: any, key: number, root: any): any => {
   return null;
 };
 
-const renderTag = (source: any, editor: any, key: number, root: any): any => {
+const renderTag = (
+  source: any,
+  editor: any,
+  key: number,
+  root: any,
+  parentInfo: any
+): any => {
   const tag = tags[source.name] as any;
   if (tag) {
     const cactiva = {
       tag,
       root: root,
       source: source,
-      editor
+      editor,
+      parentInfo: parentInfo
     };
     const Component = tag.element;
     if (editor.selectedId === source.id) {

@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import CactivaDraggable from '../../CactivaDraggable';
-import CactivaDroppable from '../../CactivaDroppable';
+import CactivaDropChild from '../../CactivaDroppable';
 import CactivaSelectable from '../../CactivaSelectable';
 import { renderChildren } from '../../utility/renderchild';
 
@@ -9,7 +9,7 @@ export default observer((props: any) => {
   const cactiva = props._cactiva;
 
   return (
-    <CactivaDroppable cactiva={cactiva} canDropOver={false}>
+    <CactivaDropChild cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva}>
           <div className="kind-jsxexpression">{'fx Arrow Function'}</div>
@@ -20,6 +20,6 @@ export default observer((props: any) => {
           )}
         </CactivaSelectable>
       </CactivaDraggable>
-    </CactivaDroppable>
+    </CactivaDropChild>
   );
 });

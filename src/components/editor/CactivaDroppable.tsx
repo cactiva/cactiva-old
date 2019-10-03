@@ -1,6 +1,8 @@
+import _ from 'lodash';
 import { observer, useObservable } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
 import { useDrop } from 'react-dnd-cjs';
+import CactivaDropMarker from './CactivaDropMarker';
 import {
   addChildInId,
   commitChanges,
@@ -10,8 +12,6 @@ import {
   prepareChanges,
   removeElementById
 } from './utility/elements/tools';
-import { allTags } from './utility/tags';
-import { isTag } from './utility/tagmatcher';
 
 export default observer(
   ({
@@ -28,11 +28,13 @@ export default observer(
       insertAfterElementId(root, child.id, el);
       commitChanges(editor);
     };
-    const { root, source, editor } = cactiva;
+    const { root, source, editor, parentInfo } = cactiva;
+    const afterDirection = _.get(parentInfo, 'afterDirection', 'column');
+    const isLastChild = _.get(parentInfo, 'isLastChild', false);
     const { id } = source;
     const [{ afterItem, afterOver }, afterDropRef] = useCactivaDrop(
       'after',
-      allTags,
+      ['element'],
       (item: any) => {
         if (afterOver && meta.canDropAfter) {
           dropAfter();
@@ -41,7 +43,7 @@ export default observer(
     );
     const [{ childItem, childOver }, childDropRef] = useCactivaDrop(
       'child',
-      allTags,
+      ['element'],
       () => {
         if (canDropAfter && !canDropOver) {
           if (childOver && meta.canDropAfter) {
@@ -60,7 +62,8 @@ export default observer(
     );
     const meta = useObservable({
       canDropAfter: false,
-      canDropChild: false
+      canDropChild: false,
+      hideDropAfter: false
     });
 
     useEffect(() => {
@@ -71,6 +74,18 @@ export default observer(
       } else if (!meta.canDropAfter) {
         meta.canDropAfter = childOver && canDrop(childItem.id, id);
       }
+
+      const parentCanDropAfter = _.get(cactiva, 'parentInfo.canDropAfter');
+      if (parentCanDropAfter !== undefined && parentCanDropAfter === false) {
+        meta.canDropAfter = false;
+        meta.hideDropAfter = true;
+      }
+
+      const parentCanDropChild = _.get(cactiva, 'parentInfo.canDropChild');
+      if (parentCanDropChild !== undefined && parentCanDropChild === false) {
+        meta.canDropChild = false;
+      }
+
       if (onDropOver) {
         onDropOver(meta.canDropChild);
       }
@@ -81,11 +96,15 @@ export default observer(
         <div ref={childDropRef} className={`cactiva-drop-children`}>
           {children}
         </div>
-        <div
-          ref={afterDropRef}
-          onMouseOver={e => e.stopPropagation()}
-          className={`cactiva-drop-after ${meta.canDropAfter ? 'hover' : ''}`}
-        />
+        {!meta.hideDropAfter && (
+          <CactivaDropMarker
+            ref={afterDropRef}
+            hover={meta.canDropAfter}
+            direction={afterDirection}
+            stretch={isLastChild}
+            placement='after'
+          />
+        )}
       </>
     );
   }

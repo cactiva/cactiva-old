@@ -2,7 +2,7 @@ import * as IconSource from 'react-web-vector-icons';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import CactivaDraggable from '../../../CactivaDraggable';
-import CactivaDroppable from '../../../CactivaDroppable';
+import CactivaDropChild from '../../../CactivaDroppable';
 import CactivaSelectable from '../../../CactivaSelectable';
 import { parseProps } from '../../../utility/parser';
 
@@ -10,13 +10,13 @@ export default observer((props: any) => {
   const cactiva = props._cactiva;
   const tagProps = parseProps(props);
   return (
-    <CactivaDroppable cactiva={cactiva} canDropOver={false}>
+    <CactivaDropChild cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva} style={tagProps.style}>
           <Icon {...tagProps} />
         </CactivaSelectable>
       </CactivaDraggable>
-    </CactivaDroppable>
+    </CactivaDropChild>
   );
 });
 

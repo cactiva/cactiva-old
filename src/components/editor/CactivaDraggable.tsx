@@ -7,7 +7,9 @@ export default observer(({ cactiva, children }: any) => {
   const { id } = source;
   const [{ isDragging }, dragRef] = useDrag({
     item: {
-      type: kind ? kind.kindName : tag.tagName,
+      type: 'element',
+      name: kind ? kind.kindName : tag.tagName,
+      mode: kind ? 'kind' : 'tag',
       id
     },
     collect: monitor => {

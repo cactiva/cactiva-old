@@ -29,6 +29,7 @@ export default observer(({ cactiva, children, className = '', style }: any) => {
       onClick={e => {
         e.preventDefault();
         e.stopPropagation();
+        console.log(cactiva); 
         editor.selectedId = source.id;
       }}
     >
