@@ -8,7 +8,6 @@ import React from 'react';
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  console.log(cactiva);
 
   return (
     <CactivaDroppable cactiva={cactiva} canDropOver={false}>

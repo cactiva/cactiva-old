@@ -29,7 +29,6 @@ export const renderChildren = (source: any, editor: any, root?: any): any => {
 };
 
 const renderKind = (source: any, editor: any, key: number, root: any): any => {
-  console.log(toJS(source));
   switch (source.kind) {
     case SyntaxKind.StringLiteral:
     case SyntaxKind.JsxText:

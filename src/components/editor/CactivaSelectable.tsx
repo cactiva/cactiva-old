@@ -1,7 +1,7 @@
-import { observer, useObservable } from 'mobx-react-lite';
-import React from 'react';
 import { Text } from 'evergreen-ui';
 import _ from 'lodash';
+import { observer, useObservable } from 'mobx-react-lite';
+import React from 'react';
 export default observer(({ cactiva, children, className = '', style }: any) => {
   const { editor, source } = cactiva;
   const meta = useObservable({ hover: false });

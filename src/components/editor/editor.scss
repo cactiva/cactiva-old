@@ -4,7 +4,8 @@
 }
 .cactiva-editor {
   flex: 1;
-  padding: 5px;
+  display: flex;
+  flex-direction: column;
 }
 
 .cactiva-element {
@@ -95,5 +96,90 @@
 
   > span {
     font-size: 9px;
+  }
+}
+
+.cactiva-canvas {
+  flex: 1;
+  padding: 5px;
+}
+
+.cactiva-breadcrumb {
+  display: flex;
+  flex-direction: row;
+
+  .breadcrumb-tag {
+    position: relative;
+    border-left: 1px solid #ccc;
+    transition: 0.3s ease;
+    background-color: #fbfbfb;
+    cursor: pointer;
+
+    &:hover {
+      &:before {
+        border-left: 10px solid #ececeb;
+      }
+
+      span {
+        color: #000;
+        background: #ececeb;
+      }
+    }
+
+    &:before {
+      content: '';
+      position: absolute;
+      right: -9px;
+      top: 0;
+      z-index: 20;
+      border-left: 10px solid #fbfbfb;
+      border-top: 13px solid transparent;
+      border-bottom: 13px solid transparent;
+      transition: 0.3s ease;
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      right: -10px;
+      top: 0;
+      z-index: 10;
+      border-left: 10px solid #eaeaea;
+      border-top: 13px solid transparent;
+      border-bottom: 13px solid transparent;
+    }
+
+    &:last-child {
+      span {
+        color: #1070ca;
+        background: #e5eef6;
+      }
+      &:before {
+        border-left: 10px solid #e5eef6;
+      }
+    }
+
+    &:first-child {
+      border-left: none;
+      // font-size: 18px;
+      // border-radius: 5px 0px 0px 5px;
+    }
+
+    span {
+      display: block;
+      font-size: 12px;
+      line-height: 15px;
+      color: #425a70;
+      padding: 5px 10px 5px 15px;
+      text-decoration: none;
+      background: #fbfbfb;
+      border: 1px solid #eaeaea;
+      white-space: nowrap;
+      overflow: hidden;
+      transition: 0.3s ease;
+      font-family: 'SF UI Text', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol';
+    }
   }
 }
