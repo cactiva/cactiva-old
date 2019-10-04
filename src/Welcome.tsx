@@ -1,8 +1,16 @@
+import {
+  Button,
+  Dialog,
+  Icon,
+  Spinner,
+  TextInputField,
+  Pane
+} from 'evergreen-ui';
+import { observer, useObservable } from 'mobx-react-lite';
 import React from 'react';
 import './Welcome.scss';
-import { Icon, Button } from 'evergreen-ui';
 
-export default () => {
+export default observer(() => {
   return (
     <div className="wrapper">
       <div className="welcome-canvas">
@@ -46,12 +54,93 @@ export default () => {
             </div>
           </div>
           <div className="action">
-            <Button appearance="primary">New Project...</Button>
-            <div />
-            <Button>Open...</Button>
+            <NewProject />
+            <div className="divider" />
+            <Button iconBefore="folder-open">Open...</Button>
           </div>
         </div>
       </div>
     </div>
   );
-};
+});
+
+const NewProject = observer(() => {
+  const meta = useObservable({
+    isShown: false,
+    loading: false,
+    isInvalid: false,
+    projectName: ''
+  });
+  return (
+    <>
+      <Dialog
+        isShown={meta.isShown}
+        hasHeader={false}
+        hasFooter={false}
+        onCloseComplete={() => (meta.isShown = false)}
+        preventBodyScrolling
+      >
+        <div className="modal-wrapper">
+          <div className="modal-create">
+            <TextInputField
+              label="Project Name"
+              required
+              flexDirection="column"
+              flex={1}
+              value={meta.projectName}
+              onChange={(e: any) => {
+                meta.projectName = e.nativeEvent.target.value;
+              }}
+              isInvalid={meta.isInvalid}
+              validationMessage="This field is required"
+            />
+            <Button
+              appearance="primary"
+              onClick={() => {
+                meta.isInvalid = false;
+                if (!meta.projectName) meta.isInvalid = true;
+                else {
+                  meta.loading = true;
+                  setTimeout(() => {
+                    meta.isShown = false;
+                    meta.loading = false;
+                    meta.projectName = '';
+                  }, 5000);
+                }
+              }}
+              iconBefore="folder-new"
+            >
+              Create
+            </Button>
+          </div>
+
+          {meta.loading && (
+            <div className="loading-content">
+              <div className="loading-message">
+                <Icon icon="tick-circle" color="success" size={24} />
+                <label>Creating folder...</label>
+              </div>
+              <div className="loading-message">
+                <Spinner size={24} display="block" />
+                <label>Setup project...</label>
+              </div>
+              <div className="loading-message">
+                <Spinner size={24} display="block" />
+                <label> Opening CACTIVA...</label>
+              </div>
+            </div>
+          )}
+        </div>
+      </Dialog>
+      <Button
+        appearance="primary"
+        onClick={() => {
+          meta.isShown = true;
+        }}
+        iconBefore="folder-new"
+      >
+        New Project...
+      </Button>
+    </>
+  );
+});

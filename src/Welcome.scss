@@ -133,7 +133,47 @@
   display: flex;
   flex-direction: row;
 
-  div {
+  .divider {
     width: 5px;
+  }
+}
+
+.modal-wrapper {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+
+  font-family: 'SF UI Text', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol';
+  color: #425a70;
+}
+
+.modal-create {
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  justify-content: flex-end;
+  flex-direction: column;
+
+  div {
+    width: 100%;
+  }
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+
+  .loading-message {
+    align-items: center;
+
+    div {
+      display: block !important;
+    }
+
+    label {
+      margin-left: 15px;
+    }
   }
 }
