@@ -16,10 +16,15 @@ class EditorStore {
   async load(path: string) {
     this.status = 'loading';
     const apiPath = '/project/read-source?path=';
-    const res = await Axios.get(`${baseUrl}${apiPath}${path}`);
-    this.sources[path] = new SourceStore(res.data);
-    this.path = path;
-    this.status = 'ready';
+    await Axios.get(`${baseUrl}${apiPath}${path}`)
+      .then(res => {
+        this.sources[path] = new SourceStore(res.data);
+        this.path = path;
+        this.status = 'ready';
+      })
+      .catch(e => {
+        this.status = 'failed';
+      });
   }
 
   @computed

@@ -10,7 +10,10 @@ import { observer, useObservable } from 'mobx-react-lite';
 import React from 'react';
 import './Welcome.scss';
 
-export default observer(() => {
+export default observer(({ editor }: any) => {
+  if (editor.status === 'loading') {
+    return <Loading />;
+  }
   return (
     <div className="wrapper">
       <div className="welcome-canvas">
@@ -144,3 +147,14 @@ const NewProject = observer(() => {
     </>
   );
 });
+
+const Loading = () => {
+  return (
+    <div className="wrapper">
+      <div className="loading-screen">
+        <Spinner size={32} display="block" />
+        <label>Loading...</label>
+      </div>
+    </div>
+  );
+};

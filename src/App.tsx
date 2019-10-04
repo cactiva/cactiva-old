@@ -3,7 +3,7 @@ import CactivaEditor from '@src/components/editor/CactivaEditor';
 import { Pane, Spinner, Tab, Text } from 'evergreen-ui';
 import hotkeys from 'hotkeys-js';
 import { observer, useObservable } from 'mobx-react-lite';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { DndProvider } from 'react-dnd-cjs';
 import HTML5Backend from 'react-dnd-html5-backend-cjs';
 import Split from 'react-split';
@@ -21,12 +21,9 @@ export default observer(() => {
   const current = editor.current;
   const meta = useObservable({
     currentPane: 'props',
-    value: 'yo'
+    value: 'yo',
+    currentProject: ''
   });
-
-  if (!editor.path) {
-    return <Welcome />;
-  }
 
   useAsyncEffect(async () => {
     hotkeys('ctrl+z,command+z', (event, handler) => {
@@ -51,6 +48,14 @@ export default observer(() => {
     });
     editor.load('/src/Main/Home.tsx');
   }, []);
+
+  useEffect(() => {
+    meta.currentProject = editor.path;
+  }, [editor.status]);
+
+  if (!meta.currentProject) {
+    return <Welcome editor={editor} />;
+  }
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="cactiva-container">

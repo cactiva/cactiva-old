@@ -122,7 +122,7 @@ export default observer(
             hover={meta.canDropAfter}
             direction={afterDirection}
             stretch={isLastChild}
-            placement='after'
+            placement="after"
           />
         )}
       </>
