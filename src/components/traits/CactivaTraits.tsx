@@ -34,10 +34,11 @@ export default observer(({ source, editor }: any) => {
         </Text>
       </div>
       {(traits || []).map((item: ICactivaTrait, key: number) => {
+        const isExpanded = meta.expanded.indexOf(item.name) >= 0;
         return (
           <React.Fragment key={key}>
             <div
-              className='heading'
+              className={`heading ${isExpanded ? '' : 'collapsed'}`}
               onClick={() => {
                 const idx = meta.expanded.indexOf(item.name);
                 if (idx >= 0) meta.expanded.splice(idx, 1);
@@ -45,16 +46,10 @@ export default observer(({ source, editor }: any) => {
               }}
             >
               <Text>{item.name}</Text>
-              <Icon
-                icon={
-                  meta.expanded.indexOf(item.name) < 0
-                    ? 'small-plus'
-                    : 'small-minus'
-                }
-              />
+              <Icon icon={!isExpanded ? 'small-plus' : 'small-minus'} />
             </div>
             <div className='cactiva-trait-body'>
-              {meta.expanded.indexOf(item.name) >= 0 &&
+              {isExpanded &&
                 item.fields.map((trait: ICactivaTraitField, key: number) => {
                   const currentValue = _.get(selected.source.props, trait.path);
                   const kind = _.get(currentValue, 'kind', trait.kind);

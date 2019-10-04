@@ -1,12 +1,10 @@
 import _ from 'lodash';
 import { observer, useObservable } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
+import CactivaDraggable from './CactivaDraggable';
+import CactivaSelectable from './CactivaSelectable';
 import { findElementById, getIds } from './utility/elements/tools';
 import { kindNames } from './utility/kinds';
-import CactivaDraggable from './CactivaDraggable';
-import { isTag } from './utility/tagmatcher';
-import { toJS } from 'mobx';
-import CactivaSelectable from './CactivaSelectable';
 
 export default observer(({ source, editor }: any) => {
   const meta = useObservable({
@@ -19,37 +17,35 @@ export default observer(({ source, editor }: any) => {
       return;
     }
     meta.nav = generatePath(editor, source);
-  }, [editor.selectedId, editor.history.undoStack]);
+  }, [editor.selectedId, editor.undoStack.length]);
   const lastNav: any = meta.nav[meta.nav.length - 1];
   const lastId = _.get(lastNav, 'source.id');
   return (
     <div className='cactiva-breadcrumb'>
       {_.map(meta.nav, (v: any, i) => {
         const cactiva = editor.cactivaRefs[v.source.id];
+        if (!cactiva) return null;
+
         return (
-          <div
+          <CactivaSelectable
             key={i}
+            cactiva={cactiva}
+            style={{}}
             className={`breadcrumb-tag ${
               editor.selectedId === v.source.id ? 'selected' : ''
             }`}
+            showElementTag={false}
+            onBeforeSelect={() => {
+              meta.shouldUpdateNav = false;
+            }}
           >
             <CactivaDraggable cactiva={cactiva}>
-              <CactivaSelectable
-                cactiva={cactiva}
-                style={{}}
-                className=''
-                showElementTag={false}
-                onBeforeSelect={() => {
-                  meta.shouldUpdateNav = false;
-                }}
-              >
-                <span>{v.name}</span>
-              </CactivaSelectable>
+              <span>{v.name}</span>
             </CactivaDraggable>
-          </div>
+          </CactivaSelectable>
         );
       })}
-      {lastId === editor.selectedId && (
+      {lastId === editor.selectedId && lastId && editor.cactivaRefs[lastId] && (
         <div className={`breadcrumb-tag last selected`}>
           <CactivaDraggable cactiva={editor.cactivaRefs[lastId]}>
             <CactivaSelectable

@@ -11,6 +11,11 @@ import editor from './store/editor';
 import hotkeys from 'hotkeys-js';
 import { Spinner, Text, Tab, Pane } from 'evergreen-ui';
 import { ControlledEditor } from '@monaco-editor/react';
+import {
+  prepareChanges,
+  removeElementById,
+  commitChanges
+} from './components/editor/utility/elements/tools';
 
 export default observer(() => {
   const current = editor.current;
@@ -30,6 +35,15 @@ export default observer(() => {
         if (editor.current) editor.current.history.redo();
       }
     );
+    hotkeys('backspace, delete', (event, handler) => {
+      event.preventDefault();
+      const current = editor.current;
+      if (current) {
+        prepareChanges(current);
+        removeElementById(current.source, current.selectedId);
+        commitChanges(current);
+      }
+    });
     editor.load('/src/Main/Home.tsx');
   }, []);
   return (

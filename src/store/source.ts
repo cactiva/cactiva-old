@@ -1,6 +1,5 @@
-import { observable, toJS, computed } from 'mobx';
+import { observable, toJS } from 'mobx';
 import { applyDiff, getDiff } from 'recursive-diff';
-import { findElementById } from '@src/components/editor/utility/elements/tools';
 
 export class SourceStore {
   @observable path = '';
@@ -12,9 +11,10 @@ export class SourceStore {
   @observable selected: any;
 
   prevSource = null;
+
+  @observable undoStack: any = [];
+  @observable redoStack: any = [];
   history = {
-    undoStack: [] as any,
-    redoStack: [] as any,
     swap: (source: any[], target: any[]) => {
       if (source.length > 0) {
         const popped = source.pop();
@@ -24,10 +24,10 @@ export class SourceStore {
       }
     },
     undo: () => {
-      this.history.swap(this.history.undoStack, this.history.redoStack);
+      this.history.swap(this.undoStack, this.redoStack);
     },
     redo: () => {
-      this.history.swap(this.history.redoStack, this.history.undoStack);
+      this.history.swap(this.redoStack, this.undoStack);
     }
   };
   cactivaRefs: any = {};

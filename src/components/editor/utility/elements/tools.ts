@@ -93,7 +93,7 @@ export const prepareChanges = (editor: any) => {
   } else {
     editor.tempSelected = undefined;
   }
-  editor.history.redoStack.length = 0;
+  editor.redoStack.length = 0;
   editor.prevSource = toJS(editor.source);
 };
 
@@ -104,22 +104,22 @@ export const commitChanges = (editor: any) => {
   }
   const diff = getDiff(toJS(editor.source), editor.prevSource);
 
-  if (editor.history.undoStack.length > 2) {
+  if (editor.undoStack.length > 2) {
     const lastStack1 =
-      editor.history.undoStack[editor.history.undoStack.length - 1];
+      editor.undoStack[editor.undoStack.length - 1];
     const lastStack2 =
-      editor.history.undoStack[editor.history.undoStack.length - 2];
+      editor.undoStack[editor.undoStack.length - 2];
 
     if (
       isUndoStackSimilar(lastStack1, diff) &&
       isUndoStackSimilar(lastStack2, diff)
     ) {
-      editor.history.undoStack[editor.history.undoStack.length - 1] = diff;
+      editor.undoStack[editor.undoStack.length - 1] = diff;
       return;
     }
   }
 
-  editor.history.undoStack.push(diff);
+  editor.undoStack.push(diff);
 };
 
 const isUndoStackSimilar = (compare: any, diff: any) => {
