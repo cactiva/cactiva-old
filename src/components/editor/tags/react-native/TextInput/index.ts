@@ -11,6 +11,12 @@ const styles = {
 export default class extends CactivaTag {
   static tagName = 'TextInput';
   static from = 'react-native';
+  static structure = {
+    kind: SyntaxKind.JsxElement,
+    name: 'TextInput',
+    props: {style:{}},
+    children: []
+  };
   static traits = [
     {
       name: 'attributes',

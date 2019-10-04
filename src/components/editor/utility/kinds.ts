@@ -364,14 +364,14 @@ for (let k in SyntaxKind) {
 
 const r = require.context('../kinds/', true, /.*\/index.ts$/, 'sync');
 export const allKinds: string[] = [];
-const tags: {
+const kinds: {
   [key: string]: CactivaKind;
 } = {};
 
 r.keys().forEach(key => {
   const element = r(key).default;
   const name = element.kindName;
-  tags[name] = element;
+  kinds[name] = element;
   allKinds.push(name);
 });
-export default tags;
+export default kinds;

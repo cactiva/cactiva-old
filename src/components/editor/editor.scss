@@ -66,12 +66,26 @@
 .cactiva-breadcrumb {
   display: flex;
   flex-direction: row;
-  background: #fbfbfb;
+  background: #ececeb;
+  border-top: 1px solid #eaeaea;
 
   .breadcrumb-tag {
+    margin-top: -1px;
     position: relative;
-    background-color: #fbfbfb;
     cursor: pointer;
+
+    &.last {
+      margin-left: -5px;
+      &:before {
+        border-left: 10px solid #e5eef6;
+      }
+      &:after {
+        border-left: 10px solid white;
+      }
+      > div {
+        width: 5px;
+      }
+    }
 
     div {
       span {
@@ -96,13 +110,13 @@
     &:hover,
     &.selected {
       &:before {
-        border-left: 10px solid #ececeb;
+        border-left: 10px solid #ddd;
       }
       div {
         span {
           max-width: 120px;
           transition: max-width 0.3s;
-          background: #ececeb;
+          background: #ddd;
         }
       }
     }
@@ -160,7 +174,7 @@
   display: flex;
   padding: 2px;
   overflow-y: scroll;
-  margin-right: -15px;
+  margin-right: -10px;
 
   .divider {
     display: block;
@@ -172,6 +186,16 @@
   }
 
   .btn-toolbar {
-    padding: 5px;
+    > button {
+      border: 0 !important;
+      box-shadow: none !important;
+      background: transparent;
+      &:hover,
+      &:focus,
+      &:active {
+        outline: none !important;
+        background: #e8eff6 !important;
+      }
+    }
   }
 }

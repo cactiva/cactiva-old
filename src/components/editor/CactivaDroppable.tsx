@@ -10,8 +10,10 @@ import {
   insertAfterElementId,
   isParentOf,
   prepareChanges,
-  removeElementById
+  removeElementById,
+  createNewElement
 } from './utility/elements/tools';
+import { toJS } from 'mobx';
 
 export default observer(
   ({
@@ -21,17 +23,38 @@ export default observer(
     canDropOver = true,
     canDropAfter = true
   }: any) => {
-    const dropAfter = () => {
-      prepareChanges(editor);
-      const child = findElementById(root, id);
-      const el = removeElementById(root, afterItem.id);
-      insertAfterElementId(root, child.id, el);
-      commitChanges(editor);
-    };
     const { root, source, editor, parentInfo } = cactiva;
     const afterDirection = _.get(parentInfo, 'afterDirection', 'column');
     const isLastChild = _.get(parentInfo, 'isLastChild', false);
     const { id } = source;
+    const dropAfter = () => {
+      prepareChanges(editor);
+      let el = null;
+      const child = findElementById(root, id);
+      if (afterItem.id === null) {
+        el = createNewElement(afterItem.name);
+      } else {
+        el = removeElementById(root, afterItem.id);
+      }
+      if (el) {
+        insertAfterElementId(root, child.id, el);
+      }
+      commitChanges(editor);
+    };
+    const dropChild = () => {
+      prepareChanges(editor);
+      let el = null;
+      const child = findElementById(root, id);
+      if (childItem.id === null) {
+        el = createNewElement(childItem.name);
+      } else {
+        el = removeElementById(root, childItem.id);
+      }
+      if (el) {
+        addChildInId(root, child.id, el);
+      }
+      commitChanges(editor);
+    };
     const [{ afterItem, afterOver }, afterDropRef] = useCactivaDrop(
       'after',
       ['element'],
@@ -51,11 +74,7 @@ export default observer(
           }
         } else {
           if (childOver && meta.canDropChild) {
-            prepareChanges(editor);
-            const child = findElementById(root, id);
-            const el = removeElementById(root, childItem.id);
-            addChildInId(root, child.id, el);
-            commitChanges(editor);
+            dropChild();
           }
         }
       }

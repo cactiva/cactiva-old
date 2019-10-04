@@ -1,4 +1,4 @@
-import { Dialog, IconButton, Pane, Icon, Tooltip } from 'evergreen-ui';
+import { Dialog, IconButton, Pane, Icon, Tooltip, Text } from 'evergreen-ui';
 import { observer, useObservable } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
 import './ImageBrowser.scss';
@@ -41,18 +41,20 @@ export default observer(({ value, onChange }: any) => {
         onCloseComplete={() => (meta.isShown = false)}
         preventBodyScrolling
       >
-        <div className="canvas">
-          <div className="header">
-            <div>Media</div>
+        <div className='image-browser'>
+          <div className='header'>
+            <Text>Media</Text>
           </div>
-          <div className="content">
-            <label className="image image-upload">
-              <Icon icon="cloud-upload" size={40} color="#1070ca" />
-              Upload File
+          <div className='content'>
+            <label className='image image-upload'>
+              <Icon icon='cloud-upload' size={35} color='white' />
+              <Text>
+                <Icon icon='plus' size={13} color='white' /> Upload File
+              </Text>
               <input
                 multiple={false}
-                type="file"
-                accept="image/*"
+                type='file'
+                accept='image/*'
                 onChange={async (e: any) => {
                   const file = e.target.files[0];
                   var formDataToUpload = new FormData();
@@ -73,7 +75,7 @@ export default observer(({ value, onChange }: any) => {
                 (file: any, idx: number) => {
                   return (
                     <div
-                      className="image-canvas"
+                      className='image-canvas'
                       key={idx}
                       style={{
                         position: 'relative'
@@ -96,13 +98,13 @@ export default observer(({ value, onChange }: any) => {
                         />
                       </div>
                       <IconButton
-                        className="btn-delete"
-                        icon="trash"
+                        className='btn-delete'
+                        icon='trash'
                         height={24}
                         paddingLeft={6}
                         paddingRight={6}
-                        intent="danger"
-                        appearance="primary"
+                        intent='danger'
+                        appearance='primary'
                         onClick={() => {
                           deleteFile(file.name).then((res: any) => {
                             meta.filetree = res;
@@ -116,9 +118,9 @@ export default observer(({ value, onChange }: any) => {
           </div>
         </div>
       </Dialog>
-      <Tooltip content="Browse" position="bottom">
+      <Tooltip content='Browse' position='bottom'>
         <IconButton
-          icon="folder-open"
+          icon='folder-open'
           height={24}
           paddingLeft={6}
           paddingRight={6}

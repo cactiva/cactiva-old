@@ -13,4 +13,10 @@ export default class extends CactivaTag {
     ...styleTrait
   ];
   static element = require('./element').default;
+  static structure = {
+    kind: SyntaxKind.JsxElement,
+    name: 'View',
+    props: {style:{}},
+    children: []
+  };
 }

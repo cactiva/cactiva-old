@@ -9,6 +9,12 @@ const styles = {
 export default class extends CactivaTag {
   static tagName = 'Image';
   static from = 'react-native';
+  static structure = {
+    kind: SyntaxKind.JsxElement,
+    name: 'ScrollView',
+    props: {style:{}},
+    children: []
+  };
   static traits = [
     {
       name: 'attributes',

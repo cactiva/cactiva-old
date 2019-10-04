@@ -20,6 +20,8 @@ export default observer(({ source, editor }: any) => {
     }
     meta.nav = generatePath(editor, source);
   }, [editor.selectedId, editor.history.undoStack]);
+  const lastNav: any = meta.nav[meta.nav.length - 1];
+  const lastId = _.get(lastNav, 'source.id');
   return (
     <div className='cactiva-breadcrumb'>
       {_.map(meta.nav, (v: any, i) => {
@@ -47,6 +49,21 @@ export default observer(({ source, editor }: any) => {
           </div>
         );
       })}
+      {lastId === editor.selectedId && (
+        <div className={`breadcrumb-tag last selected`}>
+          <CactivaDraggable cactiva={editor.cactivaRefs[lastId]}>
+            <CactivaSelectable
+              cactiva={editor.cactivaRefs[lastId]}
+              style={{}}
+              className=''
+              showElementTag={false}
+              onBeforeSelect={() => {
+                meta.shouldUpdateNav = false;
+              }}
+            ></CactivaSelectable>
+          </CactivaDraggable>
+        </div>
+      )}
     </div>
   );
 });

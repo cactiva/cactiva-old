@@ -5,8 +5,13 @@ body {
   padding: 0;
   margin: 0;
 }
-[evergreen-portal-container] div {
-  display: flex;
+[evergreen-portal-container] {
+  div {
+    display: flex;
+  }
+  > div > div > p {
+    font-size: 11px;
+  }
 }
 
 #root {
@@ -70,6 +75,7 @@ body {
       justify-content: center;
     }
     .gutter {
+      z-index: 10;
       cursor: col-resize;
       border-right: 1px solid #ccc;
     }

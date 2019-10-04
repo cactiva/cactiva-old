@@ -1,20 +1,34 @@
-import React from 'react';
-import { IconButton, Tooltip, Positioner } from 'evergreen-ui';
+import { IconButton, Tooltip } from 'evergreen-ui';
 import _ from 'lodash';
+import React from 'react';
+import CactivaDraggable from './CactivaDraggable';
+import tags from './utility/tags';
+import kinds from './utility/kinds';
 
 export default () => {
   return (
-    <div className="cactiva-toolbar">
+    <div className='cactiva-toolbar'>
       {_.map(toolbar, (v: any, i) => {
         if (v.divider) {
-          return <div key={i} className="divider" />;
+          return <div key={i} className='divider' />;
         }
+        const tag = tags[v.label];
+        const kind = kinds[v.label];
+        if (!tag && !kind) {
+          return null;
+        }
+
         return (
-          <div key={i} className="btn-toolbar">
-            <Tooltip content={v.label} position="right">
-              <IconButton icon={v.icon} height={30} />
-            </Tooltip>
-          </div>
+          <CactivaDraggable
+            key={i}
+            cactiva={{ source: { id: null }, tag, kind }}
+          >
+            <div className='btn-toolbar'>
+              <Tooltip content={v.label} position='right'>
+                <IconButton icon={v.icon} height={30} />
+              </Tooltip>
+            </div>
+          </CactivaDraggable>
         );
       })}
     </div>
@@ -24,107 +38,89 @@ export default () => {
 const toolbar = [
   {
     icon: 'search',
-    label: 'Search',
-    component: null
+    label: 'Search'
   },
   {
     divider: 'primary'
   },
   {
     icon: 'font',
-    label: 'Text',
-    component: null
+    label: 'Text'
   },
   {
     icon: 'new-text-box',
-    label: 'TextInput',
-    component: null
+    label: 'TextInput'
   },
   {
     icon: 'widget-button',
-    label: 'TouchableOpacity',
-    component: null
+    label: 'TouchableOpacity'
   },
   {
     icon: 'merge-links',
-    label: 'Dropdown',
-    component: null
+    label: 'Dropdown'
   },
   {
     icon: 'list-detail-view',
-    label: 'FlatList',
-    component: null
+    label: 'FlatList'
   },
   {
     icon: 'tick',
-    label: 'CheckBox',
-    component: null
+    label: 'CheckBox'
   },
   {
     icon: 'segmented-control',
-    label: 'RadioGroup',
-    component: null
+    label: 'RadioGroup'
   },
   {
     divider: 'media'
   },
   {
     icon: 'star',
-    label: 'Icon',
-    component: null
+    label: 'Icon'
   },
   {
     icon: 'media',
-    label: 'Image',
-    component: null
+    label: 'Image'
   },
   {
     divider: 'layout'
   },
   {
     icon: 'style',
-    label: 'ImageBackground',
-    component: null
+    label: 'ImageBackground'
   },
   {
     icon: 'page-layout',
-    label: 'View',
-    component: null
+    label: 'View'
   },
   {
     icon: 'control',
-    label: 'ScrollView',
-    component: null
+    label: 'ScrollView'
   },
   {
     divider: 'ui-kitten'
   },
   {
     icon: 'widget-footer',
-    label: 'BottomNavigation',
-    component: null
+    label: 'BottomNavigation'
   },
   {
     icon: 'widget-header',
-    label: 'TopNavigation',
-    component: null
+    label: 'TopNavigation'
   },
   {
     divider: 'ui-kitten'
   },
   {
     icon: 'split-columns',
-    label: 'If',
-    component: null
+    label: 'If'
   },
   {
     icon: 'merge-columns',
-    label: 'IfElse',
-    component: null
+    label: 'IfElse'
   },
   {
     icon: 'column-layout',
-    label: 'Switch',
-    component: null
+    label: 'Switch'
   }
 ];

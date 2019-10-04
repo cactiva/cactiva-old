@@ -11,7 +11,7 @@ export interface ICactivaTraitField {
       label?: any;
       field?: any;
     };
-    items?: { label: string, value: string | number }[]
+    items?: { label: string; value: string | number }[];
   } & any;
 }
 
@@ -27,11 +27,13 @@ export abstract class CactivaTag {
   static from: string = '';
   static traits: ICactivaTrait[] = [];
   static element: any;
+  static structure: any;
 }
 
 export abstract class CactivaKind {
   static kindName: string = '';
   static element: any;
+  static structure: any;
 }
 
 const r = require.context('../tags/', true, /.*\/index.ts$/, 'sync');

@@ -1,16 +1,22 @@
-import {CactivaTag} from '@src/components/editor/utility/tags';
-import {SyntaxKind} from "@src/components/editor/utility/kinds";
-import styleTrait from "@src/components/traits/templates/styleTrait";
+import { CactivaTag } from '@src/components/editor/utility/tags';
+import { SyntaxKind } from '@src/components/editor/utility/kinds';
+import styleTrait from '@src/components/traits/templates/styleTrait';
 
 const styles = {
   root: {
-    flex: "1 1 100%"
+    flex: '1 1 100%'
   }
 };
 
 export default class extends CactivaTag {
   static tagName = 'Text';
   static from = 'react-native';
+  static structure = {
+    kind: SyntaxKind.JsxElement,
+    name: 'Text',
+    props: {style:{}},
+    children: [{ kind: SyntaxKind.StringLiteral, value: 'Text' }]
+  };
   static traits = [
     {
       name: 'attributes',
@@ -27,14 +33,14 @@ export default class extends CactivaTag {
           name: 'Ellipsize Mode',
           path: 'ellipsizeMode',
           kind: SyntaxKind.StringLiteral,
-          mode: "select",
+          mode: 'select',
           options: {
             styles: styles,
             items: [
-              {value: "head", label: "Head"},
-              {value: "middle", label: "Middle"},
-              {value: "tail", label: "Tail"},
-              {value: "chip", label: "Chip"}
+              { value: 'head', label: 'Head' },
+              { value: 'middle', label: 'Middle' },
+              { value: 'tail', label: 'Tail' },
+              { value: 'chip', label: 'Chip' }
             ]
           }
         }

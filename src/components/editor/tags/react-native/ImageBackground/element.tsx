@@ -13,7 +13,7 @@ export default observer((props: any) => {
   const cactiva = props._cactiva;
   const tagProps = parseProps(props);
   const meta = useObservable({ dropOver: false });
-  tagProps.style.backgroundImage = `url(${baseUrl +
+  const backgroundImage = `url(${baseUrl +
     '/assets/' +
     tagProps.source
       .replace("require('", '')
@@ -25,7 +25,10 @@ export default observer((props: any) => {
       onDropOver={(value: boolean) => (meta.dropOver = value)}
     >
       <CactivaDraggable cactiva={cactiva}>
-        <CactivaSelectable cactiva={cactiva} style={tagProps.style}>
+        <CactivaSelectable
+          cactiva={cactiva}
+          style={{ ...tagProps.style, backgroundImage }}
+        >
           <CactivaDropMarker
             hover={meta.dropOver}
             direction={_.get(tagProps.style, 'flexDirection', 'column')}

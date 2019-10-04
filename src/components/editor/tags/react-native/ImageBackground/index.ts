@@ -9,6 +9,18 @@ const styles = {
 export default class extends CactivaTag {
   static tagName = 'ImageBackground';
   static from = 'react-native';
+  static structure = {
+    kind: SyntaxKind.JsxElement,
+    name: 'ImageBackground',
+    props: {
+      style: {},
+      source: {
+        kind: SyntaxKind.CallExpression,
+        value: `require('@src/assets/images')`
+      }
+    },
+    children: []
+  };
   static traits = [
     {
       name: 'attributes',

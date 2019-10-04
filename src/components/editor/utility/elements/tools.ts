@@ -2,6 +2,8 @@ import _ from 'lodash';
 import { toJS } from 'mobx';
 import { getDiff } from 'recursive-diff';
 import { isTag } from '../tagmatcher';
+import tags from '../tags';
+import kinds from '../kinds';
 
 export const getIds = (id: string | string[]) =>
   Array.isArray(id) ? _.clone(id) : id.split('_');
@@ -139,6 +141,15 @@ const isUndoStackSimilar = (compare: any, diff: any) => {
   }
   return false;
 };
+
+export function createNewElement(name: string) {
+  const tag = tags[name];
+  const kind = kinds[name];
+  if (!tag && !kind) return null;
+
+  const type: any = tag ? tag : kind;
+  return _.clone(type.structure);
+}
 
 export function fastClone(clone: any, obj: any) {
   for (var i in obj)
