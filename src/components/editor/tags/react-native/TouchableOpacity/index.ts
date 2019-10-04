@@ -14,12 +14,12 @@ export default class extends CactivaTag {
   static structure = {
     kind: SyntaxKind.JsxElement,
     name: 'TouchableOpacity',
-    props: {style:{}},
+    props: {},
     children: [
       {
         kind: SyntaxKind.JsxElement,
         name: 'Text',
-        props: {style:{}},
+        props: { style: {} },
         children: [{ kind: SyntaxKind.StringLiteral, value: 'Button' }]
       }
     ]

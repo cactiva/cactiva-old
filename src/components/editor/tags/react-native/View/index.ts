@@ -5,6 +5,12 @@ import { SyntaxKind } from '../../../utility/kinds';
 export default class extends CactivaTag {
   static tagName = 'View';
   static from = 'react-native';
+  static structure = {
+    kind: SyntaxKind.JsxElement,
+    name: 'View',
+    props: {},
+    children: []
+  };
   static traits = [
     {
       name: 'attributes',
@@ -13,10 +19,4 @@ export default class extends CactivaTag {
     ...styleTrait
   ];
   static element = require('./element').default;
-  static structure = {
-    kind: SyntaxKind.JsxElement,
-    name: 'View',
-    props: {style:{}},
-    children: []
-  };
 }

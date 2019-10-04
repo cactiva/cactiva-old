@@ -1,10 +1,10 @@
-import {CactivaTag} from '@src/components/editor/utility/tags';
-import {SyntaxKind} from "@src/components/editor/utility/kinds";
-import styleTrait from "@src/components/traits/templates/styleTrait";
+import { CactivaTag } from '@src/components/editor/utility/tags';
+import { SyntaxKind } from '@src/components/editor/utility/kinds';
+import styleTrait from '@src/components/traits/templates/styleTrait';
 
 const styles = {
   root: {
-    flex: "1 1 100%"
+    flex: '1 1 100%'
   }
 };
 
@@ -14,7 +14,7 @@ export default class extends CactivaTag {
   static structure = {
     kind: SyntaxKind.JsxElement,
     name: 'TextInput',
-    props: {style:{}},
+    props: {},
     children: []
   };
   static traits = [

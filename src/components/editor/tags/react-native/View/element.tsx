@@ -20,7 +20,7 @@ export default observer((props: any) => {
       onDropOver={(value: boolean) => (meta.dropOver = value)}
     >
       <CactivaDraggable cactiva={cactiva}>
-        <CactivaSelectable cactiva={cactiva} style={style}>
+        <CactivaSelectable cactiva={cactiva} style={style || {}}>
           <CactivaDropMarker
             hover={meta.dropOver}
             direction={direction}

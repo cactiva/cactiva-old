@@ -14,7 +14,7 @@ export default class extends CactivaTag {
   static structure = {
     kind: SyntaxKind.JsxElement,
     name: 'ScrollView',
-    props: {style:{}},
+    props: {},
     children: []
   };
   static traits = [

@@ -33,6 +33,7 @@ export default observer(
       const child = findElementById(root, id);
       if (afterItem.id === null) {
         el = createNewElement(afterItem.name);
+        console.log(el);
       } else {
         el = removeElementById(root, afterItem.id);
       }

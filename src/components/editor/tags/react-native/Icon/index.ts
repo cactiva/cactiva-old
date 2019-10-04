@@ -7,7 +7,16 @@ export default class extends CactivaTag {
   static structure = {
     kind: SyntaxKind.JsxElement,
     name: 'Icon',
-    props: {style:{}},
+    props: {
+      source: {
+        kind: SyntaxKind.StringLiteral,
+        value: "'Entypo'"
+      },
+      name: {
+        kind: SyntaxKind.StringLiteral,
+        value: "'home'"
+      }
+    },
     children: []
   };
   static traits = [];

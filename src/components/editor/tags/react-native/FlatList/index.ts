@@ -8,7 +8,7 @@ export default class extends CactivaTag {
   static structure = {
     kind: SyntaxKind.JsxElement,
     name: 'FlatList',
-    props: {style:{}},
+    props: {},
     children: []
   };
   static element = require('./element').default;

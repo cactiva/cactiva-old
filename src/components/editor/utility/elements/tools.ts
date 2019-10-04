@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { toJS } from 'mobx';
+import { toJS, observable } from 'mobx';
 import { getDiff } from 'recursive-diff';
 import { isTag } from '../tagmatcher';
 import tags from '../tags';
@@ -67,6 +67,7 @@ export const insertAfterElementId = (
   const parent = findParentElementById(root, id);
   const index = parseInt(ids[ids.length - 1] || '-1');
   if (parent && parent.children && parent.children[index]) {
+    console.log(child, toJS(parent.children));
     parent.children.splice(index + 1, 0, child);
   }
 };
@@ -105,10 +106,8 @@ export const commitChanges = (editor: any) => {
   const diff = getDiff(toJS(editor.source), editor.prevSource);
 
   if (editor.undoStack.length > 2) {
-    const lastStack1 =
-      editor.undoStack[editor.undoStack.length - 1];
-    const lastStack2 =
-      editor.undoStack[editor.undoStack.length - 2];
+    const lastStack1 = editor.undoStack[editor.undoStack.length - 1];
+    const lastStack2 = editor.undoStack[editor.undoStack.length - 2];
 
     if (
       isUndoStackSimilar(lastStack1, diff) &&
@@ -148,14 +147,5 @@ export function createNewElement(name: string) {
   if (!tag && !kind) return null;
 
   const type: any = tag ? tag : kind;
-  return _.clone(type.structure);
-}
-
-export function fastClone(clone: any, obj: any) {
-  for (var i in obj)
-    clone[i] =
-      typeof obj[i] == 'object'
-        ? fastClone(obj[i].constructor(), obj[i])
-        : obj[i];
-  return clone;
+  return observable(_.clone(type.structure));
 }
