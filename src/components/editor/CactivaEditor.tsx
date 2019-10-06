@@ -6,13 +6,15 @@ import { renderChildren } from './utility/renderchild';
 import CactivaBreadcrumb from './CactivaBreadcrumb';
 import CactivaToolbar from './CactivaToolbar';
 export default observer(({ source, editor }: any) => {
+  const children = renderChildren(
+    { name: '--root--', children: [source] },
+    editor
+  );
   return (
-    <div className="cactiva-editor">
-      <div className="cactiva-wrapper">
+    <div className='cactiva-editor'>
+      <div className='cactiva-wrapper'>
         <CactivaToolbar />
-        <div className="cactiva-canvas">
-          {renderChildren({ name: '--root--', children: [source] }, editor)}
-        </div>
+        <div className='cactiva-canvas'>{children}</div>
       </div>
       <CactivaBreadcrumb source={source} editor={editor} />
     </div>

@@ -23,17 +23,23 @@ export const renderChildren = (
 
   if (isRoot) {
     editor.cactivaRefs = {};
+    if (children[0].kind === SyntaxKind.ParenthesizedExpression) {
+      children[0] = children[0].value;
+    }
   }
 
-  const result = children.map((child: any, key: number) => {
-    if (typeof child === 'object') {
+  const result = children.map((refChild: any, key: number) => {
+    if (typeof refChild === 'object') {
       if (!source.id && !isRoot) {
         source.id = '0';
       }
+      let child = refChild;
       const childId = id++;
+      const istag = isTag(child);
+
       child.id = isRoot ? `${id - 1}` : `${source.id}_${childId}`;
 
-      if (isTag(child)) {
+      if (istag) {
         return renderTag(
           child,
           editor,
@@ -51,7 +57,7 @@ export const renderChildren = (
       }
       return renderKind(child, editor, key, isRoot ? child : root);
     }
-    return child;
+    return refChild;
   });
   return result;
 };
@@ -81,7 +87,7 @@ const renderKind = (source: any, editor: any, key: number, root: any): any => {
     if (editor.selectedId === source.id) {
       editor.selected = cactiva;
     }
-    
+
     return <Component {...source.props} key={key} _cactiva={cactiva} />;
   }
   return null;
