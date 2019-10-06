@@ -1,6 +1,7 @@
 import Axios from 'axios';
 import { computed, observable } from 'mobx';
 import { SourceStore } from './source';
+import { SyntaxKind } from '@src/components/editor/utility/kinds';
 
 interface IEditorSources {
   [key: string]: SourceStore;
@@ -18,7 +19,13 @@ class EditorStore {
     const apiPath = '/project/read-source?path=';
     await Axios.get(`${baseUrl}${apiPath}${path}`)
       .then(res => {
-        this.sources[path] = new SourceStore(res.data);
+        let root = res.data;
+        if (root.kind === SyntaxKind.ParenthesizedExpression) {
+          root = root.value;
+        }
+        console.log(root);
+
+        this.sources[path] = new SourceStore(root);
         this.path = path;
         this.status = 'ready';
       })

@@ -1,4 +1,3 @@
-import { ControlledEditor } from '@monaco-editor/react';
 import { kindNames } from '@src/components/editor/utility/kinds';
 import { Icon, Popover, Text } from 'evergreen-ui';
 import _ from 'lodash';
@@ -59,7 +58,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             <span>{trait.name} =</span>
             <span style={{ opacity: 0.5 }}>{kindNames[meta.kind]}</span>
           </div>
-          <ControlledEditor
+          {/* <ControlledEditor
             theme='dark'
             value={meta.value}
             onChange={(e, value) => (meta.value = value || '')}
@@ -71,7 +70,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             width='100%'
             height='100%'
             language='javascript'
-          />
+          /> */}
         </Text>
       }
     >
@@ -120,7 +119,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                   color={isShown ? '#fff' : '#666'}
                 />
                 <Text size={300} color={isShown ? '#fff' : '#666'}>
-                  Code 
+                  Code
                 </Text>
               </div>
             </div>

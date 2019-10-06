@@ -2,7 +2,7 @@ import * as path from 'path';
 import { Project as TProject } from 'ts-morph';
 import config, { execPath } from './config';
 import { defaultExport } from './libs/morph/defaultExport';
-import { generateJsx } from './libs/morph/generateJsx';
+import { generateJsx as generateSource } from './libs/morph/generateJsx';
 import { parseJsx } from './libs/morph/parseJsx';
 
 export class Morph {
@@ -21,6 +21,10 @@ export class Morph {
     }
   }
 
+  generateSource(node: any) {
+    return generateSource(node);
+  }
+
   getSourceFile(filename: string) {
     return this.root.getSourceFileOrThrow(file => {
       return file.getFilePath() === this.getAppPath() + filename;
@@ -32,10 +36,6 @@ export class Morph {
     const de = defaultExport(sf);
     const ps = parseJsx(de, showKindName);
     return ps;
-  }
-
-  writeTsx(node: any) {
-    return generateJsx(node);
   }
 
   /************************ Singleton  **************************/

@@ -21,7 +21,7 @@ export class ProjectController {
       return;
     }
     const morph = Morph.getInstance();
-    const result = morph.writeTsx(morph.readTsx(req.query.path));
+    const result = morph.generateSource(morph.readTsx(req.query.path));
     
     res.status(200).json(result);
   }

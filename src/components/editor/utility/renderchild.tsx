@@ -23,9 +23,6 @@ export const renderChildren = (
 
   if (isRoot) {
     editor.cactivaRefs = {};
-    if (children[0].kind === SyntaxKind.ParenthesizedExpression) {
-      children[0] = children[0].value;
-    }
   }
 
   const result = children.map((refChild: any, key: number) => {

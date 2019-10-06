@@ -58,20 +58,20 @@ export default observer(() => {
   }
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="cactiva-container">
-        <div className="cactiva-menu"></div>
+      <div className='cactiva-container'>
+        <div className='cactiva-menu'></div>
         <Split
           sizes={editor.status === 'loading' ? [15, 85] : [15, 70, 15]}
           minSize={100}
           expandToMin={false}
           gutterSize={5}
-          gutterAlign="center"
+          gutterAlign='center'
           snapOffset={30}
           dragInterval={1}
-          direction="horizontal"
-          className="cactiva-main"
+          direction='horizontal'
+          className='cactiva-main'
         >
-          <div className="cactiva-pane">
+          <div className='cactiva-pane'>
             {current && current.source && current.selected && (
               <div
                 style={{
@@ -94,15 +94,15 @@ export default observer(() => {
             )}
           </div>
           {editor.status === 'loading' ? (
-            <div className="cactiva-editor-loading">
+            <div className='cactiva-editor-loading'>
               <Spinner size={18} />
-              <Text color="muted" size={300} style={{ marginLeft: 8 }}>
+              <Text color='muted' size={300} style={{ marginLeft: 8 }}>
                 Loading
               </Text>
             </div>
           ) : (
             <div
-              className="cactiva-pane cactiva-editor-container"
+              className='cactiva-pane cactiva-editor-container'
               onContextMenu={(e: any) => {
                 e.preventDefault();
               }}
@@ -119,11 +119,11 @@ export default observer(() => {
 
           {editor.status !== 'loading' ? (
             <div
-              className="cactiva-pane"
+              className='cactiva-pane'
               onContextMenu={e => e.preventDefault()}
             >
-              <div className="cactiva-pane-inner">
-                <div className="cactiva-pane-tab-header">
+              <div className='cactiva-pane-inner'>
+                <div className='cactiva-pane-tab-header'>
                   <Tab
                     style={{ flex: 1 }}
                     isSelected={meta.currentPane === 'props'}
@@ -145,14 +145,14 @@ export default observer(() => {
                       <CactivaTraits source={current.source} editor={current} />
                     ) : (
                       <Pane
-                        display="flex"
-                        flexDirection="column"
+                        display='flex'
+                        flexDirection='column'
                         padding={10}
-                        alignItems="center"
-                        justifyContent="center"
+                        alignItems='center'
+                        justifyContent='center'
                       >
                         <img
-                          src="/images/reindeer.svg"
+                          src='/images/reindeer.svg'
                           style={{ width: '50%', margin: 20, opacity: 0.4 }}
                         />
                         <Text size={300}>Please select a component</Text>

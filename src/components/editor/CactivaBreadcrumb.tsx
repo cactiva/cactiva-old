@@ -5,6 +5,7 @@ import CactivaDraggable from './CactivaDraggable';
 import CactivaSelectable from './CactivaSelectable';
 import { findElementById, getIds } from './utility/elements/tools';
 import { kindNames } from './utility/kinds';
+import { toJS } from 'mobx';
 
 export default observer(({ source, editor }: any) => {
   const meta = useObservable({
@@ -18,6 +19,7 @@ export default observer(({ source, editor }: any) => {
     }
     meta.nav = generatePath(editor, source);
   }, [editor.selectedId, editor.undoStack.length]);
+
   const lastNav: any = meta.nav[meta.nav.length - 1];
   const lastId = _.get(lastNav, 'source.id');
   return (
