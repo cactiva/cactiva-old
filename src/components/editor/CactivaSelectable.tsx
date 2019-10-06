@@ -10,6 +10,7 @@ export default observer(
     style,
     showElementTag = true,
     onBeforeSelect,
+    onDoubleClick,
     onSelected
   }: any) => {
     const { editor, source } = cactiva;
@@ -33,6 +34,7 @@ export default observer(
           e.stopPropagation();
           meta.hover = false;
         }}
+        onDoubleClick={onDoubleClick}
         onClick={e => {
           e.preventDefault();
           e.stopPropagation();

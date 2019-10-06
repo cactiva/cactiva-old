@@ -12,6 +12,15 @@ export class Morph {
     return `${execPath}/app/${config.get('app')}`;
   }
 
+  parseText(source: string) {
+    const sf = this.root.createSourceFile('__tempfile__.ts', source);
+    try {
+      return parseJsx(sf.getFirstChild());
+    } finally {
+      sf.delete();
+    }
+  }
+
   getSourceFile(filename: string) {
     return this.root.getSourceFileOrThrow(file => {
       return file.getFilePath() === this.getAppPath() + filename;

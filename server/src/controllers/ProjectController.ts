@@ -14,7 +14,6 @@ export class ProjectController {
     res.status(200).json(result);
   }
 
-
   @Get('write-source')
   private writeSource(req: Request, res: Response) {
     if (!req.query.path) {
