@@ -1,7 +1,7 @@
-import React from 'react';
-import kinds, { kindNames, SyntaxKind } from './kinds';
-import { isTag } from './tagmatcher';
-import tags from './tags';
+import React from "react";
+import kinds, { kindNames, SyntaxKind } from "./kinds";
+import { isTag } from "./tagmatcher";
+import tags from "./tags";
 
 export const renderChildren = (
   source: any,
@@ -18,7 +18,7 @@ export const renderChildren = (
   let id = 0;
   if (!source) return source;
   if (!source.children) return undefined;
-  const isRoot = source.name === '--root--';
+  const isRoot = source.name === "--root--";
   const children = source.children;
 
   if (isRoot) {
@@ -26,9 +26,9 @@ export const renderChildren = (
   }
 
   const result = children.map((refChild: any, key: number) => {
-    if (typeof refChild === 'object') {
+    if (typeof refChild === "object") {
       if (!source.id && !isRoot) {
-        source.id = '0';
+        source.id = "0";
       }
       let child = refChild;
       const childId = id++;
@@ -36,39 +36,42 @@ export const renderChildren = (
 
       child.id = isRoot ? `${id - 1}` : `${source.id}_${childId}`;
 
-      if (istag) {
-        return renderTag(
+      const info =
+        parentInfo &&
+        parentInfo({
+          isLastChild: key === children.length - 1,
           child,
           editor,
           key,
-          isRoot ? child : root,
-          parentInfo &&
-            parentInfo({
-              isLastChild: key === children.length - 1,
-              child,
-              editor,
-              key,
-              root: isRoot ? child : root
-            })
-        );
+          root: isRoot ? child : root
+        });
+
+      if (istag) {
+        return renderTag(child, editor, key, isRoot ? child : root, info);
       }
-      return renderKind(child, editor, key, isRoot ? child : root);
+      return renderKind(child, editor, key, isRoot ? child : root, info);
     }
     return refChild;
   });
   return result;
 };
 
-const renderKind = (source: any, editor: any, key: number, root: any): any => {
+const renderKind = (
+  source: any,
+  editor: any,
+  key: number,
+  root: any,
+  parentInfo: any
+): any => {
   switch (source.kind) {
     case SyntaxKind.StringLiteral:
     case SyntaxKind.JsxText:
     case SyntaxKind.NumericLiteral:
       return source.value;
     case SyntaxKind.TrueKeyword:
-      return 'true';
+      return "true";
     case SyntaxKind.FalseKeyword:
-      return 'false';
+      return "false";
   }
 
   const kind = kinds[kindNames[source.kind]] as any;
@@ -77,7 +80,8 @@ const renderKind = (source: any, editor: any, key: number, root: any): any => {
       kind,
       root: root,
       source: source,
-      editor
+      editor,
+      parentInfo
     };
     editor.cactivaRefs[source.id] = cactiva;
     const Component = kind.element;
@@ -104,7 +108,7 @@ const renderTag = (
       root: root,
       source: source,
       editor,
-      parentInfo: parentInfo
+      parentInfo
     };
     editor.cactivaRefs[source.id] = cactiva;
     const Component = tag.element;
