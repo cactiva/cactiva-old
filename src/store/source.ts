@@ -35,4 +35,32 @@ export class SourceStore {
   constructor(source: any) {
     this.source = source;
   }
+
+  setupMonaco(monaco: any) {
+    // compiler options
+    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+      target: monaco.languages.typescript.ScriptTarget.ES2016,
+      allowNonTsExtensions: true,
+      moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+      module: monaco.languages.typescript.ModuleKind.CommonJS,
+      noEmit: true,
+      typeRoots: ['node_modules/@types'],
+      jsx: monaco.languages.typescript.JsxEmit.React,
+      jsxFactory: 'JSXAlone.createElement'
+    });
+
+    // extra libraries
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(
+      `
+      declare var meta:any;
+      declare var Main:any;
+       ,`,
+      'filename/meta.d.ts'
+    );
+
+    monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: false,
+      noSyntaxValidation: false
+    });
+  }
 }

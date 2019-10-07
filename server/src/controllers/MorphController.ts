@@ -16,4 +16,10 @@ export class MorphController {
     const result = morph.generateSource(req.body);
     res.status(200).json(result);
   }
+
+  @Post('ast2exp')
+  private ast2exp(req: Request, res: Response) {
+    const result = morph.generateSource(req.body);
+    res.status(200).json(result);
+  }
 }

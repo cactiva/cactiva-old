@@ -22,7 +22,16 @@ export class Morph {
   }
 
   generateSource(node: any) {
-    return generateSource(node);
+    const source = generateSource(node);
+    const sf = this.root.createSourceFile('__tempfile__.ts', source);
+    let result = '';
+    try {
+      sf.formatText();
+      result = sf.getText();
+    } finally {
+      sf.delete();
+    }
+    return result;
   }
 
   getSourceFile(filename: string) {

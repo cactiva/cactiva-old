@@ -14,9 +14,11 @@ export const generateJsx = (node: any): string => {
     case SyntaxKind.PropertyAccessExpression:
       return node.value;
     case SyntaxKind.ObjectLiteralExpression:
-      return `{${_.map(node.value, (e, key) => {
-        return `${key}: ${generateJsx(e)}`;
-      }).join(',')}}`;
+      return `{
+  ${_.map(node.value, (e, key) => {
+  return `${key}: ${generateJsx(e)}`;
+  }).join(`,\n\t`)}
+}`;
 
     case SyntaxKind.AsExpression:
       return `${generateJsx(node.value)} as any`;
@@ -30,9 +32,9 @@ export const generateJsx = (node: any): string => {
       return `return ${generateJsx(node.value)}`;
     case SyntaxKind.ArrowFunction:
       return (() => {
-        return `(${node.params.join(',')}) => { ${node.body
-          .map((e: any) => generateJsx(e))
-          .join('\n')} }`;
+        return `(${node.params.join(',')}) => { 
+${node.body.map((e: any) => generateJsx(e)).join('\n')} 
+}`;
       })();
     case SyntaxKind.JsxElement:
       return (() => {

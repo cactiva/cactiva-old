@@ -1,12 +1,12 @@
+import api from '@src/libs/api';
 import { Popover, Text } from 'evergreen-ui';
 import { observer, useObservable } from 'mobx-react-lite';
 import React, { useRef } from 'react';
+import MonacoEditor from 'react-monaco-editor';
+import useAsyncEffect from 'use-async-effect';
 import CactivaDraggable from '../../../CactivaDraggable';
 import CactivaDroppable from '../../../CactivaDroppable';
 import CactivaSelectable from '../../../CactivaSelectable';
-import MonacoEditor from 'react-monaco-editor';
-import api from '@src/libs/api';
-
 export default observer((props: any) => {
   const cactiva = props._cactiva;
   const meta = useObservable({
@@ -23,6 +23,12 @@ export default observer((props: any) => {
     }
   });
   const ref = useRef(null);
+  useAsyncEffect(async () => {
+    meta.loading = true;
+    const res = await api.post('morph/ast2exp', cactiva.source);
+    meta.content = res;
+    meta.loading = false;
+  }, []);
   return (
     <>
       <div
@@ -40,12 +46,6 @@ export default observer((props: any) => {
         <CactivaDraggable cactiva={cactiva}>
           <Popover
             onClose={() => {}}
-            onOpen={async () => {
-              meta.loading = true;
-              const res = await api.post('morph/ast2text', cactiva.source);
-              meta.content = res;
-              meta.loading = false;
-            }}
             content={
               <Text
                 style={{
@@ -68,7 +68,7 @@ export default observer((props: any) => {
                   <>
                     <div
                       style={{
-                        padding: '0px 10px',
+                        padding: '10px',
                         display: 'flex',
                         alignSelf: 'stretch',
                         flexDirection: 'row',
@@ -83,8 +83,8 @@ export default observer((props: any) => {
                         e.preventDefault();
                       }}
                     >
-                      <span>No error</span>
-                      <span style={{ opacity: 0.5 }}></span>
+                      {/* <span>No error</span>
+                      <span style={{ opacity: 0.5 }}></span> */}
                     </div>
                     <MonacoEditor
                       theme='vs-dark'
@@ -92,14 +92,12 @@ export default observer((props: any) => {
                       onChange={value => {
                         meta.content = value;
                       }}
-                      options={{
-                        minimap: {
-                          enabled: false
-                        }
+                      editorWillMount={monaco => {
+                        cactiva.editor.setupMonaco(monaco);
                       }}
                       width='100%'
                       height='100%'
-                      language='javascript'
+                      language='typescript'
                     />
                   </>
                 )}
@@ -135,11 +133,13 @@ export default observer((props: any) => {
             zIndex: 101
           }}
           onMouseUpCapture={e => {
-            meta.drag.drag = false;
+            if (meta.drag.drag) meta.drag.drag = false;
           }}
           onMouseMoveCapture={e => {
-            meta.drag.dx = e.screenX - meta.drag.x;
-            meta.drag.dy = e.screenY - meta.drag.y;
+            if (meta.drag.drag) {
+              meta.drag.dx = e.screenX - meta.drag.x;
+              meta.drag.dy = e.screenY - meta.drag.y;
+            }
           }}
         ></div>
       )}
