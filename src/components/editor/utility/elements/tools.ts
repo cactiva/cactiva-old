@@ -12,6 +12,8 @@ export const findElementById = (root: any, id: string | string[]): any => {
   const ids = getIds(id);
   const rid = ids.shift();
 
+  if (!root) return null;
+
   if (ids.length === 0 && rid == root.id) return root;
   let el = root;
 

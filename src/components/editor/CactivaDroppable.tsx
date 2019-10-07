@@ -29,32 +29,36 @@ export default observer(
     const isLastChild = _.get(parentInfo, "isLastChild", false);
     const { id } = source;
     const dropAfter = () => {
-      prepareChanges(editor);
       let el = null;
       const child = findElementById(root, id);
-      if (afterItem.id === null) {
-        el = createNewElement(afterItem.name);
-      } else {
-        el = removeElementById(root, afterItem.id);
+      if (child) {
+        prepareChanges(editor);
+        if (afterItem.id === null) {
+          el = createNewElement(afterItem.name);
+        } else {
+          el = removeElementById(root, afterItem.id);
+        }
+        if (el) {
+          insertAfterElementId(root, child.id, el);
+        }
+        commitChanges(editor);
       }
-      if (el) {
-        insertAfterElementId(root, child.id, el);
-      }
-      commitChanges(editor);
     };
     const dropChild = () => {
-      prepareChanges(editor);
       let el = null;
       const child = findElementById(root, id);
-      if (childItem.id === null) {
-        el = createNewElement(childItem.name);
-      } else {
-        el = removeElementById(root, childItem.id);
+      if (child) {
+        prepareChanges(editor);
+        if (childItem.id === null) {
+          el = createNewElement(childItem.name);
+        } else {
+          el = removeElementById(root, childItem.id);
+        }
+        if (el) {
+          addChildInId(root, child.id, el);
+        }
+        commitChanges(editor);
       }
-      if (el) {
-        addChildInId(root, child.id, el);
-      }
-      commitChanges(editor);
     };
     const [{ afterItem, afterOver }, afterDropRef] = useCactivaDrop(
       "after",

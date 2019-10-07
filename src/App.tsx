@@ -62,7 +62,7 @@ export default observer(() => {
         <div className='cactiva-menu'></div>
         <Split
           sizes={editor.status === 'loading' ? [15, 85] : [15, 70, 15]}
-          minSize={100}
+          minSize={200}
           expandToMin={false}
           gutterSize={5}
           gutterAlign='center'
