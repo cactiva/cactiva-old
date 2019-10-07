@@ -98,22 +98,11 @@ const toolbar = [
     label: 'ScrollView'
   },
   {
-    divider: 'ui-kitten'
+    divider: 'code'
   },
   {
-    icon: 'widget-footer',
-    label: 'BottomNavigation'
-  },
-  {
-    icon: 'widget-header',
-    label: 'TopNavigation'
-  },
-  {
-    divider: 'ui-kitten'
-  },
-  {
-    icon: 'split-columns',
-    label: 'If'
+    icon: 'function',
+    label: 'JsxExpression'
   },
   {
     icon: 'merge-columns',

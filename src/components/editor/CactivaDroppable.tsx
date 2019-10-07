@@ -1,31 +1,32 @@
-import _ from 'lodash';
-import { observer, useObservable } from 'mobx-react-lite';
-import React, { useEffect } from 'react';
-import { useDrop } from 'react-dnd-cjs';
-import CactivaDropMarker from './CactivaDropMarker';
+import _ from "lodash";
+import { observer, useObservable } from "mobx-react-lite";
+import React, { useEffect } from "react";
+import { useDrop } from "react-dnd-cjs";
+import CactivaDropMarker from "./CactivaDropMarker";
 import {
   addChildInId,
   commitChanges,
+  createNewElement,
   findElementById,
   insertAfterElementId,
   isParentOf,
   prepareChanges,
-  removeElementById,
-  createNewElement
-} from './utility/elements/tools';
-import { toJS } from 'mobx';
+  removeElementById
+} from "./utility/elements/tools";
 
 export default observer(
   ({
     cactiva,
     children,
     onDropOver,
+    onBeforeDropOver,
+    onDropped,
     canDropOver = true,
     canDropAfter = true
   }: any) => {
     const { root, source, editor, parentInfo } = cactiva;
-    const afterDirection = _.get(parentInfo, 'afterDirection', 'column');
-    const isLastChild = _.get(parentInfo, 'isLastChild', false);
+    const afterDirection = _.get(parentInfo, "afterDirection", "column");
+    const isLastChild = _.get(parentInfo, "isLastChild", false);
     const { id } = source;
     const dropAfter = () => {
       prepareChanges(editor);
@@ -33,7 +34,6 @@ export default observer(
       const child = findElementById(root, id);
       if (afterItem.id === null) {
         el = createNewElement(afterItem.name);
-        console.log(el);
       } else {
         el = removeElementById(root, afterItem.id);
       }
@@ -57,25 +57,34 @@ export default observer(
       commitChanges(editor);
     };
     const [{ afterItem, afterOver }, afterDropRef] = useCactivaDrop(
-      'after',
-      ['element'],
+      "after",
+      ["element"],
       (item: any) => {
         if (afterOver && meta.canDropAfter) {
           dropAfter();
+          if (onDropped) {
+            onDropped(afterItem, "after");
+          }
         }
       }
     );
     const [{ childItem, childOver }, childDropRef] = useCactivaDrop(
-      'child',
-      ['element'],
+      "child",
+      ["element"],
       () => {
         if (canDropAfter && !canDropOver) {
           if (childOver && meta.canDropAfter) {
             dropAfter();
+            if (onDropped) {
+              onDropped(childItem, "child");
+            }
           }
         } else {
           if (childOver && meta.canDropChild) {
             dropChild();
+            if (onDropped) {
+              onDropped(childItem, "child");
+            }
           }
         }
       }
@@ -87,6 +96,13 @@ export default observer(
     });
 
     useEffect(() => {
+      if (onBeforeDropOver) {
+        const type = afterOver ? "after" : "child";
+        const item = type === "after" ? afterItem : childItem;
+        const result = onBeforeDropOver(item, type);
+        if (!result) return;
+      }
+
       meta.canDropAfter =
         canDropAfter && afterOver && canDrop(afterItem.id, id);
       if (canDropOver || !canDropAfter) {
@@ -95,13 +111,13 @@ export default observer(
         meta.canDropAfter = childOver && canDrop(childItem.id, id);
       }
 
-      const parentCanDropAfter = _.get(cactiva, 'parentInfo.canDropAfter');
+      const parentCanDropAfter = _.get(cactiva, "parentInfo.canDropAfter");
       if (parentCanDropAfter !== undefined && parentCanDropAfter === false) {
         meta.canDropAfter = false;
         meta.hideDropAfter = true;
       }
 
-      const parentCanDropChild = _.get(cactiva, 'parentInfo.canDropChild');
+      const parentCanDropChild = _.get(cactiva, "parentInfo.canDropChild");
       if (parentCanDropChild !== undefined && parentCanDropChild === false) {
         meta.canDropChild = false;
       }
@@ -109,7 +125,7 @@ export default observer(
       if (onDropOver) {
         onDropOver(meta.canDropChild);
       }
-    }, [childOver, afterOver]);
+    }, [childOver, afterOver, canDropAfter, canDropOver]);
 
     return (
       <>
@@ -144,8 +160,8 @@ const useCactivaDrop = (name: string, accept: string[], drop: any) => {
     drop,
     collect: monitor => {
       return {
-        [name + 'Item']: monitor.getItem(),
-        [name + 'Over']: monitor.isOver({ shallow: true })
+        [name + "Item"]: monitor.getItem(),
+        [name + "Over"]: monitor.isOver({ shallow: true })
       };
     }
   });
