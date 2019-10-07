@@ -1,8 +1,8 @@
-import _ from "lodash";
-import { observer, useObservable } from "mobx-react-lite";
-import React, { useEffect } from "react";
-import { useDrop } from "react-dnd-cjs";
-import CactivaDropMarker from "./CactivaDropMarker";
+import _ from 'lodash';
+import { observer, useObservable } from 'mobx-react-lite';
+import React, { useEffect } from 'react';
+import { useDrop } from 'react-dnd-cjs';
+import CactivaDropMarker from './CactivaDropMarker';
 import {
   addChildInId,
   commitChanges,
@@ -12,7 +12,8 @@ import {
   isParentOf,
   prepareChanges,
   removeElementById
-} from "./utility/elements/tools";
+} from './utility/elements/tools';
+import { toJS } from 'mobx';
 
 export default observer(
   ({
@@ -25,8 +26,8 @@ export default observer(
     canDropAfter = true
   }: any) => {
     const { root, source, editor, parentInfo } = cactiva;
-    const afterDirection = _.get(parentInfo, "afterDirection", "column");
-    const isLastChild = _.get(parentInfo, "isLastChild", false);
+    const afterDirection = _.get(parentInfo, 'afterDirection', 'column');
+    const isLastChild = _.get(parentInfo, 'isLastChild', false);
     const { id } = source;
     const dropAfter = () => {
       let el = null;
@@ -61,33 +62,33 @@ export default observer(
       }
     };
     const [{ afterItem, afterOver }, afterDropRef] = useCactivaDrop(
-      "after",
-      ["element"],
+      'after',
+      ['element'],
       (item: any) => {
         if (afterOver && meta.canDropAfter) {
           dropAfter();
           if (onDropped) {
-            onDropped(afterItem, "after");
+            onDropped(afterItem, 'after');
           }
         }
       }
     );
     const [{ childItem, childOver }, childDropRef] = useCactivaDrop(
-      "child",
-      ["element"],
+      'child',
+      ['element'],
       () => {
         if (canDropAfter && !canDropOver) {
           if (childOver && meta.canDropAfter) {
             dropAfter();
             if (onDropped) {
-              onDropped(childItem, "child");
+              onDropped(childItem, 'child');
             }
           }
         } else {
           if (childOver && meta.canDropChild) {
             dropChild();
             if (onDropped) {
-              onDropped(childItem, "child");
+              onDropped(childItem, 'child');
             }
           }
         }
@@ -101,8 +102,8 @@ export default observer(
 
     useEffect(() => {
       if (onBeforeDropOver) {
-        const type = afterOver ? "after" : "child";
-        const item = type === "after" ? afterItem : childItem;
+        const type = afterOver ? 'after' : 'child';
+        const item = type === 'after' ? afterItem : childItem;
         const result = onBeforeDropOver(item, type);
         if (!result) return;
       }
@@ -115,13 +116,13 @@ export default observer(
         meta.canDropAfter = childOver && canDrop(childItem.id, id);
       }
 
-      const parentCanDropAfter = _.get(cactiva, "parentInfo.canDropAfter");
+      const parentCanDropAfter = _.get(cactiva, 'parentInfo.canDropAfter');
       if (parentCanDropAfter !== undefined && parentCanDropAfter === false) {
         meta.canDropAfter = false;
         meta.hideDropAfter = true;
       }
 
-      const parentCanDropChild = _.get(cactiva, "parentInfo.canDropChild");
+      const parentCanDropChild = _.get(cactiva, 'parentInfo.canDropChild');
       if (parentCanDropChild !== undefined && parentCanDropChild === false) {
         meta.canDropChild = false;
       }
@@ -164,8 +165,8 @@ const useCactivaDrop = (name: string, accept: string[], drop: any) => {
     drop,
     collect: monitor => {
       return {
-        [name + "Item"]: monitor.getItem(),
-        [name + "Over"]: monitor.isOver({ shallow: true })
+        [name + 'Item']: monitor.getItem(),
+        [name + 'Over']: monitor.isOver({ shallow: true })
       };
     }
   });

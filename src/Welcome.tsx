@@ -11,9 +11,9 @@ import React from 'react';
 import './Welcome.scss';
 
 export default observer(({ editor }: any) => {
-  if (editor.status === 'loading') {
-    return <Loading />;
-  }
+  // if (editor.status === 'loading') {
+  return <Loading />;
+  // }
   return (
     <div className='wrapper'>
       <div className='welcome-canvas'>

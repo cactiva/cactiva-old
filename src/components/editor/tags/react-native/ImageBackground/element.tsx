@@ -17,8 +17,8 @@ export default observer((props: any) => {
     '/assets/' +
     tagProps.source
       .replace("require('", '')
-      .replace('@src/assets/images', '')
-      .replace("')", '')})`;
+      .replace('@src/assets/images/', '')
+      .replace("')", '')}), url('images/sample.jpg')`;
   return (
     <CactivaDropChild
       cactiva={cactiva}

@@ -69,7 +69,6 @@ export const insertAfterElementId = (
   const parent = findParentElementById(root, id);
   const index = parseInt(ids[ids.length - 1] || '-1');
   if (parent && parent.children && parent.children[index]) {
-    console.log(child, toJS(parent.children));
     parent.children.splice(index + 1, 0, child);
   }
 };

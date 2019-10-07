@@ -1,5 +1,6 @@
 import { CactivaTag } from '@src/components/editor/utility/tags';
 import { SyntaxKind } from '@src/components/editor/utility/kinds';
+import styleTrait from '@src/components/traits/templates/styleTrait';
 const styles = {
   root: {
     flex: '1 1 100%'
@@ -11,7 +12,7 @@ export default class extends CactivaTag {
   static from = 'react-native';
   static structure = {
     kind: SyntaxKind.JsxElement,
-    name: 'ScrollView',
+    name: 'Image',
     props: {},
     children: []
   };
@@ -27,6 +28,19 @@ export default class extends CactivaTag {
           options: {
             styles: styles
           }
+        }
+      ]
+    },
+    {
+      name: 'style',
+      kind: SyntaxKind.ObjectLiteralExpression,
+      default: {},
+      fields: [
+        {
+          name: 'width',
+          path: 'style.value.width',
+          kind: SyntaxKind.NumericLiteral,
+          value: 250
         }
       ]
     }
