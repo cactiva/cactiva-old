@@ -105,14 +105,18 @@ export default observer(
 
     useEffect(() => {
       if (onBeforeDropOver) {
-        const type = afterOver ? "after" : "child";
-        const item = type === "after" ? afterItem : childItem;
+        const type = !!afterItem ? "after" : "child";
+        const item = afterItem || childItem;
         const result = onBeforeDropOver(item, type);
         if (!result) return;
       }
 
       meta.canDropAfter =
         canDropAfter && afterOver && canDrop(afterItem.id, id);
+
+      if (id && afterItem && onDropped) {
+        console.log(canDropAfter, afterOver, canDrop(afterItem.id, id));
+      }
       if (canDropOver || !canDropAfter) {
         meta.canDropChild = childOver && canDrop(childItem.id, id);
       } else if (!meta.canDropAfter) {
@@ -132,9 +136,6 @@ export default observer(
 
       if (onDropOver) {
         onDropOver(meta.canDropChild);
-      }
-      if (!afterOver && !childOver) {
-        meta.canDropAfter = false;
       }
     }, [childOver, afterOver, canDropAfter, canDropOver]);
 

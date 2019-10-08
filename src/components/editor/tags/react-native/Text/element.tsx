@@ -24,12 +24,15 @@ export default observer((props: any) => {
     <CactivaDroppable
       cactiva={cactiva}
       onBeforeDropOver={(item: any, type: string) => {
+        console.log(item, type);
         if (type === "after") {
           return true;
-        } else if (item && item.name === "JsxExpression") {
-          meta.canDropOver = true;
-          meta.dropOver = true;
-          return true;
+        } else {
+          if (item && item.name === "JsxExpression") {
+            meta.canDropOver = true;
+            meta.dropOver = true;
+            return true;
+          }
         }
       }}
       onDropped={(item: any, type: string) => {
@@ -65,7 +68,7 @@ export default observer((props: any) => {
               }
             }
           }}
-          // style={style}
+          style={style}
           className="cactiva-element rn-text"
         >
           {meta.canDropOver ? (

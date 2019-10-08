@@ -3,6 +3,8 @@ import { Project as TProject } from "ts-morph";
 import config, { execPath } from "./config";
 import { defaultExport } from "./libs/morph/defaultExport";
 import { parseJsx } from "./libs/morph/parseJsx";
+import * as _ from "lodash";
+import { kindNames } from "./libs/morph/kindNames";
 
 export class Morph {
   private root: TProject = new TProject();
@@ -11,10 +13,17 @@ export class Morph {
     return `${execPath}/app/${config.get("app")}`;
   }
 
-  parseText(source: string) {
-    const sf = this.root.createSourceFile("__tempfile__.ts", source);
+  parseJsxExpression(source: string) {
+    const sourced = `<div>{ ${source} }</div>`;
+
+    const sf = this.root.createSourceFile("__tempfile__.tsx", sourced);
     try {
-      return parseJsx(sf.getFirstChild());
+      const fc = sf.getFirstChild() as any;
+      const jsx = _.get(
+        fc,
+        "_compilerNode._children[0].expression.children[0]"
+      );
+      return parseJsx(jsx);
     } finally {
       sf.delete();
     }

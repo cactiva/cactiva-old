@@ -6,9 +6,9 @@ import { SyntaxKind } from "ts-morph";
 const morph = Morph.getInstance();
 @Controller("api/morph")
 export class MorphController {
-  @Get("text2ast")
-  private text2ast(req: Request, res: Response) {
-    const result = morph.parseText("let a = 'asfasf';");
+  @Post("jsxexp")
+  private jsxexp(req: Request, res: Response) {
+    const result = morph.parseJsxExpression(JSON.parse(req.body.value));
     res.status(200).json(result);
   }
 

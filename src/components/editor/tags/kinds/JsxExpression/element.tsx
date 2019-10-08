@@ -9,6 +9,8 @@ import MonacoEditor from "react-monaco-editor";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDroppable from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
+import api from "@src/libs/api";
+import { findElementById } from "@src/components/editor/utility/elements/tools";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -26,7 +28,7 @@ export default observer((props: any) => {
     }
   });
   const ref = useRef(null);
-  const expressions = generateExpression(cactiva.source);
+  const expressions = generateExpression(cactiva.source.value);
 
   return (
     <>
@@ -44,8 +46,12 @@ export default observer((props: any) => {
       <CactivaDroppable cactiva={cactiva} canDropOver={false}>
         <CactivaDraggable cactiva={cactiva}>
           <Popover
-            onClose={() => {
-              console.log(meta.source);
+            onClose={async () => {
+              const res = await api.post("morph/jsxexp", {
+                value: JSON.stringify(meta.source)
+              });
+              res.id = cactiva.source.id;
+              cactiva.source = res;
             }}
             content={
               <Text
@@ -113,7 +119,7 @@ export default observer((props: any) => {
                   onDoubleClick={(e: any) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    meta.source = generateSource(cactiva.source);
+                    meta.source = generateSource(cactiva.source.value);
                     if (meta.drag.sx === 0) meta.drag.sx = e.clientX;
                     if (meta.drag.sy === 0) meta.drag.sy = e.clientY;
                     toggle();
@@ -141,7 +147,7 @@ export default observer((props: any) => {
                               kind: cactiva.source.kind,
                               id: cactiva.source.id,
                               child: {
-                                id: cactiva.source.id + '_' + key,
+                                id: cactiva.source.id + "_" + key,
                                 value: exp
                               }
                             },
