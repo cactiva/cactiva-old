@@ -6,6 +6,7 @@ export class SourceStore {
   lastId = 1;
   @observable source: any = {};
   root = null;
+  @observable hooks: any = [];
 
   @observable selectedId = '';
   @observable selected: any;
