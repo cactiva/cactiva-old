@@ -1,13 +1,13 @@
-import { renderChildren } from "@src/components/editor/utility/renderchild";
-import { observer, useObservable } from "mobx-react-lite";
-import React, { useEffect } from "react";
-import CactivaDraggable from "../../../CactivaDraggable";
-import CactivaDroppable from "../../../CactivaDroppable";
-import CactivaSelectable from "../../../CactivaSelectable";
-import { parseValue } from "../../../utility/parser/parser";
-import CactivaDropMarker from "@src/components/editor/CactivaDropMarker";
-import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
-import _ from "lodash";
+import { renderChildren } from '@src/components/editor/utility/renderchild';
+import { observer, useObservable } from 'mobx-react-lite';
+import React, { useEffect } from 'react';
+import CactivaDraggable from '../../../CactivaDraggable';
+import CactivaDroppable from '../../../CactivaDroppable';
+import CactivaSelectable from '../../../CactivaSelectable';
+import { parseValue } from '../../../utility/parser/parser';
+import CactivaDropMarker from '@src/components/editor/CactivaDropMarker';
+import { SyntaxKind } from '@src/components/editor/utility/syntaxkinds';
+import _ from 'lodash';
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -24,11 +24,10 @@ export default observer((props: any) => {
     <CactivaDroppable
       cactiva={cactiva}
       onBeforeDropOver={(item: any, type: string) => {
-        console.log(item, type);
-        if (type === "after") {
+        if (type === 'after') {
           return true;
         } else {
-          if (item && item.name === "JsxExpression") {
+          if (item && item.name === 'JsxExpression') {
             meta.canDropOver = true;
             meta.dropOver = true;
             return true;
@@ -36,7 +35,7 @@ export default observer((props: any) => {
         }
       }}
       onDropped={(item: any, type: string) => {
-        if (type === "child") {
+        if (type === 'child') {
           const child = children.filter(
             (e: any) => e.kind === SyntaxKind.JsxExpression
           );
@@ -56,10 +55,10 @@ export default observer((props: any) => {
           onDoubleClick={(e: any) => {
             e.preventDefault();
             const hasJsxExpression =
-              _.get(children, "0.kind") === SyntaxKind.JsxExpression;
+              _.get(children, '0.kind') === SyntaxKind.JsxExpression;
 
             if (!hasJsxExpression) {
-              let text = prompt("Text:", _.get(children, "0.value"));
+              let text = prompt('Text:', _.get(children, '0.value'));
               if (text !== null) {
                 children[0] = {
                   kind: SyntaxKind.JsxText,
@@ -75,7 +74,7 @@ export default observer((props: any) => {
             <CactivaDropMarker
               hover={meta.dropOver}
               stretch={true}
-              style={{ margin: "0px 5px" }}
+              style={{ margin: '0px 5px' }}
             />
           ) : (
             renderChildren(

@@ -12,7 +12,7 @@ const deleteFile = (filename: any) => {
     });
   });
 };
-export default observer(({ value, onChange }: any) => {
+export default observer(({ value, onChange, isShown, onDismiss }: any) => {
   const meta = useObservable({
     isShown: false,
     source: '',
@@ -24,7 +24,8 @@ export default observer(({ value, onChange }: any) => {
         .replace("require('", '')
         .replace('@src/assets/images/', '')
         .replace("')", ''));
-  }, [value]);
+    meta.isShown = isShown;
+  }, [value, isShown]);
 
   useEffect(() => {
     const load = async () => {
@@ -38,7 +39,10 @@ export default observer(({ value, onChange }: any) => {
         isShown={meta.isShown}
         hasHeader={false}
         hasFooter={false}
-        onCloseComplete={() => (meta.isShown = false)}
+        onCloseComplete={() => {
+          meta.isShown = false;
+          onDismiss && onDismiss(false);
+        }}
         preventBodyScrolling
       >
         <div className="image-browser">
@@ -87,6 +91,7 @@ export default observer(({ value, onChange }: any) => {
                         onClick={() => {
                           meta.source = file.name;
                           meta.isShown = false;
+                          onDismiss && onDismiss(false);
                           onChange(
                             `require('@src/assets/images/${file.name}')`
                           );
@@ -118,17 +123,6 @@ export default observer(({ value, onChange }: any) => {
           </div>
         </div>
       </Dialog>
-      <Tooltip content="Browse" position="bottom">
-        <IconButton
-          icon="folder-open"
-          height={24}
-          paddingLeft={6}
-          paddingRight={6}
-          onClick={() => {
-            meta.isShown = true;
-          }}
-        />
-      </Tooltip>
     </>
   );
 });

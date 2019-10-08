@@ -2,11 +2,12 @@ import { observer, useObservable } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
 import { ICactivaTraitFieldProps } from '../CactivaTraitField';
 import './CallExpression.scss';
-import { SelectMenu, IconButton } from 'evergreen-ui';
+import { SelectMenu, IconButton, Tooltip } from 'evergreen-ui';
 import ImageBrowse from './components/ImageBrowse';
 export default observer((trait: ICactivaTraitFieldProps) => {
   const meta = useObservable({
-    value: trait.value
+    value: trait.value,
+    isShown: false
   });
 
   useEffect(() => {
@@ -55,12 +56,25 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               trait.update(`${meta.value}`);
             }}
           />
+
+          <Tooltip content="Browse" position="bottom">
+            <IconButton
+              icon="folder-open"
+              height={24}
+              paddingLeft={6}
+              paddingRight={6}
+              onClick={() => {
+                meta.isShown = true;
+              }}
+            />
+          </Tooltip>
           <ImageBrowse
             value={meta.value}
             onChange={(v: any) => {
               meta.value = v;
               trait.update(`${meta.value}`);
             }}
+            isShown={meta.isShown}
           />
         </div>
       )}
