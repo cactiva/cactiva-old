@@ -75,13 +75,13 @@ export class Morph {
   public static getInstance(): Morph {
     if (!Morph.instance) {
       Morph.instance = new Morph();
+      process.chdir(Morph.instance.getAppPath());
+      console.log(`Project loaded: ${Morph.instance.getAppPath()}`);
+      Morph.instance.root = new TProject({
+        tsConfigFilePath: path.join(".", "tsconfig.json")
+      });
     }
 
-    process.chdir(Morph.instance.getAppPath());
-    console.log(`Project loaded: ${Morph.instance.getAppPath()}`);
-    Morph.instance.root = new TProject({
-      tsConfigFilePath: path.join(".", "tsconfig.json")
-    });
     return Morph.instance;
   }
 }

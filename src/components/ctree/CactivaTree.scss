@@ -1,0 +1,21 @@
+.cactiva-tree {
+  .item {
+    cursor: default;
+    user-select: none;
+    display: flex;
+    flex-direction: row;
+    .icon {
+      flex-basis: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    span {
+      flex: 1;
+      font-size: 11px;
+    }
+    &:hover {
+      background: #e3f2ff;
+    }
+  }
+}

@@ -7,8 +7,11 @@ body {
   background: #fff;
 }
 [evergreen-portal-container] {
-  div[role='dialog'] {
+  div[role="dialog"] {
     z-index: 100 !important;
+  }
+  div > p {
+    font-size: 11px;
   }
 }
 

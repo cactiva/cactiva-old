@@ -36,13 +36,13 @@ export default () => {
 };
 
 const toolbar = [
-  {
-    icon: "search",
-    label: "Search"
-  },
-  {
-    divider: "primary"
-  },
+  // {
+  //   icon: "search",
+  //   label: "Search"
+  // },
+  // {
+  //   divider: "primary"
+  // },
   {
     icon: "font",
     label: "Text"

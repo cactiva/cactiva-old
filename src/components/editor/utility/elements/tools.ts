@@ -196,7 +196,13 @@ const isUndoStackSimilar = (compare: any, diff: any) => {
 export function createNewElement(name: string) {
   const tag = tags[name];
   const kind = kinds[name];
-  if (!tag && !kind) return null;
+  if (!tag && !kind) {
+    return {
+      kind: SyntaxKind.JsxElement,
+      name,
+      props: {}
+    };
+  }
 
   const type: any = tag ? tag : kind;
   return _.clone(type.structure);
