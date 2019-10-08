@@ -9,9 +9,9 @@ const tags: {
 r.keys().forEach(key => {
   const element = r(key).default;
   const name = element.tagName;
-  if (key.indexOf("kinds/")) {
-  tags[name] = element;
-  allTags.push(name);
+  if (key.indexOf('kinds/')) {
+    tags[name] = element;
+    allTags.push(name);
   }
 });
 export default tags;

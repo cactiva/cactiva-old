@@ -111,6 +111,8 @@ export default observer((props: any) => {
                 <CactivaSelectable
                   cactiva={cactiva}
                   onDoubleClick={(e: any) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     meta.source = generateSource(cactiva.source);
                     if (meta.drag.sx === 0) meta.drag.sx = e.clientX;
                     if (meta.drag.sy === 0) meta.drag.sy = e.clientY;

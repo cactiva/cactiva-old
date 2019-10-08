@@ -23,7 +23,6 @@ class EditorStore {
         if (root.kind === SyntaxKind.ParenthesizedExpression) {
           root = root.value;
         }
-        console.log(root);
 
         this.sources[path] = new SourceStore(root);
         this.path = path;

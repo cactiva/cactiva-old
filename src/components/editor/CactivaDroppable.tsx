@@ -13,6 +13,7 @@ import {
   prepareChanges,
   removeElementById
 } from "./utility/elements/tools";
+import { toJS } from "mobx";
 
 export default observer(
   ({
@@ -117,7 +118,6 @@ export default observer(
       } else if (!meta.canDropAfter) {
         meta.canDropAfter = childOver && canDrop(childItem.id, id);
       }
-
 
       const parentCanDropAfter = _.get(cactiva, "parentInfo.canDropAfter");
       if (parentCanDropAfter !== undefined && parentCanDropAfter === false) {

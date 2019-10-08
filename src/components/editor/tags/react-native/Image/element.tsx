@@ -10,18 +10,25 @@ import { baseUrl } from '@src/store/editor';
 export default observer((props: any) => {
   const cactiva = props._cactiva;
   const tagProps = parseProps(props);
-  tagProps.src =
-    baseUrl +
-    '/assets/' +
-    tagProps.source
-      .replace("require('", '')
-      .replace('@src/assets/images/', '')
-      .replace("')", '');
+  tagProps.src = !!tagProps.source
+    ? baseUrl +
+      '/assets/' +
+      tagProps.source
+        .replace("require('", '')
+        .replace('@src/assets/images/', '')
+        .replace("')", '')
+    : 'images/sample.jpg';
   return (
     <CactivaDropChild cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva} style={tagProps.style}>
-          <img {...tagProps} />
+          <img
+            {...tagProps}
+            onError={(e: any) => {
+              e.target.onerror = null;
+              e.target.src = 'images/sample.jpg';
+            }}
+          />
         </CactivaSelectable>
       </CactivaDraggable>
     </CactivaDropChild>

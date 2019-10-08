@@ -90,7 +90,7 @@ export default observer(({ source, editor }: any) => {
                       commitChanges(editor);
                     }
                   };
-                  const updateValue = (value: any, kind: any) => {
+                  const updateValue = _.debounce((value: any, kind: any) => {
                     prepareChanges(editor);
                     const sp = selected.source.props;
 
@@ -133,7 +133,7 @@ export default observer(({ source, editor }: any) => {
 
                     _.set(selected.source.props, trait.path, valueByKind);
                     commitChanges(editor);
-                  };
+                  });
                   return (
                     <React.Fragment key={key}>
                       <CactivaTraitField
