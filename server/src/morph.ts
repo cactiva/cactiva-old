@@ -1,5 +1,5 @@
 import * as path from "path";
-import { Project as TProject } from "ts-morph";
+import { Project as TProject, SyntaxKind } from "ts-morph";
 import config, { execPath } from "./config";
 import { defaultExport } from "./libs/morph/defaultExport";
 import { parseJsx } from "./libs/morph/parseJsx";
@@ -23,7 +23,16 @@ export class Morph {
         fc,
         "_compilerNode._children[0].expression.children[0]"
       );
-      return parseJsx(jsx);
+      if (jsx && jsx.expression) {
+        return parseJsx(jsx);
+      }
+      return {
+        kind: 271,
+        value: {
+          kind: SyntaxKind.StringLiteral,
+          value: ""
+        }
+      };
     } finally {
       sf.delete();
     }

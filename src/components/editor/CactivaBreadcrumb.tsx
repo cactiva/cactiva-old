@@ -72,7 +72,7 @@ const generatePath = (editor: any, source: any) => {
   const currentId = [...selectedId];
   for (let id in selectedId) {
     const el = findElementById(source, currentId);
-    if (!!el.name)
+    if (!!el && !!el.name)
       nav.push({
         name: el.name,
         source: el

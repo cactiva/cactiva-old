@@ -10,7 +10,7 @@ import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDroppable from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
 import api from "@src/libs/api";
-import { findElementById } from "@src/components/editor/utility/elements/tools";
+import { findElementById, prepareChanges, commitChanges } from "@src/components/editor/utility/elements/tools";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -47,11 +47,14 @@ export default observer((props: any) => {
         <CactivaDraggable cactiva={cactiva}>
           <Popover
             onClose={async () => {
+              console.log(meta.source);
               const res = await api.post("morph/jsxexp", {
                 value: JSON.stringify(meta.source)
               });
-              res.id = cactiva.source.id;
-              cactiva.source = res;
+              res.value.id = cactiva.source.id;
+              prepareChanges(cactiva.editor);
+              cactiva.source.value = res.value;
+              commitChanges(cactiva.editor);
             }}
             content={
               <Text

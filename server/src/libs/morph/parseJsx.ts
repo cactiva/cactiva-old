@@ -1,11 +1,11 @@
-import * as _ from 'lodash';
-import { SyntaxKind } from 'ts-morph';
-import { kindNames } from './kindNames';
+import * as _ from "lodash";
+import { SyntaxKind } from "ts-morph";
+import { kindNames } from "./kindNames";
 export const parseJsx = (node: any, showKindName: boolean = false): any => {
   if (node.compilerNode) {
     node = node.compilerNode;
   }
-  let kind = _.get(node, 'kind');
+  let kind = _.get(node, "kind");
   if (!kind && node && node.getKind) {
     kind = node.getKind();
   }
@@ -32,6 +32,13 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
         kind: kindName,
         exp: parseJsx(node.expression, showKindName),
         argExp: parseJsx(node.argumentExpression, showKindName)
+      };
+    case SyntaxKind.ConditionalExpression:
+      return {
+        kind: kindName,
+        trueKeyword: node.trueKeyword,
+        whenTrue: parseJsx(node.whenTrue, showKindName),
+        whenFalse: parseJsx(node.whenFalse, showKindName)
       };
     case SyntaxKind.ReturnStatement:
     case SyntaxKind.JsxExpression:
@@ -66,7 +73,7 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
     case SyntaxKind.JsxSelfClosingElement:
       return (() => {
         const jsxElement: any = node.compilerNode ? node.compilerNode : node;
-        let name = '';
+        let name = "";
         const props: any = {};
 
         const je = jsxElement as any;
@@ -86,7 +93,7 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
       })();
     case SyntaxKind.JsxElement:
       return (() => {
-        let name = '';
+        let name = "";
         const props: any = {};
 
         name = node.openingElement.tagName.escapedText;

@@ -50,6 +50,14 @@ export const generateExpressionArray = (node: any): any[] => {
       })();
     case SyntaxKind.AsExpression:
       return [...generateExpressionArray(node.value), ` as any`];
+    case SyntaxKind.ConditionalExpression:
+      return [
+        node.trueKeyword,
+        "?",
+        ...generateExpressionArray(node.whenTrue),
+        ":",
+        ...generateExpressionArray(node.whenFalse)
+      ];
     case SyntaxKind.JsxExpression:
       return [`{`, ...generateExpressionArray(node.value), `}`];
     case SyntaxKind.ElementAccessExpression:
