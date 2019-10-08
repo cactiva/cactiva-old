@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { SyntaxKind } from './kinds';
+import { SyntaxKind } from '../syntaxkinds';
 
 export const parseValue = (node: any): any => {
   if (!node) return node;

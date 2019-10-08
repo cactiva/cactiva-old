@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import { computed, observable } from 'mobx';
 import { SourceStore } from './source';
-import { SyntaxKind } from '@src/components/editor/utility/kinds';
+import { SyntaxKind } from '@src/components/editor/utility/syntaxkinds';
 
 interface IEditorSources {
   [key: string]: SourceStore;

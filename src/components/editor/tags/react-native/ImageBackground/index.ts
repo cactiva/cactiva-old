@@ -1,5 +1,5 @@
-import { CactivaTag } from '@src/components/editor/utility/tags';
-import { SyntaxKind } from '@src/components/editor/utility/kinds';
+import { SyntaxKind } from '@src/components/editor/utility/syntaxkinds';
+import { CactivaTag } from "@src/components/editor/utility/classes";
 const styles = {
   root: {
     flex: '1 1 100%'
@@ -13,7 +13,6 @@ export default class extends CactivaTag {
     kind: SyntaxKind.JsxElement,
     name: 'ImageBackground',
     props: {
-      style: {},
       source: {
         kind: SyntaxKind.CallExpression,
         value: `require('@src/assets/images')`

@@ -6,16 +6,17 @@ import {
   commitChanges,
   prepareChanges
 } from "../editor/utility/elements/tools";
-import { SyntaxKind, kindNames } from "../editor/utility/kinds";
+import { kindNames } from "../editor/utility/kinds";
 import {
   generateValueByKind,
   parseProps,
   parseValue
-} from "../editor/utility/parser";
-import { ICactivaTrait, ICactivaTraitField } from "../editor/utility/tags";
+} from "../editor/utility/parser/parser";
+import { ICactivaTrait, ICactivaTraitField } from "../editor/utility/classes";
 import CactivaTraitField from "./CactivaTraitField";
 import "./traits.scss";
 import { isTag } from "../editor/utility/tagmatcher";
+import { SyntaxKind } from "../editor/utility/syntaxkinds";
 
 export default observer(({ source, editor }: any) => {
   const traits = _.get(editor, "selected.tag.traits") as ICactivaTrait[];

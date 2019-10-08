@@ -1,5 +1,5 @@
-import { CactivaTag } from '@src/components/editor/utility/tags';
-import { SyntaxKind } from '@src/components/editor/utility/kinds';
+import { CactivaTag } from "@src/components/editor/utility/classes";
+import { SyntaxKind } from '@src/components/editor/utility/syntaxkinds';
 
 export default class extends CactivaTag {
   static tagName = 'FlatList';

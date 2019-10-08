@@ -1,5 +1,5 @@
-import { ICactivaTrait } from '@src/components/editor/utility/tags';
-import { SyntaxKind } from '@src/components/editor/utility/kinds';
+import { ICactivaTrait } from '@src/components/editor/utility/classes';
+import { SyntaxKind } from '@src/components/editor/utility/syntaxkinds';
 
 const styleTrait: ICactivaTrait[] = [
   {

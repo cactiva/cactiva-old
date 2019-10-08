@@ -1,10 +1,11 @@
-import { Alert, Menu, Pane, Popover, Text } from 'evergreen-ui';
-import _ from 'lodash';
-import { observer, useObservable } from 'mobx-react-lite';
-import React, { useRef } from 'react';
-import { SyntaxKind, kindNames } from '../editor/utility/kinds';
-import { ICactivaTraitField } from '../editor/utility/tags';
-import kinds from './tags';
+import { Alert, Menu, Pane, Popover, Text, Tooltip } from "evergreen-ui";
+import _ from "lodash";
+import { observer, useObservable } from "mobx-react-lite";
+import React, { useRef } from "react";
+import { ICactivaTraitField } from "../editor/utility/classes";
+import { kindNames } from "../editor/utility/kinds";
+import { SyntaxKind } from "../editor/utility/syntaxkinds";
+import kinds from "./tags";
 
 export interface ICactivaTraitFieldProps extends ICactivaTraitField {
   editor: any;
@@ -12,7 +13,7 @@ export interface ICactivaTraitFieldProps extends ICactivaTraitField {
   value?: any;
   resetValue: any;
   style?: any;
-  mode?: string | 'select' & undefined;
+  mode?: string | "select" & undefined;
   convertToCode: any;
   defaultKind: number;
   update: (value: any, updatedKind?: SyntaxKind) => void;
@@ -33,24 +34,24 @@ export default observer((trait: ICactivaTraitFieldProps) => {
     return (
       <Alert
         ref={fieldRef}
-        intent='warning'
+        intent="warning"
         title={`Trait field error: ${kindName} not found!`}
       />
     );
   }
   return (
     <Popover
-      position='right'
+      position="right"
       content={({ close }) => (
         <Pane>
-          <div className={'cactiva-trait-cmenu-heading'}>
+          <div className={"cactiva-trait-cmenu-heading"}>
             <Text size={300}>{trait.name}</Text>
             <Text size={300}>{kindName}</Text>
           </div>
           <Menu>
             {trait.kind !== SyntaxKind.CactivaCode ? (
               <Menu.Item
-                icon='code'
+                icon="code"
                 onSelect={() => {
                   meta.options.open = true;
                   trait.convertToCode();
@@ -61,7 +62,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               </Menu.Item>
             ) : (
               <Menu.Item
-                icon='code'
+                icon="code"
                 onSelect={() => {
                   meta.options.open = true;
                   close();
@@ -71,7 +72,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               </Menu.Item>
             )}
             <Menu.Item
-              icon='undo'
+              icon="undo"
               onSelect={() => {
                 trait.resetValue();
                 close();
@@ -90,15 +91,28 @@ export default observer((trait: ICactivaTraitFieldProps) => {
 
         return (
           <div
-            className='cactiva-trait-field'
+            className="cactiva-trait-field"
             onContextMenu={e => {
               e.preventDefault();
               toggle();
             }}
             style={rootStyle}
           >
-            <div className='label' style={labelStyle}>
-              <Text>{trait.name}</Text>
+            <div className="label" style={labelStyle}>
+              <Tooltip
+                showDelay={300}
+                content={
+                  <Text
+                    color={"white"}
+                    fontSize={"10px"}
+                    textTransform={"capitalize"}
+                  >
+                    {trait.name}
+                  </Text>
+                }
+              >
+                <Text>{trait.name}</Text>
+              </Tooltip>
             </div>
             <div ref={fieldRef} />
             <KindField
@@ -106,10 +120,10 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               options={meta.options}
               style={{
                 flex: 1,
-                height: '20px',
-                alignItems: 'stretch',
+                height: "20px",
+                alignItems: "stretch",
                 ...fieldStyle,
-                position: 'relative'
+                position: "relative"
               }}
             />
           </div>

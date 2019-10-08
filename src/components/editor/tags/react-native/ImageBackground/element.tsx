@@ -3,7 +3,7 @@ import React from 'react';
 import CactivaDraggable from '../../../CactivaDraggable';
 import CactivaDropChild from '../../../CactivaDroppable';
 import CactivaSelectable from '../../../CactivaSelectable';
-import { parseProps } from '../../../utility/parser';
+import { parseProps } from '../../../utility/parser/parser';
 import { renderChildren } from '../../../utility/renderchild';
 import { baseUrl } from '@src/store/editor';
 import CactivaDropMarker from '@src/components/editor/CactivaDropMarker';

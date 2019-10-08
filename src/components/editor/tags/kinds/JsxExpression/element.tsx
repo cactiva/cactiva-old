@@ -1,17 +1,20 @@
-import api from '@src/libs/api';
-import { Popover, Text } from 'evergreen-ui';
-import { observer, useObservable } from 'mobx-react-lite';
-import React, { useRef } from 'react';
-import MonacoEditor from 'react-monaco-editor';
-import useAsyncEffect from 'use-async-effect';
-import CactivaDraggable from '../../../CactivaDraggable';
-import CactivaDroppable from '../../../CactivaDroppable';
-import CactivaSelectable from '../../../CactivaSelectable';
+import { generateExpression } from "@src/components/editor/utility/parser/generateExpression";
+import { generateSource } from "@src/components/editor/utility/parser/generateSource";
+import { renderChildren } from "@src/components/editor/utility/renderchild";
+import { Popover, Text } from "evergreen-ui";
+import { toJS } from "mobx";
+import { observer, useObservable } from "mobx-react-lite";
+import React, { useRef } from "react";
+import MonacoEditor from "react-monaco-editor";
+import CactivaDraggable from "../../../CactivaDraggable";
+import CactivaDroppable from "../../../CactivaDroppable";
+import CactivaSelectable from "../../../CactivaSelectable";
+
 export default observer((props: any) => {
   const cactiva = props._cactiva;
   const meta = useObservable({
-    content: '',
     loading: false,
+    source: "",
     drag: {
       x: 0,
       y: 0,
@@ -19,21 +22,17 @@ export default observer((props: any) => {
       dy: 0,
       sx: 0,
       sy: 0,
-      drag: false
+      dragging: false
     }
   });
   const ref = useRef(null);
-  useAsyncEffect(async () => {
-    meta.loading = true;
-    const res = await api.post('morph/ast2exp', cactiva.source);
-    meta.content = res;
-    meta.loading = false;
-  }, []);
+  const expressions = generateExpression(cactiva.source);
+
   return (
     <>
       <div
         style={{
-          position: 'fixed',
+          position: "fixed",
           left: meta.drag.sx,
           top: meta.drag.sy,
           transform: `translate(${meta.drag.dx}px, ${meta.drag.dy}px)`,
@@ -45,40 +44,42 @@ export default observer((props: any) => {
       <CactivaDroppable cactiva={cactiva} canDropOver={false}>
         <CactivaDraggable cactiva={cactiva}>
           <Popover
-            onClose={() => {}}
+            onClose={() => {
+              console.log(meta.source);
+            }}
             content={
               <Text
                 style={{
-                  width: '650px',
-                  height: '450px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '11px',
-                  backgroundColor: '#202123',
-                  color: 'white',
-                  position: 'relative',
-                  userSelect: 'none'
+                  width: "650px",
+                  height: "450px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "11px",
+                  backgroundColor: "#202123",
+                  color: "white",
+                  position: "relative",
+                  userSelect: "none"
                 }}
               >
                 {meta.loading ? (
-                  'Loading'
+                  "Loading"
                 ) : (
                   <>
                     <div
                       style={{
-                        padding: '10px',
-                        display: 'flex',
-                        alignSelf: 'stretch',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between'
+                        padding: "10px",
+                        display: "flex",
+                        alignSelf: "stretch",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between"
                       }}
                       onMouseDownCapture={e => {
-                        if (meta.drag.x === 0) meta.drag.x = e.screenX;
-                        if (meta.drag.y === 0) meta.drag.y = e.screenY;
-                        meta.drag.drag = true;
+                        meta.drag.x = e.screenX;
+                        meta.drag.y = e.screenY;
+                        meta.drag.dragging = true;
                         e.stopPropagation();
                         e.preventDefault();
                       }}
@@ -87,17 +88,17 @@ export default observer((props: any) => {
                       <span style={{ opacity: 0.5 }}></span> */}
                     </div>
                     <MonacoEditor
-                      theme='vs-dark'
-                      value={meta.content}
+                      theme="vs-dark"
+                      value={meta.source}
                       onChange={value => {
-                        meta.content = value;
+                        meta.source = value;
                       }}
                       editorWillMount={monaco => {
                         cactiva.editor.setupMonaco(monaco);
                       }}
-                      width='100%'
-                      height='100%'
-                      language='typescript'
+                      width="100%"
+                      height="100%"
+                      language="typescript"
                     />
                   </>
                 )}
@@ -110,22 +111,61 @@ export default observer((props: any) => {
                 <CactivaSelectable
                   cactiva={cactiva}
                   onDoubleClick={(e: any) => {
+                    meta.source = generateSource(cactiva.source);
                     if (meta.drag.sx === 0) meta.drag.sx = e.clientX;
                     if (meta.drag.sy === 0) meta.drag.sy = e.clientY;
                     toggle();
                   }}
                 >
-                  {meta.content}
+                  <Text
+                    style={{
+                      padding: 5,
+                      margin: 5,
+                      borderRadius: 5,
+                      border: "1px solid #ccc",
+                      fontSize: 10,
+                      color: "#000",
+                      backgroundColor: "rgba(255,255,255,1)"
+                    }}
+                  >
+                    {expressions.map((exp: any, key: number) => {
+                      if (typeof exp === "string") {
+                        return exp;
+                      }
+                      return (
+                        <div key={key} style={{ paddingLeft: 10 }}>
+                          {renderChildren(
+                            {
+                              kind: cactiva.source.kind,
+                              id: cactiva.source.id,
+                              child: {
+                                id: cactiva.source.id + '_' + key,
+                                value: exp
+                              }
+                            },
+                            cactiva.editor,
+                            cactiva.root,
+                            () => ({
+                              canDropAfter: false,
+                              onDropped: (item: any, type: string) => {
+                                console.log(toJS(exp));
+                              }
+                            })
+                          )}
+                        </div>
+                      );
+                    })}
+                  </Text>
                 </CactivaSelectable>
               );
             }}
           </Popover>
         </CactivaDraggable>
       </CactivaDroppable>
-      {meta.drag.drag && (
+      {meta.drag.dragging && (
         <div
           style={{
-            position: 'fixed',
+            position: "fixed",
             top: 0,
             left: 0,
             right: 0,
@@ -133,10 +173,16 @@ export default observer((props: any) => {
             zIndex: 101
           }}
           onMouseUpCapture={e => {
-            if (meta.drag.drag) meta.drag.drag = false;
+            if (meta.drag.dragging) {
+              meta.drag.dragging = false;
+              meta.drag.sx += meta.drag.dx;
+              meta.drag.dx = 0;
+              meta.drag.sy += meta.drag.dy;
+              meta.drag.dy = 0;
+            }
           }}
           onMouseMoveCapture={e => {
-            if (meta.drag.drag) {
+            if (meta.drag.dragging) {
               meta.drag.dx = e.screenX - meta.drag.x;
               meta.drag.dy = e.screenY - meta.drag.y;
             }

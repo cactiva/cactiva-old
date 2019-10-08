@@ -1,5 +1,7 @@
 import React from "react";
-import kinds, { kindNames, SyntaxKind } from "./kinds";
+import Component from "../tags/react-native/Component";
+import kinds, { kindNames } from "./kinds";
+import { SyntaxKind } from "./syntaxkinds";
 import { isTag } from "./tagmatcher";
 import tags from "./tags";
 
@@ -17,6 +19,9 @@ export const renderChildren = (
 ): any => {
   let id = 0;
   if (!source) return source;
+  if (source.child) {
+    source.children = [source.child.value];
+  }
   if (!source.children) return undefined;
   const isRoot = source.name === "--root--";
   const children = source.children;
@@ -27,15 +32,18 @@ export const renderChildren = (
 
   const result = children.map((refChild: any, key: number) => {
     if (typeof refChild === "object") {
-      if (!source.id && !isRoot) {
-        source.id = "0";
-      }
       let child = refChild;
-      const childId = id++;
+      if (!source.child) {
+        if (!source.id && !isRoot) {
+          source.id = "0";
+        }
+        const childId = id++;
+        child.id = isRoot ? `${id - 1}` : `${source.id}_${childId}`;
+      } else {
+        child.id = source.child.id;
+      }
+
       const istag = isTag(child);
-
-      child.id = isRoot ? `${id - 1}` : `${source.id}_${childId}`;
-
       const info =
         parentInfo &&
         parentInfo({
@@ -102,21 +110,23 @@ const renderTag = (
   parentInfo: any
 ): any => {
   const tag = tags[source.name] as any;
-  if (tag) {
-    const cactiva = {
-      tag,
-      root: root,
-      source: source,
-      editor,
-      parentInfo
-    };
-    editor.cactivaRefs[source.id] = cactiva;
-    const Component = tag.element;
-    if (editor.selectedId === source.id) {
-      editor.selected = cactiva;
-    }
-
-    return <Component {...source.props} key={key} _cactiva={cactiva} />;
+  const cactiva = {
+    tag,
+    root: root,
+    source: source,
+    editor,
+    parentInfo
+  };
+  editor.cactivaRefs[source.id] = cactiva;
+  if (editor.selectedId === source.id) {
+    editor.selected = cactiva;
   }
-  return null;
+
+  if (tag) {
+    const Component = tag.element;
+    return <Component {...source.props} key={key} _cactiva={cactiva} />;
+  } else {
+    cactiva.tag = tags["Component"];
+    return <Component.element {...source.props} key={key} _cactiva={cactiva} />;
+  }
 };

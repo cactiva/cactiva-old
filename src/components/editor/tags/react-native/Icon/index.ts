@@ -1,5 +1,5 @@
-import { CactivaTag } from '@src/components/editor/utility/tags';
-import { SyntaxKind } from '@src/components/editor/utility/kinds';
+import { SyntaxKind } from '@src/components/editor/utility/syntaxkinds';
+import { CactivaTag } from "@src/components/editor/utility/classes";
 
 export default class extends CactivaTag {
   static tagName = 'Icon';

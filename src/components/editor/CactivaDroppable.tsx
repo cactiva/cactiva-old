@@ -28,6 +28,8 @@ export default observer(
     const afterDirection = _.get(parentInfo, "afterDirection", "column");
     const isLastChild = _.get(parentInfo, "isLastChild", false);
     const { id } = source;
+    const onDroppedEvent =
+      parentInfo && parentInfo.onDropped ? parentInfo.onDropped : onDropped;
     const dropAfter = () => {
       let el = null;
       const child = findElementById(root, id);
@@ -66,10 +68,11 @@ export default observer(
       (item: any) => {
         if (afterOver && meta.canDropAfter) {
           dropAfter();
-          if (onDropped) {
-            onDropped(afterItem, "after");
+          if (onDroppedEvent) {
+            onDroppedEvent(afterItem, "after");
           }
         }
+        meta.canDropAfter = false;
       }
     );
     const [{ childItem, childOver }, childDropRef] = useCactivaDrop(
@@ -79,15 +82,15 @@ export default observer(
         if (canDropAfter && !canDropOver) {
           if (childOver && meta.canDropAfter) {
             dropAfter();
-            if (onDropped) {
-              onDropped(childItem, "child");
+            if (onDroppedEvent) {
+              onDroppedEvent(childItem, "child");
             }
           }
         } else {
           if (childOver && meta.canDropChild) {
             dropChild();
-            if (onDropped) {
-              onDropped(childItem, "child");
+            if (onDroppedEvent) {
+              onDroppedEvent(childItem, "child");
             }
           }
         }
@@ -115,6 +118,7 @@ export default observer(
         meta.canDropAfter = childOver && canDrop(childItem.id, id);
       }
 
+
       const parentCanDropAfter = _.get(cactiva, "parentInfo.canDropAfter");
       if (parentCanDropAfter !== undefined && parentCanDropAfter === false) {
         meta.canDropAfter = false;
@@ -128,6 +132,9 @@ export default observer(
 
       if (onDropOver) {
         onDropOver(meta.canDropChild);
+      }
+      if (!afterOver && !childOver) {
+        meta.canDropAfter = false;
       }
     }, [childOver, afterOver, canDropAfter, canDropOver]);
 

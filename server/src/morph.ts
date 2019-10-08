@@ -1,19 +1,18 @@
-import * as path from 'path';
-import { Project as TProject } from 'ts-morph';
-import config, { execPath } from './config';
-import { defaultExport } from './libs/morph/defaultExport';
-import { generateJsx as generateSource } from './libs/morph/generateJsx';
-import { parseJsx } from './libs/morph/parseJsx';
+import * as path from "path";
+import { Project as TProject } from "ts-morph";
+import config, { execPath } from "./config";
+import { defaultExport } from "./libs/morph/defaultExport";
+import { parseJsx } from "./libs/morph/parseJsx";
 
 export class Morph {
   private root: TProject = new TProject();
 
   getAppPath() {
-    return `${execPath}/app/${config.get('app')}`;
+    return `${execPath}/app/${config.get("app")}`;
   }
 
   parseText(source: string) {
-    const sf = this.root.createSourceFile('__tempfile__.ts', source);
+    const sf = this.root.createSourceFile("__tempfile__.ts", source);
     try {
       return parseJsx(sf.getFirstChild());
     } finally {
@@ -21,10 +20,9 @@ export class Morph {
     }
   }
 
-  generateSource(node: any) {
-    const source = generateSource(node);
-    const sf = this.root.createSourceFile('__tempfile__.ts', source);
-    let result = '';
+  generateSource(source: string) {
+    const sf = this.root.createSourceFile("__tempfile__.ts", source);
+    let result = "";
     try {
       sf.formatText();
       result = sf.getText();
@@ -52,7 +50,7 @@ export class Morph {
 
   constructor() {
     if (Morph.instance) {
-      throw new Error('Use Singleton.getInstance() instead of new');
+      throw new Error("Use Singleton.getInstance() instead of new");
     }
   }
 
@@ -64,7 +62,7 @@ export class Morph {
     process.chdir(Morph.instance.getAppPath());
     console.log(`Project loaded: ${Morph.instance.getAppPath()}`);
     Morph.instance.root = new TProject({
-      tsConfigFilePath: path.join('.', 'tsconfig.json')
+      tsConfigFilePath: path.join(".", "tsconfig.json")
     });
     return Morph.instance;
   }

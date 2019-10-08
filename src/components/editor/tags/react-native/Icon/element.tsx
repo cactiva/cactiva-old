@@ -4,7 +4,7 @@ import React from 'react';
 import CactivaDraggable from '../../../CactivaDraggable';
 import CactivaDropChild from '../../../CactivaDroppable';
 import CactivaSelectable from '../../../CactivaSelectable';
-import { parseProps } from '../../../utility/parser';
+import { parseProps } from '../../../utility/parser/parser';
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;

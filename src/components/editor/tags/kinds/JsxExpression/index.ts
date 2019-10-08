@@ -1,6 +1,6 @@
-import { CactivaKind } from '@src/components/editor/utility/kinds';
+import { CactivaKind } from "@src/components/editor/utility/classes";
 
 export default class extends CactivaKind {
-  static kindName = 'JsxExpression';
-  static element = require('./element').default;
+  static kindName = "JsxExpression";
+  static element = require("./element").default;
 }

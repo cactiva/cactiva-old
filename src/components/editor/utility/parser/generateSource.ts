@@ -1,8 +1,8 @@
-import { SyntaxKind } from 'ts-morph';
-import * as _ from 'lodash';
+import * as _ from "lodash";
+import { SyntaxKind } from "../syntaxkinds";
 
-export const generateJsx = (node: any): string => {
-  if (!node) return '';
+export const generateSource = (node: any): string => {
+  if (!node) return "";
 
   const kind = node.kind;
 
@@ -16,44 +16,44 @@ export const generateJsx = (node: any): string => {
     case SyntaxKind.ObjectLiteralExpression:
       return `{
   ${_.map(node.value, (e, key) => {
-  return `${key}: ${generateJsx(e)}`;
+    return `${key}: ${generateSource(e)}`;
   }).join(`,\n\t`)}
 }`;
 
     case SyntaxKind.AsExpression:
-      return `${generateJsx(node.value)} as any`;
+      return `${generateSource(node.value)} as any`;
     case SyntaxKind.JsxExpression:
-      return `{${generateJsx(node.value)}}`;
+      return `{${generateSource(node.value)}}`;
     case SyntaxKind.ElementAccessExpression:
-      return `${generateJsx(node.exp)}[${generateJsx(node.argExp)}]`;
+      return `${generateSource(node.exp)}[${generateSource(node.argExp)}]`;
     case SyntaxKind.ParenthesizedExpression:
-      return `(${generateJsx(node.value)})`;
+      return `(${generateSource(node.value)})`;
     case SyntaxKind.ReturnStatement:
-      return `return ${generateJsx(node.value)}`;
+      return `return ${generateSource(node.value)}`;
     case SyntaxKind.ArrowFunction:
       return (() => {
-        return `(${node.params.join(',')}) => { 
-${node.body.map((e: any) => generateJsx(e)).join('\n')} 
+        return `(${node.params.join(",")}) => { 
+${node.body.map((e: any) => generateSource(e)).join("\n")} 
 }`;
       })();
     case SyntaxKind.JsxElement:
       return (() => {
         return `<${node.name} ${_.map(node.props, (e, name) => {
-          return `${name}={${generateJsx(e)}}`;
-        }).join(' ')}>${node.children
+          return `${name}={${generateSource(e)}}`;
+        }).join(" ")}>${node.children
           .map((e: any) => {
-            return generateJsx(e);
+            return generateSource(e);
           })
-          .join(' ')}</${node.name}>`;
+          .join(" ")}</${node.name}>`;
       })();
     case SyntaxKind.JsxSelfClosingElement:
       return (() => {
         return `<${node.name} ${_.map(node.props, (e, name) => {
-          return `${name}={${generateJsx(e)}}`;
-        }).join(' ')}/>`;
+          return `${name}={${generateSource(e)}}`;
+        }).join(" ")}/>`;
       })();
   }
 
-  if (typeof node === 'object' && node.value) return node.value;
+  if (typeof node === "object" && node.value) return node.value;
   return node;
 };

@@ -1,5 +1,5 @@
-import { CactivaTag } from '@src/components/editor/utility/tags';
-import { SyntaxKind } from '@src/components/editor/utility/kinds';
+import { SyntaxKind } from '@src/components/editor/utility/syntaxkinds';
+import { CactivaTag } from "@src/components/editor/utility/classes";
 const styles = {
   root: {
     flex: '1 1 100%'

@@ -1,36 +1,36 @@
-declare module 'evergreen-ui' {
-  import * as React from 'react';
+declare module "evergreen-ui" {
+  import * as React from "react";
 
   type PositionTypes =
-    | 'top'
-    | 'top-left'
-    | 'top-right'
-    | 'bottom'
-    | 'bottom-left'
-    | 'bottom-right'
-    | 'left'
-    | 'right';
-  type IntentTypes = 'none' | 'success' | 'warning' | 'danger';
+    | "top"
+    | "top-left"
+    | "top-right"
+    | "bottom"
+    | "bottom-left"
+    | "bottom-right"
+    | "left"
+    | "right";
+  type IntentTypes = "none" | "success" | "warning" | "danger";
   type IconNameTypes =
-    | ''
-    | 'loading'
-    | 'error'
-    | 'tick-circle'
-    | 'caret-down'
-    | 'cross'
-    | 'menu'
-    | 'list'
-    | 'more'
-    | 'properties'
-    | 'diagram-tree'
-    | 'database'
-    | 'join-table'
-    | 'function'
-    | 'person'
-    | 'import'
-    | 'predictive-analysis'
-    | 'refresh'
-    | 'export'
+    | ""
+    | "loading"
+    | "error"
+    | "tick-circle"
+    | "caret-down"
+    | "cross"
+    | "menu"
+    | "list"
+    | "more"
+    | "properties"
+    | "diagram-tree"
+    | "database"
+    | "join-table"
+    | "function"
+    | "person"
+    | "import"
+    | "predictive-analysis"
+    | "refresh"
+    | "export"
     | string;
 
   interface BoxBackground {
@@ -145,29 +145,29 @@ declare module 'evergreen-ui' {
     clear?: string;
     clearfix?: boolean;
     display?:
-      | 'block'
-      | 'contents'
-      | 'flex'
-      | 'grid'
-      | 'inherit'
-      | 'initial'
-      | 'inline'
-      | 'inline-block'
-      | 'inline-flex'
-      | 'inline-grid'
-      | 'inline-table'
-      | 'list-item'
-      | 'none'
-      | 'table'
-      | 'table-caption'
-      | 'table-cell'
-      | 'table-columnr'
-      | 'table-column-group'
-      | 'table-header-group'
-      | 'table-footer-group'
-      | 'table-row'
-      | 'table-row-group'
-      | '';
+      | "block"
+      | "contents"
+      | "flex"
+      | "grid"
+      | "inherit"
+      | "initial"
+      | "inline"
+      | "inline-block"
+      | "inline-flex"
+      | "inline-grid"
+      | "inline-table"
+      | "list-item"
+      | "none"
+      | "table"
+      | "table-caption"
+      | "table-cell"
+      | "table-columnr"
+      | "table-column-group"
+      | "table-header-group"
+      | "table-footer-group"
+      | "table-row"
+      | "table-row-group"
+      | "";
     float?: string;
     zIndex?: number;
   }
@@ -185,47 +185,47 @@ declare module 'evergreen-ui' {
 
   interface BoxOverflow {
     overflow?:
-      | 'auto'
-      | 'hidden'
-      | 'inherit'
-      | 'initial'
-      | 'revert'
-      | 'scroll'
-      | 'unset'
-      | 'visible';
+      | "auto"
+      | "hidden"
+      | "inherit"
+      | "initial"
+      | "revert"
+      | "scroll"
+      | "unset"
+      | "visible";
     overflowX?:
-      | 'auto'
-      | 'hidden'
-      | 'inherit'
-      | 'initial'
-      | 'revert'
-      | 'scroll'
-      | 'unset'
-      | 'visible';
+      | "auto"
+      | "hidden"
+      | "inherit"
+      | "initial"
+      | "revert"
+      | "scroll"
+      | "unset"
+      | "visible";
     overflowY?:
-      | 'auto'
-      | 'hidden'
-      | 'inherit'
-      | 'initial'
-      | 'revert'
-      | 'scroll'
-      | 'unset'
-      | 'visible';
+      | "auto"
+      | "hidden"
+      | "inherit"
+      | "initial"
+      | "revert"
+      | "scroll"
+      | "unset"
+      | "visible";
   }
 
   interface BoxPosition {
     bottom?: string | number;
     left?: string | number;
     position?:
-      | 'absolute'
-      | 'fixed'
-      | 'inherit'
-      | 'initial'
-      | 'relative'
-      | 'revert'
-      | 'static'
-      | 'sticky'
-      | 'unset';
+      | "absolute"
+      | "fixed"
+      | "inherit"
+      | "initial"
+      | "relative"
+      | "revert"
+      | "static"
+      | "sticky"
+      | "unset";
     right?: string | number;
     top?: string | number;
   }
@@ -258,16 +258,16 @@ declare module 'evergreen-ui' {
     letterSpacing?: string | number;
     lineHeight?: string | number;
     textAlign?:
-      | 'center'
-      | 'end'
-      | 'inherit'
-      | 'justify'
-      | 'left'
-      | 'match-parent'
-      | 'revert'
-      | 'right'
-      | 'start'
-      | 'unset';
+      | "center"
+      | "end"
+      | "inherit"
+      | "justify"
+      | "left"
+      | "match-parent"
+      | "revert"
+      | "right"
+      | "start"
+      | "unset";
     textDecoration?: string;
     textOverflow?: string;
     textShadow?: string;
@@ -328,7 +328,7 @@ declare module 'evergreen-ui' {
     hasIcon?: boolean;
     isRemoveable?: boolean;
     onRemove?: () => void;
-    appearance?: 'default' | 'card';
+    appearance?: "default" | "card";
     children?: React.ReactNode;
   }
 
@@ -342,7 +342,7 @@ declare module 'evergreen-ui' {
     children: (props: {
       toggle: () => void;
       getRef: (ref: React.RefObject) => void;
-      isShown: NonNullable<PopoverProps['isShown']>;
+      isShown: NonNullable<PopoverProps["isShown"]>;
       getInputProps: () => {
         onKeyDown: (e: React.ChangeEvent<any>) => void;
         onChange: (e: React.ChangeEvent<any>) => void;
@@ -392,7 +392,7 @@ declare module 'evergreen-ui' {
     onChange?: (e: React.ChangeEvent<string>) => void;
     disabled?: boolean;
     isInvalid?: boolean;
-    appearance?: 'default';
+    appearance?: "default";
   }
 
   export class Checkbox extends React.PureComponent<CheckboxProps> {}
@@ -403,9 +403,9 @@ declare module 'evergreen-ui' {
       BoxPosition,
       BoxSpacing,
       TextProps {
-    type?: 'submit' | 'button';
+    type?: "submit" | "button";
     intent?: IntentTypes;
-    appearance?: 'default' | 'minimal' | 'primary';
+    appearance?: "default" | "minimal" | "primary";
     isLoading?: boolean;
     isActive?: boolean;
     iconBefore?: IconNameTypes;
@@ -469,7 +469,7 @@ declare module 'evergreen-ui' {
 
   export interface IconButtonProps extends ButtonProps {
     icon: IconNameTypes;
-    iconAim?: 'down' | 'up';
+    iconAim?: "down" | "up";
     iconSize?: number;
   }
 
@@ -492,7 +492,7 @@ declare module 'evergreen-ui' {
     icon?: React.JSX;
     children?: React.JSX;
     secondaryText?: React.JSX;
-    appearance?: 'default';
+    appearance?: "default";
     intent?: IntentTypes;
   }
 
@@ -505,16 +505,16 @@ declare module 'evergreen-ui' {
 
   export interface PaneProps extends UiBoxPropsType {
     background?:
-      | 'tint1'
-      | 'tint2'
-      | 'overlay'
-      | 'yellowTint'
-      | 'greenTint'
-      | 'orangeTint'
-      | 'redTint'
-      | 'blueTint'
-      | 'purpleTint'
-      | 'tealTint';
+      | "tint1"
+      | "tint2"
+      | "overlay"
+      | "yellowTint"
+      | "greenTint"
+      | "orangeTint"
+      | "redTint"
+      | "blueTint"
+      | "purpleTint"
+      | "tealTint";
     elevation?: 0 | 1 | 2 | 3 | 4;
     hoverElevation?: 0 | 1 | 2 | 3 | 4;
     activeElevation?: 0 | 1 | 2 | 3 | 4;
@@ -530,7 +530,7 @@ declare module 'evergreen-ui' {
   export interface PopoverProps {
     position?: PositionTypes;
     isShown?: boolean;
-    trigger?: 'click' | 'hover';
+    trigger?: "click" | "hover";
     content:
       | React.ReactNode
       | ((object: { close: () => void }) => React.ReactNode);
@@ -538,7 +538,7 @@ declare module 'evergreen-ui' {
       | ((props: {
           toggle: () => void;
           getRef: (ref: React.RefObject) => void;
-          isShown: NonNullable<PopoverProps['isShown']>;
+          isShown: NonNullable<PopoverProps["isShown"]>;
         }) => React.ReactNode)
       | React.ReactNode;
     display?: string;
@@ -558,7 +558,7 @@ declare module 'evergreen-ui' {
 
   export interface ParagraphProps extends UiBoxPropsType {
     size?: 300 | 400 | 500;
-    fontFamily?: 'ui' | 'display' | 'mono';
+    fontFamily?: "ui" | "display" | "mono";
   }
 
   export class Paragraph extends React.PureComponent<ParagraphProps> {}
@@ -570,17 +570,17 @@ declare module 'evergreen-ui' {
     children: (params: {
       top: number;
       left: number;
-      zIndex: NonNullable<StackProps['value']>;
+      zIndex: NonNullable<StackProps["value"]>;
       css;
       style: {
         transformOrigin: string;
         left: number;
         top: number;
-        zIndex: NonNullable<StackProps['value']>;
+        zIndex: NonNullable<StackProps["value"]>;
       };
       getRef: (ref: React.RefObject) => void;
-      animationDuration: PositionerProps['animationDuration'];
-      state: 'exited' | 'entering' | 'entered' | 'exiting';
+      animationDuration: PositionerProps["animationDuration"];
+      state: "exited" | "entering" | "entered" | "exiting";
     }) => React.ReactNode;
     innerRef?: (ref: React.RefObject) => void;
     bodyOffset?: number;
@@ -612,7 +612,7 @@ declare module 'evergreen-ui' {
     size?: 12 | 16;
     isRequired?: boolean;
     isInvalid?: boolean;
-    appearance?: 'default';
+    appearance?: "default";
   }
 
   export class Radio extends React.PureComponent<RadioProps> {}
@@ -646,11 +646,11 @@ declare module 'evergreen-ui' {
       BoxDimensions {
     options: Array<{
       label: string;
-      value: NonNullable<SegmentedControlProps['value']>;
+      value: NonNullable<SegmentedControlProps["value"]>;
     }>;
     value?: number | string | boolean;
     defaultValue?: number | string | boolean;
-    onChange: (value: NonNullable<SegmentedControlProps['value']>) => void;
+    onChange: (value: NonNullable<SegmentedControlProps["value"]>) => void;
     name?: string;
     height?: number;
   }
@@ -673,8 +673,8 @@ declare module 'evergreen-ui' {
     filterPlaceholder?: string;
     filterIcon?: IconNameTypes;
     onFilterChange?: (searchValue: string) => void;
-    position?: Omit<PositionTypes, 'left' | 'right'>;
-    detailView?: PopoverProps['content'];
+    position?: Omit<PositionTypes, "left" | "right">;
+    detailView?: PopoverProps["content"];
     titleView?: React.ReactNode | (() => React.ReactNode);
     emptyView?: React.ReactNode | (() => React.ReactNode);
     closeOnSelect?: boolean;
@@ -692,7 +692,7 @@ declare module 'evergreen-ui' {
     shouldCloseOnEscapePress?: boolean;
     width?: string | number;
     containerProps?: PaneProps;
-    position?: PICK<PositionTypes, 'top' | 'bottom' | 'left' | 'right'>;
+    position?: PICK<PositionTypes, "top" | "bottom" | "left" | "right">;
     preventBodyScrolling?: boolean;
   }
 
@@ -713,7 +713,7 @@ declare module 'evergreen-ui' {
     onSelect?: () => void;
     isSelected?: boolean;
     disabled?: boolean;
-    appearance?: 'default';
+    appearance?: "default";
   }
 
   export class Tab extends React.PureComponent<TabProps> {}
@@ -728,7 +728,7 @@ declare module 'evergreen-ui' {
 
   export interface TextProps extends UiBoxPropsType {
     size?: 300 | 400 | 500 | 600;
-    fontFamily?: 'ui' | 'display' | 'mono';
+    fontFamily?: "ui" | "display" | "mono";
   }
 
   export class Text extends React.PureComponent<TextProps> {}
@@ -736,14 +736,14 @@ declare module 'evergreen-ui' {
   export interface TextInputProps extends TextProps {
     id?: string;
     name?: string;
-    type?: 'text' | 'number' | 'hidden';
+    type?: "text" | "number" | "hidden";
     required?: boolean;
     disabled?: boolean;
     readOnly?: boolean;
     isInvalid?: boolean;
     spellCheck?: boolean;
     placeholder?: string;
-    appearance?: 'default' | 'primary';
+    appearance?: "default" | "primary";
     width?: string | number;
     className?: string;
     value?: string | number;
@@ -768,10 +768,11 @@ declare module 'evergreen-ui' {
   > {}
 
   export interface TooltipProps extends TextProps {
-    appearance?: 'default' | 'card';
+    appearance?: "default" | "card";
     position?: PositionTypes;
     content: React.ReactNode;
     hideDelay?: number;
+    showDelay?: number;
     isShown?: boolean;
     children: React.ReactNode;
   }

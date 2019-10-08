@@ -1,12 +1,57 @@
-import _ from 'lodash';
-import { toJS, observable } from 'mobx';
-import { getDiff } from 'recursive-diff';
-import { isTag } from '../tagmatcher';
-import tags from '../tags';
-import kinds from '../kinds';
+import _ from "lodash";
+import { toJS, observable } from "mobx";
+import { getDiff } from "recursive-diff";
+import { isTag } from "../tagmatcher";
+import tags from "../tags";
+import { SyntaxKind } from "../syntaxkinds";
+import kinds from "../kinds";
 
 export const getIds = (id: string | string[]) =>
-  Array.isArray(id) ? _.clone(id) : id.split('_');
+  Array.isArray(id) ? _.clone(id) : id.split("_");
+
+const recurseElementById = (id: string, root: any): any => {
+  if (root.id === id) {
+    return root;
+  }
+  if (root.value) {
+    return recurseElementById(id, root.value);
+  }
+
+  if (!root.value && !root.children) {
+    const result = Object.keys(root)
+      .map((c: any) => {
+        if (typeof root[c] === "object") {
+          const res = recurseElementById(id, root[c]);
+          if (res) return res;
+        }
+      })
+      .filter((e: any) => !!e) as any;
+
+    if (result.length > 0) return result[0];
+  }
+
+  if (Array.isArray(root.props)) {
+    const result = root.props
+      .map((c: any) => {
+        const res = recurseElementById(id, c);
+        if (res) return res;
+      })
+      .filter((e: any) => !!e);
+
+    if (result.length > 0) return result[0];
+  }
+
+  if (Array.isArray(root.children)) {
+    const result = root.children
+      .map((c: any) => {
+        const res = recurseElementById(id, c);
+        if (res) return res;
+      })
+      .filter((e: any) => !!e);
+
+    if (result.length > 0) return result[0];
+  }
+};
 
 export const findElementById = (root: any, id: string | string[]): any => {
   const ids = getIds(id);
@@ -17,7 +62,9 @@ export const findElementById = (root: any, id: string | string[]): any => {
   if (ids.length === 0 && rid == root.id) return root;
   let el = root;
 
+  let currentIds = ["0"];
   for (let i in ids) {
+    currentIds.push(ids[i]);
     if (isTag(el)) {
       const cid = parseInt(ids[i]);
       if (el && el.children && el.children.length > cid && el.children[cid]) {
@@ -25,7 +72,11 @@ export const findElementById = (root: any, id: string | string[]): any => {
       }
     } else {
       if (!!el && !!el.value) {
-        el = el.value;
+        if (el.kind === SyntaxKind.JsxExpression) {
+          el = recurseElementById(currentIds.join("_"), el);
+        } else {
+          el = el.value;
+        }
       }
     }
   }
@@ -47,7 +98,7 @@ export const findParentElementById = (
 export const removeElementById = (root: any, id: string | string[]) => {
   const ids = getIds(id);
   const parent = findParentElementById(root, id);
-  const index = parseInt(ids[ids.length - 1] || '-1');
+  const index = parseInt(ids[ids.length - 1] || "-1");
   if (
     parent &&
     parent.children &&
@@ -67,9 +118,8 @@ export const insertAfterElementId = (
 ) => {
   const ids = getIds(id);
   const parent = findParentElementById(root, id);
-  const index = parseInt(ids[ids.length - 1] || '-1');
+  const index = parseInt(ids[ids.length - 1] || "-1");
   if (parent && parent.children && parent.children[index]) {
-    console.log(child, toJS(parent.children));
     parent.children.splice(index + 1, 0, child);
   }
 };
@@ -149,5 +199,5 @@ export function createNewElement(name: string) {
   if (!tag && !kind) return null;
 
   const type: any = tag ? tag : kind;
-  return observable(_.clone(type.structure));
+  return _.clone(type.structure);
 }

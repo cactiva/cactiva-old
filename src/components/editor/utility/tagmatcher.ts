@@ -1,6 +1,5 @@
-import { SyntaxKind } from './kinds';
 import _ from 'lodash';
-import { toJS } from 'mobx';
+import { SyntaxKind } from './syntaxkinds';
 export const isTag = (s: any, tagName?: string): boolean => {
   let tag: any = false;
 

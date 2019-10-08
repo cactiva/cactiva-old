@@ -4,7 +4,7 @@ import ErrorBoundary from 'react-error-boundary';
 import CactivaDraggable from '../../../CactivaDraggable';
 import CactivaDropChild from '../../../CactivaDroppable';
 import CactivaSelectable from '../../../CactivaSelectable';
-import { parseProps } from '../../../utility/parser';
+import { parseProps } from '../../../utility/parser/parser';
 import { baseUrl } from '@src/store/editor';
 
 export default observer((props: any) => {
