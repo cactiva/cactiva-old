@@ -8,6 +8,7 @@ import IconMaps from './components/IconMaps';
 import { parseValue } from '@src/components/editor/utility/parser/parser';
 import * as IconSource from 'react-web-vector-icons';
 import { toJS } from 'mobx';
+import _ from 'lodash';
 
 const Icons = IconMaps();
 export default observer((trait: ICactivaTraitFieldProps) => {
@@ -27,7 +28,12 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   }, [trait.value]);
 
   useEffect(() => {
-    icon.source = parseValue(trait.source.props.source);
+    if (_.get(trait, 'mode') === 'icon') {
+      icon.source = parseValue(trait.source.props.source);
+      icon.list = Icons[icon.source].filter((x: string) =>
+        x.toLowerCase().includes(icon.search)
+      );
+    }
   }, [trait]);
   return (
     <>
@@ -94,10 +100,15 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               </div>
               <input
                 className={`cactiva-trait-input input`}
+                placeholder="Search"
                 type="text"
                 value={icon.search}
                 onChange={e => {
-                  icon.search = e.target.value;
+                  let v = e.target.value.toLowerCase();
+                  icon.search = v;
+                  icon.list = Icons[icon.source].filter((x: string) =>
+                    x.toLowerCase().includes(v)
+                  );
                 }}
                 onFocus={e => {
                   e.target.select();
@@ -107,7 +118,13 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             <div className={`list`}>
               {icon.list.map((name: any, idx: number) => {
                 return (
-                  <div key={idx} className="icon">
+                  <div
+                    key={idx}
+                    className={`icon ${meta.value === name ? 'active' : ''}`}
+                    onClick={() => {
+                      trait.update(`"${name}"`);
+                    }}
+                  >
                     <Icon source={icon.source} name={name} size={18} />
                   </div>
                 );

@@ -18,9 +18,11 @@
     .toolbar {
       display: flex;
       flex-direction: row;
-
-      .input {
-        width: auto !important;
+      .icon-selected {
+        margin: 0 8px;
+        i {
+          color: #1070ca !important;
+        }
       }
     }
 
@@ -33,11 +35,30 @@
       overflow-y: auto;
       background: white;
       border: 1px solid #ececeb;
+      justify-content: space-around;
 
       .icon {
         cursor: pointer;
-        padding: 0 6px;
-        margin: 5px;
+        width: 20px;
+        align-items: center;
+        padding: 5px;
+        border-radius: 4px;
+        margin: 2px;
+        justify-content: space-between;
+
+        &:hover {
+          background: rgba(16, 112, 202, 0.09);
+          i {
+            color: #1070ca !important;
+          }
+        }
+      }
+
+      .active {
+        background: rgba(16, 112, 202, 0.09);
+        i {
+          color: #1070ca !important;
+        }
       }
     }
   }
