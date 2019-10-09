@@ -92,7 +92,7 @@ export default observer(({ source, editor }: any) => {
         <CactivaToolbar />
         <div className="cactiva-editor-wrapper">
           <Split
-            sizes={meta.jsx ? [50, 50] : [100]}
+            sizes={[50, 50]}
             gutterSize={5}
             gutterAlign="center"
             dragInterval={1}
@@ -128,7 +128,7 @@ export default observer(({ source, editor }: any) => {
         <CactivaBreadcrumb source={source} editor={editor} />
         <div
           className={`footer-icon ${meta.jsx ? "active" : ""}`}
-          onClick={() => {
+          onClick={() => { 
             meta.jsx = !meta.jsx;
           }}
         >
