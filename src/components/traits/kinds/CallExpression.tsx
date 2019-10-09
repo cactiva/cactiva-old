@@ -75,6 +75,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               trait.update(`${meta.value}`);
             }}
             isShown={meta.isShown}
+            onDismiss={(v: any) => (meta.isShown = v)}
           />
         </div>
       )}

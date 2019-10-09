@@ -157,9 +157,9 @@
         background: #fbfbfb;
         border: 1px solid #eaeaea;
         border-top: 0px;
-        font-family: "SF UI Text", -apple-system, BlinkMacSystemFont, "Segoe UI",
-          Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji",
-          "Segoe UI Emoji", "Segoe UI Symbol";
+        font-family: 'SF UI Text', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+          Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji',
+          'Segoe UI Emoji', 'Segoe UI Symbol';
       }
     }
 
@@ -184,7 +184,7 @@
     }
 
     &:before {
-      content: "";
+      content: '';
       position: absolute;
       right: -7px;
       top: 0;
@@ -195,7 +195,7 @@
     }
 
     &:after {
-      content: "";
+      content: '';
       position: absolute;
       right: -8px;
       top: 0;
@@ -260,5 +260,15 @@
         background: #e8eff6 !important;
       }
     }
+  }
+}
+
+.cactiva-editor-source {
+  height: 250px;
+  display: flex;
+  overflow: hidden;
+
+  .monaco-editor {
+    padding-top: 10px;
   }
 }

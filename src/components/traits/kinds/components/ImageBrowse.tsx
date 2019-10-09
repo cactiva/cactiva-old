@@ -50,7 +50,12 @@ export default observer(({ value, onChange, isShown, onDismiss }: any) => {
             <Text>Media</Text>
           </div>
           <div className="content">
-            <label className="image image-upload">
+            <label
+              className="image image-upload"
+              onClickCapture={e => {
+                e.stopPropagation();
+              }}
+            >
               <Icon icon="cloud-upload" size={35} color="white" />
               <Text>
                 <Icon icon="plus" size={13} color="white" /> Upload File
