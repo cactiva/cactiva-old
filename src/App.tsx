@@ -19,6 +19,7 @@ import Welcome from "./Welcome";
 import CactivaTree from "./components/ctree/CactivaTree";
 import CactivaHooks from "./components/hooks/CactivaHooks";
 import CactivaHead from "./components/head/CactivaHead";
+import { generateSource } from "./components/editor/utility/parser/generateSource";
 
 export default observer(() => {
   const current = editor.current;
@@ -31,7 +32,11 @@ export default observer(() => {
   useAsyncEffect(async () => {
     hotkeys("ctrl+s,command+s", (event, handler) => {
       event.preventDefault();
-      if (editor.current) editor.current.history.undo();
+      if (editor.current) {
+        editor.status = "saving";
+        const sourceText = generateSource(editor.current.source);
+        console.log(sourceText);
+      }
     });
     hotkeys("ctrl+z,command+z", (event, handler) => {
       event.preventDefault();

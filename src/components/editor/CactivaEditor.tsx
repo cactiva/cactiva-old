@@ -110,7 +110,9 @@ export default observer(({ source, editor }: any) => {
               {!editor.selectedId ? (
                 <div className="empty">
                   <Icon icon="select" color="white" size={30} />
-                  <Text  color="white" marginTop={10}>Please select a component</Text>
+                  <Text color="white" marginTop={10} size={300}>
+                    Please select a component
+                  </Text>
                 </div>
               ) : (
                 meta.jsx && (
