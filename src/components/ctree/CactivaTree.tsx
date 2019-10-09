@@ -12,9 +12,8 @@ import { generateSource } from "../editor/utility/parser/generateSource";
 import MonacoEditor from "react-monaco-editor";
 
 export default observer(({ editor }: any) => {
-  const meta = useObservable({ list: [], mode: "tree" });
+  const meta = useObservable({ list: [] });
   const selected = editor.path;
-  const current = editor.current;
   useAsyncEffect(async () => {
     const res = await api.get("ctree/list");
     meta.list = res.children;
@@ -36,85 +35,15 @@ export default observer(({ editor }: any) => {
           height={25}
           spellCheck={false}
         />
-        <div
-          className={`search-opt`}
-          onClick={() => {
-            meta.mode = meta.mode === "tree" ? "selected" : "tree";
-          }}
-        >
-          <Icon
-            icon={meta.mode === "tree" ? "citation" : "git-merge"}
-            size={12}
-            color={"#aaa"}
-          />
+        <div className={`search-opt`} onClick={() => {}}>
+          <Icon icon={"plus"} size={11} color={"#aaa"} />
         </div>
       </div>
       <div className="list">
-        {meta.mode === "tree" ? (
-          <>
-            {renderTree(editor, meta.list, selected, 0)}
-            <div style={{ height: 100 }} />
-          </>
-        ) : (
-          current &&
-          current.source &&
-          current.selected && (
-            <div
-              style={{
-                overflow: "auto",
-                position: "absolute",
-                left: 0,
-                right: 0,
-                bottom: 0,
-                top: 26
-              }}
-            >
-              <MonacoEditor
-                theme="vs-light"
-                value={generateSource(current.selected.source)}
-                // value={JSON.stringify(current.selected.source, null, 2)}
-                editorWillMount={monaco => {
-                  editor.current.setupMonaco(monaco);
-                }}
-                options={{
-                  lineNumbers: "off",
-                  wordWrap: "wordWrapColumn",
-                  wrappingIndent: "indent",
-                  glyphMargin: false,
-                  folding: false,
-                  lineDecorationsWidth: 0,
-                  lineNumbersMinChars: 0,
-                  minimap: {
-                    enabled: false
-                  },
-                  fontSize: 8,
-                  scrollbar: {
-                    // Subtle shadows to the left & top. Defaults to true.
-                    useShadows: false,
-                    // Render vertical arrows. Defaults to false.
-                    verticalHasArrows: false,
-                    // Render horizontal arrows. Defaults to false.
-                    horizontalHasArrows: false,
-                    // Render vertical scrollbar.
-                    // Accepted values: 'auto', 'visible', 'hidden'.
-                    // Defaults to 'auto'
-                    vertical: "auto",
-                    // Render horizontal scrollbar.
-                    // Accepted values: 'auto', 'visible', 'hidden'.
-                    // Defaults to 'auto'
-                    horizontal: "auto",
-                    verticalScrollbarSize: 5,
-                    horizontalScrollbarSize: 5,
-                    arrowSize: 0
-                  }
-                }}
-                width="100%"
-                height="100%"
-                language="javascript"
-              />
-            </div>
-          )
-        )}
+        <div className="list-body">
+          {renderTree(editor, meta.list, selected, 0)}
+          <div style={{ height: 100 }} />
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 .cactiva-tree {
   display: flex;
   flex-direction: column;
+  flex: 1;
   .search-box {
     display: flex;
     flex-direction: row;
@@ -17,7 +18,7 @@
 
     .search-opt {
       flex-basis: 25px;
-      display:flex;
+      display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
@@ -26,6 +27,15 @@
   }
   .list {
     flex: 1;
+    overflow-y: auto;
+    position: relative;
+    .list-body {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: 0;
+    }
     .item {
       cursor: default;
       user-select: none;

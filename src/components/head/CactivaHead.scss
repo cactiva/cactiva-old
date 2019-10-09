@@ -1,0 +1,26 @@
+.cactiva-head {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+
+  > .center {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 5px 8px;
+    height: 15px;
+    user-select: none;
+    min-width: 250px;
+    border-radius: 5px;
+    background: rgb(255, 255, 255);
+    background: linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(250, 2450, 250, 1) 100%
+    );
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

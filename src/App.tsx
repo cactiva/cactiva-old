@@ -18,6 +18,7 @@ import editor from "./store/editor";
 import Welcome from "./Welcome";
 import CactivaTree from "./components/ctree/CactivaTree";
 import CactivaHooks from "./components/hooks/CactivaHooks";
+import CactivaHead from "./components/head/CactivaHead";
 
 export default observer(() => {
   const current = editor.current;
@@ -67,7 +68,9 @@ export default observer(() => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="cactiva-container">
-        <div className="cactiva-menu"></div>
+        <div className="cactiva-head-outer">
+          <CactivaHead editor={editor} />
+        </div>
         <Split
           sizes={editor.status === "loading" ? [15, 85] : [15, 70, 15]}
           minSize={200}
