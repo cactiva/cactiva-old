@@ -4,6 +4,7 @@ import { ICactivaTraitFieldProps } from '../CactivaTraitField';
 import './CallExpression.scss';
 import { SelectMenu, IconButton, Tooltip } from 'evergreen-ui';
 import ImageBrowse from './components/ImageBrowse';
+import IconBrowse from './components/IconBrowse';
 export default observer((trait: ICactivaTraitFieldProps) => {
   const meta = useObservable({
     value: trait.value,

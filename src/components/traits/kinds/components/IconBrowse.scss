@@ -1,0 +1,22 @@
+.image-browser {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  font-family: 'SF UI Text', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol';
+  color: #425a70;
+  margin: -10px;
+
+  .header {
+    margin: 5px;
+  }
+
+  .content {
+    flex: 1 1;
+    overflow-x: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    display: flex;
+  }
+}

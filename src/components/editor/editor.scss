@@ -313,6 +313,15 @@
   height: 250px;
   display: flex;
   overflow: hidden;
+  flex-direction: column;
+  background: #1e1e1e;
+
+  .source-action {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+  }
 
   .monaco-editor {
     padding-top: 10px;
