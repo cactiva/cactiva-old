@@ -28,6 +28,19 @@ export const generateSource = (node: any): string => {
       return `${generateSource(node.exp)}[${generateSource(node.argExp)}]`;
     case SyntaxKind.ParenthesizedExpression:
       return `(${generateSource(node.value)})`;
+    case SyntaxKind.BinaryExpression:
+      return (() => {
+        let operator = "=";
+        switch (node.operator) {
+          case SyntaxKind.EqualsToken:
+            operator = "=";
+            break;
+        }
+
+        return `${generateSource(node.left)} ${operator} ${generateSource(
+          node.right
+        )}`;
+      })();
     case SyntaxKind.ReturnStatement:
       return `return ${generateSource(node.value)}`;
     case SyntaxKind.ArrowFunction:

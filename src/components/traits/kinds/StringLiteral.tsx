@@ -1,14 +1,14 @@
-import { observer, useObservable } from 'mobx-react-lite';
-import React, { useEffect } from 'react';
-import { ICactivaTraitFieldProps } from '../CactivaTraitField';
-import './StringLiteral.scss';
-import { SelectMenu, Tooltip, IconButton } from 'evergreen-ui';
-import IconBrowse from './components/IconBrowse';
-import IconMaps from './components/IconMaps';
-import { parseValue } from '@src/components/editor/utility/parser/parser';
-import * as IconSource from 'react-web-vector-icons';
-import { toJS } from 'mobx';
-import _ from 'lodash';
+import { observer, useObservable } from "mobx-react-lite";
+import React, { useEffect } from "react";
+import { ICactivaTraitFieldProps } from "../CactivaTraitField";
+import "./StringLiteral.scss";
+import { SelectMenu, Tooltip, IconButton } from "evergreen-ui";
+import IconBrowse from "./components/IconBrowse";
+import IconMaps from "./components/IconMaps";
+import { parseValue } from "@src/components/editor/utility/parser/parser";
+import * as IconSource from "react-web-vector-icons";
+import { toJS } from "mobx";
+import _ from "lodash";
 
 const Icons = IconMaps();
 export default observer((trait: ICactivaTraitFieldProps) => {
@@ -18,9 +18,9 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   });
 
   const icon = useObservable({
-    source: 'Entypo',
-    search: '',
-    list: Icons['Entypo']
+    source: "Entypo",
+    search: "",
+    list: Icons["Entypo"]
   });
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   }, [trait.value]);
 
   useEffect(() => {
-    if (_.get(trait, 'mode') === 'icon') {
+    if (_.get(trait, "mode") === "icon") {
       icon.source = parseValue(trait.source.props.source);
       icon.list = Icons[icon.source].filter((x: string) =>
         x.toLowerCase().includes(icon.search)
@@ -40,12 +40,12 @@ export default observer((trait: ICactivaTraitFieldProps) => {
       {!trait.mode && (
         <div
           className={`trait-string-literal`}
-          style={{ ...trait.style, flexDirection: 'row' }}
+          style={{ ...trait.style, flexDirection: "row" }}
         >
           <input
             className={`cactiva-trait-input`}
             type="text"
-            value={meta.value || ''}
+            value={meta.value || ""}
             onChange={e => {
               meta.value = e.target.value;
             }}
@@ -60,12 +60,12 @@ export default observer((trait: ICactivaTraitFieldProps) => {
       )}
 
       {trait.mode &&
-        trait.mode === 'select' &&
+        trait.mode === "select" &&
         trait.options &&
         trait.options.items && (
           <div
             className={`trait-string-literal`}
-            style={{ ...trait.style, flexDirection: 'row' }}
+            style={{ ...trait.style, flexDirection: "row" }}
           >
             <select
               className={`cactiva-trait-select`}
@@ -75,7 +75,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                 trait.update(`"${meta.value}"`);
               }}
             >
-              <option disabled={meta.value} value={''}>
+              <option disabled={meta.value} value={""}>
                 Select ...
               </option>
               {trait.options.items.map((item: any, i: number) => {
@@ -88,10 +88,10 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             </select>
           </div>
         )}
-      {trait.mode && trait.mode === 'icon' && (
+      {trait.mode && trait.mode === "icon" && (
         <div
           className={`trait-string-literal cactiva-trait-icon`}
-          style={{ ...trait.style, flexDirection: 'row', alignItems: 'center' }}
+          style={{ ...trait.style, flexDirection: "row", alignItems: "center" }}
         >
           <div className="icon-wrapper">
             <div className="toolbar">
@@ -120,7 +120,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                 return (
                   <div
                     key={idx}
-                    className={`icon ${meta.value === name ? 'active' : ''}`}
+                    className={`icon ${meta.value === name ? "active" : ""}`}
                     onClick={() => {
                       trait.update(`"${name}"`);
                     }}

@@ -17,6 +17,7 @@ import CactivaTraitField from "./CactivaTraitField";
 import "./traits.scss";
 import { isTag } from "../editor/utility/tagmatcher";
 import { SyntaxKind } from "../editor/utility/syntaxkinds";
+import { toJS } from "mobx";
 
 export default observer(({ source, editor }: any) => {
   const traits = _.get(editor, "selected.tag.traits") as ICactivaTrait[];
@@ -134,6 +135,7 @@ export default observer(({ source, editor }: any) => {
                     _.set(selected.source.props, trait.path, valueByKind);
                     commitChanges(editor);
                   });
+
                   return (
                     <React.Fragment key={key}>
                       <CactivaTraitField

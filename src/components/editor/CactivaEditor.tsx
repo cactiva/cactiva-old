@@ -1,34 +1,35 @@
-import api from '@src/libs/api';
-import _ from 'lodash';
-import { observer, useObservable } from 'mobx-react-lite';
-import React, { useCallback, useEffect } from 'react';
-import { useDropzone } from 'react-dropzone';
-import MonacoEditor from 'react-monaco-editor';
-import Split from 'react-split';
-import CactivaBreadcrumb from './CactivaBreadcrumb';
-import CactivaToolbar from './CactivaToolbar';
-import './editor.scss';
-import './tags/tags.scss';
+import api from "@src/libs/api";
+import _ from "lodash";
+import { observer, useObservable } from "mobx-react-lite";
+import React, { useCallback, useEffect } from "react";
+import { useDropzone } from "react-dropzone";
+import MonacoEditor from "react-monaco-editor";
+import Split from "react-split";
+import CactivaBreadcrumb from "./CactivaBreadcrumb";
+import CactivaToolbar from "./CactivaToolbar";
+import "./editor.scss";
+import "./tags/tags.scss";
 import {
   addChildInId,
   commitChanges,
   createNewElement,
   insertAfterElementId,
   prepareChanges
-} from './utility/elements/tools';
-import { Icon, Text } from 'evergreen-ui';
-import { generateSource } from './utility/parser/generateSource';
-import { renderChildren } from './utility/renderchild';
-import { SyntaxKind } from './utility/syntaxkinds';
-import prettier from 'prettier/standalone';
-import typescript from 'prettier/parser-typescript';
+} from "./utility/elements/tools";
+import { Icon, Text } from "evergreen-ui";
+import { generateSource } from "./utility/parser/generateSource";
+import { renderChildren } from "./utility/renderchild";
+import { SyntaxKind } from "./utility/syntaxkinds";
+import prettier from "prettier/standalone";
+import typescript from "prettier/parser-typescript";
+import { toJS } from "mobx";
 
 const uploadImage = async (file: any) => {
   var formDataToUpload = new FormData();
-  formDataToUpload.append('file', file);
-  return await api.post('/assets/upload', formDataToUpload, {
+  formDataToUpload.append("file", file);
+  return await api.post("/assets/upload", formDataToUpload, {
     headers: {
-      'Content-Type': 'multipart/form-data'
+      "Content-Type": "multipart/form-data"
     }
   });
 };
@@ -37,26 +38,26 @@ export default observer(({ source, editor }: any) => {
   const meta = useObservable({
     onDrag: false,
     jsx: false,
-    source: ''
+    source: ""
   });
   const children = renderChildren(
-    { name: '--root--', children: [source] },
+    { name: "--root--", children: [source] },
     editor
   );
 
   const onDrop = useCallback(async acceptedFiles => {
-    if (!acceptedFiles[0].type.includes('image/')) {
-      alert('Images only!');
+    if (!acceptedFiles[0].type.includes("image/")) {
+      alert("Images only!");
       return;
     }
     prepareChanges(editor);
-    const el = createNewElement('Image');
+    const el = createNewElement("Image");
     const file: any = await uploadImage(acceptedFiles[0]);
-    el.props['source'] = {
+    el.props["source"] = {
       kind: SyntaxKind.CallExpression,
       value: `require('@src/assets/images/${file.filename}')`
     };
-    el.props['style'] = {
+    el.props["style"] = {
       kind: SyntaxKind.ObjectLiteralExpression,
       value: {
         width: {
@@ -83,12 +84,16 @@ export default observer(({ source, editor }: any) => {
   delete rootProps.onClick;
 
   useEffect(() => {
-    meta.source = _.get(editor, 'selected.source')
-      ? prettier.format(generateSource(editor.selected.source), {
-          parser: 'typescript',
-          plugins: [typescript]
-        })
-      : '';
+    try {
+      meta.source = _.get(editor, "selected.source")
+        ? prettier.format(generateSource(editor.selected.source), {
+            parser: "typescript",
+            plugins: [typescript]
+          })
+        : "";
+    } catch (e) {
+      console.log(toJS(editor.selected.source));
+    }
   }, [editor.selectedId]);
   return (
     <div className="cactiva-editor" {...rootProps}>
@@ -104,13 +109,13 @@ export default observer(({ source, editor }: any) => {
             dragInterval={1}
             direction="vertical"
             className={`cactiva-editor-content ${
-              meta.jsx ? 'split' : 'unsplit'
+              meta.jsx ? "split" : "unsplit"
             }`}
           >
             <div className="cactiva-canvas">{children}</div>
             <div
               className={`cactiva-editor-source `}
-              style={{ display: meta.jsx ? 'flex' : 'none' }}
+              style={{ display: meta.jsx ? "flex" : "none" }}
             >
               {!editor.selectedId ? (
                 <div className="empty">
@@ -142,7 +147,7 @@ export default observer(({ source, editor }: any) => {
       <div className="cactiva-editor-footer">
         <CactivaBreadcrumb source={source} editor={editor} />
         <div
-          className={`toggle-jsx ${meta.jsx ? 'active' : ''}`}
+          className={`toggle-jsx ${meta.jsx ? "active" : ""}`}
           onClick={() => {
             meta.jsx = !meta.jsx;
           }}

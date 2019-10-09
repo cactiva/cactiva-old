@@ -26,9 +26,6 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   const fieldStyle = _.get(trait, `options.styles.field`, {});
   const labelStyle = _.get(trait, `options.styles.label`, {});
   const rootStyle = _.get(trait, `options.styles.root`, {});
-  const meta = useObservable({
-    options: { ...trait.options }
-  });
 
   if (!KindField) {
     return (
@@ -53,7 +50,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               <Menu.Item
                 icon="code"
                 onSelect={() => {
-                  meta.options.open = true;
+                  trait.options.open = true;
                   trait.convertToCode();
                   close();
                 }}
@@ -64,7 +61,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               <Menu.Item
                 icon="code"
                 onSelect={() => {
-                  meta.options.open = true;
+                  trait.options.open = true;
                   close();
                 }}
               >
@@ -117,7 +114,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             <div ref={fieldRef} />
             <KindField
               {...trait}
-              options={meta.options}
+              options={trait.options}
               style={{
                 flex: 1,
                 height: "20px",
