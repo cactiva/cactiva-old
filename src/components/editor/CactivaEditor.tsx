@@ -127,7 +127,7 @@ export default observer(({ source, editor }: any) => {
       <div className="cactiva-editor-footer">
         <CactivaBreadcrumb source={source} editor={editor} />
         <div
-          className={`footer-icon ${meta.jsx ? "active" : ""}`}
+          className={`toggle-jsx ${meta.jsx ? "active" : ""}`}
           onClick={() => { 
             meta.jsx = !meta.jsx;
           }}
