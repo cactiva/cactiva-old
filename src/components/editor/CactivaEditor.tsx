@@ -19,6 +19,7 @@ import {
 import { generateSource } from "./utility/parser/generateSource";
 import { renderChildren } from "./utility/renderchild";
 import { SyntaxKind } from "./utility/syntaxkinds";
+import { Icon, Text } from "evergreen-ui";
 
 const uploadImage = async (file: any) => {
   var formDataToUpload = new FormData();
@@ -106,19 +107,26 @@ export default observer(({ source, editor }: any) => {
               className={`cactiva-editor-source `}
               style={{ display: meta.jsx ? "flex" : "none" }}
             >
-              {meta.jsx && (
-                <MonacoEditor
-                  theme="vs-dark"
-                  value={meta.source}
-                  onChange={value => {
-                    console.log(value);
-                    meta.source = value;
-                  }}
-                  editorWillMount={monaco => {
-                    editor.setupMonaco(monaco);
-                  }}
-                  language="typescript"
-                />
+              {!editor.selectedId ? (
+                <div className="empty">
+                  <Icon icon="select" color="white" size={30} />
+                  <Text  color="white" marginTop={10}>Please select a component</Text>
+                </div>
+              ) : (
+                meta.jsx && (
+                  <MonacoEditor
+                    theme="vs-dark"
+                    value={meta.source}
+                    onChange={value => {
+                      console.log(value);
+                      meta.source = value;
+                    }}
+                    editorWillMount={monaco => {
+                      editor.setupMonaco(monaco);
+                    }}
+                    language="typescript"
+                  />
+                )
               )}
             </div>
           </Split>
@@ -128,7 +136,7 @@ export default observer(({ source, editor }: any) => {
         <CactivaBreadcrumb source={source} editor={editor} />
         <div
           className={`toggle-jsx ${meta.jsx ? "active" : ""}`}
-          onClick={() => { 
+          onClick={() => {
             meta.jsx = !meta.jsx;
           }}
         >
