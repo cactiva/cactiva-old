@@ -1,9 +1,8 @@
-import { Dialog, IconButton, Pane, Icon, Tooltip, Text } from 'evergreen-ui';
+import api from '@src/libs/api';
+import { Dialog, Icon, IconButton, Text } from 'evergreen-ui';
 import { observer, useObservable } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
 import './ImageBrowser.scss';
-import api from '@src/libs/api';
-import { toJS } from 'mobx';
 
 const deleteFile = (filename: any) => {
   return new Promise(resolve => {
