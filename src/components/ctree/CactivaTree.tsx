@@ -8,6 +8,8 @@ import CactivaDraggable from "../editor/CactivaDraggable";
 import { SyntaxKind } from "../editor/utility/syntaxkinds";
 import tags from "../editor/utility/tags";
 import _, { map } from "lodash";
+import { generateSource } from "../editor/utility/parser/generateSource";
+import MonacoEditor from "react-monaco-editor";
 
 export default observer(({ editor }: any) => {
   const meta = useObservable({ list: [], mode: "tree" });
@@ -20,7 +22,12 @@ export default observer(({ editor }: any) => {
   }, []);
 
   return (
-    <div className="cactiva-tree">
+    <div
+      className="cactiva-tree"
+      onContextMenu={e => {
+        e.preventDefault();
+      }}
+    >
       <div className="search-box">
         <SearchInput
           className="search"
@@ -36,7 +43,7 @@ export default observer(({ editor }: any) => {
           }}
         >
           <Icon
-            icon={meta.mode === "tree" ? "layout-hierarchy" : "camera"}
+            icon={meta.mode === "tree" ? "citation" : "git-merge"}
             size={12}
             color={"#aaa"}
           />
@@ -62,13 +69,48 @@ export default observer(({ editor }: any) => {
                 top: 26
               }}
             >
-              <pre
-                style={{
-                  fontSize: 9
+              <MonacoEditor
+                theme="vs-light"
+                value={JSON.stringify(current.selected.source, null, 2)}
+                editorWillMount={monaco => {
+                  editor.current.setupMonaco(monaco);
                 }}
-              >
-                {JSON.stringify(current.selected.source, null, 2)}
-              </pre>
+                options={{
+                  lineNumbers: "off",
+                  wordWrap: "wordWrapColumn",
+                  wrappingIndent: "indent",
+                  glyphMargin: false,
+                  folding: false,
+                  lineDecorationsWidth: 0,
+                  lineNumbersMinChars: 0,
+                  minimap: {
+                    enabled: false
+                  },
+                  fontSize: 8,
+                  scrollbar: {
+                    // Subtle shadows to the left & top. Defaults to true.
+                    useShadows: false,
+                    // Render vertical arrows. Defaults to false.
+                    verticalHasArrows: false,
+                    // Render horizontal arrows. Defaults to false.
+                    horizontalHasArrows: false,
+                    // Render vertical scrollbar.
+                    // Accepted values: 'auto', 'visible', 'hidden'.
+                    // Defaults to 'auto'
+                    vertical: "auto",
+                    // Render horizontal scrollbar.
+                    // Accepted values: 'auto', 'visible', 'hidden'.
+                    // Defaults to 'auto'
+                    horizontal: "auto",
+                    verticalScrollbarSize: 5,
+                    horizontalScrollbarSize: 5,
+                    arrowSize: 0
+                  }
+                }}
+                width="100%"
+                height="100%"
+                language="javascript"
+              />
             </div>
           )
         )}

@@ -1,11 +1,11 @@
-import _ from 'lodash';
-import { observer, useObservable } from 'mobx-react-lite';
-import React, { useEffect } from 'react';
-import CactivaDraggable from './CactivaDraggable';
-import CactivaSelectable from './CactivaSelectable';
-import { findElementById, getIds } from './utility/elements/tools';
-import { kindNames } from './utility/kinds';
-import { toJS } from 'mobx';
+import _ from "lodash";
+import { observer, useObservable } from "mobx-react-lite";
+import React, { useEffect } from "react";
+import CactivaDraggable from "./CactivaDraggable";
+import CactivaSelectable from "./CactivaSelectable";
+import { findElementById, getIds } from "./utility/elements/tools";
+import { kindNames } from "./utility/kinds";
+import { Icon } from "evergreen-ui";
 
 export default observer(({ source, editor }: any) => {
   const meta = useObservable({
@@ -21,9 +21,27 @@ export default observer(({ source, editor }: any) => {
   }, [editor.selectedId, editor.undoStack.length]);
 
   const lastNav: any = meta.nav[meta.nav.length - 1];
-  const lastId = _.get(lastNav, 'source.id');
+  const lastId = _.get(lastNav, "source.id");
   return (
-    <div className='cactiva-breadcrumb'>
+    <div className="cactiva-breadcrumb">
+      <div className="breadcrumb-tag">
+        <div>
+          <span
+            style={{
+              marginLeft: -6,
+              display: "flex",
+              flexDirection: "row",
+              userSelect: "none",
+              alignItems: "center"
+            }}
+          >
+            <div style={{ margin: '1px 6px -1px 0px' }}>
+              <Icon icon={"layout-hierarchy"} size={9} color={"#878787"} />
+            </div>
+            Root
+          </span>
+        </div>
+      </div>
       {_.map(meta.nav, (v: any, i) => {
         const cactiva = editor.cactivaRefs[v.source.id];
         if (!cactiva) return null;
@@ -34,7 +52,7 @@ export default observer(({ source, editor }: any) => {
             cactiva={cactiva}
             style={{}}
             className={`breadcrumb-tag ${
-              editor.selectedId === v.source.id ? 'selected' : ''
+              editor.selectedId === v.source.id ? "selected" : ""
             }`}
             showElementTag={false}
             onBeforeSelect={() => {
@@ -53,7 +71,7 @@ export default observer(({ source, editor }: any) => {
             <CactivaSelectable
               cactiva={editor.cactivaRefs[lastId]}
               style={{}}
-              className=''
+              className=""
               showElementTag={false}
               onBeforeSelect={() => {
                 meta.shouldUpdateNav = false;

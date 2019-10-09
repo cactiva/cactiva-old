@@ -7,8 +7,8 @@ export const generateSource = (node: any): string => {
   const kind = node.kind;
 
   switch (kind) {
-    case SyntaxKind.NumericLiteral:
     case SyntaxKind.StringLiteral:
+    case SyntaxKind.NumericLiteral:
       return `${node.value}`;
     case SyntaxKind.CallExpression:
     case SyntaxKind.PropertyAccessExpression:

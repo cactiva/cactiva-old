@@ -90,7 +90,16 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
           if (Array.isArray(props.children)) {
             props.children.forEach((c: any) => children.push(c));
           } else {
-            children.push(props.children);
+            const c = props.children;
+            if (c.kind === SyntaxKind.StringLiteral) {
+              children.push({
+                ...c,
+                kind: SyntaxKind.JsxText,
+                value: c.value.substr(1, c.value.length - 2)
+              });
+            } else {
+              children.push(c);
+            }
           }
           delete props.children;
           return {
