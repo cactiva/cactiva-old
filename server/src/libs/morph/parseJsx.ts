@@ -85,6 +85,22 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
           );
         });
 
+        if (props.children) {
+          const children = [];
+          if (Array.isArray(props.children)) {
+            props.children.forEach((c: any) => children.push(c));
+          } else {
+            children.push(props.children);
+          }
+          delete props.children;
+          return {
+            kind: SyntaxKind.JsxElement,
+            name,
+            props,
+            children
+          };
+        }
+
         return {
           kind: kindName,
           name,
@@ -112,6 +128,15 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
             children.push(parsedChildren);
           }
         });
+
+        if (props.children) {
+          if (Array.isArray(props.children)) {
+            props.children.forEach((c: any) => children.push(c));
+          } else {
+            children.push(props.children);
+          }
+          delete props.children;
+        }
 
         return {
           kind: kindName,

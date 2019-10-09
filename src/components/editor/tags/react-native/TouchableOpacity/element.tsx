@@ -28,7 +28,8 @@ export default observer((props: any) => {
           />
           {renderChildren(cactiva.source, cactiva.editor, cactiva.root, c => ({
             isLastChild: c.isLastChild,
-            afterDirection: direction
+            afterDirection: direction,
+            style
           }))}
         </CactivaSelectable>
       </CactivaDraggable>

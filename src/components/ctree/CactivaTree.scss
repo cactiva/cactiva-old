@@ -1,13 +1,28 @@
 .cactiva-tree {
   display: flex;
   flex-direction: column;
-  .search {
-    outline: none !important;
-    box-shadow: none !important;
-    border: 0;
-    border-radius: 0;
+  .search-box {
+    display: flex;
+    flex-direction: row;
     border-bottom: 1px solid #ccc;
-    font-size: 11px;
+
+    .search {
+      flex: 1;
+      outline: none !important;
+      box-shadow: none !important;
+      border: 0;
+      border-radius: 0;
+      font-size: 11px;
+    }
+
+    .search-opt {
+      flex-basis: 25px;
+      display:flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-left: 1px solid #ccc;
+    }
   }
   .list {
     flex: 1;
@@ -26,6 +41,7 @@
         flex: 1;
         font-size: 11px;
       }
+      &.selected,
       &:hover {
         background: #e3f2ff;
       }

@@ -10,6 +10,7 @@ export const renderChildren = (
   editor: any,
   root?: any,
   parentInfo?: (cactiva: {
+    isFirstChild: boolean;
     isLastChild: boolean;
     child: any;
     editor: any;
@@ -47,6 +48,7 @@ export const renderChildren = (
       const info =
         parentInfo &&
         parentInfo({
+          isFirstChild: key === 0,
           isLastChild: key === children.length - 1,
           child,
           editor,
@@ -73,6 +75,7 @@ const renderKind = (
 ): any => {
   switch (source.kind) {
     case SyntaxKind.StringLiteral:
+      return source.value.substr(1, source.value.length - 2);
     case SyntaxKind.JsxText:
     case SyntaxKind.NumericLiteral:
       return source.value;

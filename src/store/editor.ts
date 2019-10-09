@@ -1,22 +1,22 @@
-import Axios from 'axios';
-import { computed, observable } from 'mobx';
-import { SourceStore } from './source';
-import { SyntaxKind } from '@src/components/editor/utility/syntaxkinds';
+import Axios from "axios";
+import { computed, observable } from "mobx";
+import { SourceStore } from "./source";
+import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
 
 interface IEditorSources {
   [key: string]: SourceStore;
 }
 
-export const baseUrl = 'http://localhost:8080/api';
+export const baseUrl = "http://localhost:8080/api";
 
 class EditorStore {
   sources: IEditorSources = {};
-  @observable path = '';
-  @observable status = 'loading';
+  @observable path = "";
+  @observable status = "loading";
 
   async load(path: string) {
-    this.status = 'loading';
-    const apiPath = '/project/read-source?path=';
+    this.status = "loading";
+    const apiPath = "/project/read-source?path=";
     await Axios.get(`${baseUrl}${apiPath}${path}`)
       .then(res => {
         let root = res.data;
@@ -24,12 +24,13 @@ class EditorStore {
           root = root.value;
         }
 
-        this.sources[path] = new SourceStore(root);
+        this.sources[path] = new SourceStore(root, path);
         this.path = path;
-        this.status = 'ready';
+        this.status = "ready";
+        localStorage.setItem("cactiva-current-path", path);
       })
       .catch(e => {
-        this.status = 'failed';
+        this.status = "failed";
       });
   }
 

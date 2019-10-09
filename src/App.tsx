@@ -47,7 +47,9 @@ export default observer(() => {
         commitChanges(current);
       }
     });
-    editor.load("/src/Main/Home.tsx");
+    editor.load(
+      localStorage.getItem("cactiva-current-path") || "/src/Main/Home.tsx"
+    );
   }, []);
 
   useEffect(() => {

@@ -27,8 +27,10 @@ export default observer((props: any) => {
             stretch={hasNoChildren}
           />
           {renderChildren(cactiva.source, cactiva.editor, cactiva.root, c => ({
+            isFirstChild: c.isFirstChild,
             isLastChild: c.isLastChild,
-            afterDirection: direction
+            afterDirection: direction,
+            style
           }))}
         </CactivaSelectable>
       </CactivaDraggable>

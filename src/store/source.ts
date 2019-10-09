@@ -1,13 +1,13 @@
-import { observable, toJS } from 'mobx';
-import { applyDiff, getDiff } from 'recursive-diff';
+import { observable, toJS } from "mobx";
+import { applyDiff, getDiff } from "recursive-diff";
 
 export class SourceStore {
-  @observable path = '';
+  @observable path = "";
   lastId = 1;
   @observable source: any = {};
   root = null;
 
-  @observable selectedId = '';
+  @observable selectedId = "";
   @observable selected: any;
 
   prevSource = null;
@@ -32,8 +32,9 @@ export class SourceStore {
   };
   cactivaRefs: any = {};
 
-  constructor(source: any) {
+  constructor(source: any, path: any) {
     this.source = source;
+    this.path = path;
   }
 
   setupMonaco(monaco: any) {
@@ -44,9 +45,9 @@ export class SourceStore {
       moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
       module: monaco.languages.typescript.ModuleKind.CommonJS,
       noEmit: true,
-      typeRoots: ['node_modules/@types'],
+      typeRoots: ["node_modules/@types"],
       jsx: monaco.languages.typescript.JsxEmit.React,
-      jsxFactory: 'JSXAlone.createElement'
+      jsxFactory: "JSXAlone.createElement"
     });
 
     // extra libraries
@@ -55,7 +56,7 @@ export class SourceStore {
       declare var meta:any;
       declare var Main:any;
        ,`,
-      'filename/meta.d.ts'
+      "filename/meta.d.ts"
     );
 
     monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({

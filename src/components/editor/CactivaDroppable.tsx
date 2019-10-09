@@ -28,6 +28,20 @@ export default observer(
     const { root, source, editor, parentInfo } = cactiva;
     const afterDirection = _.get(parentInfo, "afterDirection", "column");
     const isLastChild = _.get(parentInfo, "isLastChild", false);
+    const parentJustifyContent = _.get(
+      parentInfo,
+      "style.justifyContent",
+      "flex-start"
+    );
+    let isAfterStretched = isLastChild;
+    if (parentJustifyContent === "space-between") {
+      if (isLastChild) {
+        isAfterStretched = false;
+      } else {
+        isAfterStretched = true;
+      }
+    }
+
     const { id } = source;
     const onDroppedEvent =
       parentInfo && parentInfo.onDropped ? parentInfo.onDropped : onDropped;
@@ -149,7 +163,7 @@ export default observer(
             ref={afterDropRef}
             hover={meta.canDropAfter}
             direction={afterDirection}
-            stretch={isLastChild}
+            stretch={isAfterStretched}
             placement="after"
           />
         )}
