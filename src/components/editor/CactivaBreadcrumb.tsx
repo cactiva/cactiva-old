@@ -31,14 +31,15 @@ export default observer(({ source, editor }: any) => {
               marginLeft: -6,
               display: "flex",
               flexDirection: "row",
+              maxWidth: 'none',
               userSelect: "none",
               alignItems: "center"
             }}
           >
-            <div style={{ margin: '1px 6px -1px 0px' }}>
+            <div style={{ margin: "1px 6px -1px 0px" }}>
               <Icon icon={"layout-hierarchy"} size={9} color={"#878787"} />
             </div>
-            Root
+            Component
           </span>
         </div>
       </div>

@@ -71,7 +71,8 @@ export default observer(({ editor }: any) => {
             >
               <MonacoEditor
                 theme="vs-light"
-                value={JSON.stringify(current.selected.source, null, 2)}
+                value={generateSource(current.selected.source)}
+                // value={JSON.stringify(current.selected.source, null, 2)}
                 editorWillMount={monaco => {
                   editor.current.setupMonaco(monaco);
                 }}
