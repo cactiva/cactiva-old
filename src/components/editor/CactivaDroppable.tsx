@@ -128,9 +128,6 @@ export default observer(
       meta.canDropAfter =
         canDropAfter && afterOver && canDrop(afterItem.id, id);
 
-      if (id && afterItem && onDropped) {
-        console.log(canDropAfter, afterOver, canDrop(afterItem.id, id));
-      }
       if (canDropOver || !canDropAfter) {
         meta.canDropChild = childOver && canDrop(childItem.id, id);
       } else if (!meta.canDropAfter) {

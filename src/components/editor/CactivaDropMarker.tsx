@@ -36,7 +36,8 @@ export default forwardRef(
               : stretch && direction === "row"
               ? "0px 5px"
               : "0px"};
-            /* background: red; */
+            min-width: 5px;
+            min-height: 5px;
             background: ${hover ? "rgba(54, 172, 232, .4)" : "transparent"};
           `}
         ></div>
