@@ -16,6 +16,11 @@ class EditorStore {
 
   async load(path: string) {
     this.status = "loading";
+    if (this.sources[path]) {
+      this.path = path;
+      this.status = "ready";
+      return;
+    }
     const apiPath = "/project/read-source?path=";
     await Axios.get(`${baseUrl}${apiPath}${path}`)
       .then(res => {

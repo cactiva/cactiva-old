@@ -156,7 +156,7 @@ export default observer(() => {
               </div>
             </div>
           ) : (
-            <div></div>
+            <div style={{ flex: 1 }}></div>
           )}
         </Split>
       </div>
