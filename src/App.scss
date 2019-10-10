@@ -5,12 +5,12 @@ body {
   padding: 0;
   margin: 0;
   background: #fff;
-  font-family: "SF UI Text", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol";
+  font-family: 'SF UI Text', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol';
 }
 [evergreen-portal-container] {
-  div[role="dialog"] {
+  div[role='dialog'] {
     z-index: 100 !important;
   }
   div > p {
@@ -34,7 +34,7 @@ body {
     flex-direction: row;
     justify-content: space-between;
     border-bottom: 1px solid #ccc;
-    background:#ececeb;
+    background: #ececeb;
     background: rgb(255, 255, 255);
     background: linear-gradient(
       180deg,
@@ -59,6 +59,7 @@ body {
         background: #fbfbfb;
         user-select: none;
         height: 100%;
+        position: relative;
       }
 
       .cactiva-pane-tab-header {

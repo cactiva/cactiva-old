@@ -715,7 +715,7 @@ const CactivaTraitStyle: any = {
   ] as ICactivaTraitField[],
   Border: [
     {
-      name: 'Border Color',
+      name: 'Color',
       path: 'style.value.borderColor',
       kind: SyntaxKind.StringLiteral,
       mode: 'color',
@@ -730,7 +730,7 @@ const CactivaTraitStyle: any = {
       }
     },
     {
-      name: 'Border Style',
+      name: 'Style',
       path: 'style.value.borderStyle',
       kind: SyntaxKind.StringLiteral,
       mode: 'radio',
@@ -754,20 +754,20 @@ const CactivaTraitStyle: any = {
       }
     },
     {
-      name: 'Border Width',
+      name: 'Width',
       path: 'style.value.borderWidth',
       kind: SyntaxKind.NumericLiteral,
       options: {
         styles: {
           root: {
-            flex: '0 0 45%',
+            flex: '0 0 42%',
             paddingRight: 0
           }
         }
       }
     },
     {
-      name: 'Border Radius',
+      name: 'Radius',
       path: 'style.value.borderTopLeftRadius',
       kind: SyntaxKind.NumericLiteral,
       options: {

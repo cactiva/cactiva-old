@@ -31,6 +31,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   if (!KindField) {
     return (
       <Alert
+        padding={10}
         ref={fieldRef}
         intent="warning"
         title={`Trait field error: ${kindName} not found!`}
