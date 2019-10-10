@@ -56,7 +56,7 @@ export default class extends CactivaTag {
         }
       ]
     },
-    ...styleTrait
+    ...styleTrait(['Typography'])
   ];
   static element = require('./element').default;
 }

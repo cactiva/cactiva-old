@@ -1,17 +1,17 @@
-import { Icon } from "evergreen-ui";
-import { observer, useObservable } from "mobx-react-lite";
-import React, { useEffect } from "react";
-import { ICactivaTraitFieldProps } from "../CactivaTraitField";
-import _ from "lodash";
-import "./NumericLiteral.scss";
-import { toJS } from "mobx";
+import { Icon } from 'evergreen-ui';
+import { observer, useObservable } from 'mobx-react-lite';
+import React, { useEffect } from 'react';
+import { ICactivaTraitFieldProps } from '../CactivaTraitField';
+import _ from 'lodash';
+import './NumericLiteral.scss';
+import { toJS } from 'mobx';
 
 export default observer((trait: ICactivaTraitFieldProps) => {
   const meta = useObservable({
     value: trait.value,
     clicked: false,
     moving: false,
-    direction: "vertical",
+    direction: 'vertical',
     directionCount: 0,
     y: -1,
     x: -1,
@@ -19,26 +19,26 @@ export default observer((trait: ICactivaTraitFieldProps) => {
     cy: 0,
     startValue: parseInt(trait.value) || 0
   });
-  const minValue = _.get(trait, "options.minValue", undefined);
-  const maxValue = _.get(trait, "options.maxValue", undefined);
+  const minValue = _.get(trait, 'options.minValue', undefined);
+  const maxValue = _.get(trait, 'options.maxValue', undefined);
   useEffect(() => {
     meta.value = trait.value;
   }, [trait.value]);
   return (
     <>
       <div
-        className={`trait-numeric-literal ${meta.clicked ? "clicked" : ""}`}
-        style={{ ...trait.style, flexDirection: "row" }}
+        className={`trait-numeric-literal ${meta.clicked ? 'clicked' : ''}`}
+        style={{ ...trait.style, flexDirection: 'row' }}
       >
         <input
-          className={`cactiva-trait-input ${meta.clicked ? "focus" : ""}`}
+          className={`cactiva-trait-input ${meta.clicked ? 'focus' : ''}`}
           type="text"
-          value={meta.value || ""}
+          value={meta.value || ''}
           onKeyDown={e => {
             if (e.which === 13) (e.target as any).blur();
           }}
           onChange={e => {
-            meta.value = e.target.value.replace(/[^0-9\-]/gi, "");
+            meta.value = e.target.value.replace(/[^0-9\-]/gi, '');
           }}
           onFocus={e => {
             e.target.select();
@@ -50,8 +50,8 @@ export default observer((trait: ICactivaTraitFieldProps) => {
         <div
           className="arrow"
           style={{
-            flexDirection: meta.direction === "vertical" ? "column" : "row",
-            width: meta.direction === "vertical" ? 12 : 20
+            flexDirection: meta.direction === 'vertical' ? 'column' : 'row',
+            width: meta.direction === 'vertical' ? 12 : 20
           }}
           onMouseDown={() => {
             meta.clicked = true;
@@ -59,27 +59,27 @@ export default observer((trait: ICactivaTraitFieldProps) => {
         >
           <div className="arrow-btn">
             <Icon
-              icon={meta.direction === "vertical" ? "caret-up" : "caret-left"}
-              size={meta.direction === "vertical" ? 8 : 9}
+              icon={meta.direction === 'vertical' ? 'caret-up' : 'caret-left'}
+              size={meta.direction === 'vertical' ? 8 : 9}
             />
           </div>
           <div
             style={
-              meta.direction === "vertical"
+              meta.direction === 'vertical'
                 ? {
-                    borderBottom: "1px solid #ececeb"
+                    borderBottom: '1px solid #ececeb'
                   }
                 : {
-                    borderRight: "1px solid #ececeb"
+                    borderRight: '1px solid #ececeb'
                   }
             }
           />
           <div className="arrow-btn">
             <Icon
               icon={
-                meta.direction === "vertical" ? "caret-down" : "caret-right"
+                meta.direction === 'vertical' ? 'caret-down' : 'caret-right'
               }
-              size={meta.direction === "vertical" ? 8 : 9}
+              size={meta.direction === 'vertical' ? 8 : 9}
             />
           </div>
         </div>
@@ -88,18 +88,18 @@ export default observer((trait: ICactivaTraitFieldProps) => {
       {meta.clicked && (
         <div
           style={{
-            position: "fixed",
+            position: 'fixed',
             top: 0,
             left: 0,
             bottom: 0,
-            cursor: meta.direction === "vertical" ? "ns-resize" : "ew-resize",
+            cursor: meta.direction === 'vertical' ? 'ns-resize' : 'ew-resize',
             right: 0,
             zIndex: 22
           }}
           onMouseUpCapture={e => {
             meta.clicked = false;
             meta.startValue = meta.value;
-            meta.direction = "vertical";
+            meta.direction = 'vertical';
             e.stopPropagation();
           }}
           onMouseMoveCapture={e => {
@@ -116,7 +116,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               const cdx = meta.cx - e.nativeEvent.clientX;
               const cdy = meta.cy - e.nativeEvent.clientY;
               const newDirection =
-                Math.abs(cdx) > Math.abs(cdy) ? "horizontal" : "vertical";
+                Math.abs(cdx) > Math.abs(cdy) ? 'horizontal' : 'vertical';
 
               if (newDirection !== meta.direction) {
                 meta.directionCount++;

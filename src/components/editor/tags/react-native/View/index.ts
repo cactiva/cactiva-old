@@ -1,4 +1,4 @@
-import { CactivaTag } from "@src/components/editor/utility/classes";
+import { CactivaTag } from '@src/components/editor/utility/classes';
 import styleTrait from '@src/components/traits/templates/styleTrait';
 import { SyntaxKind } from '../../../utility/syntaxkinds';
 
@@ -16,7 +16,7 @@ export default class extends CactivaTag {
       name: 'attributes',
       fields: []
     },
-    ...styleTrait
+    ...styleTrait(['Typography'])
   ];
   static element = require('./element').default;
 }
