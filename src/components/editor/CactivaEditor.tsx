@@ -107,6 +107,7 @@ export default observer(({ source, editor }: any) => {
           }
         );
         meta.sourceLanguage = "javascript";
+        meta.jsx = true;
       } else {
         if (meta.sourceLanguage === "json") {
           meta.source = JSON.stringify(editor.selected.source, null, 2);
@@ -126,7 +127,7 @@ export default observer(({ source, editor }: any) => {
       monacoRef.current.setValue(meta.source);
       monacoRef.current.layout();
     }
-  }, [editor.selectedId, editor.rootSelected, meta.sourceLanguage]);
+  }, [editor.selectedId, editor.rootSelected, meta.sourceLanguage, meta.jsx]);
 
   return (
     <div className="cactiva-editor" {...rootProps}>
@@ -243,6 +244,10 @@ export default observer(({ source, editor }: any) => {
           className={`toggle-jsx ${meta.jsx ? "active" : ""}`}
           onClick={() => {
             meta.jsx = !meta.jsx;
+
+            if (meta.jsx === false) {
+              editor.rootSelected = false;
+            }
             localStorage.setItem(
               "cactiva-editor-source-visible",
               meta.jsx ? "y" : "n"
