@@ -1,12 +1,12 @@
-import api from '@src/libs/api';
-import { Dialog, Icon, IconButton, Text } from 'evergreen-ui';
-import { observer, useObservable } from 'mobx-react-lite';
-import React, { useEffect } from 'react';
-import './ImageBrowser.scss';
+import api from "@src/libs/api";
+import { Dialog, Icon, IconButton, Text } from "evergreen-ui";
+import { observer, useObservable } from "mobx-react-lite";
+import React, { useEffect } from "react";
+import "./ImageBrowser.scss";
 
 const deleteFile = (filename: any) => {
   return new Promise(resolve => {
-    api.post('assets/delete', { filename }).then(res => {
+    api.post("assets/delete", { filename }).then(res => {
       resolve(res);
     });
   });
@@ -14,24 +14,24 @@ const deleteFile = (filename: any) => {
 export default observer(({ value, onChange, isShown, onDismiss }: any) => {
   const meta = useObservable({
     isShown: false,
-    source: '',
+    source: "",
     filetree: {}
   });
   useEffect(() => {
     value &&
       (meta.source = value
-        .replace("require('", '')
-        .replace('@src/assets/images/', '')
-        .replace("')", ''));
+        .replace("require('", "")
+        .replace("@src/assets/images/", "")
+        .replace("')", ""));
     meta.isShown = isShown;
   }, [value, isShown]);
 
   useEffect(() => {
     const load = async () => {
-      meta.filetree = await api.get('assets/list');
+      meta.filetree = await api.get("assets/list");
     };
     load();
-  }, []);
+  }, [meta.isShown]);
   return (
     <>
       <Dialog
@@ -66,16 +66,16 @@ export default observer(({ value, onChange, isShown, onDismiss }: any) => {
                 onChange={async (e: any) => {
                   const file = e.target.files[0];
                   var formDataToUpload = new FormData();
-                  formDataToUpload.append('file', file);
-                  await api.post('/assets/upload', formDataToUpload, {
+                  formDataToUpload.append("file", file);
+                  await api.post("/assets/upload", formDataToUpload, {
                     headers: {
-                      'Content-Type': 'multipart/form-data'
+                      "Content-Type": "multipart/form-data"
                     }
                   });
-                  const res = await api.get('assets/list');
+                  const res = await api.get("assets/list");
                   meta.filetree = { ...res };
                 }}
-                style={{ display: 'none' }}
+                style={{ display: "none" }}
               />
             </label>
             {!!meta.filetree &&
@@ -86,12 +86,12 @@ export default observer(({ value, onChange, isShown, onDismiss }: any) => {
                       className="image-canvas"
                       key={idx}
                       style={{
-                        position: 'relative'
+                        position: "relative"
                       }}
                     >
                       <div
                         className={`image ${meta.source === file.name &&
-                          'active'}`}
+                          "active"}`}
                         onClick={() => {
                           meta.source = file.name;
                           meta.isShown = false;
@@ -102,7 +102,7 @@ export default observer(({ value, onChange, isShown, onDismiss }: any) => {
                         }}
                       >
                         <img
-                          src={api.url + 'assets/' + file.name}
+                          src={api.url + "assets/" + file.name}
                           alt={file.name}
                         />
                       </div>

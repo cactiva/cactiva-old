@@ -15,7 +15,7 @@ export default observer(({ editor }: any) => {
   return <Loading />;
   // }
   return (
-    <div className='wrapper'>
+    <div className='welcome-wrapper'>
       <div className='welcome-canvas'>
         <div className='canvas-left'>
           <div className='logo'>

@@ -115,8 +115,8 @@ const renderTag = (
   const tag = tags[source.name] as any;
   const cactiva = {
     tag,
-    root: root,
-    source: source,
+    root,
+    source,
     editor,
     parentInfo
   };

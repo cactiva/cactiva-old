@@ -7,7 +7,7 @@ import { findElementById, getIds } from "./utility/elements/tools";
 import { kindNames } from "./utility/kinds";
 import { Icon } from "evergreen-ui";
 
-export default observer(({ source, editor }: any) => {
+export default observer(({ editor }: any) => {
   const meta = useObservable({
     nav: [],
     shouldUpdateNav: true
@@ -17,7 +17,7 @@ export default observer(({ source, editor }: any) => {
       meta.shouldUpdateNav = true;
       return;
     }
-    meta.nav = generatePath(editor, source);
+    meta.nav = generatePath(editor, editor.source);
   }, [editor.selectedId, editor.undoStack.length]);
 
   const lastNav: any = meta.nav[meta.nav.length - 1];
@@ -25,10 +25,14 @@ export default observer(({ source, editor }: any) => {
   return (
     <div className="cactiva-breadcrumb">
       <div
-        className={`breadcrumb-tag ${
-          editor.rootSelected ? "selected" : ""
-        }`}
+        className={`breadcrumb-tag ${editor.rootSelected ? "selected" : ""}`}
         onClick={() => {
+          if (!editor.rootSelected) {
+            if (!editor.applySelectedSource()) {
+              return;
+            }
+          }
+
           editor.rootSelected = !editor.rootSelected;
         }}
       >
@@ -44,7 +48,11 @@ export default observer(({ source, editor }: any) => {
             }}
           >
             <div style={{ margin: "1px 6px -1px 0px" }}>
-              <Icon icon={"layout-hierarchy"} size={9} color={"#878787"} />
+              <Icon
+                icon={"layout-hierarchy"}
+                size={9}
+                color={editor.rootSelected ? "#1070ca" : "#878787"}
+              />
             </div>
             SourceFile
           </span>
@@ -54,8 +62,7 @@ export default observer(({ source, editor }: any) => {
         const cactiva = editor.cactivaRefs[v.source.id];
         if (!cactiva) return null;
         const isSelected = !!(
-          editor.rootSelected === false &&
-          editor.selectedId === v.source.id
+          editor.rootSelected === false && editor.selectedId === v.source.id
         );
         return (
           <CactivaSelectable

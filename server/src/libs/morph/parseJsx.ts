@@ -1,10 +1,31 @@
 import * as _ from "lodash";
 import { SyntaxKind } from "ts-morph";
 import { kindNames } from "./kindNames";
+
+export const getEntryPoint = (node: any): any => {
+  if (node && node.compilerNode) {
+    node = node.compilerNode;
+  }
+  if (node.kind === SyntaxKind.SyntaxList) {
+    return getEntryPoint(_.get(node, "_children.0"));
+  }
+  if (node.kind === SyntaxKind.ExpressionStatement) {
+    return getEntryPoint(_.get(node, "expression"));
+  }
+  if (node.kind === SyntaxKind.ParenthesizedExpression) {
+    return getEntryPoint(_.get(node, "expression"));
+  }
+  if (node.kind === SyntaxKind.Block) {
+    return getEntryPoint(_.get(node, "statements.0"));
+  }
+  return node;
+};
+
 export const parseJsx = (node: any, showKindName: boolean = false): any => {
   if (node.compilerNode) {
     node = node.compilerNode;
   }
+
   let kind = _.get(node, "kind");
   if (!kind && node && node.getKind) {
     kind = node.getKind();
@@ -163,7 +184,7 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
   }
 
   if (node.containsOnlyTriviaWhiteSpaces) return undefined;
-  if (node.getText) return { kind: kindName, value: node.getText() };
-  if (node.text) return { kind: kindName, value: node.text };
-  if (node.escapedText) return { kind: kindName, value: node.escapedText };
+  if (node.getText) return { kind: kindName, value: node.getText().trim() };
+  if (node.text) return { kind: kindName, value: node.text.trim() };
+  if (node.escapedText) return { kind: kindName, value: node.escapedText.trim() };
 };

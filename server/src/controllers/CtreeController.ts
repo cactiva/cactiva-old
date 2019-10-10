@@ -21,7 +21,7 @@ export class CtreeController {
         return false;
       }
       return true;
-    });
+    }); 
 
     res.status(200).json(tree);
   }

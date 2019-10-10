@@ -41,9 +41,13 @@ export default observer(
           meta.hover = false;
         }}
         onDoubleClick={onDoubleClick}
-        onClick={e => {
+        onClick={async e => {
           e.preventDefault();
           e.stopPropagation();
+
+          if (!(await editor.applySelectedSource())) {
+            return;
+          }
 
           if (onBeforeSelect) {
             onBeforeSelect(source.id);

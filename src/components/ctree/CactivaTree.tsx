@@ -122,6 +122,7 @@ const renderTree = (
       >
         <div
           onClick={() => {
+            localStorage.setItem("cactiva-current-path", e.relativePath);
             editor.load(e.relativePath);
           }}
           style={{ paddingLeft: level * 10 }}

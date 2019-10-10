@@ -19,7 +19,7 @@ import { isTag } from "../editor/utility/tagmatcher";
 import { SyntaxKind } from "../editor/utility/syntaxkinds";
 import { toJS } from "mobx";
 
-export default observer(({ source, editor }: any) => {
+export default observer(({ editor }: any) => {
   const traits = _.get(editor, "selected.tag.traits") as ICactivaTrait[];
   const meta = useObservable({
     expanded: ["attributes", "style"] as string[],
@@ -138,7 +138,7 @@ export default observer(({ source, editor }: any) => {
 
                   return (
                     <React.Fragment key={key}>
-                      <CactivaTraitField 
+                      <CactivaTraitField
                         key={key}
                         {...trait}
                         kind={kind || trait.kind}

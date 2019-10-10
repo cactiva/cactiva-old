@@ -34,7 +34,7 @@ const uploadImage = async (file: any) => {
   });
 };
 
-export default observer(({ source, editor }: any) => {
+export default observer(({ editor }: any) => {
   const meta = useObservable({
     onDrag: false,
     jsx:
@@ -42,14 +42,34 @@ export default observer(({ source, editor }: any) => {
         ? true
         : false,
     sourceLanguage: "javascript",
-    source: "",
+    selectedSource: "",
+    listenEditorChanges: false,
     edHeight: parseInt(
       localStorage.getItem("cactiva-editor-source-height") || "40"
     )
   });
   const children = renderChildren(
-    { name: "--root--", children: [source] },
+    { name: "--root--", children: [editor.source] },
     editor
+  );
+
+  const monacoEditorChange = _.debounce(
+    value => {
+      if (meta.listenEditorChanges) {
+        if (value !== editor.selectedSource) {
+          editor.selectedSource = value;
+
+          const ed = monacoEdRef.current;
+          if (!ed.getModel().canUndo()) {
+            editor.selectedSource = "";
+          }
+        }
+      }
+    },
+    100,
+    {
+      leading: true
+    }
   );
 
   const onDrop = useCallback(async acceptedFiles => {
@@ -73,11 +93,11 @@ export default observer(({ source, editor }: any) => {
         }
       }
     };
-    if (source.children.length > 0) {
-      const idx = source.children.length - 1;
-      insertAfterElementId(source, source.children[idx].id, el);
+    if (editor.source.children.length > 0) {
+      const idx = editor.source.children.length - 1;
+      insertAfterElementId(editor.source, editor.source.children[idx].id, el);
     } else {
-      addChildInId(source, source.id, el);
+      addChildInId(editor.source, editor.source.id, el);
     }
     commitChanges(editor);
     meta.onDrag = false;
@@ -89,52 +109,70 @@ export default observer(({ source, editor }: any) => {
   const rootProps = getRootProps();
   const sourceRef = useRef(null as any);
   const monacoRef = useRef(null as any);
+  const monacoEdRef = useRef(null as any);
   const isSelected = !!editor.rootSelected || !!editor.selectedId;
-  rootProps.onDoubleClick = rootProps.onClick;
+  delete rootProps.onDoubleClick;
   delete rootProps.onClick;
 
-  useEffect(() => {
+  const reloadEditorSource = (resetUndo = true) => {
     try {
       if (editor.rootSelected) {
-        meta.source = prettier.format(
-          editor.rootSource.replace(
-            "<<<<cactiva>>>>",
-            generateSource(editor.source)
-          ),
-          {
-            parser: "typescript",
-            plugins: [typescript]
-          }
-        );
+        meta.selectedSource = editor.getSourceCode();
         meta.sourceLanguage = "javascript";
         meta.jsx = true;
       } else {
         if (meta.sourceLanguage === "json") {
-          meta.source = JSON.stringify(editor.selected.source, null, 2);
+          meta.selectedSource = JSON.stringify(editor.selected.source, null, 2);
         } else {
-          meta.source = _.get(editor, "selected.source")
-            ? prettier.format(generateSource(editor.selected.source), {
-                parser: "typescript",
-                plugins: [typescript]
-              })
-            : "";
+          meta.selectedSource = editor.getSelectedSourceCode();
         }
       }
     } catch (e) {
       console.log(e);
     }
-    if (monacoRef.current) {
-      monacoRef.current.setValue(meta.source);
-      monacoRef.current.layout();
+    if (monacoEdRef.current) {
+      meta.listenEditorChanges = false;
+      if (resetUndo) {
+        monacoEdRef.current.setValue(meta.selectedSource);
+      } else {
+        const activeEditor = monacoEdRef.current;
+        const monaco = monacoRef.current;
+        activeEditor.executeEdits("beautifier", [
+          {
+            identifier: "delete" as any,
+            range: new monaco.Range(1, 1, 10000, 1),
+            text: "",
+            forceMoveMarkers: true
+          }
+        ]);
+        activeEditor.executeEdits("beautifier", [
+          {
+            identifier: "insert" as any,
+            range: new monaco.Range(1, 1, 1, 1),
+            text: meta.selectedSource,
+            forceMoveMarkers: true
+          }
+        ]);
+        activeEditor.setSelection(new monaco.Range(0, 0, 0, 0));
+      }
+      monacoEdRef.current.layout();
+      meta.listenEditorChanges = true;
     }
-  }, [editor.selectedId, editor.rootSelected, meta.sourceLanguage, meta.jsx]);
+  };
+  useEffect(reloadEditorSource, [
+    editor.selectedId,
+    editor.rootSelected,
+    meta.sourceLanguage,
+    meta.jsx,
+    editor.undoStack.length
+  ]);
 
   return (
     <div className="cactiva-editor" {...rootProps}>
       {meta.onDrag && <input {...getInputProps()} />}
 
       <div className="cactiva-wrapper">
-        <CactivaToolbar />
+        {!editor.rootSelected && <CactivaToolbar />}
         <div className="cactiva-editor-wrapper">
           <Split
             sizes={[100 - meta.edHeight, meta.edHeight]}
@@ -157,8 +195,8 @@ export default observer(({ source, editor }: any) => {
                   localStorage.setItem("cactiva-editor-source-height", h + "");
                 }
               }
-              if (monacoRef.current) {
-                monacoRef.current.layout();
+              if (monacoEdRef.current) {
+                monacoEdRef.current.layout();
               }
             }}
           >
@@ -184,50 +222,106 @@ export default observer(({ source, editor }: any) => {
                       height: "100%"
                     }}
                   >
-                    {!editor.rootSelected && (
+                    <div
+                      className="editor-source-action"
+                      style={{
+                        paddingTop: editor.rootSelected ? 6 : undefined
+                      }}
+                    >
+                      {editor.selectedSource.length > 0 ? (
+                        <div className="action-toolbar">
+                          <div
+                            className="action-btn green"
+                            onClick={() => editor.applySelectedSource()}
+                          >
+                            <Icon icon="small-tick" size={12} />
+                            <Text>Apply Changes [ Ctrl / ⌘ + Enter ] </Text>
+                          </div>
+                          <div
+                            className="action-btn red"
+                            onClick={() => {
+                              reloadEditorSource(false);
+                              monacoEdRef.current.setValue(meta.selectedSource);
+                              editor.selectedSource = "";
+                            }}
+                          >
+                            <Icon icon="small-cross" size={12} />
+                            <Text>Discard</Text>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="action-toolbar">
+                          <div
+                            className="action-btn"
+                            style={{ padding: 0, opacity: 0.7, border: 0 }}
+                          >
+                            <Text>Code Editor</Text>
+                          </div>
+                        </div>
+                      )}
                       <div
                         style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          padding: "0px 3px 5px 5px",
-                          height: 6,
-                          justifyContent: "space-between"
+                          width: 15,
+                          height: 8,
+                          border: "1px solid #ccc",
+                          opacity: 0.3,
+                          borderRadius: 3,
+                          cursor: "pointer",
+                          background:
+                            meta.sourceLanguage === "json" ? "white" : undefined
                         }}
-                      >
-                        <div></div>
-                        <div
-                          style={{
-                            width: 15,
-                            height: 4,
-                            border: "1px solid #ccc",
-                            opacity: 0.3,
-                            borderRadius: 33,
-                            cursor: "pointer",
-                            background:
-                              meta.sourceLanguage === "json"
-                                ? "white"
-                                : undefined
-                          }}
-                          onClick={() => {
+                        onClick={() => {
+                          if (!editor.rootSelected) {
                             meta.sourceLanguage =
                               meta.sourceLanguage === "json"
                                 ? "javascript"
                                 : "json";
-                          }}
-                        ></div>
-                      </div>
-                    )}
+                          }
+                        }}
+                      ></div>
+                    </div>
                     <MonacoEditor
                       theme="vs-dark"
-                      onChange={value => {
-                        meta.source = value;
-                      }}
                       options={{ fontSize: 11 }}
                       editorWillMount={(monaco: any) => {
                         editor.setupMonaco(monaco);
-                      }}
-                      editorDidMount={(monaco: any) => {
                         monacoRef.current = monaco;
+                      }}
+                      editorDidMount={(ed: any, monaco: any) => {
+                        monacoEdRef.current = ed;
+                        ed.onDidBlurEditorText(function(e: any) {
+                          monacoEditorChange(ed.getValue());
+                        });
+                        ed.onMouseLeave(function(e: any) {
+                          monacoEditorChange(ed.getValue());
+                        });
+                        ed.onMouseMove(function(e: any) {
+                          monacoEditorChange(ed.getValue());
+                        });
+                        ed.addAction({
+                          id: "cactiva-apply-changes",
+                          label: "Apply Changes",
+                          keybindings: [
+                            monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter
+                          ],
+                          run: function(ed: any) {
+                            if (editor.selectedSource.length > 0) {
+                              editor.applySelectedSource();
+                            }
+                            return null;
+                          }
+                        });
+                        ed.addAction({
+                          id: "cactiva-save",
+                          label: "Save",
+                          keybindings: [
+                            monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S
+                          ],
+                          run: function(ed: any) {
+                            editor.save();
+                            return null;
+                          }
+                        });
                       }}
                       language={meta.sourceLanguage}
                     />
@@ -239,7 +333,7 @@ export default observer(({ source, editor }: any) => {
         </div>
       </div>
       <div className="cactiva-editor-footer">
-        <CactivaBreadcrumb source={source} editor={editor} />
+        <CactivaBreadcrumb editor={editor} />
         <div
           className={`toggle-jsx ${meta.jsx ? "active" : ""}`}
           onClick={() => {
@@ -247,6 +341,7 @@ export default observer(({ source, editor }: any) => {
 
             if (meta.jsx === false) {
               editor.rootSelected = false;
+              editor.selectedSource = "";
             }
             localStorage.setItem(
               "cactiva-editor-source-visible",

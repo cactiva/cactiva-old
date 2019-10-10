@@ -1,27 +1,29 @@
-import ImageBrowse from '@src/components/traits/kinds/components/ImageBrowse';
-import { baseUrl } from '@src/store/editor';
-import { observer, useObservable } from 'mobx-react-lite';
-import React, { useEffect } from 'react';
-import CactivaDraggable from '../../../CactivaDraggable';
-import CactivaDropChild from '../../../CactivaDroppable';
-import CactivaSelectable from '../../../CactivaSelectable';
-import { parseProps } from '../../../utility/parser/parser';
+import ImageBrowse from "@src/components/traits/kinds/components/ImageBrowse";
+import { baseUrl } from "@src/store/editor";
+import { observer, useObservable } from "mobx-react-lite";
+import React, { useEffect } from "react";
+import CactivaDraggable from "../../../CactivaDraggable";
+import CactivaDropChild from "../../../CactivaDroppable";
+import CactivaSelectable from "../../../CactivaSelectable";
+import { parseProps } from "../../../utility/parser/parser";
+import {
+  prepareChanges,
+  commitChanges
+} from "@src/components/editor/utility/elements/tools";
 
 export default observer((props: any) => {
   const meta = useObservable({
     edited: false,
-    source: ''
+    source: ""
   });
   const cactiva = props._cactiva;
   const tagProps = parseProps(props);
+  const quotedImg = tagProps.source
+    .match(/\(([^)]+)\)/)[1]
+    .replace("@src/assets/images/", "");
   tagProps.src = !!tagProps.source
-    ? baseUrl +
-      '/assets/' +
-      tagProps.source
-        .replace("require('", '')
-        .replace('@src/assets/images/', '')
-        .replace("')", '')
-    : 'images/sample.jpg';
+    ? baseUrl + "/assets/" + quotedImg.substr(1, quotedImg.length - 2)
+    : "images/sample.jpg";
   useEffect(() => {
     meta.source = tagProps.source;
   }, [props]);
@@ -31,7 +33,6 @@ export default observer((props: any) => {
         <CactivaDraggable cactiva={cactiva}>
           <CactivaSelectable
             cactiva={cactiva}
-            style={tagProps.style}
             onDoubleClick={(e: any) => {
               e.preventDefault();
               e.stopPropagation();
@@ -42,7 +43,7 @@ export default observer((props: any) => {
               {...tagProps}
               onError={(e: any) => {
                 e.target.onerror = null;
-                e.target.src = 'images/sample.jpg';
+                e.target.src = "images/sample.jpg";
               }}
             />
           </CactivaSelectable>
@@ -52,7 +53,9 @@ export default observer((props: any) => {
       <ImageBrowse
         value={meta.source}
         onChange={(v: any) => {
+          prepareChanges(cactiva.editor);
           props.source.value = meta.source = v;
+          commitChanges(cactiva.editor);
         }}
         onDismiss={(e: any) => (meta.edited = e)}
         isShown={meta.edited}

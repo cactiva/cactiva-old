@@ -25,7 +25,6 @@ export default observer(() => {
   const current = editor.current;
   const meta = useObservable({
     currentPane: "props",
-    value: "yo",
     currentProject: ""
   });
 
@@ -33,9 +32,7 @@ export default observer(() => {
     hotkeys("ctrl+s,command+s", (event, handler) => {
       event.preventDefault();
       if (editor.current) {
-        editor.status = "saving";
-        const sourceText = generateSource(editor.current.source);
-        console.log(sourceText);
+        editor.current.save();
       }
     });
     hotkeys("ctrl+z,command+z", (event, handler) => {
@@ -106,7 +103,7 @@ export default observer(() => {
             >
               {current && current.source ? (
                 <>
-                  <CactivaEditor source={current.source} editor={current} />
+                  <CactivaEditor editor={current} />
                 </>
               ) : (
                 <div>Please Choose A Component</div>
@@ -139,7 +136,7 @@ export default observer(() => {
                 {meta.currentPane === "props" && (
                   <>
                     {current && current.source && current.selected ? (
-                      <CactivaTraits source={current.source} editor={current} />
+                      <CactivaTraits editor={current} />
                     ) : (
                       <Pane
                         display="flex"

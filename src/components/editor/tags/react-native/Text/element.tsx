@@ -9,6 +9,10 @@ import CactivaDropMarker from "@src/components/editor/CactivaDropMarker";
 import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
 import _ from "lodash";
 import { toJS } from "mobx";
+import {
+  prepareChanges,
+  commitChanges
+} from "@src/components/editor/utility/elements/tools";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -63,10 +67,12 @@ export default observer((props: any) => {
             if (!hasJsxExpression) {
               let text = prompt("Text:", _.get(children, "0.value"));
               if (text !== null) {
+                prepareChanges(cactiva.editor);
                 children[0] = {
                   kind: SyntaxKind.JsxText,
                   value: text
                 };
+                commitChanges(cactiva.editor);
               }
             }
           }}

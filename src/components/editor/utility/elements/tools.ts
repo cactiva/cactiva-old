@@ -9,19 +9,29 @@ import kinds from "../kinds";
 export const getIds = (id: string | string[]) =>
   Array.isArray(id) ? _.clone(id) : id.split("_");
 
-const recurseElementById = (id: string, root: any): any => {
+const recurseElementById = (
+  id: string,
+  root: any,
+  replacement?: any,
+  replacementParent?: any,
+  replacementChildKey?: any
+): any => {
   if (root.id === id) {
+    if (replacement) {
+      replacementParent[replacementChildKey] = replacement;
+      return replacementParent[replacementChildKey];
+    }
     return root;
   }
   if (root.value) {
-    return recurseElementById(id, root.value);
+    return recurseElementById(id, root.value, replacement, root, "value");
   }
 
   if (!root.value && !root.children) {
     const result = Object.keys(root)
       .map((c: any) => {
         if (typeof root[c] === "object") {
-          const res = recurseElementById(id, root[c]);
+          const res = recurseElementById(id, root[c], replacement, root, c);
           if (res) return res;
         }
       })
@@ -32,8 +42,8 @@ const recurseElementById = (id: string, root: any): any => {
 
   if (Array.isArray(root.props)) {
     const result = root.props
-      .map((c: any) => {
-        const res = recurseElementById(id, c);
+      .map((c: any, idx: number) => {
+        const res = recurseElementById(id, c, replacement, root, idx);
         if (res) return res;
       })
       .filter((e: any) => !!e);
@@ -43,8 +53,8 @@ const recurseElementById = (id: string, root: any): any => {
 
   if (Array.isArray(root.children)) {
     const result = root.children
-      .map((c: any) => {
-        const res = recurseElementById(id, c);
+      .map((c: any, idx: number) => {
+        const res = recurseElementById(id, c, replacement, root, idx);
         if (res) return res;
       })
       .filter((e: any) => !!e);
@@ -75,6 +85,62 @@ export const findElementById = (root: any, id: string | string[]): any => {
           el = recurseElementById(currentIds.join("_"), el);
         } else {
           el = el.value;
+        }
+      }
+    }
+  }
+  if (el) {
+    return el;
+  }
+};
+
+export const replaceElementById = (
+  root: any,
+  id: string | string[],
+  value: any
+): any => {
+  const ids = getIds(id);
+  if (!root) return null;
+  let el = root;
+
+  if (id === "0") {
+    for (let i in root) {
+      delete root[i];
+    }
+    for (let i in value) {
+      root[i] = value[i];
+    }
+    return root;
+  }
+
+  let currentIds = [];
+  for (let i in ids) {
+    const idx = parseInt(i);
+    const cid = parseInt(ids[idx + 1]);
+    const isBeforeLast = ids.length - 2 === idx;
+    const hasChild = !!_.get(el, `children.${cid}`, false);
+    currentIds.push(ids[i]);
+
+    if (hasChild) {
+      if (!isBeforeLast) {
+        el = el.children[cid];
+      } else {
+        el.children[cid] = value;
+      }
+    } else {
+      if (!!el && !!el.value) {
+        if (el.kind === SyntaxKind.JsxExpression) {
+          if (!isBeforeLast) {
+            el = recurseElementById(currentIds.join("_"), el);
+          } else {
+            el = recurseElementById(currentIds.join("_"), el, value);
+          }
+        } else {
+          if (!isBeforeLast) {
+            el = el.value;
+          } else {
+            el.value = value;
+          }
         }
       }
     }
@@ -141,7 +207,7 @@ export const isParentOf = (parentId: string, childId: string): boolean => {
 
 export const prepareChanges = (editor: any) => {
   if (editor.selectedId) {
-    editor.tempSelected = findElementById(editor.root, editor.selectedId);
+    editor.tempSelected = findElementById(editor.source, editor.selectedId);
   } else {
     editor.tempSelected = undefined;
   }

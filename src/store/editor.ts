@@ -25,12 +25,11 @@ class EditorStore {
     await Axios.get(`${baseUrl}${apiPath}${path}`)
       .then(res => {
         let root = res.data.component;
-        if (root.kind === SyntaxKind.ParenthesizedExpression) {
-          root = root.value;
-        }
 
         this.sources[path] = new SourceStore(root, path);
         this.sources[path].rootSource = res.data.file;
+        this.sources[path].project = this;
+
         this.path = path;
         this.status = "ready";
         localStorage.setItem("cactiva-current-path", path);
