@@ -20,6 +20,10 @@
       flex-direction: row;
       .icon-selected {
         margin: 0 8px;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+
         i {
           color: #1070ca !important;
         }
@@ -62,4 +66,19 @@
       }
     }
   }
+}
+
+.cactiva-trait-color-picker {
+  display: flex;
+  flex: 1;
+}
+
+.sketch-picker {
+  box-shadow: none !important;
+}
+
+.cactiva-trait-radio {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }

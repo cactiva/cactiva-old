@@ -1,13 +1,14 @@
 export abstract class CactivaKind {
-  static kindName: string = "";
+  static kindName: string = '';
   static element: any;
   static structure: any;
 }
 export interface ICactivaTraitField {
-  label?: string;
+  label?: boolean;
   name: string;
   path: string;
   kind: number;
+  divider?: string;
   default?: any;
   mode?: string;
   options?: {
@@ -28,8 +29,8 @@ export interface ICactivaTrait {
 }
 
 export abstract class CactivaTag {
-  static tagName: string = "";
-  static from: string = "";
+  static tagName: string = '';
+  static from: string = '';
   static traits: ICactivaTrait[] = [];
   static element: any;
   static structure: any;

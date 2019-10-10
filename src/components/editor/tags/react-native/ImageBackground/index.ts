@@ -1,5 +1,6 @@
 import { SyntaxKind } from '@src/components/editor/utility/syntaxkinds';
-import { CactivaTag } from "@src/components/editor/utility/classes";
+import styleTrait from '@src/components/traits/templates/styleTrait';
+import { CactivaTag } from '@src/components/editor/utility/classes';
 const styles = {
   root: {
     flex: '1 1 100%'
@@ -34,7 +35,8 @@ export default class extends CactivaTag {
           }
         }
       ]
-    }
+    },
+    ...styleTrait(['Typography'])
   ];
   static element = require('./element').default;
 }
