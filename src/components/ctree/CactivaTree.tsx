@@ -1,5 +1,5 @@
 import { observer, useObservable } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect } from "react";
 import useAsyncEffect from "use-async-effect";
 import api from "@src/libs/api";
 import "./CactivaTree.scss";
@@ -37,9 +37,11 @@ export default observer(({ editor }: any) => {
   const selected = editor.path;
   useAsyncEffect(async () => {
     const res = await api.get("ctree/list");
-    meta.list = meta.source = res.children;
+    meta.source = res.children;
   }, []);
-  expandSelected(selected, meta.list, null);
+  useEffect(() => {
+    expandSelected(selected, meta.list, null);
+  }, [meta.list]);
   return (
     <div
       className="cactiva-tree"
