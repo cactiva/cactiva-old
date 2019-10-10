@@ -120,7 +120,7 @@ export default observer(() => {
               onContextMenu={e => e.preventDefault()}
             >
               <div className="cactiva-pane-inner">
-                <div className="cactiva-pane-tab-header">
+                {/* <div className="cactiva-pane-tab-header">
                   <Tab
                     style={{ flex: 1 }}
                     isSelected={meta.currentPane === "props"}
@@ -135,7 +135,7 @@ export default observer(() => {
                   >
                     Hooks
                   </Tab>
-                </div>
+                </div> */}
                 {meta.currentPane === "props" && (
                   <>
                     {current && current.source && current.selected ? (

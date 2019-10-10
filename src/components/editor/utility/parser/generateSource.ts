@@ -49,6 +49,14 @@ export const generateSource = (node: any): string => {
 ${node.body.map((e: any) => generateSource(e)).join("\n")} 
 }`;
       })();
+    case SyntaxKind.JsxFragment:
+      return (() => {
+        return `<>${node.children
+          .map((e: any) => {
+            return generateSource(e);
+          })
+          .join(" ")}</>`;
+      })();
     case SyntaxKind.JsxElement:
       return (() => {
         return `<${node.name} ${_.map(node.props, (e, name) => {

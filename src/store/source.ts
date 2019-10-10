@@ -5,9 +5,12 @@ export class SourceStore {
   @observable path = "";
   lastId = 1;
   @observable source: any = {};
+  @observable rootSource: string = "";
+
   root = null;
   @observable hooks: any = [];
 
+  @observable sourceFileSelected = false;
   @observable selectedId = "";
   @observable selected: any;
 

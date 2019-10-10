@@ -1,12 +1,13 @@
-import _ from 'lodash';
-import { SyntaxKind } from './syntaxkinds';
+import _ from "lodash";
+import { SyntaxKind } from "./syntaxkinds";
 export const isTag = (s: any, tagName?: string): boolean => {
   let result = false;
 
-  const kind = _.get(s, 'kind');
-  if (kind === SyntaxKind.JsxElement) {
-    result = true;
-  } else if (kind === SyntaxKind.JsxSelfClosingElement) {
+  const kind = _.get(s, "kind");
+  if (
+    kind === SyntaxKind.JsxElement ||
+    kind === SyntaxKind.JsxSelfClosingElement
+  ) {
     result = true;
   }
 

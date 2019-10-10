@@ -1,7 +1,7 @@
 import api from "@src/libs/api";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import MonacoEditor from "react-monaco-editor";
 import Split from "react-split";
@@ -37,8 +37,15 @@ const uploadImage = async (file: any) => {
 export default observer(({ source, editor }: any) => {
   const meta = useObservable({
     onDrag: false,
-    jsx: false,
-    source: ""
+    jsx:
+      localStorage.getItem("cactiva-editor-source-visible") === "y"
+        ? true
+        : false,
+    jsxFormat: "jsx",
+    source: "",
+    edHeight: parseInt(
+      localStorage.getItem("cactiva-editor-source-height") || "40"
+    )
   });
   const children = renderChildren(
     { name: "--root--", children: [source] },
@@ -80,21 +87,41 @@ export default observer(({ source, editor }: any) => {
   };
   const { getRootProps, getInputProps } = useDropzone({ onDrop, onDragEnter });
   const rootProps = getRootProps();
+  const sourceRef = useRef(null as any);
+  const monacoRef = useRef(null as any);
+  const isSelected = !!editor.sourceFileSelected || !!editor.selectedId;
   rootProps.onDoubleClick = rootProps.onClick;
   delete rootProps.onClick;
 
   useEffect(() => {
     try {
-      meta.source = _.get(editor, "selected.source")
-        ? prettier.format(generateSource(editor.selected.source), {
+      if (editor.sourceFileSelected) {
+        meta.source = prettier.format(
+          editor.rootSource.replace(
+            "<<<<cactiva>>>>",
+            generateSource(editor.source)
+          ),
+          {
             parser: "typescript",
             plugins: [typescript]
-          })
-        : "";
+          }
+        );
+      } else {
+        meta.source = _.get(editor, "selected.source")
+          ? prettier.format(generateSource(editor.selected.source), {
+              parser: "typescript",
+              plugins: [typescript]
+            })
+          : "";
+      }
     } catch (e) {
-      console.log(toJS(editor.selected.source));
+      console.log(e);
     }
-  }, [editor.selectedId]);
+    if (monacoRef.current) {
+      monacoRef.current.layout;
+    }
+  }, [editor.selectedId, editor.sourceFileSelected]);
+
   return (
     <div className="cactiva-editor" {...rootProps}>
       {meta.onDrag && <input {...getInputProps()} />}
@@ -103,21 +130,42 @@ export default observer(({ source, editor }: any) => {
         <CactivaToolbar />
         <div className="cactiva-editor-wrapper">
           <Split
-            sizes={[50, 50]}
+            sizes={[100 - meta.edHeight, meta.edHeight]}
             gutterSize={5}
             gutterAlign="center"
             dragInterval={1}
             direction="vertical"
             className={`cactiva-editor-content ${
-              meta.jsx ? "split" : "unsplit"
+              meta.jsx
+                ? editor.sourceFileSelected
+                  ? "resplit"
+                  : "split"
+                : "unsplit"
             }`}
+            onDrag={(e: any) => {
+              if (sourceRef.current) {
+                const h = parseInt(
+                  sourceRef.current.style.height
+                    .replace("calc(", "")
+                    .replace("% - 2.5px)")
+                );
+
+                if (!isNaN(h)) {
+                  localStorage.setItem("cactiva-editor-source-height", h + "");
+                }
+              }
+              if (monacoRef.current) {
+                monacoRef.current.layout;
+              }
+            }}
           >
             <div className="cactiva-canvas">{children}</div>
             <div
               className={`cactiva-editor-source `}
+              ref={sourceRef}
               style={{ display: meta.jsx ? "flex" : "none" }}
             >
-              {!editor.selectedId ? (
+              {!isSelected ? (
                 <div className="empty">
                   <Icon icon="select" color="white" size={30} />
                   <Text color="white" marginTop={10} size={300}>
@@ -126,18 +174,30 @@ export default observer(({ source, editor }: any) => {
                 </div>
               ) : (
                 meta.jsx && (
-                  <MonacoEditor
-                    theme="vs-dark"
-                    value={meta.source}
-                    onChange={value => {
-                      console.log(value);
-                      meta.source = value;
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "100%",
+                      height: "100%"
                     }}
-                    editorWillMount={monaco => {
-                      editor.setupMonaco(monaco);
-                    }}
-                    language="typescript"
-                  />
+                  >
+                    <div>asd</div>
+                    <MonacoEditor
+                      theme="vs-dark"
+                      value={meta.source}
+                      onChange={value => {
+                        meta.source = value;
+                      }}
+                      options={{ fontSize: 11 }}
+                      editorWillMount={(monaco: any) => {
+                        editor.setupMonaco(monaco);
+                      }}
+                      editorDidMount={(monaco: any) => {
+                        monacoRef.current = monaco;
+                      }}
+                      language="javascript"
+                    />
+                  </div>
                 )
               )}
             </div>
@@ -150,6 +210,10 @@ export default observer(({ source, editor }: any) => {
           className={`toggle-jsx ${meta.jsx ? "active" : ""}`}
           onClick={() => {
             meta.jsx = !meta.jsx;
+            localStorage.setItem(
+              "cactiva-editor-source-visible",
+              meta.jsx ? "y" : "n"
+            );
           }}
         >
           JSX

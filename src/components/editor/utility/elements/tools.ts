@@ -65,11 +65,10 @@ export const findElementById = (root: any, id: string | string[]): any => {
   let currentIds = ["0"];
   for (let i in ids) {
     currentIds.push(ids[i]);
-    if (isTag(el)) {
-      const cid = parseInt(ids[i]);
-      if (el && el.children && el.children.length > cid && el.children[cid]) {
-        el = el.children[cid];
-      }
+    const cid = parseInt(ids[i]);
+    const hasChild = _.get(el, `children.${cid}`, false);
+    if (hasChild) {
+      el = el.children[cid];
     } else {
       if (!!el && !!el.value) {
         if (el.kind === SyntaxKind.JsxExpression) {

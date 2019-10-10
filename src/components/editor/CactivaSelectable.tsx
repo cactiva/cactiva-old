@@ -11,16 +11,22 @@ export default observer(
     showElementTag = true,
     onBeforeSelect,
     onDoubleClick,
+    ignoreClassName = [],
     onSelected
   }: any) => {
     const { editor, source } = cactiva;
     const meta = useObservable({ hover: false });
-    const classes = {
+    const classes: any = {
       hover: meta.hover ? "hover" : "",
       selected: editor.selectedId === source.id ? "selected" : "",
       horizontal: _.get(style, "flexDirection") === "row" ? "horizontal" : "",
       kind: cactiva.kind ? "kind" : ""
     };
+
+    ignoreClassName.forEach((e: string) => {
+      delete classes[e];
+    });
+
     const name = cactiva.kind ? cactiva.kind.kindName : cactiva.tag.tagName;
     return (
       <div
@@ -43,6 +49,7 @@ export default observer(
             onBeforeSelect(source.id);
           }
 
+          editor.sourceFileSelected = false;
           editor.selectedId = source.id;
 
           if (onSelected) {

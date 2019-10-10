@@ -58,6 +58,8 @@ export const generateExpressionArray = (node: any): any[] => {
         ":",
         ...generateExpressionArray(node.whenFalse)
       ];
+    case SyntaxKind.JsxFragment:
+      return [`</>`, ...node.children, `</>`];
     case SyntaxKind.JsxExpression:
       return [`{`, ...generateExpressionArray(node.value), `}`];
     case SyntaxKind.ElementAccessExpression:

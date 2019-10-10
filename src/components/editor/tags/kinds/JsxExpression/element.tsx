@@ -1,6 +1,8 @@
+import { commitChanges, prepareChanges } from "@src/components/editor/utility/elements/tools";
 import { generateExpression } from "@src/components/editor/utility/parser/generateExpression";
 import { generateSource } from "@src/components/editor/utility/parser/generateSource";
 import { renderChildren } from "@src/components/editor/utility/renderchild";
+import api from "@src/libs/api";
 import { Popover, Text } from "evergreen-ui";
 import { toJS } from "mobx";
 import { observer, useObservable } from "mobx-react-lite";
@@ -9,8 +11,6 @@ import MonacoEditor from "react-monaco-editor";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDroppable from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
-import api from "@src/libs/api";
-import { findElementById, prepareChanges, commitChanges } from "@src/components/editor/utility/elements/tools";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;

@@ -116,13 +116,19 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
           props
         };
       })();
+    case SyntaxKind.JsxFragment:
     case SyntaxKind.JsxElement:
       return (() => {
         let name = "";
         const props: any = {};
 
-        name = node.openingElement.tagName.escapedText;
-        node.openingElement.attributes.properties.forEach((p: any) => {
+        name = _.get(node, "openingElement.tagName.escapedText");
+        const properties = _.get(
+          node,
+          "openingElement.attributes.properties",
+          []
+        );
+        properties.forEach((p: any) => {
           props[p.name.escapedText] = parseJsx(
             p.initializer.expression,
             showKindName

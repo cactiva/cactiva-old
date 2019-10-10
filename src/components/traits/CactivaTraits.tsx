@@ -138,7 +138,7 @@ export default observer(({ source, editor }: any) => {
 
                   return (
                     <React.Fragment key={key}>
-                      <CactivaTraitField
+                      <CactivaTraitField 
                         key={key}
                         {...trait}
                         kind={kind || trait.kind}

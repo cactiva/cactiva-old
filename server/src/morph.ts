@@ -5,6 +5,7 @@ import { defaultExport } from "./libs/morph/defaultExport";
 import { parseJsx } from "./libs/morph/parseJsx";
 import * as _ from "lodash";
 import { kindNames } from "./libs/morph/kindNames";
+import { replaceReturn } from "./libs/morph/replaceReturn";
 
 export class Morph {
   private root: TProject = new TProject();
@@ -60,7 +61,10 @@ export class Morph {
     const sf = this.getSourceFile(filename);
     const de = defaultExport(sf);
     const ps = parseJsx(de, showKindName);
-    return ps;
+    return {
+      file: replaceReturn(sf, "<<<<cactiva>>>>"),
+      component: ps
+    };
   }
 
   /************************ Singleton  **************************/

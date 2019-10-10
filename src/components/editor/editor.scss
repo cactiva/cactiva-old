@@ -81,7 +81,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    opacity: .7;
+    opacity: 0.7;
   }
 
   .cactiva-wrapper {
@@ -112,9 +112,20 @@
         }
         .cactiva-canvas {
           overflow-y: auto;
+          > div {
+            margin: 5px;
+          }
         }
         &.unsplit {
           .cactiva-canvas {
+            height: 100% !important;
+          }
+        }
+        &.resplit {
+          .cactiva-canvas {
+            display: none !important;
+          }
+          .cactiva-editor-source {
             height: 100% !important;
           }
         }

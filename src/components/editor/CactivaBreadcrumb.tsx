@@ -24,14 +24,21 @@ export default observer(({ source, editor }: any) => {
   const lastId = _.get(lastNav, "source.id");
   return (
     <div className="cactiva-breadcrumb">
-      <div className="breadcrumb-tag">
+      <div
+        className={`breadcrumb-tag ${
+          editor.sourceFileSelected ? "selected" : ""
+        }`}
+        onClick={() => {
+          editor.sourceFileSelected = !editor.sourceFileSelected;
+        }}
+      >
         <div>
           <span
             style={{
               marginLeft: -6,
               display: "flex",
               flexDirection: "row",
-              maxWidth: 'none',
+              maxWidth: "none",
               userSelect: "none",
               alignItems: "center"
             }}
@@ -39,22 +46,23 @@ export default observer(({ source, editor }: any) => {
             <div style={{ margin: "1px 6px -1px 0px" }}>
               <Icon icon={"layout-hierarchy"} size={9} color={"#878787"} />
             </div>
-            Component
+            SourceFile
           </span>
         </div>
       </div>
       {_.map(meta.nav, (v: any, i) => {
         const cactiva = editor.cactivaRefs[v.source.id];
         if (!cactiva) return null;
-
+        const isSelected = !!(
+          editor.sourceFileSelected === false &&
+          editor.selectedId === v.source.id
+        );
         return (
           <CactivaSelectable
             key={i}
             cactiva={cactiva}
-            style={{}}
-            className={`breadcrumb-tag ${
-              editor.selectedId === v.source.id ? "selected" : ""
-            }`}
+            className={`breadcrumb-tag ${isSelected ? "selected" : ""}`}
+            ignoreClassName={["selected"]}
             showElementTag={false}
             onBeforeSelect={() => {
               meta.shouldUpdateNav = false;
@@ -66,21 +74,24 @@ export default observer(({ source, editor }: any) => {
           </CactivaSelectable>
         );
       })}
-      {lastId === editor.selectedId && lastId && editor.cactivaRefs[lastId] && (
-        <div className={`breadcrumb-tag last selected`}>
-          <CactivaDraggable cactiva={editor.cactivaRefs[lastId]}>
-            <CactivaSelectable
-              cactiva={editor.cactivaRefs[lastId]}
-              style={{}}
-              className=""
-              showElementTag={false}
-              onBeforeSelect={() => {
-                meta.shouldUpdateNav = false;
-              }}
-            ></CactivaSelectable>
-          </CactivaDraggable>
-        </div>
-      )}
+      {!editor.sourceFileSelected &&
+        lastId === editor.selectedId &&
+        lastId &&
+        editor.cactivaRefs[lastId] && (
+          <div className={`breadcrumb-tag last selected`}>
+            <CactivaDraggable cactiva={editor.cactivaRefs[lastId]}>
+              <CactivaSelectable
+                cactiva={editor.cactivaRefs[lastId]}
+                style={{}}
+                className=""
+                showElementTag={false}
+                onBeforeSelect={() => {
+                  meta.shouldUpdateNav = false;
+                }}
+              ></CactivaSelectable>
+            </CactivaDraggable>
+          </div>
+        )}
     </div>
   );
 });
