@@ -55,7 +55,7 @@ ${node.body.map((e: any) => generateSource(e)).join("\n")}
           .map((e: any) => {
             return generateSource(e);
           })
-          .join(" ")}</>`;
+          .join("")}</>`;
       })();
     case SyntaxKind.JsxElement:
       return (() => {

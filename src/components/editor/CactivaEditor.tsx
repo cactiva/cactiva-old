@@ -1,4 +1,5 @@
 import api from "@src/libs/api";
+import { Icon, Text } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useCallback, useEffect, useRef } from "react";
@@ -16,13 +17,8 @@ import {
   insertAfterElementId,
   prepareChanges
 } from "./utility/elements/tools";
-import { Icon, Text } from "evergreen-ui";
-import { generateSource } from "./utility/parser/generateSource";
 import { renderChildren } from "./utility/renderchild";
 import { SyntaxKind } from "./utility/syntaxkinds";
-import prettier from "prettier/standalone";
-import typescript from "prettier/parser-typescript";
-import { toJS } from "mobx";
 
 const uploadImage = async (file: any) => {
   var formDataToUpload = new FormData();
@@ -42,6 +38,7 @@ export default observer(({ editor }: any) => {
         ? true
         : false,
     sourceLanguage: "javascript",
+    showAction: true,
     selectedSource: "",
     listenEditorChanges: false,
     edHeight: parseInt(
@@ -131,11 +128,12 @@ export default observer(({ editor }: any) => {
       console.log(e);
     }
     if (monacoEdRef.current) {
+      const activeEditor = monacoEdRef.current;
+      const currentPosition = activeEditor.getPosition();
       meta.listenEditorChanges = false;
       if (resetUndo) {
         monacoEdRef.current.setValue(meta.selectedSource);
       } else {
-        const activeEditor = monacoEdRef.current;
         const monaco = monacoRef.current;
         activeEditor.executeEdits("beautifier", [
           {
@@ -157,7 +155,9 @@ export default observer(({ editor }: any) => {
       }
       monacoEdRef.current.layout();
       meta.listenEditorChanges = true;
+      activeEditor.setPosition(currentPosition);
     }
+    meta.showAction = true;
   };
   useEffect(reloadEditorSource, [
     editor.selectedId,
@@ -228,7 +228,7 @@ export default observer(({ editor }: any) => {
                         paddingTop: editor.rootSelected ? 6 : undefined
                       }}
                     >
-                      {editor.selectedSource.length > 0 ? (
+                      {editor.selectedSource.length > 0 && meta.showAction ? (
                         <div className="action-toolbar">
                           <div
                             className="action-btn green"
@@ -255,7 +255,7 @@ export default observer(({ editor }: any) => {
                             className="action-btn"
                             style={{ padding: 0, opacity: 0.7, border: 0 }}
                           >
-                            <Text>Code Editor</Text>
+                            <Text>Apply Changes: Ctrl / ⌘ + Enter</Text>
                           </div>
                         </div>
                       )}
@@ -305,9 +305,14 @@ export default observer(({ editor }: any) => {
                             monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter
                           ],
                           run: function(ed: any) {
+                            meta.showAction = false;
+                            monacoEditorChange(ed.getValue());
                             if (editor.selectedSource.length > 0) {
-                              editor.applySelectedSource();
+                              editor.applySelectedSource(true);
+                            } else {
+                              meta.showAction = true;
                             }
+
                             return null;
                           }
                         });
@@ -318,6 +323,7 @@ export default observer(({ editor }: any) => {
                             monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S
                           ],
                           run: function(ed: any) {
+                            monacoEditorChange(ed.getValue());
                             editor.save();
                             return null;
                           }

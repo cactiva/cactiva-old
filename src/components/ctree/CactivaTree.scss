@@ -42,6 +42,9 @@
       display: flex;
       flex-direction: row;
       .icon {
+        &.file {
+          margin-top: 2px;
+        }
         flex-basis: 20px;
         display: flex;
         align-items: center;

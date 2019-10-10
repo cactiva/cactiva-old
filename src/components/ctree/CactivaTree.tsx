@@ -74,11 +74,18 @@ const renderTree = (
   level: number
 ) => {
   return _.sortBy(tree, "type").map((e: any, i: number) => {
+    let unsaved = false;
+    if (
+      editor.sources[e.relativePath] &&
+      !editor.sources[e.relativePath].isSaved
+    ) {
+      unsaved = true;
+    }
     const name =
       e.type === "dir" ? e.name : e.name.substr(0, e.name.length - 4);
     const el = (
       <>
-        <div className="icon">
+        <div className={`icon ${e.type}`}>
           {e.type === "dir" ? (
             <Icon
               icon={e.expanded ? "folder-open" : "folder-close"}
@@ -86,10 +93,15 @@ const renderTree = (
               color="#66788a"
             />
           ) : (
-            <Icon icon="code" size={10} color="#66788a" />
+            <Icon icon="code" size={10} color={unsaved ? "red" : "#66788a"} />
           )}
         </div>
-        <Text color="#333">{name}</Text>
+        <Text
+          color={unsaved ? "red" : "#333"}
+          fontWeight={unsaved ? "bold" : "normal"}
+        >
+          {name}
+        </Text>
       </>
     );
     return e.type === "dir" ? (
