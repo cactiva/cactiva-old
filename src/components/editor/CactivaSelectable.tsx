@@ -49,7 +49,7 @@ export default observer(
             onBeforeSelect(source.id);
           }
 
-          editor.sourceFileSelected = false;
+          editor.rootSelected = false;
           editor.selectedId = source.id;
 
           if (onSelected) {

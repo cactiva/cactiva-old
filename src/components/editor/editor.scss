@@ -171,6 +171,7 @@
       user-select: none;
       &.active {
         margin-top: -3px;
+        padding-top: 4px;
         border: 1px solid #1e1e1e;
         background: #1e1e1e;
         color: white;
@@ -332,9 +333,5 @@
     flex-direction: row;
     align-items: stretch;
     justify-content: space-between;
-  }
-
-  .monaco-editor {
-    padding-top: 10px;
   }
 }

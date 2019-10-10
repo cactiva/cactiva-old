@@ -10,7 +10,7 @@ export class SourceStore {
   root = null;
   @observable hooks: any = [];
 
-  @observable sourceFileSelected = false;
+  @observable rootSelected = false;
   @observable selectedId = "";
   @observable selected: any;
 

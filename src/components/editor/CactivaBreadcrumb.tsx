@@ -26,10 +26,10 @@ export default observer(({ source, editor }: any) => {
     <div className="cactiva-breadcrumb">
       <div
         className={`breadcrumb-tag ${
-          editor.sourceFileSelected ? "selected" : ""
+          editor.rootSelected ? "selected" : ""
         }`}
         onClick={() => {
-          editor.sourceFileSelected = !editor.sourceFileSelected;
+          editor.rootSelected = !editor.rootSelected;
         }}
       >
         <div>
@@ -54,7 +54,7 @@ export default observer(({ source, editor }: any) => {
         const cactiva = editor.cactivaRefs[v.source.id];
         if (!cactiva) return null;
         const isSelected = !!(
-          editor.sourceFileSelected === false &&
+          editor.rootSelected === false &&
           editor.selectedId === v.source.id
         );
         return (
@@ -74,7 +74,7 @@ export default observer(({ source, editor }: any) => {
           </CactivaSelectable>
         );
       })}
-      {!editor.sourceFileSelected &&
+      {!editor.rootSelected &&
         lastId === editor.selectedId &&
         lastId &&
         editor.cactivaRefs[lastId] && (

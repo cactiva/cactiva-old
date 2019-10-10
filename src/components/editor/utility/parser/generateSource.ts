@@ -63,15 +63,16 @@ ${node.body.map((e: any) => generateSource(e)).join("\n")}
           return `${name}={${generateSource(e)}}`;
         }).join(" ")}>${node.children
           .map((e: any) => {
-            return generateSource(e);
+            const res = generateSource(e);
+            return res;
           })
-          .join(" ")}</${node.name}>`;
+          .join("")}</${node.name}>`;
       })();
     case SyntaxKind.JsxSelfClosingElement:
       return (() => {
         return `<${node.name} ${_.map(node.props, (e, name) => {
           return `${name}={${generateSource(e)}}`;
-        }).join(" ")}/>`;
+        }).join("")}/>`;
       })();
   }
 

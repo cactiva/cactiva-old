@@ -41,7 +41,7 @@ export default observer(({ source, editor }: any) => {
       localStorage.getItem("cactiva-editor-source-visible") === "y"
         ? true
         : false,
-    jsxFormat: "jsx",
+    sourceLanguage: "javascript",
     source: "",
     edHeight: parseInt(
       localStorage.getItem("cactiva-editor-source-height") || "40"
@@ -89,13 +89,13 @@ export default observer(({ source, editor }: any) => {
   const rootProps = getRootProps();
   const sourceRef = useRef(null as any);
   const monacoRef = useRef(null as any);
-  const isSelected = !!editor.sourceFileSelected || !!editor.selectedId;
+  const isSelected = !!editor.rootSelected || !!editor.selectedId;
   rootProps.onDoubleClick = rootProps.onClick;
   delete rootProps.onClick;
 
   useEffect(() => {
     try {
-      if (editor.sourceFileSelected) {
+      if (editor.rootSelected) {
         meta.source = prettier.format(
           editor.rootSource.replace(
             "<<<<cactiva>>>>",
@@ -106,21 +106,27 @@ export default observer(({ source, editor }: any) => {
             plugins: [typescript]
           }
         );
+        meta.sourceLanguage = "javascript";
       } else {
-        meta.source = _.get(editor, "selected.source")
-          ? prettier.format(generateSource(editor.selected.source), {
-              parser: "typescript",
-              plugins: [typescript]
-            })
-          : "";
+        if (meta.sourceLanguage === "json") {
+          meta.source = JSON.stringify(editor.selected.source, null, 2);
+        } else {
+          meta.source = _.get(editor, "selected.source")
+            ? prettier.format(generateSource(editor.selected.source), {
+                parser: "typescript",
+                plugins: [typescript]
+              })
+            : "";
+        }
       }
     } catch (e) {
       console.log(e);
     }
     if (monacoRef.current) {
-      monacoRef.current.layout;
+      monacoRef.current.setValue(meta.source);
+      monacoRef.current.layout();
     }
-  }, [editor.selectedId, editor.sourceFileSelected]);
+  }, [editor.selectedId, editor.rootSelected, meta.sourceLanguage]);
 
   return (
     <div className="cactiva-editor" {...rootProps}>
@@ -136,11 +142,7 @@ export default observer(({ source, editor }: any) => {
             dragInterval={1}
             direction="vertical"
             className={`cactiva-editor-content ${
-              meta.jsx
-                ? editor.sourceFileSelected
-                  ? "resplit"
-                  : "split"
-                : "unsplit"
+              meta.jsx ? (editor.rootSelected ? "resplit" : "split") : "unsplit"
             }`}
             onDrag={(e: any) => {
               if (sourceRef.current) {
@@ -155,7 +157,7 @@ export default observer(({ source, editor }: any) => {
                 }
               }
               if (monacoRef.current) {
-                monacoRef.current.layout;
+                monacoRef.current.layout();
               }
             }}
           >
@@ -181,10 +183,41 @@ export default observer(({ source, editor }: any) => {
                       height: "100%"
                     }}
                   >
-                    <div>asd</div>
+                    {!editor.rootSelected && (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          padding: "0px 3px 5px 5px",
+                          height: 6,
+                          justifyContent: "space-between"
+                        }}
+                      >
+                        <div></div>
+                        <div
+                          style={{
+                            width: 15,
+                            height: 4,
+                            border: "1px solid #ccc",
+                            opacity: 0.3,
+                            borderRadius: 33,
+                            cursor: "pointer",
+                            background:
+                              meta.sourceLanguage === "json"
+                                ? "white"
+                                : undefined
+                          }}
+                          onClick={() => {
+                            meta.sourceLanguage =
+                              meta.sourceLanguage === "json"
+                                ? "javascript"
+                                : "json";
+                          }}
+                        ></div>
+                      </div>
+                    )}
                     <MonacoEditor
                       theme="vs-dark"
-                      value={meta.source}
                       onChange={value => {
                         meta.source = value;
                       }}
@@ -195,7 +228,7 @@ export default observer(({ source, editor }: any) => {
                       editorDidMount={(monaco: any) => {
                         monacoRef.current = monaco;
                       }}
-                      language="javascript"
+                      language={meta.sourceLanguage}
                     />
                   </div>
                 )
@@ -216,7 +249,8 @@ export default observer(({ source, editor }: any) => {
             );
           }}
         >
-          JSX
+          <Icon icon={meta.jsx ? "eye-off" : "eye-open"} size={12} />
+          <div style={{ marginLeft: 5 }}>Code</div>
         </div>
       </div>
     </div>
