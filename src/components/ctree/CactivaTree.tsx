@@ -19,9 +19,11 @@ export default observer(({ editor }: any) => {
     meta.source = res.children;
     meta.list = res.children;
   }, []);
+  
   useEffect(() => {
     expandSelected(selected, meta.list, null);
   }, [meta.list]);
+  
   return (
     <div
       className="cactiva-tree"

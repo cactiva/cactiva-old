@@ -69,12 +69,16 @@ export default observer((trait: ICactivaTraitFieldProps) => {
     <>
       {!trait.mode && (
         <div
-          className={`trait-string-literal`}
+          className={`trait-string-literal ${_.get(
+            trait,
+            "options.className"
+          )}`}
           style={{ ...trait.style, flexDirection: "row" }}
         >
           <input
             className={`cactiva-trait-input`}
             type="text"
+            placeholder={_.get(trait, "options.fields.name")}
             value={meta.value || ""}
             onChange={e => {
               meta.value = e.target.value;
@@ -312,44 +316,6 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               trait.update(`"${meta.value}"`);
             }}
           />
-          {/* <label className="btn-upload">
-            <IconButton
-              icon="cloud-upload"
-              height={20}
-              onClick={e => {
-                e.stopPropagation();
-                refInputFont.current.click();
-              }}
-            />
-            <input
-              ref={refInputFont}
-              multiple={false}
-              type="file"
-              accept=".ttf"
-              onChange={async (e: any) => {
-                const file = e.target.files[0];
-                var formDataToUpload = new FormData();
-                formDataToUpload.append("file", file);
-                const newVal = await api.post(
-                  "/assets/upload-font",
-                  formDataToUpload,
-                  {
-                    headers: {
-                      "Content-Type": "multipart/form-data"
-                    }
-                  }
-                );
-                meta.value = newVal.filename.substr(
-                  0,
-                  newVal.filename.length - 4
-                );
-                trait.update(`"${meta.value}"`);
-                const filetree = await api.get("assets/font-list");
-                metaFont.list = filetree.children;
-              }}
-              style={{ display: "none" }}
-            />
-          </label> */}
         </div>
       )}
     </>
