@@ -295,9 +295,6 @@ export default observer(({ editor }: any) => {
                         ed.onMouseLeave(function(e: any) {
                           monacoEditorChange(ed.getValue());
                         });
-                        ed.onMouseMove(function(e: any) {
-                          monacoEditorChange(ed.getValue());
-                        });
                         ed.addAction({
                           id: "cactiva-apply-changes",
                           label: "Apply Changes",

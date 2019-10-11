@@ -158,6 +158,11 @@ export default observer(
         {!meta.hideDropAfter && (
           <CactivaDropMarker
             ref={afterDropRef}
+            onMouseOver={() => {
+              if (meta.canDropAfter && !childOver && !afterOver) {
+                meta.canDropAfter = false;
+              }
+            }}
             hover={meta.canDropAfter}
             direction={afterDirection}
             stretch={isAfterStretched}

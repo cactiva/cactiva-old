@@ -4,7 +4,14 @@ import React, { forwardRef } from "react";
 
 export default forwardRef(
   (
-    { hover, direction, style, stretch = false, placement = "child" }: any,
+    {
+      hover,
+      onMouseOver,
+      direction,
+      style,
+      stretch = false,
+      placement = "child"
+    }: any,
     ref: any
   ) => {
     const mode = `${direction === "row" ? "width" : "height"}`;
@@ -12,6 +19,7 @@ export default forwardRef(
       <div
         className="cactiva-drop-marker"
         ref={ref}
+        onMouseOver={onMouseOver}
         css={css`
           display: flex;
           flex-direction: ${direction};

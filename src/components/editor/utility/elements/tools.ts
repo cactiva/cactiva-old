@@ -220,7 +220,7 @@ export const commitChanges = (editor: any) => {
     editor.selectedId = editor.tempSelected.id;
     editor.tempSelected = undefined;
   }
-  const diff = getDiff(toJS(editor.source), editor.prevSource);
+  const diff = getDiff(editor.source, editor.prevSource);
 
   // if (editor.undoStack.length > 2) {
   //   const lastStack1 = editor.undoStack[editor.undoStack.length - 1];
