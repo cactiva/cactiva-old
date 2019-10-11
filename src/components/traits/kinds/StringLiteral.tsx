@@ -315,6 +315,10 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               meta.value = v;
               trait.update(`"${meta.value}"`);
             }}
+            onAddFont={(v: any) => {
+              console.log(trait.editor, v);
+              trait.editor.renderfont = v;
+            }}
           />
         </div>
       )}

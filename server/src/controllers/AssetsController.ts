@@ -71,13 +71,12 @@ export class AssetsController {
 
   @Get("font-list")
   private _fontList(req: Request, res: Response) {
-    const tree = jetpack.inspectTree(
+    const tree: any = jetpack.inspectTree(
       path.join(morph.getAppPath(), "src/assets/fonts"),
       {
         relativePath: true
       }
     );
-
     res.status(200).json(tree);
   }
 
@@ -120,7 +119,7 @@ export class AssetsController {
         path.join(morph.getAppPath(), "src/assets/fonts/", filename)
       );
     }
-    const tree = jetpack.inspectTree(
+    const tree: any = jetpack.inspectTree(
       path.join(morph.getAppPath(), "src/assets/fonts"),
       {
         relativePath: true

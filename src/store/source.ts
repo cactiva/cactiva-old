@@ -22,6 +22,8 @@ export class SourceStore {
   @observable selectedId = "";
   @observable selected: any;
   @observable selectedSource: string = "";
+  @observable renderfont = true;
+
   async applySelectedSource() {
     if (!this.selectedSource) {
       return true;
