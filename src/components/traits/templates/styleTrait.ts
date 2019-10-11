@@ -156,8 +156,8 @@ const CactivaTraitStyle: any = {
           }
         },
         items: [
-          { value: "none", label: "None", icon: "ban-circle", mode: "icon" },
-          { value: "flex", label: "Flex", icon: "tick-circle", mode: "icon" }
+          { value: "none", label: "None", icon: "minus", mode: "icon" },
+          { value: "flex", label: "Flex", icon: "zoom-to-fit", mode: "icon" }
         ]
       }
     },
