@@ -20,7 +20,6 @@ import CactivaTree from "./components/ctree/CactivaTree";
 import CactivaHooks from "./components/hooks/CactivaHooks";
 import CactivaHead from "./components/head/CactivaHead";
 import { generateSource } from "./components/editor/utility/parser/generateSource";
-
 export default observer(() => {
   const current = editor.current;
   const meta = useObservable({

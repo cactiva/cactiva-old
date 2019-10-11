@@ -7,11 +7,25 @@ import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
 const CactivaTraitStyle: any = {
   Typography: [
     {
+      name: "Font Family",
+      path: "style.value.fontFamily",
+      kind: SyntaxKind.StringLiteral,
+      mode: "font",
+      divider: "Typography",
+      options: {
+        styles: {
+          root: {
+            flex: "0 0 100%",
+            paddingRight: 0
+          }
+        }
+      }
+    },
+    {
       name: "Color",
       path: "style.value.color",
       kind: SyntaxKind.StringLiteral,
       mode: "color",
-      divider: "Typography",
       options: {
         styles: {
           root: {
@@ -121,7 +135,7 @@ const CactivaTraitStyle: any = {
           },
           {
             value: "auto",
-            label: "Auto",
+            label: "Auto"
           }
         ]
       }
@@ -416,7 +430,7 @@ const CactivaTraitStyle: any = {
       options: {
         styles: {
           root: {
-            flex: "0 0 18%",
+            flex: "0 0 17%",
             paddingRight: 0
           }
         },
@@ -433,7 +447,7 @@ const CactivaTraitStyle: any = {
       options: {
         styles: {
           root: {
-            flex: "0 0 18%",
+            flex: "0 0 17%",
             paddingRight: 0
           }
         },
@@ -450,7 +464,7 @@ const CactivaTraitStyle: any = {
       options: {
         styles: {
           root: {
-            flex: "0 0 18%",
+            flex: "0 0 17%",
             paddingRight: 0
           }
         },
@@ -745,7 +759,7 @@ const CactivaTraitStyle: any = {
       options: {
         styles: {
           root: {
-            flex: "0 0 55%",
+            flex: "0 0 70%",
             paddingRight: 0
           }
         },
@@ -768,7 +782,7 @@ const CactivaTraitStyle: any = {
       options: {
         styles: {
           root: {
-            flex: "0 0 42%",
+            flex: "0 0 60%",
             paddingRight: 0
           }
         }
