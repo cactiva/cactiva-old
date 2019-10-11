@@ -15,7 +15,6 @@ export interface ICactivaTraitFieldProps extends ICactivaTraitField {
   style?: any;
   mode?: string | "select" & undefined;
   defaultKind: number;
-  quickUpdate: (value: any) => void;
   update: (value: any, updatedKind?: SyntaxKind) => void;
 }
 export default observer((trait: ICactivaTraitFieldProps) => {

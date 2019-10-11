@@ -138,7 +138,6 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                 v = maxValue;
               }
               meta.value = v;
-              trait.quickUpdate(v);
             }
           }}
         />

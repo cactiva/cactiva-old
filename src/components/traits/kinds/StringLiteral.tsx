@@ -186,7 +186,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             return (
               <Tooltip
                 key={idx}
-                showDelay={300}
+                showDelay={1000}
                 content={
                   <Text
                     color={"white"}

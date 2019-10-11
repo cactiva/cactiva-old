@@ -54,7 +54,7 @@ export default observer(({ editor }: any) => {
           {current ? path.split("/").pop() : ""}
         </Text>
       </div>
-      <div className="right"></div>
+      <div className="right">{editor.current.undoStack.length}</div>
     </div>
   );
 });

@@ -95,17 +95,6 @@ export default observer(({ editor }: any) => {
                         commitChanges(editor);
                       }
                     };
-                    const quickUpdateValue = _.debounce(
-                      (value: any) => {
-                        _.set(
-                          selected.source.props,
-                          `${trait.path}.value`,
-                          value
-                        );
-                      },
-                      undefined,
-                      { trailing: true }
-                    );
                     const updateValue = _.debounce((value: any, kind: any) => {
                       prepareChanges(editor);
                       const sp = selected.source.props;
@@ -145,9 +134,6 @@ export default observer(({ editor }: any) => {
                           defaultKind={trait.kind}
                           editor={editor}
                           resetValue={resetValue}
-                          quickUpdate={value => {
-                            quickUpdateValue(value);
-                          }}
                           update={(value, updatedKind?) => {
                             updateValue(
                               value === undefined ? item.default : value,

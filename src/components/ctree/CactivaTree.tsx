@@ -1,16 +1,11 @@
+import api from "@src/libs/api";
+import { Icon, SearchInput, Text } from "evergreen-ui";
+import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect } from "react";
 import useAsyncEffect from "use-async-effect";
-import api from "@src/libs/api";
-import "./CactivaTree.scss";
-import { Text, Icon, SearchInput } from "evergreen-ui";
 import CactivaDraggable from "../editor/CactivaDraggable";
-import { SyntaxKind } from "../editor/utility/syntaxkinds";
-import tags from "../editor/utility/tags";
-import _, { map } from "lodash";
-import { generateSource } from "../editor/utility/parser/generateSource";
-import MonacoEditor from "react-monaco-editor";
-import { toJS } from "mobx";
+import "./CactivaTree.scss";
 
 const filter = (source: any, keyword: string) => {
   const temp = _.cloneDeep(source);
@@ -38,6 +33,7 @@ export default observer(({ editor }: any) => {
   useAsyncEffect(async () => {
     const res = await api.get("ctree/list");
     meta.source = res.children;
+    meta.list = filter(meta.source, "");
   }, []);
   useEffect(() => {
     expandSelected(selected, meta.list, null);
