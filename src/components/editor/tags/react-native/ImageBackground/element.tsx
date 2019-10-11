@@ -18,7 +18,8 @@ export default observer((props: any) => {
     edited: false,
     source: ""
   });
-  const quotedImg = tagProps.source
+  const sourceImg = tagProps.source || "";
+  const quotedImg = sourceImg
     .match(/\(([^)]+)\)/)[1]
     .replace("@src/assets/images/", "");
   const imgPath = `${baseUrl}/assets/${quotedImg.substr(

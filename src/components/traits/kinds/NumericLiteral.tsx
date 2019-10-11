@@ -44,7 +44,10 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             e.target.select();
           }}
           onBlur={e => {
-            trait.update(parseInt(meta.value));
+            const val = parseInt(meta.value);
+            if (!isNaN(val)) {
+              trait.update(val);
+            }
           }}
         />
         <div
@@ -100,7 +103,10 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             meta.clicked = false;
             meta.startValue = meta.value;
             meta.direction = "vertical";
-            trait.update(meta.value);
+            const val = parseInt(meta.value);
+            if (!isNaN(val)) {
+              trait.update(val);
+            }
             e.stopPropagation();
           }}
           onMouseMove={e => {

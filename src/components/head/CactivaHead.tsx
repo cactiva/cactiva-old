@@ -1,7 +1,7 @@
-import React from "react";
+import { Icon, Spinner, Text, Tooltip, Button } from "evergreen-ui";
 import { observer } from "mobx-react-lite";
+import React from "react";
 import "./CactivaHead.scss";
-import { Text, Spinner, Icon } from "evergreen-ui";
 
 export default observer(({ editor }: any) => {
   const current = editor.current;
@@ -54,7 +54,29 @@ export default observer(({ editor }: any) => {
           {current ? path.split("/").pop() : ""}
         </Text>
       </div>
-      <div className="right">{editor.current.undoStack.length}</div>
+      <div className="right">
+        <Tooltip content="Undo" position={"bottom"}>
+          <Button
+            className="btn"
+            onClick={() => {
+              editor.current.history.undo();
+            }}
+          >
+            <Icon icon="undo" size={12} />
+            <div className="badge">{editor.current.undoStack.length}</div>
+          </Button>
+        </Tooltip>
+        <Tooltip content="Redo" position={"bottom"}>
+          <Button
+            className="btn"
+            onClick={() => {
+              editor.current.history.redo();
+            }}
+          >
+            <Icon icon="redo" size={12} />
+          </Button>
+        </Tooltip>
+      </div>
     </div>
   );
 });

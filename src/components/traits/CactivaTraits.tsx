@@ -124,7 +124,10 @@ export default observer(({ editor }: any) => {
                       _.set(selected.source.props, trait.path, valueByKind);
                       commitChanges(editor);
                     });
-
+                    const rawValue = _.get(
+                      selected.source.props,
+                      `${trait.path}`
+                    );
                     return (
                       <React.Fragment key={key}>
                         <CactivaTraitField
@@ -143,9 +146,8 @@ export default observer(({ editor }: any) => {
                             );
                           }}
                           source={selected.source}
-                          value={parseValue(
-                            _.get(selected.source.props, `${trait.path}`)
-                          )}
+                          rawValue={rawValue}
+                          value={parseValue(rawValue)}
                         />
                       </React.Fragment>
                     );

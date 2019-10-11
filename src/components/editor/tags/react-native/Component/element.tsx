@@ -50,7 +50,17 @@ export default observer((props: any) => {
           />
 
           {children.length > 0 && (
-            <div style={{ marginTop: 20 }}>{children}</div>
+            <div
+              style={{
+                marginTop: 20,
+                display: "flex",
+                flexDirection: _.get(style, "flexDirection", "column"),
+                alignItems: _.get(style, "alignItems", "stretch"),
+                justifyContent: _.get(style, "justifyContent", "flex-start"),
+              }}
+            >
+              {children}
+            </div>
           )}
         </CactivaSelectable>
       </CactivaDraggable>

@@ -223,7 +223,11 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                       trait.update(`"${meta.value}"`);
                     }}
                     flexGrow={1}
-                    textAlign="center"
+                    fontSize={10}
+                    padding={0}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
                   >
                     {item.label}
                   </Button>

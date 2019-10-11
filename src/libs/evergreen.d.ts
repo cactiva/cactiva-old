@@ -597,6 +597,11 @@ declare module "evergreen-ui" {
 
   export class Positioner extends React.PureComponent<PositionerProps> {}
 
+  export interface PillProps extends UiBoxPropsType {
+    isSolid?: boolean;
+  }
+  export class Pill extends React.PureComponent<PillProps> {}
+
   export interface RadioProps
     extends BoxSpacing,
       BoxPosition,

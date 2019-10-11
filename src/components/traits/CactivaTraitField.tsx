@@ -1,4 +1,4 @@
-import { Alert, Menu, Pane, Popover, Text, Tooltip } from "evergreen-ui";
+import { Alert, Menu, Pane, Popover, Text, Tooltip, Icon } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useRef } from "react";
@@ -6,11 +6,13 @@ import { ICactivaTraitField } from "../editor/utility/classes";
 import { kindNames } from "../editor/utility/kinds";
 import { SyntaxKind } from "../editor/utility/syntaxkinds";
 import kinds from "./tags";
+import { generateSource } from "../editor/utility/parser/generateSource";
 
 export interface ICactivaTraitFieldProps extends ICactivaTraitField {
   editor: any;
   source: any;
   value?: any;
+  rawValue?: any;
   resetValue: any;
   style?: any;
   mode?: string | "select" & undefined;
@@ -27,16 +29,6 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   const rootStyle = _.get(trait, `options.styles.root`, {});
   const fieldName = _.get(trait, `options.fields.name`, null);
 
-  if (!KindField) {
-    return (
-      <Alert
-        padding={10}
-        ref={fieldRef}
-        intent="warning"
-        title={`Trait field error: ${kindName} not found!`}
-      />
-    );
-  }
   return (
     <>
       {!!trait.divider && (
@@ -83,17 +75,56 @@ export default observer((trait: ICactivaTraitFieldProps) => {
           isShown={!fieldName ? false : undefined}
         >
           <Pane style={{ flex: 1 }}>
-            <KindField
-              {...trait}
-              options={trait.options}
-              style={{
-                flex: 1,
-                height: "20px",
-                alignItems: "stretch",
-                ...fieldStyle,
-                position: "relative"
-              }}
-            />
+            {KindField ? (
+              <KindField
+                {...trait}
+                options={trait.options}
+                style={{
+                  flex: 1,
+                  height: "20px",
+                  alignItems: "stretch",
+                  ...fieldStyle,
+                  position: "relative"
+                }}
+              />
+            ) : (
+              <Tooltip
+                content={
+                  <code
+                    style={{ color: "white", fontSize: 11 }}
+                  >{`{${generateSource(trait.rawValue)}}`}</code>
+                }
+              >
+                <Pane
+                  style={{
+                    flex: 1,
+                    height: "18px",
+                    padding: "0px",
+                    display: "flex",
+
+                    alignItems: "center",
+                    justifyContent: "center",
+                    ...fieldStyle,
+                    position: "relative"
+                  }}
+                >
+                  <div
+                    className={`cactiva-trait-input`}
+                    style={{
+                      flex: 1,
+                      height: "18px",
+                      padding: "0px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      position: "relative"
+                    }}
+                  >
+                    <Icon icon="function" size={13} color={"#666"} />
+                  </div>
+                </Pane>
+              </Tooltip>
+            )}
           </Pane>
         </Tooltip>
       </div>

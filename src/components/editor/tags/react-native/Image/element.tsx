@@ -18,7 +18,8 @@ export default observer((props: any) => {
   });
   const cactiva = props._cactiva;
   const tagProps = parseProps(props);
-  const quotedImg = tagProps.source
+  const sourceImg = tagProps.source || "";
+  const quotedImg = sourceImg
     .match(/\(([^)]+)\)/)[1]
     .replace("@src/assets/images/", "");
   tagProps.src = !!tagProps.source
