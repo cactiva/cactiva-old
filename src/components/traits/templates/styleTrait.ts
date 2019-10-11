@@ -397,6 +397,7 @@ const CactivaTraitStyle: any = {
       kind: SyntaxKind.NumericLiteral,
       mode: "multiple",
       options: {
+        className: "group-first",
         styles: {
           root: {
             flex: "0 0 45%",
@@ -414,6 +415,7 @@ const CactivaTraitStyle: any = {
       path: "style.value.right",
       kind: SyntaxKind.NumericLiteral,
       options: {
+        className: "group-middle",
         styles: {
           root: {
             flex: "0 0 18%",
@@ -431,6 +433,7 @@ const CactivaTraitStyle: any = {
       path: "style.value.bottom",
       kind: SyntaxKind.NumericLiteral,
       options: {
+        className: "group-middle",
         styles: {
           root: {
             flex: "0 0 18%",
@@ -448,6 +451,7 @@ const CactivaTraitStyle: any = {
       path: "style.value.left",
       kind: SyntaxKind.NumericLiteral,
       options: {
+        className: "group-last",
         styles: {
           root: {
             flex: "0 0 18%",
@@ -481,6 +485,7 @@ const CactivaTraitStyle: any = {
       mode: "multiple",
       divider: "Spacing",
       options: {
+        className: "group-first",
         styles: {
           root: {
             flex: "0 0 45%",
@@ -498,6 +503,7 @@ const CactivaTraitStyle: any = {
       path: "style.value.marginRight",
       kind: SyntaxKind.NumericLiteral,
       options: {
+        className: "group-middle",
         styles: {
           root: {
             flex: "0 0 18%",
@@ -515,6 +521,7 @@ const CactivaTraitStyle: any = {
       path: "style.value.marginBottom",
       kind: SyntaxKind.NumericLiteral,
       options: {
+        className: "group-middle",
         styles: {
           root: {
             flex: "0 0 18%",
@@ -532,6 +539,7 @@ const CactivaTraitStyle: any = {
       path: "style.value.marginLeft",
       kind: SyntaxKind.NumericLiteral,
       options: {
+        className: "group-last",
         styles: {
           root: {
             flex: "0 0 18%",
@@ -548,6 +556,7 @@ const CactivaTraitStyle: any = {
       path: "style.value.paddingTop",
       kind: SyntaxKind.NumericLiteral,
       options: {
+        className: "group-first",
         styles: {
           root: {
             flex: "0 0 45%",
@@ -565,6 +574,7 @@ const CactivaTraitStyle: any = {
       path: "style.value.paddingRight",
       kind: SyntaxKind.NumericLiteral,
       options: {
+        className: "group-middle",
         styles: {
           root: {
             flex: "0 0 18%",
@@ -582,6 +592,7 @@ const CactivaTraitStyle: any = {
       path: "style.value.paddingBottom",
       kind: SyntaxKind.NumericLiteral,
       options: {
+        className: "group-middle",
         styles: {
           root: {
             flex: "0 0 18%",
@@ -599,6 +610,7 @@ const CactivaTraitStyle: any = {
       path: "style.value.paddingLeft",
       kind: SyntaxKind.NumericLiteral,
       options: {
+        className: "group-last",
         styles: {
           root: {
             flex: "0 0 18%",
@@ -779,6 +791,7 @@ const CactivaTraitStyle: any = {
       path: "style.value.borderTopLeftRadius",
       kind: SyntaxKind.NumericLiteral,
       options: {
+        className: "group-first",
         styles: {
           root: {
             flex: "0 0 45%",
@@ -796,6 +809,7 @@ const CactivaTraitStyle: any = {
       path: "style.value.borderTopRightRadius",
       kind: SyntaxKind.NumericLiteral,
       options: {
+        className: "group-middle",
         styles: {
           root: {
             flex: "0 0 18%",
@@ -813,6 +827,7 @@ const CactivaTraitStyle: any = {
       path: "style.value.borderBottomRightRadius",
       kind: SyntaxKind.NumericLiteral,
       options: {
+        className: "group-middle",
         styles: {
           root: {
             flex: "0 0 18%",
@@ -830,6 +845,7 @@ const CactivaTraitStyle: any = {
       path: "style.value.borderBottomLeftRadius",
       kind: SyntaxKind.NumericLiteral,
       options: {
+        className: "group-last",
         styles: {
           root: {
             flex: "0 0 18%",

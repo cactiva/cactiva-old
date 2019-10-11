@@ -122,6 +122,31 @@
         text-overflow: ellipsis;
       }
     }
+    
+    input::placeholder {
+      font-size:9px;
+      color:#ddd;
+      text-align:center;
+    }
+    .group-first {
+      input {
+        border-right: 0px;
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+      }
+    }
+    .group-middle {
+      input {
+        border-right: 0px;
+        border-radius: 0px;
+      }
+    }
+    .group-last {
+      input {
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+      }
+    }
   }
   .wide .label {
     flex-basis: 60px;
@@ -206,4 +231,5 @@ div[role="menuitem"] {
   &:hover {
     background-color: #ececeb !important;
   }
+
 }

@@ -1,14 +1,9 @@
 import { parseValue } from "@src/components/editor/utility/parser/parser";
-import { Button, IconButton, Pane, Popover, Text, Tooltip } from "evergreen-ui";
+import { Button, IconButton, Popover, Text, Tooltip } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect } from "react";
-import {
-  SketchPicker,
-  PhotoshopPicker,
-  MaterialPicker,
-  ChromePicker
-} from "react-color";
+import { SketchPicker } from "react-color";
 import * as IconSource from "react-web-vector-icons";
 import { ICactivaTraitFieldProps } from "../CactivaTraitField";
 import IconMaps from "./components/IconMaps";
@@ -44,12 +39,13 @@ export default observer((trait: ICactivaTraitFieldProps) => {
     <>
       {!trait.mode && (
         <div
-          className={`trait-string-literal`}
+          className={`trait-string-literal ${_.get(trait, 'options.className')}`}
           style={{ ...trait.style, flexDirection: "row" }}
         >
           <input
             className={`cactiva-trait-input`}
             type="text"
+            placeholder={_.get(trait, 'options.fields.name')}
             value={meta.value || ""}
             onChange={e => {
               meta.value = e.target.value;
@@ -214,24 +210,24 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                     flexGrow={1}
                   />
                 ) : (
-                  <Button
-                    isActive={item.value === meta.value}
-                    iconBefore={item.icon}
-                    height={20}
-                    onClick={() => {
-                      meta.value = item.value;
-                      trait.update(`"${meta.value}"`);
-                    }}
-                    flexGrow={1}
-                    fontSize={10}
-                    padding={0}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    {item.label}
-                  </Button>
-                )}
+                    <Button
+                      isActive={item.value === meta.value}
+                      iconBefore={item.icon}
+                      height={20}
+                      onClick={() => {
+                        meta.value = item.value;
+                        trait.update(`"${meta.value}"`);
+                      }}
+                      flexGrow={1}
+                      fontSize={10}
+                      padding={0}
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      {item.label}
+                    </Button>
+                  )}
               </Tooltip>
             );
           })}
