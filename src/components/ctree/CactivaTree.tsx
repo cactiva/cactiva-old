@@ -7,33 +7,17 @@ import useAsyncEffect from "use-async-effect";
 import CactivaDraggable from "../editor/CactivaDraggable";
 import "./CactivaTree.scss";
 
-const filter = (source: any, keyword: string) => {
-  const temp = _.cloneDeep(source);
-  let files: any = [];
-  if (!keyword) return temp;
-
-  temp.map((f: any) => {
-    if (f.type === "file" && f.name.toLowerCase().includes(keyword)) {
-      files.push(f);
-    }
-    if (f.type === "dir") {
-      f.children = filter(f.children, keyword);
-      if (f.children.length > 0) files.push(f);
-    }
-  });
-  return files;
-};
-
 export default observer(({ editor }: any) => {
   const meta = useObservable({
+    list: [] as any[],
     source: [],
-    list: []
+    keyword: ""
   });
   const selected = editor.path;
   useAsyncEffect(async () => {
     const res = await api.get("ctree/list");
     meta.source = res.children;
-    meta.list = filter(meta.source, "");
+    meta.list = res.children;
   }, []);
   useEffect(() => {
     expandSelected(selected, meta.list, null);
@@ -53,8 +37,29 @@ export default observer(({ editor }: any) => {
           height={25}
           spellCheck={false}
           onChange={(e: any) => {
-            const keyword = e.nativeEvent.target.value.toLowerCase();
-            meta.list = filter(meta.source, keyword);
+            meta.keyword = e.nativeEvent.target.value;
+            if (meta.keyword.length === 0) {
+              meta.list = meta.source;
+            } else {
+              meta.list = [];
+
+              const recurse = (list: any[]) => {
+                for (let i in list) {
+                  const item: any = list[i];
+                  if (item.type === "file") {
+                    if (fuzzyMatch(item.name.toLowerCase(), meta.keyword.toLowerCase())) {
+                      meta.list.push(item);
+                    }
+                  } else {
+                    item.type === "dir";
+                  }
+                  {
+                    recurse(item.children);
+                  }
+                }
+              };
+              recurse(meta.source);
+            }
           }}
         />
         <div className={`search-opt`} onClick={() => {}}>
@@ -173,4 +178,39 @@ const renderTree = (
       </CactivaDraggable>
     );
   });
+};
+
+const findLargestSmallest = (a: string, b: string) =>
+  a.length > b.length
+    ? {
+        largest: a,
+        smallest: b
+      }
+    : {
+        largest: b,
+        smallest: a
+      };
+
+const fuzzyMatch = (strA: string, strB: string, fuzziness = 1) => {
+  if (strA === "" || strB === "") {
+    return false;
+  }
+
+  const { largest, smallest } = findLargestSmallest(strA, strB);
+  const maxIters = largest.length - smallest.length;
+  const minMatches = smallest.length - fuzziness;
+
+  for (let i = 0; i < maxIters; i++) {
+    let matches = 0;
+    for (let smIdx = 0; smIdx < smallest.length; smIdx++) {
+      if (smallest[smIdx] === largest[smIdx + i]) {
+        matches++;
+      }
+    }
+    if (matches > 0 && matches >= minMatches) {
+      return true;
+    }
+  }
+
+  return false;
 };

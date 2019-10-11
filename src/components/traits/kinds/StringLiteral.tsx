@@ -150,6 +150,10 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               className={`cactiva-trait-input`}
               type="text"
               value={meta.value || ""}
+              style={{
+                backgroundColor: meta.value,
+                color: textColor(meta.value || "#fff", "#fff", "#000")
+              }}
               onChange={e => {
                 meta.value = e.target.value;
               }}
@@ -175,7 +179,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               />
             }
           >
-            <IconButton icon="helper-management" height={20} color={meta.value} />
+            <IconButton icon="helper-management" height={20} boxShadow="0px" />
           </Popover>
         </div>
       )}
@@ -238,3 +242,11 @@ const Icon = ({ source, name, size, color, style }: any) => {
 
   return <Icon name={name} size={size} color={color} style={style} />;
 };
+
+function textColor(bgColor: string, lightColor: string, darkColor: string) {
+  var color = bgColor.charAt(0) === "#" ? bgColor.substring(1, 7) : bgColor;
+  var r = parseInt(color.substring(0, 2), 16); // hexToR
+  var g = parseInt(color.substring(2, 4), 16); // hexToG
+  var b = parseInt(color.substring(4, 6), 16); // hexToB
+  return r * 0.299 + g * 0.587 + b * 0.114 > 186 ? darkColor : lightColor;
+}
