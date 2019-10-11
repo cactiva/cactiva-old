@@ -1,24 +1,18 @@
-import { observer, useObservable } from 'mobx-react-lite';
-import React, { useEffect } from 'react';
-import { ICactivaTraitFieldProps } from '../CactivaTraitField';
-import './StringLiteral.scss';
+import { parseValue } from "@src/components/editor/utility/parser/parser";
+import { Button, IconButton, Pane, Popover, Text, Tooltip } from "evergreen-ui";
+import _ from "lodash";
+import { observer, useObservable } from "mobx-react-lite";
+import React, { useEffect } from "react";
 import {
-  SelectMenu,
-  Tooltip,
-  IconButton,
-  Popover,
-  Pane,
-  RadioGroup,
-  Text,
-  Button
-} from 'evergreen-ui';
-import IconBrowse from './components/IconBrowse';
-import IconMaps from './components/IconMaps';
-import { parseValue } from '@src/components/editor/utility/parser/parser';
-import * as IconSource from 'react-web-vector-icons';
-import { toJS } from 'mobx';
-import _ from 'lodash';
-import { SketchPicker } from 'react-color';
+  SketchPicker,
+  PhotoshopPicker,
+  MaterialPicker,
+  ChromePicker
+} from "react-color";
+import * as IconSource from "react-web-vector-icons";
+import { ICactivaTraitFieldProps } from "../CactivaTraitField";
+import IconMaps from "./components/IconMaps";
+import "./StringLiteral.scss";
 
 const Icons = IconMaps();
 export default observer((trait: ICactivaTraitFieldProps) => {
@@ -28,18 +22,18 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   });
 
   const icon = useObservable({
-    source: 'Entypo',
-    search: '',
-    list: Icons['Entypo']
+    source: "Entypo",
+    search: "",
+    list: Icons["Entypo"]
   });
 
-  const optionItems = _.get(trait, 'options.items', []);
+  const optionItems = _.get(trait, "options.items", []);
   useEffect(() => {
     meta.value = trait.value;
   }, [trait.value]);
 
   useEffect(() => {
-    if (_.get(trait, 'mode') === 'icon') {
+    if (_.get(trait, "mode") === "icon") {
       icon.source = parseValue(trait.source.props.source);
       icon.list = Icons[icon.source].filter((x: string) =>
         x.toLowerCase().includes(icon.search)
@@ -51,12 +45,12 @@ export default observer((trait: ICactivaTraitFieldProps) => {
       {!trait.mode && (
         <div
           className={`trait-string-literal`}
-          style={{ ...trait.style, flexDirection: 'row' }}
+          style={{ ...trait.style, flexDirection: "row" }}
         >
           <input
             className={`cactiva-trait-input`}
             type="text"
-            value={meta.value || ''}
+            value={meta.value || ""}
             onChange={e => {
               meta.value = e.target.value;
             }}
@@ -71,12 +65,12 @@ export default observer((trait: ICactivaTraitFieldProps) => {
       )}
 
       {trait.mode &&
-        trait.mode === 'select' &&
+        trait.mode === "select" &&
         trait.options &&
         trait.options.items && (
           <div
             className={`trait-string-literal`}
-            style={{ ...trait.style, flexDirection: 'row' }}
+            style={{ ...trait.style, flexDirection: "row" }}
           >
             <select
               className={`cactiva-trait-select`}
@@ -86,7 +80,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                 trait.update(`"${meta.value}"`);
               }}
             >
-              <option disabled={meta.value} value={''}>
+              <option disabled={meta.value} value={""}>
                 Select ...
               </option>
               {trait.options.items.map((item: any, i: number) => {
@@ -100,10 +94,10 @@ export default observer((trait: ICactivaTraitFieldProps) => {
           </div>
         )}
 
-      {trait.mode === 'icon' && (
+      {trait.mode === "icon" && (
         <div
           className={`trait-string-literal cactiva-trait-icon`}
-          style={{ ...trait.style, flexDirection: 'row', alignItems: 'center' }}
+          style={{ ...trait.style, flexDirection: "row", alignItems: "center" }}
         >
           <div className="icon-wrapper">
             <div className="toolbar">
@@ -132,7 +126,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                 return (
                   <div
                     key={idx}
-                    className={`icon ${meta.value === name ? 'active' : ''}`}
+                    className={`icon ${meta.value === name ? "active" : ""}`}
                     onClick={() => {
                       trait.update(`"${name}"`);
                     }}
@@ -146,16 +140,16 @@ export default observer((trait: ICactivaTraitFieldProps) => {
         </div>
       )}
 
-      {trait.mode === 'color' && (
+      {trait.mode === "color" && (
         <div className="cactiva-trait-color-picker">
           <div
             className={`trait-string-literal`}
-            style={{ ...trait.style, flexDirection: 'row' }}
+            style={{ ...trait.style, flexDirection: "row" }}
           >
             <input
               className={`cactiva-trait-input`}
               type="text"
-              value={meta.value || ''}
+              value={meta.value || ""}
               onChange={e => {
                 meta.value = e.target.value;
               }}
@@ -169,32 +163,24 @@ export default observer((trait: ICactivaTraitFieldProps) => {
           </div>
           <Popover
             content={
-              <Pane
-                display="flex"
-                alignItems="stretch"
-                justifyContent="center"
-                flexDirection="column"
-              >
-                <SketchPicker
-                  onChangeComplete={(v: any) => {
-                    meta.value = v.hex;
-                    if (v.rgb.a < 1) {
-                      meta.value = `rgba(${Object.values(v.rgb)})`;
-                    }
-                    trait.update(`"${meta.value}"`);
-                  }}
-                  color={meta.value}
-                  css
-                />
-              </Pane>
+              <SketchPicker
+                onChangeComplete={(v: any) => {
+                  meta.value = v.hex;
+                  if (v.rgb.a < 1) {
+                    meta.value = `rgba(${Object.values(v.rgb)})`;
+                  }
+                  trait.update(`"${meta.value}"`);
+                }}
+                color={meta.value}
+              />
             }
           >
-            <IconButton icon="heatmap" height={20} color={meta.value} />
+            <IconButton icon="helper-management" height={20} color={meta.value} />
           </Popover>
         </div>
       )}
 
-      {trait.mode === 'radio' && optionItems.length > 0 && (
+      {trait.mode === "radio" && optionItems.length > 0 && (
         <div className="cactiva-trait-radio">
           {optionItems.map((item: any, idx: number) => {
             return (
@@ -203,16 +189,16 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                 showDelay={300}
                 content={
                   <Text
-                    color={'white'}
-                    fontSize={'10px'}
-                    textTransform={'capitalize'}
+                    color={"white"}
+                    fontSize={"10px"}
+                    textTransform={"capitalize"}
                   >
                     {item.label}
                   </Text>
                 }
                 position="top"
               >
-                {item.mode === 'icon' ? (
+                {item.mode === "icon" ? (
                   <IconButton
                     icon={item.icon}
                     isActive={item.value === meta.value}

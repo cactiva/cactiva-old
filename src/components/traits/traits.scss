@@ -1,31 +1,41 @@
+.cactiva-traits-kind-name {
+  padding: 0px 5px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 7px;
+  display: flex;
+  justify-content: center;
+  background: rgb(250, 252, 255);
+  > span {
+    flex: 1;
+    font-size: 10px;
+    line-height: 10px;
+    color: #1070ca;
+    text-align: center;
+    padding: 4px 0px 3px 0px;
+  }
+}
 .cactiva-traits-inner {
   display: flex;
   flex-direction: column;
   position: absolute;
-  top: 0;
+  top: 18px;
   bottom: 0;
   left: 0;
   right: 0;
   overflow-y: auto;
+  padding-top: 8px;
+
+  padding-bottom: 200px;
+
+  div[role="alert"] {
+    h4 {
+      font-size: 11px !important;
+      line-height: 14px !important;
+    }
+  }
 
   span {
     font-size: 11px;
-  }
-  .cactiva-traits-kind-name {
-    padding: 0px 5px;
-    border-bottom: 1px solid #ddd;
-    margin-bottom: -7px;
-    display: flex;
-    justify-content: center;
-    background: rgb(250, 252, 255);
-    > span {
-      flex: 1;
-      font-size: 10px;
-      line-height: 10px;
-      color: #1070ca;
-      text-align: center;
-      padding: 4px 0px 3px 0px;
-    }
   }
   .heading {
     display: flex;
@@ -68,7 +78,7 @@
     align-items: center;
     user-select: none;
     flex: 1 1 100%;
-    margin-left: 5px;
+    margin: 5px 0px 5px 5px;
     color: #7f909e;
 
     span {
@@ -170,7 +180,7 @@
   }
 }
 
-div[role='menuitem'] {
+div[role="menuitem"] {
   user-select: none;
   background: #fafafa;
   display: flex;

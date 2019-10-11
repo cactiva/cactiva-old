@@ -71,14 +71,44 @@
 .cactiva-trait-color-picker {
   display: flex;
   flex: 1;
+  .cactiva-trait-input {
+    border-right: 0px !important;
+    border-top-right-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+  }
+  button {
+    border-bottom-left-radius: 0px !important;
+    border-top-left-radius: 0px !important;
+  }
 }
 
 .sketch-picker {
   box-shadow: none !important;
+  user-select: none;
 }
 
 .cactiva-trait-radio {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  > button {
+    border-radius: 0px !important;
+    box-shadow: none !important;
+    border: 1px solid #cdd9e2;
+    border-left-width: 0px;
+
+    &:first-child {
+      border-top-left-radius: 4px !important;
+      border-bottom-left-radius: 4px !important;
+      border-top-right-radius: 0px !important;
+      border-bottom-right-radius: 0px !important;
+      border-left-width: 1px;
+    }
+    &:last-child {
+      border-top-left-radius: 0px !important;
+      border-bottom-left-radius: 0px !important;
+      border-top-right-radius: 4px !important;
+      border-bottom-right-radius: 4px !important;
+    }
+  }
 }

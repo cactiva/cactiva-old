@@ -26,7 +26,7 @@ export default observer((props: any) => {
     : "images/sample.jpg";
   useEffect(() => {
     meta.source = tagProps.source;
-  }, [props]);
+  }, [tagProps.source]);
   return (
     <>
       <CactivaDropChild cactiva={cactiva} canDropOver={false}>

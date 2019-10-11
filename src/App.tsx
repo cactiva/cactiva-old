@@ -112,10 +112,7 @@ export default observer(() => {
           )}
 
           {editor.status !== "loading" ? (
-            <div
-              className="cactiva-pane"
-              onContextMenu={e => e.preventDefault()}
-            >
+            <div className="cactiva-pane">
               <div className="cactiva-pane-inner">
                 {/* <div className="cactiva-pane-tab-header">
                   <Tab

@@ -73,7 +73,7 @@ const CactivaTraitStyle: any = {
       options: {
         styles: {
           root: {
-            flex: '0 0 50%',
+            flex: '0 0 80%',
             paddingRight: 0
           }
         },
@@ -154,7 +154,7 @@ const CactivaTraitStyle: any = {
         },
         items: [
           { value: 'none', label: 'None', icon: 'ban-circle', mode: 'icon' },
-          { value: 'flex', label: 'Flex', icon: 'layout-grid', mode: 'icon' }
+          { value: 'flex', label: 'Flex', icon: 'tick-circle', mode: 'icon' }
         ]
       }
     },
@@ -223,8 +223,8 @@ const CactivaTraitStyle: any = {
           }
         },
         items: [
-          { value: 'nowrap', label: 'No Wrap', icon: 'layer', mode: 'icon' },
-          { value: 'wrap', label: 'Wrap', icon: 'layers', mode: 'icon' }
+          { value: 'nowrap', label: 'No Wrap', icon: 'more', mode: 'icon' },
+          { value: 'wrap', label: 'Wrap', icon: 'drag-handle-horizontal', mode: 'icon' }
         ]
       }
     },
