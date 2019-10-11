@@ -1,5 +1,5 @@
 import { observer, useObservable } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect } from "react";
 import useAsyncEffect from "use-async-effect";
 import api from "@src/libs/api";
 import "./CactivaTree.scss";
@@ -10,16 +10,38 @@ import tags from "../editor/utility/tags";
 import _, { map } from "lodash";
 import { generateSource } from "../editor/utility/parser/generateSource";
 import MonacoEditor from "react-monaco-editor";
+import { toJS } from "mobx";
+
+const filter = (source: any, keyword: string) => {
+  const temp = _.cloneDeep(source);
+  let files: any = [];
+  if (!keyword) return temp;
+
+  temp.map((f: any) => {
+    if (f.type === "file" && f.name.toLowerCase().includes(keyword)) {
+      files.push(f);
+    }
+    if (f.type === "dir") {
+      f.children = filter(f.children, keyword);
+      if (f.children.length > 0) files.push(f);
+    }
+  });
+  return files;
+};
 
 export default observer(({ editor }: any) => {
-  const meta = useObservable({ list: [] });
+  const meta = useObservable({
+    source: [],
+    list: []
+  });
   const selected = editor.path;
   useAsyncEffect(async () => {
     const res = await api.get("ctree/list");
-    meta.list = res.children;
-    expandSelected(selected, meta.list, null);
+    meta.source = res.children;
   }, []);
-
+  useEffect(() => {
+    expandSelected(selected, meta.list, null);
+  }, [meta.list]);
   return (
     <div
       className="cactiva-tree"
@@ -34,6 +56,10 @@ export default observer(({ editor }: any) => {
           width="100%"
           height={25}
           spellCheck={false}
+          onChange={(e: any) => {
+            const keyword = e.nativeEvent.target.value.toLowerCase();
+            meta.list = filter(meta.source, keyword);
+          }}
         />
         <div className={`search-opt`} onClick={() => {}}>
           <Icon icon={"plus"} size={11} color={"#aaa"} />
@@ -41,7 +67,13 @@ export default observer(({ editor }: any) => {
       </div>
       <div className="list">
         <div className="list-body">
-          {renderTree(editor, meta.list, selected, 0)}
+          {meta.list.length > 0 ? (
+            renderTree(editor, meta.list, selected, 0)
+          ) : (
+            <Text fontSize={10} marginLeft={10}>
+              No item to display.
+            </Text>
+          )}
           <div style={{ height: 100 }} />
         </div>
       </div>
