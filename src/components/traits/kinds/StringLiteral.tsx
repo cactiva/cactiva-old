@@ -28,7 +28,7 @@ import FontBrowser from "./components/FontBrowser";
 const Icons = IconMaps();
 export default observer((trait: ICactivaTraitFieldProps) => {
   const meta = useObservable({
-    value: trait.value,
+    value: trait.value || trait.default,
     isShown: false
   });
 
@@ -55,8 +55,6 @@ export default observer((trait: ICactivaTraitFieldProps) => {
         x.toLowerCase().includes(metaIcon.search)
       );
     }
-  }, [trait]);
-  useEffect(() => {
     if (_.get(trait, "mode") === "font") {
       const load = async () => {
         const filetree = await api.get("assets/font-list");
@@ -282,6 +280,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             value={meta.value || trait.default}
             onChange={e => {
               meta.value = e.target.value;
+              console.log(trait.source, meta.value);
               trait.update(`"${meta.value}"`);
             }}
           >
@@ -316,8 +315,9 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               trait.update(`"${meta.value}"`);
             }}
             onAddFont={(v: any) => {
-              console.log(trait.editor, v);
-              trait.editor.renderfont = v;
+              metaFont.list = v.list;
+              trait.editor.renderfont = v.render;
+              console.log(v);
             }}
           />
         </div>

@@ -11,6 +11,7 @@ const CactivaTraitStyle: any = {
       path: "style.value.fontFamily",
       kind: SyntaxKind.StringLiteral,
       mode: "font",
+      default: "Global",
       divider: "Typography",
       options: {
         styles: {

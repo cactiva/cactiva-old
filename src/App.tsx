@@ -39,8 +39,13 @@ const generateFonts = (fonts: any) => {
     }`;
   });
   const node = document.createTextNode(style);
+  const root: any = document.getElementById("root");
   css.appendChild(node);
-  document.head.appendChild(css);
+  if (root.firstChild.tagName === "STYLE") {
+    console.log(root.firstChild, root.firstChild.tagName);
+    root.removeChild(root.firstChild);
+  }
+  root.insertBefore(css, root.firstChild);
 };
 
 export default observer(() => {

@@ -66,7 +66,7 @@ export default observer(
                     onChange={async (e: any) => {
                       const file = await e.target.files[0];
                       const name: any = prompt(
-                        "Name:",
+                        'Name it as "Global" to set the font to default',
                         file.name.substr(0, file.name.length - 4)
                       );
                       var formDataToUpload = new FormData();
@@ -81,13 +81,18 @@ export default observer(
                           }
                         }
                       );
+                      const filetree = await api.get("assets/font-list");
+                      meta.list = filetree.children;
+                      onAddFont &&
+                        onAddFont({
+                          list: filetree.children,
+                          render: true
+                        });
                       meta.value = newVal.filename.substr(
                         0,
                         newVal.filename.length - 4
                       );
-                      const filetree = await api.get("assets/font-list");
-                      meta.list = filetree.children;
-                      onAddFont && onAddFont(true);
+                      onChange(meta.value);
                     }}
                     style={{ display: "none" }}
                   />
