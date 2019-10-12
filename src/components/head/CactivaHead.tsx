@@ -5,7 +5,15 @@ import "./CactivaHead.scss";
 
 export default observer(({ editor }: any) => {
   const current = editor.current;
-  const loadingText = ["loading", "saving"];
+  const loadingText = [
+    "moving",
+    "deleting",
+    "renaming",
+    "creating",
+    "duplicating",
+    "loading",
+    "saving"
+  ];
   const infoText = ["changes applied"];
   const warningText = ["unsaved"];
   const readyText = ["ready"];

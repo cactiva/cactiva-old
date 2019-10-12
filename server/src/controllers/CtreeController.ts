@@ -3,13 +3,14 @@ import { Request, Response } from "express";
 import { Morph } from "../morph";
 import * as jetpack from "fs-jetpack";
 import * as path from "path";
-import * as fs from 'fs';
+import * as fs from "fs";
 
-const morph = Morph.getInstance();
+let morph = Morph.getInstance();
 @Controller("api/ctree")
 export class CtreeController {
   @Get("list")
   private list(req: Request, res: Response) {
+    morph.reload();
     const tree: any = jetpack.inspectTree(
       path.join(morph.getAppPath(), "src"),
       {
@@ -27,26 +28,70 @@ export class CtreeController {
     res.status(200).json(tree);
   }
 
-
-  @Get("move")
-  private move(req: Request, res: Response) {
-    const from = path.join(morph.getAppPath(), "src", req.query.old);
-    const to = path.join(morph.getAppPath(), "src", req.query.new);
-    if (fs.lstatSync(from).isDirectory()) {
-      const sf = morph.project.getDirectory(from);
+  @Get("duplicate")
+  private duplicate(req: Request, res: Response) {
+    morph.project.resolveSourceFileDependencies();
+    const from = path.join(morph.getAppPath(), req.query.path);
+    const to = path.join(morph.getAppPath(), req.query.to);
+    if (fs.lstatSync(from).isFile()) {
+      const sf = morph.getSourceFile(from, true);
       if (sf) {
-        sf.moveImmediatelySync(to);
+        sf.copyImmediatelySync(to);
         morph.project.saveSync();
-        res.send({ status: 'ok' });
-      }
-    } else {
-      const sf = morph.project.getSourceFile(from);
-      if (sf) {
-        sf.moveImmediatelySync(to);
-        morph.project.saveSync();
-        res.send({ status: 'ok' });
+        res.send({ status: "ok" });
       }
     }
   }
 
+  @Get("newdir")
+  private newdir(req: Request, res: Response) {
+    const to = path.join(morph.getAppPath(), req.query.path);
+    morph.project.createDirectory(to);
+    morph.project.saveSync();
+    res.send({ status: "ok" });
+  }
+
+  @Get("move")
+  private move(req: Request, res: Response) {
+    morph.project.resolveSourceFileDependencies();
+    const from = path.join(morph.getAppPath(), req.query.old);
+    const to = path.join(morph.getAppPath(), req.query.new);
+    if (fs.lstatSync(from).isDirectory()) {
+      const sf = morph.getDirectory(from, true);
+      if (sf) {
+        sf.moveImmediatelySync(to);
+        morph.project.saveSync();
+        res.send({ status: "ok" });
+      }
+    } else {
+      const sf = morph.getSourceFile(from, true);
+      if (sf) {
+        sf.moveImmediatelySync(to);
+        morph.project.saveSync();
+        res.send({ status: "ok" });
+      }
+    }
+  }
+
+  @Get("delete")
+  private delete(req: Request, res: Response) {
+    morph.project.resolveSourceFileDependencies();
+    let p = path.join(morph.getAppPath(), req.query.path);
+    if (fs.lstatSync(p).isDirectory()) {
+      const sf = morph.project.getDirectory(p);
+      if (sf) {
+        sf.forget();
+        morph.project.save();
+        jetpack.remove(p);
+        res.send("ok");
+      }
+    } else {
+      const sf = morph.project.getSourceFile(p);
+      if (sf) {
+        sf.delete();
+        morph.project.save();
+        res.send("ok");
+      }
+    }
+  }
 }

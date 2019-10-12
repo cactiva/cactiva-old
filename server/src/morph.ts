@@ -31,9 +31,14 @@ export class Morph {
     return result;
   }
 
-  getSourceFile(filename: string) {
-    return this.project.getSourceFileOrThrow(file => {
-      return file.getFilePath() === this.getAppPath() + filename;
+  getDirectory(name: string, isAbsolutePath = false) {
+    return this.project.getDirectoryOrThrow(name);
+  }
+
+  getSourceFile(name: string, isAbsolutePath = false) {
+    return this.project.getSourceFileOrThrow(item => {
+      const itemName = (!isAbsolutePath ? this.getAppPath() : "") + name;
+      return item.getFilePath() === itemName;
     });
   }
 
@@ -72,6 +77,11 @@ export class Morph {
       file: replaceReturn(sf, "<<<<cactiva>>>>"),
       component: ps
     };
+  }
+
+  reload() {
+    process.chdir(this.getAppPath());
+    this.project.addSourceFilesFromTsConfig(path.join(".", "tsconfig.json"));
   }
 
   /************************ Singleton  **************************/

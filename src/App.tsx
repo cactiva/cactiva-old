@@ -81,9 +81,12 @@ export default observer(() => {
         commitChanges(current);
       }
     });
-    editor.load(
-      localStorage.getItem("cactiva-current-path") || "/src/Main/Home.tsx"
+    await editor.load(
+      localStorage.getItem("cactiva-current-path") || "/src/Home.tsx"
     );
+    if (editor.status === "failed") {
+      editor.load("/src/Home.tsx");
+    }
   }, []);
 
   useEffect(() => {
@@ -115,7 +118,7 @@ export default observer(() => {
           expandToMin={false}
           gutterSize={5}
           gutterAlign="center"
-          snapOffset={30}
+          snapOffset={0}
           dragInterval={1}
           direction="horizontal"
           className="cactiva-main"
