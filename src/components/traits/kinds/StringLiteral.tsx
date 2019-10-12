@@ -1,25 +1,46 @@
 import { parseValue } from "@src/components/editor/utility/parser/parser";
-import { Button, IconButton, Popover, Text, Tooltip } from "evergreen-ui";
+import {
+  Button,
+  IconButton,
+  Pane,
+  Popover,
+  Text,
+  Tooltip,
+  Icon
+} from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
-import React, { useEffect } from "react";
-import { SketchPicker } from "react-color";
+import React, { useEffect, useRef } from "react";
+import {
+  SketchPicker,
+  PhotoshopPicker,
+  MaterialPicker,
+  ChromePicker
+} from "react-color";
 import * as IconSource from "react-web-vector-icons";
 import { ICactivaTraitFieldProps } from "../CactivaTraitField";
 import IconMaps from "./components/IconMaps";
 import "./StringLiteral.scss";
+import api from "@src/libs/api";
+import { toJS } from "mobx";
+import FontBrowser from "./components/FontBrowser";
 
 const Icons = IconMaps();
 export default observer((trait: ICactivaTraitFieldProps) => {
   const meta = useObservable({
-    value: trait.value,
+    value: trait.value || trait.default,
     isShown: false
   });
 
-  const icon = useObservable({
+  const metaIcon = useObservable({
     source: "Entypo",
     search: "",
     list: Icons["Entypo"]
+  });
+
+  const metaFont = useObservable({
+    list: [],
+    isShown: false
   });
 
   const optionItems = _.get(trait, "options.items", []);
@@ -29,23 +50,33 @@ export default observer((trait: ICactivaTraitFieldProps) => {
 
   useEffect(() => {
     if (_.get(trait, "mode") === "icon") {
-      icon.source = parseValue(trait.source.props.source);
-      icon.list = Icons[icon.source].filter((x: string) =>
-        x.toLowerCase().includes(icon.search)
+      metaIcon.source = parseValue(trait.source.props.source);
+      metaIcon.list = Icons[metaIcon.source].filter((x: string) =>
+        x.toLowerCase().includes(metaIcon.search)
       );
+    }
+    if (_.get(trait, "mode") === "font") {
+      const load = async () => {
+        const filetree = await api.get("assets/font-list");
+        metaFont.list = filetree.children;
+      };
+      load();
     }
   }, [trait]);
   return (
     <>
       {!trait.mode && (
         <div
-          className={`trait-string-literal ${_.get(trait, 'options.className')}`}
+          className={`trait-string-literal ${_.get(
+            trait,
+            "options.className"
+          )}`}
           style={{ ...trait.style, flexDirection: "row" }}
         >
           <input
             className={`cactiva-trait-input`}
             type="text"
-            placeholder={_.get(trait, 'options.fields.name')}
+            placeholder={_.get(trait, "options.fields.name")}
             value={meta.value || ""}
             onChange={e => {
               meta.value = e.target.value;
@@ -98,17 +129,21 @@ export default observer((trait: ICactivaTraitFieldProps) => {
           <div className="icon-wrapper">
             <div className="toolbar">
               <div className={`icon-selected`}>
-                <Icon source={icon.source} name={meta.value} size={20} />
+                <CustomIcon
+                  source={metaIcon.source}
+                  name={meta.value}
+                  size={20}
+                />
               </div>
               <input
                 className={`cactiva-trait-input input`}
                 placeholder="Search"
                 type="text"
-                value={icon.search}
+                value={metaIcon.search}
                 onChange={e => {
                   let v = e.target.value.toLowerCase();
-                  icon.search = v;
-                  icon.list = Icons[icon.source].filter((x: string) =>
+                  metaIcon.search = v;
+                  metaIcon.list = Icons[metaIcon.source].filter((x: string) =>
                     x.toLowerCase().includes(v)
                   );
                 }}
@@ -118,7 +153,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               />
             </div>
             <div className={`list`}>
-              {icon.list.map((name: any, idx: number) => {
+              {metaIcon.list.map((name: any, idx: number) => {
                 return (
                   <div
                     key={idx}
@@ -127,7 +162,11 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                       trait.update(`"${name}"`);
                     }}
                   >
-                    <Icon source={icon.source} name={name} size={18} />
+                    <CustomIcon
+                      source={metaIcon.source}
+                      name={name}
+                      size={18}
+                    />
                   </div>
                 );
               })}
@@ -210,34 +249,82 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                     flexGrow={1}
                   />
                 ) : (
-                    <Button
-                      isActive={item.value === meta.value}
-                      iconBefore={item.icon}
-                      height={20}
-                      onClick={() => {
-                        meta.value = item.value;
-                        trait.update(`"${meta.value}"`);
-                      }}
-                      flexGrow={1}
-                      fontSize={10}
-                      padding={0}
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      {item.label}
-                    </Button>
-                  )}
+                  <Button
+                    isActive={item.value === meta.value}
+                    iconBefore={item.icon}
+                    height={20}
+                    onClick={() => {
+                      meta.value = item.value;
+                      trait.update(`"${meta.value}"`);
+                    }}
+                    flexGrow={1}
+                    fontSize={10}
+                    padding={0}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    {item.label}
+                  </Button>
+                )}
               </Tooltip>
             );
           })}
+        </div>
+      )}
+
+      {trait.mode === "font" && (
+        <div className="cactiva-trait-font">
+          <select
+            className={`cactiva-trait-select`}
+            value={meta.value || trait.default}
+            onChange={e => {
+              meta.value = e.target.value;
+              trait.update(`"${meta.value}"`);
+            }}
+          >
+            <option disabled={meta.value} value={""}>
+              Select ...
+            </option>
+            {metaFont.list.map((item: any, i: number) => {
+              const name = item.name.substr(0, item.name.length - 4);
+              return (
+                <option key={i} value={`${name}`}>
+                  {name}
+                </option>
+              );
+            })}
+          </select>
+          <IconButton
+            icon="folder-new"
+            height={20}
+            onClick={e => {
+              e.stopPropagation();
+              metaFont.isShown = true;
+            }}
+          />
+          <FontBrowser
+            value={meta.value}
+            isShown={metaFont.isShown}
+            onDismiss={(v: any) => {
+              metaFont.isShown = v;
+            }}
+            onChange={(v: any) => {
+              meta.value = v;
+              trait.update(`"${meta.value}"`);
+            }}
+            onAddFont={(v: any) => {
+              metaFont.list = v.list;
+              trait.editor.renderfont = v.render;
+            }}
+          />
         </div>
       )}
     </>
   );
 });
 
-const Icon = ({ source, name, size, color, style }: any) => {
+const CustomIcon = ({ source, name, size, color, style }: any) => {
   const Icon: any = (IconSource as any)[source];
 
   return <Icon name={name} size={size} color={color} style={style} />;

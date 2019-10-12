@@ -21,6 +21,32 @@ import CactivaHooks from "./components/hooks/CactivaHooks";
 import CactivaHead from "./components/head/CactivaHead";
 import { generateSource } from "./components/editor/utility/parser/generateSource";
 
+import api from "./libs/api";
+const fs = require("fs");
+
+const generateFonts = (fonts: any) => {
+  const css: any = document.createElement("style");
+  let style = "";
+  fonts.map((f: any) => {
+    style += `
+    @font-face {
+      font-family: ${f.name.substr(0, f.name.length - 4)};
+      font-style: normal;
+      font-weight: 400;
+      src: url(http://localhost:8080/api/assets/font/${
+        f.name
+      }) format("truetype");
+    }`;
+  });
+  const node = document.createTextNode(style);
+  const root: any = document.getElementById("root");
+  css.appendChild(node);
+  if (root.firstChild.tagName === "STYLE") {
+    root.removeChild(root.firstChild);
+  }
+  root.insertBefore(css, root.firstChild);
+};
+
 export default observer(() => {
   const current = editor.current;
   const meta = useObservable({
@@ -64,6 +90,16 @@ export default observer(() => {
     meta.currentProject = editor.path;
   }, [editor.status]);
 
+  useEffect(() => {
+    if (current && current.renderfont) {
+      const load = async () => {
+        const filetree = await api.get("assets/font-list");
+        generateFonts(filetree.children);
+      };
+      load();
+      current.renderfont = false;
+    }
+  }, [editor.status, current && current.renderfont]);
   if (!meta.currentProject) {
     return <Welcome editor={editor} />;
   }

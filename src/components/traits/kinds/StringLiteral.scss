@@ -112,3 +112,14 @@
     }
   }
 }
+
+.cactiva-trait-font {
+  flex: 1;
+  display: flex;
+
+  .btn-upload {
+    svg {
+      fill: rgb(102, 120, 138) !important;
+    }
+  }
+}
