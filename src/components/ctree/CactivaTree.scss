@@ -20,8 +20,16 @@
       flex-basis: 25px;
       display: flex;
       align-items: center;
+      padding: 0;
+      box-shadow: none !important;
+      border-radius: 0;
+      min-height: 25px;
+      height: 25px;
+      margin: 0;
       justify-content: center;
       cursor: pointer;
+      border: 0;
+      outline: none !important;
       border-left: 1px solid #ccc;
     }
   }
@@ -29,6 +37,9 @@
     flex: 1;
     overflow-y: auto;
     position: relative;
+    &.hover {
+      background: #e3f2ff;
+    }
     .list-body {
       position: absolute;
       left: 0;
@@ -54,10 +65,21 @@
         flex: 1;
         font-size: 11px;
       }
+      &.hover,
       &.selected,
       &:hover {
         background: #e3f2ff;
       }
     }
+  }
+}
+
+.ctree-menu {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  span {
+    color: #666 !important;
   }
 }

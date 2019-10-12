@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { useDrag } from 'react-dnd-cjs';
 
-export default observer(({ cactiva, children }: any) => {
+export default observer(({ cactiva, dragInfo, children }: any) => {
   const { source, tag, kind } = cactiva;
   const { id } = source;
   const [{ isDragging }, dragRef] = useDrag({
@@ -10,7 +10,8 @@ export default observer(({ cactiva, children }: any) => {
       type: 'element',
       name: kind ? kind.kindName : tag.tagName,
       mode: kind ? 'kind' : 'tag',
-      id
+      id,
+      ...dragInfo
     },
     collect: monitor => {
       return {
