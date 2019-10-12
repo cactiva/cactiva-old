@@ -42,7 +42,6 @@ const generateFonts = (fonts: any) => {
   const root: any = document.getElementById("root");
   css.appendChild(node);
   if (root.firstChild.tagName === "STYLE") {
-    console.log(root.firstChild, root.firstChild.tagName);
     root.removeChild(root.firstChild);
   }
   root.insertBefore(css, root.firstChild);

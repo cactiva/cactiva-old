@@ -280,7 +280,6 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             value={meta.value || trait.default}
             onChange={e => {
               meta.value = e.target.value;
-              console.log(trait.source, meta.value);
               trait.update(`"${meta.value}"`);
             }}
           >
@@ -317,7 +316,6 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             onAddFont={(v: any) => {
               metaFont.list = v.list;
               trait.editor.renderfont = v.render;
-              console.log(v);
             }}
           />
         </div>
