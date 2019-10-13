@@ -138,14 +138,21 @@ export default observer(({ editor }: any) => {
                   icon="new-text-box"
                   onSelect={() => {
                     meta.newShown = false;
-                    setTimeout(() => {
+                    setTimeout(async () => {
                       const newname = prompt("New component name:");
                       if (newname) {
-                        console.log(
+                        const path =
                           "/src/" +
-                            _.startCase(newname).replace(/[^0-9a-zA-Z]/g, "") +
-                            ".tsx"
-                        );
+                          _.startCase(newname).replace(/[^0-9a-zA-Z]/g, "") +
+                          ".tsx";
+                        editor.status = "creating";
+                        try {
+                          await api.get(`ctree/newfile?path=${path}`);
+                        } catch (e) {
+                          console.log(e);
+                        }
+                        await reloadList();
+                        editor.status = "ready";
                       }
                     });
                   }}
@@ -233,7 +240,7 @@ const expandSelected = (path: string, list: any, parent: any) => {
     }
 
     if (e.type === "dir") {
-      if (meta.expandedDir.indexOf(e.relativePath) >=0) {
+      if (meta.expandedDir.indexOf(e.relativePath) >= 0) {
         e.expanded = true;
       }
       expandSelected(path, e.children, e);
@@ -483,7 +490,7 @@ const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
               onSelect={() => {
                 const toggle = _.get(toggleRef, "current");
                 toggle();
-                setTimeout(() => {
+                setTimeout(async () => {
                   const newname = prompt("New component name:");
                   if (newname) {
                     const path = e.relativePath.split("/");
@@ -493,7 +500,15 @@ const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
                     path.push(
                       _.startCase(newname).replace(/[^0-9a-zA-Z]/g, "") + ".tsx"
                     );
-                    console.log(path.join("/"));
+
+                    editor.status = "creating";
+                    try {
+                      await api.get(`ctree/newfile?path=${path.join("/")}`);
+                    } catch (e) {
+                      console.log(e);
+                    }
+                    await reloadList();
+                    editor.status = "ready";
                   }
                 });
               }}

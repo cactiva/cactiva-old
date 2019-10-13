@@ -51,6 +51,32 @@ export class CtreeController {
     res.send({ status: "ok" });
   }
 
+  @Get("newfile")
+  private newfile(req: Request, res: Response) {
+    const sf = morph.project.createSourceFile(
+      morph.getAppPath() + req.query.path,
+      ` import React from "react";
+import { observer, useObservable } from "mobx-react-lite";
+import { View } from "react-native";
+import { useDimensions } from "react-native-hooks";
+import { useNavigation } from "react-navigation-hooks";
+
+export default observer(() => {
+  const dim = useDimensions().window;
+  const nav = useNavigation();
+  const meta = useObservable({});
+
+  return <View />;
+});`,
+      {
+        overwrite: true
+      }
+    );
+    sf.saveSync();
+    morph.project.saveSync();
+    res.send({ status: "ok" });
+  }
+
   @Get("move")
   private move(req: Request, res: Response) {
     morph.project.resolveSourceFileDependencies();
