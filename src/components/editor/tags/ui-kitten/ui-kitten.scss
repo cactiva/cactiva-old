@@ -1,0 +1,42 @@
+.uik-field {
+  background-color: #f7f9fc;
+  border-radius: 4px;
+  border: 1px solid #edf1f7;
+  padding: 7px 8px;
+  color: #8f9bb3;
+  font-size: 15px;
+  font-weight: normal;
+  min-height: 32px;
+  margin: 4px;
+  display: flex;
+  align-items: center;
+
+  .uik-input {
+    margin-right: 8px;
+    margin-left: 8px;
+  }
+
+  .uik-select {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+  }
+}
+
+.uik-button {
+  background-color: rgb(51, 102, 255);
+  border-color: rgb(51, 102, 255);
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+
+  .uik-text {
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    line-height: 16px;
+    margin-right: 10px;
+    margin-left: 10px;
+  }
+}

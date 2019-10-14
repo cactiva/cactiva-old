@@ -9,7 +9,9 @@ import Split from "react-split";
 import CactivaBreadcrumb from "./CactivaBreadcrumb";
 import CactivaToolbar from "./CactivaToolbar";
 import "./editor.scss";
-import "./tags/tags.scss";
+import "./tags/kinds/kinds.scss";
+import "./tags/react-native/react-native.scss";
+import "./tags/ui-kitten/ui-kitten.scss";
 import {
   addChildInId,
   commitChanges,

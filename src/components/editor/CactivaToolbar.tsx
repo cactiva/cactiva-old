@@ -1,4 +1,4 @@
-import { IconButton, Tooltip } from "evergreen-ui";
+import { IconButton, Tooltip, Pane } from "evergreen-ui";
 import _ from "lodash";
 import React from "react";
 import CactivaDraggable from "./CactivaDraggable";
@@ -10,7 +10,13 @@ export default () => {
     <div className="cactiva-toolbar">
       {_.map(toolbar, (v: any, i) => {
         if (v.divider) {
-          return <div key={i} className="divider" />;
+          return (
+            <Tooltip key={i} content={`-- ${v.divider} --`} position="right">
+              <Pane>
+                <div className="divider" />
+              </Pane>
+            </Tooltip>
+          );
         }
         const tag = tags[v.label];
         const kind = kinds[v.label];
@@ -72,7 +78,22 @@ const toolbar = [
     label: "RadioGroup"
   },
   {
-    divider: "media"
+    divider: "UI-Kitten"
+  },
+  {
+    icon: "text-highlight",
+    label: "Input"
+  },
+  {
+    icon: "widget-header",
+    label: "Select"
+  },
+  {
+    icon: "symbol-square",
+    label: "Button"
+  },
+  {
+    divider: "Media"
   },
   {
     icon: "star",
@@ -83,7 +104,7 @@ const toolbar = [
     label: "Image"
   },
   {
-    divider: "layout"
+    divider: "Layout"
   },
   {
     icon: "style",
@@ -98,7 +119,7 @@ const toolbar = [
     label: "ScrollView"
   },
   {
-    divider: "code"
+    divider: "Code"
   },
   {
     icon: "function",
