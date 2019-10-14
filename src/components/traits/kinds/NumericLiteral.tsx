@@ -9,6 +9,7 @@ import { toJS } from "mobx";
 export default observer((trait: ICactivaTraitFieldProps) => {
   const meta = useObservable({
     value: trait.value,
+    touched: false,
     clicked: false,
     moving: false,
     direction: "vertical",
@@ -17,24 +18,29 @@ export default observer((trait: ICactivaTraitFieldProps) => {
     x: -1,
     cx: 0,
     cy: 0,
+    timeout: -1 as any,
     startValue: parseInt(trait.value) || 0
   });
   const minValue = _.get(trait, "options.minValue", undefined);
   const maxValue = _.get(trait, "options.maxValue", undefined);
+  const step = _.get(trait, "options.step", 1);
   useEffect(() => {
     meta.value = trait.value;
   }, [trait.value]);
   return (
     <>
       <div
-        className={`trait-numeric-literal ${_.get(trait, 'options.className')} ${meta.clicked ? "clicked" : ""}`}
+        className={`trait-numeric-literal ${_.get(
+          trait,
+          "options.className"
+        )} ${meta.clicked ? "clicked" : ""}`}
         style={{ ...trait.style, flexDirection: "row" }}
       >
         <input
           className={`cactiva-trait-input ${meta.clicked ? "focus" : ""}`}
           type="text"
           value={meta.value || ""}
-          placeholder={_.get(trait, 'options.fields.name')}
+          placeholder={_.get(trait, "options.fields.name")}
           onKeyDown={e => {
             if (e.which === 13) (e.target as any).blur();
           }}
@@ -57,11 +63,34 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             flexDirection: meta.direction === "vertical" ? "column" : "row",
             width: meta.direction === "vertical" ? 12 : 20
           }}
-          onMouseDown={() => {
-            meta.clicked = true;
-          }}
         >
-          <div className="arrow-btn">
+          <div
+            className="arrow-btn"
+            onMouseMove={() => {
+              if (meta.touched) {
+                meta.clicked = true;
+              }
+            }}
+            onMouseUpCapture={() => {
+              meta.touched = false;
+            }}
+            onMouseDownCapture={() => {
+              meta.value = meta.value - step;
+              if (minValue !== undefined && meta.value < minValue) {
+                meta.value = minValue;
+              } else if (maxValue !== undefined && meta.value > maxValue) {
+                meta.value = maxValue;
+              }
+              meta.touched = true;
+              clearTimeout(meta.timeout);
+              meta.timeout = setTimeout(() => {
+                if (meta.touched) {
+                  meta.clicked = true;
+                }
+                trait.update(meta.value);
+              }, 300);
+            }}
+          >
             <Icon
               icon={meta.direction === "vertical" ? "caret-up" : "caret-left"}
               size={meta.direction === "vertical" ? 8 : 9}
@@ -71,14 +100,40 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             style={
               meta.direction === "vertical"
                 ? {
-                  borderBottom: "1px solid #ececeb"
-                }
+                    borderBottom: "1px solid #ececeb"
+                  }
                 : {
-                  borderRight: "1px solid #ececeb"
-                }
+                    borderRight: "1px solid #ececeb"
+                  }
             }
           />
-          <div className="arrow-btn">
+          <div
+            className="arrow-btn"
+            onMouseMove={() => {
+              if (meta.touched) {
+                meta.clicked = true;
+              }
+            }}
+            onMouseUpCapture={() => {
+              meta.touched = false;
+            }}
+            onMouseDownCapture={() => {
+              meta.value = meta.value + step;
+              if (minValue !== undefined && meta.value < minValue) {
+                meta.value = minValue;
+              } else if (maxValue !== undefined && meta.value > maxValue) {
+                meta.value = maxValue;
+              }
+              meta.touched = true;
+              clearTimeout(meta.timeout);
+              meta.timeout = setTimeout(() => {
+                if (meta.touched) {
+                  meta.clicked = true;
+                }
+                trait.update(meta.value);
+              }, 300);
+            }}
+          >
             <Icon
               icon={
                 meta.direction === "vertical" ? "caret-down" : "caret-right"
@@ -102,6 +157,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
           }}
           onMouseUpCapture={e => {
             meta.clicked = false;
+            meta.touched = false;
             meta.startValue = meta.value;
             meta.direction = "vertical";
             const val = parseInt(meta.value);
@@ -120,7 +176,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             if (meta.clicked) {
               const dy = e.nativeEvent.screenY - meta.y;
               const dx = e.nativeEvent.screenX - meta.x;
-              let v = meta.startValue + dy + dx;
+              let v = meta.startValue + dy * step + dx * step;
               const cdx = meta.cx - e.nativeEvent.clientX;
               const cdy = meta.cy - e.nativeEvent.clientY;
               const newDirection =

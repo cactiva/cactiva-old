@@ -11,6 +11,7 @@ import {
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useRef } from "react";
+import CactivaCli from "./CactivaCli";
 import "./CactivaHead.scss";
 
 export default observer(({ editor }: any) => {
@@ -33,18 +34,27 @@ export default observer(({ editor }: any) => {
   if (editor.current && !editor.current.isSaved && status === "ready") {
     status = "unsaved";
   }
+  const meta = useObservable({
+    logText: "",
+    url: ""
+  });
   const timercli = useRef(null as any);
-  const meta = useObservable({ log: "" });
   const streamCLILog = () => {
-    timercli.current = setInterval(async () => {
+    const exec = async () => {
       const res = await api.get("project/log-server");
-      meta.log += res;
-      if (ref && ref.current) {
-        ref.current.scrollTop = 9999999;
+      if (res.indexOf("Webpack on port") >= 0) {
+        meta.url = `http://localhost:${res
+          .split("Webpack on port")[1]
+          .split("in")[0]
+          .trim()}`;
       }
-    }, 1000);
+      meta.logText += res;
+      terminal.current.write(res);
+    };
+    exec();
+    timercli.current = setInterval(exec, 500);
   };
-  const ref = useRef(null as any);
+  const terminal = useRef(null as any);
 
   return (
     <div className="cactiva-head">
@@ -62,8 +72,8 @@ export default observer(({ editor }: any) => {
           }}
           content={
             <div className="project-popover">
-              <div className="console" ref={ref}>
-                {meta.log}
+              <div className="console">
+                <CactivaCli cliref={terminal} initialText={meta.logText} />
               </div>
               <div className="commands">
                 <Button
@@ -80,6 +90,9 @@ export default observer(({ editor }: any) => {
                         editor.cli.status = "stopped";
                         clearInterval(timercli.current);
                       }
+                      meta.logText = "";
+                      meta.url = "";
+                      terminal.current.clear();
                     })();
                   }}
                 >
@@ -87,6 +100,22 @@ export default observer(({ editor }: any) => {
                     ? "Stop Server"
                     : "Start Server"}
                 </Button>
+
+                {meta.url ? (
+                  <a href={meta.url} target="_blank">
+                    <Text size={300}>Web Preview</Text>
+                    <Icon icon="share" size={11} color="#999" />
+                  </a>
+                ) : editor.cli.status === "running" ? (
+                  <a>
+                    <Spinner size={18} color="#999" />
+                    <Text size={300}>Loading...</Text>
+                  </a>
+                ) : (
+                  <a>
+                    <Text size={300}>Preview not available</Text>
+                  </a>
+                )}
               </div>
             </div>
           }

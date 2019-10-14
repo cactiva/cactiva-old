@@ -1,23 +1,14 @@
-import { Icon, Text } from "evergreen-ui";
+import { Text } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
-import React, { useRef, useEffect } from "react";
-import {
-  commitChanges,
-  prepareChanges
-} from "../editor/utility/elements/tools";
-import { kindNames } from "../editor/utility/kinds";
-import {
-  generateValueByKind,
-  parseProps,
-  parseValue
-} from "../editor/utility/parser/parser";
+import React, { useEffect, useRef } from "react";
 import { ICactivaTrait, ICactivaTraitField } from "../editor/utility/classes";
+import { commitChanges, prepareChanges } from "../editor/utility/elements/tools";
+import { kindNames } from "../editor/utility/kinds";
+import { generateValueByKind, parseValue } from "../editor/utility/parser/parser";
+import { isTag } from "../editor/utility/tagmatcher";
 import CactivaTraitField from "./CactivaTraitField";
 import "./traits.scss";
-import { isTag } from "../editor/utility/tagmatcher";
-import { SyntaxKind } from "../editor/utility/syntaxkinds";
-import { toJS } from "mobx";
 
 export default observer(({ editor }: any) => {
   const traits = _.get(editor, "selected.tag.traits") as ICactivaTrait[];

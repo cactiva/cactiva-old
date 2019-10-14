@@ -72,7 +72,11 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               {fieldName}
             </Text>
           }
-          isShown={!fieldName ? false : undefined}
+          isShown={
+            !fieldName || _.get(trait, "options.fields.name")
+              ? false
+              : undefined
+          }
         >
           <Pane style={{ flex: 1 }}>
             {KindField ? (

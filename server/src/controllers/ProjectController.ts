@@ -59,14 +59,15 @@ export class ProjectController {
     this.buffer = "";
     this.lastBufferIndex = 0;
 
+
+
     this.cli = execa("yarn", ["web"], {
       all: true
     } as any);
 
     this.cli.all.on("data", (chunk: any) => {
-      this.buffer += chunk
-        .toString("utf-8")
-        .replace(/[\u{0080}-\u{FFFF}]/gu, "");
+      const text = chunk.toString();
+      this.buffer += text;
     });
 
     res.status(200).json({
@@ -93,6 +94,6 @@ export class ProjectController {
     this.lastBufferIndex = this.buffer.length;
     res
       .status(200)
-      .send(result.replace(/\\[0m\\[47m\s/gi, "").replace(/\/gi, " "));
+      .send(result);
   }
 }

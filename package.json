@@ -37,7 +37,10 @@
     "react-web-vector-icons": "^1.0.2",
     "recursive-diff": "^0.2.0",
     "typescript": "3.6.3",
-    "use-async-effect": "^2.2.1"
+    "use-async-effect": "^2.2.1",
+    "xterm": "^4.1.0",
+    "xterm-addon-fit": "^0.2.1",
+    "xterm-addon-web-links": "^0.2.1"
   },
   "scripts": {
     "dev": "node dev.js",

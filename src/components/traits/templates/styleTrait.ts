@@ -490,6 +490,19 @@ const CactivaTraitStyle: any = {
           }
         }
       }
+    },
+    {
+      name: "Opacity",
+      path: "style.value.zIndex",
+      kind: SyntaxKind.NumericLiteral,
+      options: {
+        styles: {
+          root: {
+            flex: "0 0 50%",
+            paddingRight: 0
+          }
+        }
+      }
     }
   ] as ICactivaTraitField[],
   Spacing: [
@@ -803,6 +816,27 @@ const CactivaTraitStyle: any = {
     },
     {
       name: "Radius",
+      path: "style.value.borderRadius",
+      kind: SyntaxKind.NumericLiteral,
+      options: {
+        styles: {
+          root: {
+            flex: "0 0 99%",
+            paddingRight: 0,
+            marginBottom: -5
+          },
+          field: {
+            borderBottomLeftRadius: 0,
+            borderBottomRightRadius: 0
+          }
+        },
+        fields: {
+          name: "All"
+        }
+      }
+    },
+    {
+      name: "",
       path: "style.value.borderTopLeftRadius",
       kind: SyntaxKind.NumericLiteral,
       options: {
