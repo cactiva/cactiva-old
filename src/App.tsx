@@ -32,15 +32,13 @@ const generateFonts = (fonts: any) => {
       font-family: ${f.name.substr(0, f.name.length - 4)};
       font-style: normal;
       font-weight: 400;
-      src: url(http://localhost:8080/api/assets/font/${
-        f.name
-      }) format("truetype");
+      src: url(${api.url}assets/font/${f.name}) format("truetype");
     }`;
   });
   const node = document.createTextNode(style);
   const root: any = document.getElementById("root");
   css.appendChild(node);
-  if (root.firstChild.tagName === "STYLE") {
+  if (root.children.length > 0 && root.firstChild.tagName === "STYLE") {
     root.removeChild(root.firstChild);
   }
   root.insertBefore(css, root.firstChild);
@@ -50,7 +48,8 @@ export default observer(() => {
   const current = editor.current;
   const meta = useObservable({
     currentPane: "props",
-    currentProject: ""
+    currentProject: "",
+    traitPane: false
   });
 
   useAsyncEffect(async () => {
@@ -97,7 +96,16 @@ export default observer(() => {
 
   useEffect(() => {
     meta.currentProject = editor.path;
+    current &&
+      (current.traitPane =
+        localStorage.getItem("cactiva-editor-trait-visible") === "y"
+          ? true
+          : false);
   }, [editor.status]);
+
+  useEffect(() => {
+    current && (meta.traitPane = current.traitPane);
+  }, [current && current.traitPane]);
 
   useEffect(() => {
     if (current && current.renderfont) {
@@ -109,6 +117,7 @@ export default observer(() => {
       current.renderfont = false;
     }
   }, [editor.status, current && current.renderfont]);
+
   if (!meta.currentProject) {
     return <Welcome editor={editor} />;
   }
@@ -119,7 +128,13 @@ export default observer(() => {
           <CactivaHead editor={editor} />
         </div>
         <Split
-          sizes={editor.status === "loading" ? [15, 85] : [15, 70, 15]}
+          sizes={
+            meta.traitPane
+              ? editor.status === "loading"
+                ? [15, 85]
+                : [15, 70, 15]
+              : [15, 85]
+          }
           minSize={200}
           expandToMin={false}
           gutterSize={5}
@@ -156,7 +171,7 @@ export default observer(() => {
             </div>
           )}
 
-          {editor.status !== "loading" ? (
+          {meta.traitPane && editor.status !== "loading" ? (
             <div className="cactiva-pane">
               <div className="cactiva-pane-inner">
                 {/* <div className="cactiva-pane-tab-header">
@@ -175,30 +190,28 @@ export default observer(() => {
                     Hooks
                   </Tab>
                 </div> */}
-                {meta.currentPane === "props" && (
-                  <>
-                    {current && current.source && current.selected ? (
-                      <CactivaTraits editor={current} />
-                    ) : (
-                      <Pane
-                        display="flex"
-                        flexDirection="column"
-                        padding={10}
-                        alignItems="center"
-                        justifyContent="center"
-                      >
-                        <img
-                          src="/images/reindeer.svg"
-                          style={{ width: "50%", margin: 20, opacity: 0.4 }}
-                        />
-                        <Text size={300}>Please select a component</Text>
-                      </Pane>
-                    )}
-                  </>
-                )}
-                {meta.currentPane === "hooks" && (
+                <>
+                  {current && current.source && current.selected ? (
+                    <CactivaTraits editor={current} />
+                  ) : (
+                    <Pane
+                      display="flex"
+                      flexDirection="column"
+                      padding={10}
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <img
+                        src="/images/reindeer.svg"
+                        style={{ width: "50%", margin: 20, opacity: 0.4 }}
+                      />
+                      <Text size={300}>Please select a component</Text>
+                    </Pane>
+                  )}
+                </>
+                {/* {meta.currentPane === "hooks" && (
                   <CactivaHooks editor={current} />
-                )}
+                )} */}
               </div>
             </div>
           ) : (

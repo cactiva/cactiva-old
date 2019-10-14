@@ -1,6 +1,6 @@
 import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
 import { CactivaTag } from "@src/components/editor/utility/classes";
-import styleTrait from "@src/components/traits/templates/styleTrait";
+import traitStyle from "@src/components/traits/templates/traitStyle";
 import IconMaps from "@src/components/traits/kinds/components/IconMaps";
 import _ from "lodash";
 
@@ -53,19 +53,10 @@ export default class extends CactivaTag {
           options: {
             styles
           }
-        },
-        {
-          name: "Color",
-          path: "color",
-          kind: SyntaxKind.StringLiteral,
-          mode: "color",
-          options: {
-            styles
-          }
         }
       ]
     },
-    ...styleTrait(["Typography"])
+    ...traitStyle(["Typography"])
   ];
   static element = require("./element").default;
 }

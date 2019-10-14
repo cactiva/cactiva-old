@@ -10,6 +10,7 @@ import {
   prepareChanges,
   commitChanges
 } from "@src/components/editor/utility/elements/tools";
+import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
 
 export default observer((props: any) => {
   const meta = useObservable({
@@ -19,9 +20,9 @@ export default observer((props: any) => {
   const cactiva = props._cactiva;
   const tagProps = parseProps(props);
   const sourceImg = tagProps.source || "";
-  const quotedImg = sourceImg
-    .match(/\(([^)]+)\)/)[1]
-    .replace("@src/assets/images/", "");
+  const quotedImg =
+    sourceImg &&
+    sourceImg.match(/\(([^)]+)\)/)[1].replace("@src/assets/images/", "");
   tagProps.src = !!tagProps.source
     ? baseUrl + "/assets/" + quotedImg.substr(1, quotedImg.length - 2)
     : "images/sample.jpg";
@@ -42,6 +43,7 @@ export default observer((props: any) => {
           >
             <img
               {...tagProps}
+              className={`${tagProps.source ? "" : "img-sample"}`}
               onError={(e: any) => {
                 e.target.onerror = null;
                 e.target.src = "images/sample.jpg";
@@ -55,7 +57,14 @@ export default observer((props: any) => {
         value={meta.source}
         onChange={(v: any) => {
           prepareChanges(cactiva.editor);
-          props.source.value = meta.source = v;
+          if (!props.source) {
+            cactiva.source.props.source = {
+              kind: SyntaxKind.CallExpression,
+              value: v
+            };
+          } else {
+            props.source.value = v;
+          }
           commitChanges(cactiva.editor);
         }}
         onDismiss={(e: any) => (meta.edited = e)}

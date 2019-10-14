@@ -909,7 +909,7 @@ const CactivaTraitStyle: any = {
   ] as ICactivaTraitField[]
 };
 
-const TraitStyle = (
+export default (
   excep?: ("Layout" | "Spacing" | "Size" | "Typography" | "Border")[]
 ) => {
   const fields: ICactivaTraitField[] = [];
@@ -927,5 +927,3 @@ const TraitStyle = (
     }
   ] as ICactivaTrait[];
 };
-
-export default TraitStyle;

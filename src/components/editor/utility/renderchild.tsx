@@ -75,7 +75,7 @@ const renderKind = (
 ): any => {
   switch (source.kind) {
     case SyntaxKind.StringLiteral:
-      return source.value.substr(1, source.value.length - 2);
+      return source.value;
     case SyntaxKind.JsxText:
     case SyntaxKind.NumericLiteral:
       return source.value;

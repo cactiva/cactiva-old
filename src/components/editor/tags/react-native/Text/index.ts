@@ -1,52 +1,60 @@
-import { CactivaTag } from '@src/components/editor/utility/classes';
-import { SyntaxKind } from '@src/components/editor/utility/syntaxkinds';
-import styleTrait from '@src/components/traits/templates/styleTrait';
+import { CactivaTag } from "@src/components/editor/utility/classes";
+import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
+import traitStyle from "@src/components/traits/templates/traitStyle";
 
 const styles = {
   root: {
-    flex: '1 1 100%'
+    flex: "1 1 100%"
   }
 };
 
 export default class extends CactivaTag {
-  static tagName = 'Text';
-  static from = 'react-native';
+  static tagName = "Text";
+  static from = "react-native";
   static structure = {
     kind: SyntaxKind.JsxElement,
-    name: 'Text',
+    name: "Text",
     props: {},
-    children: [{ kind: SyntaxKind.StringLiteral, value: 'Text' }]
+    children: [{ kind: SyntaxKind.StringLiteral, value: "Text" }]
   };
   static traits = [
     {
-      name: 'attributes',
+      name: "attributes",
       fields: [
         {
-          name: 'Disabled',
-          path: 'disabled',
+          name: "Ellipsize Mode",
+          path: "ellipsizeMode",
+          kind: SyntaxKind.StringLiteral,
+          mode: "select",
+          options: {
+            styles: styles,
+            items: [
+              { value: "head", label: "Head" },
+              { value: "middle", label: "Middle" },
+              { value: "tail", label: "Tail" },
+              { value: "chip", label: "Chip" }
+            ]
+          }
+        },
+        {
+          name: "Disabled",
+          path: "disabled",
           kind: SyntaxKind.FalseKeyword,
           options: {
             styles: styles
           }
         },
         {
-          name: 'Ellipsize Mode',
-          path: 'ellipsizeMode',
-          kind: SyntaxKind.StringLiteral,
-          mode: 'select',
+          name: "On Press",
+          path: "onPress",
+          kind: SyntaxKind.ArrowFunction,
           options: {
-            styles: styles,
-            items: [
-              { value: 'head', label: 'Head' },
-              { value: 'middle', label: 'Middle' },
-              { value: 'tail', label: 'Tail' },
-              { value: 'chip', label: 'Chip' }
-            ]
+            styles: styles
           }
         }
       ]
     },
-    ...styleTrait()
+    ...traitStyle()
   ];
-  static element = require('./element').default;
+  static element = require("./element").default;
 }

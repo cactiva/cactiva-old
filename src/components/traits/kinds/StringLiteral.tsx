@@ -28,7 +28,7 @@ import FontBrowser from "./components/FontBrowser";
 const Icons = IconMaps();
 export default observer((trait: ICactivaTraitFieldProps) => {
   const meta = useObservable({
-    value: trait.value || trait.default,
+    value: trait.value,
     isShown: false
   });
 
@@ -45,7 +45,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
 
   const optionItems = _.get(trait, "options.items", []);
   useEffect(() => {
-    meta.value = trait.value;
+    meta.value = trait.value || trait.default;
   }, [trait.value]);
 
   useEffect(() => {
@@ -101,13 +101,13 @@ export default observer((trait: ICactivaTraitFieldProps) => {
           >
             <select
               className={`cactiva-trait-select`}
-              value={meta.value || trait.default}
+              value={meta.value}
               onChange={e => {
                 meta.value = e.target.value;
                 trait.update(`"${meta.value}"`);
               }}
             >
-              <option disabled={meta.value} value={""}>
+              <option disabled={trait.default} value={""}>
                 Select ...
               </option>
               {trait.options.items.map((item: any, i: number) => {
@@ -277,7 +277,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
         <div className="cactiva-trait-font">
           <select
             className={`cactiva-trait-select`}
-            value={meta.value || trait.default}
+            value={meta.value}
             onChange={e => {
               meta.value = e.target.value;
               trait.update(`"${meta.value}"`);

@@ -1,22 +1,22 @@
-import { CactivaTag } from '@src/components/editor/utility/classes';
-import styleTrait from '@src/components/traits/templates/styleTrait';
-import { SyntaxKind } from '../../../utility/syntaxkinds';
+import { CactivaTag } from "@src/components/editor/utility/classes";
+import traitStyle from "@src/components/traits/templates/traitStyle";
+import { SyntaxKind } from "../../../utility/syntaxkinds";
 
 export default class extends CactivaTag {
-  static tagName = 'View';
-  static from = 'react-native';
+  static tagName = "View";
+  static from = "react-native";
   static structure = {
     kind: SyntaxKind.JsxElement,
-    name: 'View',
+    name: "View",
     props: {},
     children: []
   };
   static traits = [
     {
-      name: 'attributes',
+      name: "attributes",
       fields: []
     },
-    ...styleTrait(['Typography'])
+    ...traitStyle(["Typography"])
   ];
-  static element = require('./element').default;
+  static element = require("./element").default;
 }

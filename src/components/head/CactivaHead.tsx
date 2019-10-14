@@ -6,7 +6,8 @@ import {
   Popover,
   Spinner,
   Text,
-  Tooltip
+  Tooltip,
+  IconButton
 } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
@@ -187,6 +188,19 @@ export default observer(({ editor }: any) => {
           >
             <Icon icon="redo" size={12} />
           </Button>
+        </Tooltip>
+        <Tooltip content="Traits" position={"bottom"}>
+          <IconButton
+            icon="contrast"
+            className={`btn ${editor.current.traitPane ? "active-pane" : ""}`}
+            onClick={() => {
+              editor.current.traitPane = !editor.current.traitPane;
+              localStorage.setItem(
+                "cactiva-editor-trait-visible",
+                editor.current.traitPane ? "y" : "n"
+              );
+            }}
+          />
         </Tooltip>
       </div>
     </div>
