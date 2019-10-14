@@ -22,19 +22,22 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   const minValue = _.get(trait, "options.minValue", undefined);
   const maxValue = _.get(trait, "options.maxValue", undefined);
   useEffect(() => {
-    meta.value = trait.value;
+    meta.value = trait.value || trait.default;
   }, [trait.value]);
   return (
     <>
       <div
-        className={`trait-numeric-literal ${_.get(trait, 'options.className')} ${meta.clicked ? "clicked" : ""}`}
+        className={`trait-numeric-literal ${_.get(
+          trait,
+          "options.className"
+        )} ${meta.clicked ? "clicked" : ""}`}
         style={{ ...trait.style, flexDirection: "row" }}
       >
         <input
           className={`cactiva-trait-input ${meta.clicked ? "focus" : ""}`}
           type="text"
           value={meta.value || ""}
-          placeholder={_.get(trait, 'options.fields.name')}
+          placeholder={_.get(trait, "options.fields.name")}
           onKeyDown={e => {
             if (e.which === 13) (e.target as any).blur();
           }}
@@ -71,11 +74,11 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             style={
               meta.direction === "vertical"
                 ? {
-                  borderBottom: "1px solid #ececeb"
-                }
+                    borderBottom: "1px solid #ececeb"
+                  }
                 : {
-                  borderRight: "1px solid #ececeb"
-                }
+                    borderRight: "1px solid #ececeb"
+                  }
             }
           />
           <div className="arrow-btn">

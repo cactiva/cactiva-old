@@ -6,6 +6,7 @@ import React from "react";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDropChild from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
+import { generateExpression } from "@src/components/editor/utility/parser/generateExpression";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -13,6 +14,7 @@ export default observer((props: any) => {
   const meta = useObservable({ dropOver: false });
   const direction = _.get(style, "flexDirection", "column");
   const hasNoChildren = _.get(cactiva.source, "children.length", 0) === 0;
+  const renderItem: any = _.get(cactiva.source, "props.renderItem.body[0]", {});
   return (
     <CactivaDropChild
       cactiva={cactiva}
@@ -25,10 +27,7 @@ export default observer((props: any) => {
             direction={direction}
             stretch={hasNoChildren}
           />
-          {renderChildren(cactiva.source, cactiva.editor, cactiva.root, c => ({
-            isLastChild: c.isLastChild,
-            afterDirection: direction
-          }))}
+          {renderChildren(cactiva.source, cactiva.editor, cactiva.root)}
         </CactivaSelectable>
       </CactivaDraggable>
     </CactivaDropChild>

@@ -1,37 +1,37 @@
-import { CactivaTag } from '@src/components/editor/utility/classes';
-import styleTrait from '@src/components/traits/templates/styleTrait';
-import { SyntaxKind } from '@src/components/editor/utility/syntaxkinds';
+import { CactivaTag } from "@src/components/editor/utility/classes";
+import traitStyle from "@src/components/traits/templates/traitStyle";
+import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
 
 const styles = {
   root: {
-    flex: '1 1 100%'
+    flex: "1 1 100%"
   }
 };
 
 export default class extends CactivaTag {
-  static tagName = 'ScrollView';
-  static from = 'react-native';
+  static tagName = "ScrollView";
+  static from = "react-native";
   static structure = {
     kind: SyntaxKind.JsxElement,
-    name: 'ScrollView',
+    name: "ScrollView",
     props: {},
     children: []
   };
   static traits = [
     {
-      name: 'attributes',
+      name: "attributes",
       fields: [
         {
-          name: 'Horizontal',
-          path: 'horizontal',
+          name: "Horizontal",
+          path: "horizontal",
           kind: SyntaxKind.FalseKeyword,
           options: {
             styles: styles
           }
         },
         {
-          name: 'On Scroll',
-          path: 'onScroll',
+          name: "On Scroll",
+          path: "onScroll",
           kind: SyntaxKind.CactivaCode,
           options: {
             styles: styles
@@ -39,7 +39,7 @@ export default class extends CactivaTag {
         }
       ]
     },
-    ...styleTrait(['Typography'])
+    ...traitStyle(["Typography"])
   ];
-  static element = require('./element').default;
+  static element = require("./element").default;
 }

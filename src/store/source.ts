@@ -23,6 +23,8 @@ export class SourceStore {
   @observable selected: any;
   @observable selectedSource: string = "";
   @observable renderfont = true;
+  @observable jsx = false;
+  @observable traitPane = false;
 
   async applySelectedSource() {
     if (!this.selectedSource) {

@@ -167,6 +167,9 @@ export default observer(({ editor }: any) => {
     editor.undoStack.length
   ]);
 
+  useEffect(() => {
+    meta.jsx = editor.jsx;
+  }, [editor.jsx]);
   return (
     <div className="cactiva-editor" {...rootProps}>
       {meta.onDrag && <input {...getInputProps()} />}

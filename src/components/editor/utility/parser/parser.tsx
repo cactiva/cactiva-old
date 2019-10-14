@@ -1,5 +1,5 @@
-import _ from 'lodash';
-import { SyntaxKind } from '../syntaxkinds';
+import _ from "lodash";
+import { SyntaxKind } from "../syntaxkinds";
 
 export const parseValue = (node: any): any => {
   if (!node) return node;
@@ -25,13 +25,13 @@ export const parseValue = (node: any): any => {
       })();
   }
 
-  if (typeof node === 'object' && node.value) return node.value;
+  if (typeof node === "object" && node.value) return node.value;
   return node;
 };
 
 export const parseProps = (node: any): any => {
   if (!node) return node;
-  if (typeof node === 'object') {
+  if (typeof node === "object") {
     let newNode: any = {};
     _.map(node, (e, key) => {
       if (!!e && !e.kind) return;
@@ -45,15 +45,15 @@ export const parseProps = (node: any): any => {
 export const generateValueByKind = (kind: number, value: any): any => {
   switch (kind) {
     case SyntaxKind.CactivaCode:
-      if (typeof value !== 'string') {
-        value = JSON.stringify(value) || '';
+      if (typeof value !== "string") {
+        value = JSON.stringify(value) || "";
       }
       break;
     case SyntaxKind.NumericLiteral:
-      if (typeof value !== 'number') {
+      if (typeof value !== "number") {
         try {
           const tryValue = parseInt(value);
-          if (typeof value !== 'number') return undefined;
+          if (typeof value !== "number") return undefined;
           return {
             kind,
             value: tryValue
@@ -65,6 +65,12 @@ export const generateValueByKind = (kind: number, value: any): any => {
       return {
         kind,
         value
+      };
+    case SyntaxKind.ArrowFunction:
+      return {
+        kind,
+        body: value.body,
+        params: value.params
       };
   }
 

@@ -1,29 +1,61 @@
-import { SyntaxKind } from '@src/components/editor/utility/syntaxkinds';
-import { CactivaTag } from '@src/components/editor/utility/classes';
-import styleTrait from '@src/components/traits/templates/styleTrait';
+import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
+import { CactivaTag } from "@src/components/editor/utility/classes";
+import traitStyle from "@src/components/traits/templates/traitStyle";
+
+const styles = {
+  root: {
+    flex: "1 1 100%"
+  }
+};
 
 export default class extends CactivaTag {
-  static tagName = 'Image';
-  static from = 'react-native';
+  static tagName = "Image";
+  static from = "react-native";
   static structure = {
     kind: SyntaxKind.JsxElement,
-    name: 'Image',
+    name: "Image",
     props: {},
     children: []
   };
   static traits = [
     {
-      name: 'attributes',
+      name: "attributes",
       fields: [
         {
-          name: 'Source',
-          path: 'source',
-          kind: SyntaxKind.CactivaCode,
-          mode: 'image'
+          name: "Source",
+          path: "source",
+          kind: SyntaxKind.StringLiteral,
+          options: {
+            styles
+          }
+        },
+        {
+          name: "Resize Mode",
+          path: "resizeMode",
+          kind: SyntaxKind.StringLiteral,
+          mode: "select",
+          options: {
+            styles: styles,
+            items: [
+              { value: "cover", label: "Cover" },
+              { value: "contain", label: "Contain" },
+              { value: "stretch", label: "Stretch" },
+              { value: "repeat", label: "Repeat" },
+              { value: "center", label: "Center" }
+            ]
+          }
+        },
+        {
+          name: "Blur Radius",
+          path: "blurRadius",
+          kind: SyntaxKind.NumericLiteral,
+          options: {
+            styles
+          }
         }
       ]
     },
-    ...styleTrait(['Typography'])
+    ...traitStyle(["Typography"])
   ];
-  static element = require('./element').default;
+  static element = require("./element").default;
 }

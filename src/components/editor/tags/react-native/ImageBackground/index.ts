@@ -1,18 +1,18 @@
-import { SyntaxKind } from '@src/components/editor/utility/syntaxkinds';
-import styleTrait from '@src/components/traits/templates/styleTrait';
-import { CactivaTag } from '@src/components/editor/utility/classes';
+import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
+import traitStyle from "@src/components/traits/templates/traitStyle";
+import { CactivaTag } from "@src/components/editor/utility/classes";
 const styles = {
   root: {
-    flex: '1 1 100%'
+    flex: "1 1 100%"
   }
 };
 
 export default class extends CactivaTag {
-  static tagName = 'ImageBackground';
-  static from = 'react-native';
+  static tagName = "ImageBackground";
+  static from = "react-native";
   static structure = {
     kind: SyntaxKind.JsxElement,
-    name: 'ImageBackground',
+    name: "ImageBackground",
     props: {
       source: {
         kind: SyntaxKind.CallExpression,
@@ -23,20 +23,20 @@ export default class extends CactivaTag {
   };
   static traits = [
     {
-      name: 'attributes',
+      name: "attributes",
       fields: [
         {
-          name: 'Source',
-          path: 'source',
+          name: "Source",
+          path: "source",
           kind: SyntaxKind.CactivaCode,
-          mode: 'image',
+          mode: "image",
           options: {
             styles: styles
           }
         }
       ]
     },
-    ...styleTrait(['Typography'])
+    ...traitStyle(["Typography"])
   ];
-  static element = require('./element').default;
+  static element = require("./element").default;
 }

@@ -7,6 +7,7 @@ import { parseValue } from "../../../utility/parser/parser";
 import { renderChildren } from "../../../utility/renderchild";
 import CactivaDropMarker from "@src/components/editor/CactivaDropMarker";
 import _ from "lodash";
+import { toJS } from "mobx";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
