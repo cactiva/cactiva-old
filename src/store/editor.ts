@@ -11,8 +11,14 @@ export const baseUrl = "http://localhost:8080/api";
 
 class EditorStore {
   sources: IEditorSources = {};
+  @observable name = "";
   @observable path = "";
   @observable status = "loading";
+
+  @observable cli = {
+    status: "stopped",
+    logs: ""
+  }
 
   async load(path: string) {
     this.status = "loading";

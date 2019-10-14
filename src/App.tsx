@@ -1,6 +1,6 @@
 import "@src/App.scss";
 import CactivaEditor from "@src/components/editor/CactivaEditor";
-import { Pane, Spinner, Tab, Text } from "evergreen-ui";
+import { Pane, Spinner, Text } from "evergreen-ui";
 import hotkeys from "hotkeys-js";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect } from "react";
@@ -8,20 +8,19 @@ import { DndProvider } from "react-dnd-cjs";
 import HTML5Backend from "react-dnd-html5-backend-cjs";
 import Split from "react-split";
 import { useAsyncEffect } from "use-async-effect";
+import CactivaTree from "./components/ctree/CactivaTree";
 import {
   commitChanges,
   prepareChanges,
   removeElementById
 } from "./components/editor/utility/elements/tools";
+import CactivaHead from "./components/head/CactivaHead";
+import CactivaHooks from "./components/hooks/CactivaHooks";
 import CactivaTraits from "./components/traits/CactivaTraits";
+import api from "./libs/api";
 import editor from "./store/editor";
 import Welcome from "./Welcome";
-import CactivaTree from "./components/ctree/CactivaTree";
-import CactivaHooks from "./components/hooks/CactivaHooks";
-import CactivaHead from "./components/head/CactivaHead";
-import { generateSource } from "./components/editor/utility/parser/generateSource";
 
-import api from "./libs/api";
 const fs = require("fs");
 
 const generateFonts = (fonts: any) => {
@@ -53,6 +52,13 @@ export default observer(() => {
     currentPane: "props",
     currentProject: ""
   });
+
+  useAsyncEffect(async () => {
+    const res = await api.get("project/info");
+    editor.name = res.app;
+    editor.cli.status = res.status;
+    return res;
+  }, []);
 
   useAsyncEffect(async () => {
     hotkeys("ctrl+s,command+s", (event, handler) => {

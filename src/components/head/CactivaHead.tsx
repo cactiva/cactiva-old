@@ -1,6 +1,16 @@
-import { Icon, Spinner, Text, Tooltip, Button } from "evergreen-ui";
-import { observer } from "mobx-react-lite";
-import React from "react";
+import api from "@src/libs/api";
+import {
+  Button,
+  Icon,
+  Pane,
+  Popover,
+  Spinner,
+  Text,
+  Tooltip
+} from "evergreen-ui";
+import _ from "lodash";
+import { observer, useObservable } from "mobx-react-lite";
+import React, { useRef } from "react";
 import "./CactivaHead.scss";
 
 export default observer(({ editor }: any) => {
@@ -23,10 +33,75 @@ export default observer(({ editor }: any) => {
   if (editor.current && !editor.current.isSaved && status === "ready") {
     status = "unsaved";
   }
+  const timercli = useRef(null as any);
+  const meta = useObservable({ log: "" });
+  const streamCLILog = () => {
+    timercli.current = setInterval(async () => {
+      const res = await api.get("project/log-server");
+      meta.log += res;
+      if (ref && ref.current) {
+        ref.current.scrollTop = 9999999;
+      }
+    }, 1000);
+  };
+  const ref = useRef(null as any);
 
   return (
     <div className="cactiva-head">
-      <div className="left"></div>
+      <div className="left">
+        <Popover
+          onCloseComplete={() => {
+            if (timercli.current) {
+              clearInterval(timercli.current);
+            }
+          }}
+          onOpenComplete={() => {
+            if (editor.cli.status === "running") {
+              streamCLILog();
+            }
+          }}
+          content={
+            <div className="project-popover">
+              <div className="console" ref={ref}>
+                {meta.log}
+              </div>
+              <div className="commands">
+                <Button
+                  size={300}
+                  userSelect="none"
+                  onClick={() => {
+                    (async () => {
+                      if (editor.cli.status === "stopped") {
+                        await api.get("project/start-server");
+                        editor.cli.status = "running";
+                        streamCLILog();
+                      } else {
+                        await api.get("project/stop-server");
+                        editor.cli.status = "stopped";
+                        clearInterval(timercli.current);
+                      }
+                    })();
+                  }}
+                >
+                  {editor.cli.status === "running"
+                    ? "Stop Server"
+                    : "Start Server"}
+                </Button>
+              </div>
+            </div>
+          }
+          position="right"
+        >
+          <Pane>
+            <div className="project">
+              <Text size={300}>{_.startCase(editor.name)}</Text>
+              <div className="status">
+                <Text size={300}>{_.startCase(editor.cli.status)}</Text>
+              </div>
+            </div>
+          </Pane>
+        </Popover>
+      </div>
       <div className="center">
         <Text
           style={{
