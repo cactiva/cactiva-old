@@ -9,6 +9,7 @@ import { baseUrl } from "@src/store/editor";
 import CactivaDropMarker from "@src/components/editor/CactivaDropMarker";
 import _ from "lodash";
 import ImageBrowse from "@src/components/traits/kinds/components/ImageBrowse";
+import CactivaChildren from "@src/components/editor/CactivaChildren";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -42,7 +43,7 @@ export default observer((props: any) => {
               hover={meta.dropOver}
               direction={_.get(tagProps.style, "flexDirection", "column")}
             />
-            {renderChildren(cactiva.source, cactiva.editor, cactiva.root)}
+            <CactivaChildren source={cactiva.source} cactiva={cactiva} />
           </CactivaSelectable>
         </CactivaDraggable>
       </CactivaDropChild>

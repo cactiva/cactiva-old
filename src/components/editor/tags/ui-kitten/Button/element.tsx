@@ -11,8 +11,8 @@ import React, { useEffect } from "react";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDroppable from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
-import { parseValue, parseProps } from "../../../utility/parser/parser";
-import { toJS } from "mobx";
+import { parseProps, parseValue } from "../../../utility/parser/parser";
+import CactivaChildren from "@src/components/editor/CactivaChildren";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -98,14 +98,13 @@ export default observer((props: any) => {
                   style={{ margin: "0px 5px" }}
                 />
               ) : (
-                renderChildren(
-                  cactiva.source,
-                  cactiva.editor,
-                  cactiva.root,
-                  () => ({
+                <CactivaChildren
+                  source={cactiva.source}
+                  cactiva={cactiva}
+                  parentInfo={() => ({
                     canDropAfter: false
-                  })
-                )
+                  })}
+                />
               )}
             </div>
           </div>

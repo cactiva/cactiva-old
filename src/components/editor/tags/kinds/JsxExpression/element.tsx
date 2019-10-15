@@ -14,6 +14,7 @@ import MonacoEditor from "react-monaco-editor";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDroppable from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
+import CactivaChildren from "@src/components/editor/CactivaChildren";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -45,24 +46,23 @@ export default observer((props: any) => {
               }
               return (
                 <div key={key} style={{ paddingLeft: 10 }}>
-                  {renderChildren(
-                    {
+                  <CactivaChildren
+                    source={{
                       kind: cactiva.source.kind,
                       id: cactiva.source.id,
                       child: {
                         id: cactiva.source.id + "_" + key,
                         value: exp
                       }
-                    },
-                    cactiva.editor,
-                    cactiva.root,
-                    () => ({
+                    }}
+                    cactiva={cactiva}
+                    parentInfo={() => ({
                       canDropAfter: false,
                       onDropped: (item: any, type: string) => {
                         console.log(toJS(exp));
                       }
-                    })
-                  )}
+                    })}
+                  />
                 </div>
               );
             })}

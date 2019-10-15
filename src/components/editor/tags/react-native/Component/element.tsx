@@ -8,6 +8,7 @@ import { renderChildren } from "../../../utility/renderchild";
 import CactivaDropMarker from "@src/components/editor/CactivaDropMarker";
 import _ from "lodash";
 import { Text } from "evergreen-ui";
+import CactivaChildren from "@src/components/editor/CactivaChildren";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -15,11 +16,7 @@ export default observer((props: any) => {
   const meta = useObservable({ dropOver: false });
   const direction = _.get(style, "flexDirection", "column");
   const hasNoChildren = _.get(cactiva.source, "children.length", 0) === 0;
-  const children =
-    renderChildren(cactiva.source, cactiva.editor, cactiva.root, c => ({
-      isLastChild: c.isLastChild,
-      afterDirection: direction
-    })) || [];
+  const children = _.get(cactiva, "source.children", []);
   return (
     <CactivaDropChild
       cactiva={cactiva}
@@ -56,10 +53,17 @@ export default observer((props: any) => {
                 display: "flex",
                 flexDirection: _.get(style, "flexDirection", "column"),
                 alignItems: _.get(style, "alignItems", "stretch"),
-                justifyContent: _.get(style, "justifyContent", "flex-start"),
+                justifyContent: _.get(style, "justifyContent", "flex-start")
               }}
             >
-              {children}
+              <CactivaChildren
+                source={cactiva.source}
+                cactiva={cactiva}
+                parentInfo={(c: any) => ({
+                  isLastChild: c.isLastChild,
+                  afterDirection: direction
+                })}
+              />
             </div>
           )}
         </CactivaSelectable>

@@ -8,6 +8,7 @@ import CactivaDropChild from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
 import { generateExpression } from "@src/components/editor/utility/parser/generateExpression";
 import { toJS } from "mobx";
+import CactivaChildren from "@src/components/editor/CactivaChildren";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -28,7 +29,7 @@ export default observer((props: any) => {
             direction={direction}
             stretch={hasNoChildren}
           />
-          {renderChildren(renderItem.value, cactiva.editor, cactiva.root)}
+          <CactivaChildren source={renderItem.value} cactiva={cactiva} />
         </CactivaSelectable>
       </CactivaDraggable>
     </CactivaDropChild>
