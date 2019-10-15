@@ -25,6 +25,7 @@ export default class extends CactivaTag {
           name: "Status",
           path: "status",
           kind: SyntaxKind.StringLiteral,
+          default: "primary",
           mode: "select",
           options: {
             styles: styles,
@@ -33,7 +34,8 @@ export default class extends CactivaTag {
               { value: "success", label: "Success" },
               { value: "info", label: "Info" },
               { value: "warning", label: "Warning" },
-              { value: "danger", label: "Danger" }
+              { value: "danger", label: "Danger" },
+              { value: "white", label: "Basic" }
             ]
           }
         },
@@ -46,9 +48,11 @@ export default class extends CactivaTag {
           options: {
             styles: styles,
             items: [
+              { value: "tiny", label: "Tiny" },
               { value: "small", label: "Small" },
               { value: "medium", label: "Medium" },
-              { value: "large", label: "Large" }
+              { value: "large", label: "Large" },
+              { value: "giant", label: "Giant" }
             ]
           }
         },

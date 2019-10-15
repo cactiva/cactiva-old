@@ -1,3 +1,10 @@
+$primary: rgb(51, 102, 255);
+$success: rgb(0, 224, 150);
+$info: rgb(0, 149, 255);
+$warning: rgb(255, 170, 0);
+$danger: rgb(255, 61, 113);
+$basic: rgb(237, 241, 247);
+
 .uik-field {
   background-color: #f7f9fc;
   border-radius: 4px;
@@ -26,17 +33,147 @@
 }
 
 .uik-button {
-  background-color: rgb(51, 102, 255);
-  border-color: rgb(51, 102, 255);
   flex: 1;
   align-items: center;
   justify-content: center;
 
   .uik-text {
     color: rgb(255, 255, 255);
-    font-size: 14px;
-    line-height: 16px;
-    margin-right: 10px;
-    margin-left: 10px;
+    font-weight: bold;
   }
+
+  &.tiny {
+    border-radius: 4px;
+    border-width: 1px;
+    min-width: 12px;
+    padding: 6px;
+    min-height: auto;
+
+    .uik-text {
+      font-size: 10px;
+      line-height: 12px;
+      margin-right: 6px;
+      margin-left: 6px;
+    }
+  }
+
+  &.small {
+    border-radius: 4px;
+    border-width: 1px;
+    min-width: 16px;
+    padding: 8px;
+    min-height: auto;
+
+    .uik-text {
+      font-size: 12px;
+      line-height: 16px;
+      margin-right: 8px;
+      margin-left: 8px;
+    }
+  }
+
+  &.medium {
+    border-radius: 4px;
+    border-width: 1px;
+    min-width: 20px;
+    padding: 12px 10px;
+    min-height: auto;
+
+    .uik-text {
+      font-size: 14px;
+      line-height: 16px;
+      margin-right: 10px;
+      margin-left: 10px;
+    }
+  }
+
+  &.large {
+    border-radius: 4px;
+    border-width: 1px;
+    min-width: 48px;
+    padding: 14px 10px;
+    min-height: auto;
+
+    .uik-text {
+      font-size: 16px;
+      line-height: 20px;
+      margin-right: 10px;
+      margin-left: 10px;
+    }
+  }
+
+  &.giant {
+    border-radius: 4px;
+    border-width: 1px;
+    min-width: 56px;
+    padding: 16px 12px;
+    min-height: auto;
+
+    .uik-text {
+      font-size: 18px;
+      line-height: 24px;
+      margin-right: 12px;
+      margin-left: 12px;
+    }
+  }
+
+  &.primary {
+    background-color: $primary;
+    border-color: $primary;
+    color: $primary;
+  }
+  &.success {
+    background-color: $success;
+    border-color: $success;
+    color: $success;
+  }
+  &.info {
+    background-color: $info;
+    border-color: $info;
+    color: $info;
+  }
+  &.warning {
+    background-color: $warning;
+    border-color: $warning;
+    color: $warning;
+  }
+  &.danger {
+    background-color: $danger;
+    border-color: $danger;
+    color: $danger;
+  }
+  &.white {
+    background-color: $basic;
+    border-color: $basic;
+    color: $primary;
+
+    .uik-text {
+      color: rgb(34, 43, 69);
+    }
+  }
+
+  &.outline {
+    background-color: $basic !important;
+
+    .uik-text {
+      color: inherit;
+    }
+  }
+
+  &.ghost {
+    background-color: transparent !important;
+    border-color: transparent !important;
+
+    .uik-text {
+      color: inherit;
+    }
+  }
+}
+
+.uik-topnav {
+  min-height: 40px;
+  padding: 8px;
+  background: #fff;
+  align-items: center;
+  display: flex;
 }

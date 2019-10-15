@@ -11,11 +11,13 @@ import React, { useEffect } from "react";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDroppable from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
-import { parseValue } from "../../../utility/parser/parser";
+import { parseValue, parseProps } from "../../../utility/parser/parser";
+import { toJS } from "mobx";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
   const style = parseValue(props.style);
+  const tagProps = parseProps(props);
   const meta = useObservable({
     dropOver: false,
     canDropOver: true
@@ -77,8 +79,18 @@ export default observer((props: any) => {
           style={{ flexDirection: "row", ...style, lineHeight: "auto" }}
           className="cactiva-element"
         >
-          <div className="uik-field uik-button">
-            <div className="uik-text">
+          <div
+            className={`uik-field uik-button ${_.get(
+              tagProps,
+              "status",
+              "primary"
+            )} ${_.get(tagProps, "size", "medium")} ${_.get(
+              tagProps,
+              "appearance",
+              "filled"
+            )}`}
+          >
+            <div className={`uik-text`}>
               {meta.canDropOver ? (
                 <CactivaDropMarker
                   hover={meta.dropOver}
