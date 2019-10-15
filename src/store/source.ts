@@ -14,9 +14,12 @@ import _ from "lodash";
 export class SourceStore {
   project = null as any;
   lastId = 1;
+
+  cactivaRefs: any = {};
   @observable path = "";
   @observable source: any = {};
   @observable rootSource: string = "";
+  @observable imports = {};
 
   @observable rootSelected = false;
   @observable selectedId = "";
@@ -110,8 +113,6 @@ export class SourceStore {
     return false;
   }
 
-  cactivaRefs: any = {};
-
   constructor(source: any, path: any) {
     this.source = source;
     this.path = path;
@@ -160,7 +161,8 @@ export class SourceStore {
 
     try {
       const res = await api.post(`project/write-source?path=${this.path}`, {
-        value: JSON.stringify(source)
+        value: JSON.stringify(source),
+        imports: this.imports
       });
       this.rootSource = res.file;
       this.source = res.component;

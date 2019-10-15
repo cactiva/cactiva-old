@@ -1,3 +1,4 @@
+import { tree } from "@src/components/ctree/CactivaTree";
 import React from "react";
 import Component from "../tags/react-native/Component";
 import kinds, { kindNames } from "./kinds";
@@ -126,9 +127,20 @@ const renderTag = (
   }
 
   if (tag) {
+    editor.imports[tag.tagName] = {
+      from: tag.from,
+      mode: "default"
+    };
     const Component = tag.element;
     return <Component {...source.props} key={key} _cactiva={cactiva} />;
   } else {
+    const file = tree.list[source.name];
+    if (file) {
+      editor.imports[source.name] = {
+        from: file.relativePath,
+        mode: "default"
+      };
+    }
     cactiva.tag = tags["Component"];
     return <Component.element {...source.props} key={key} _cactiva={cactiva} />;
   }

@@ -8,20 +8,17 @@ import { DndProvider } from "react-dnd-cjs";
 import HTML5Backend from "react-dnd-html5-backend-cjs";
 import Split from "react-split";
 import { useAsyncEffect } from "use-async-effect";
-import CactivaTree from "./components/ctree/CactivaTree";
+import CactivaTree, { tree } from "./components/ctree/CactivaTree";
 import {
   commitChanges,
   prepareChanges,
   removeElementById
 } from "./components/editor/utility/elements/tools";
 import CactivaHead from "./components/head/CactivaHead";
-import CactivaHooks from "./components/hooks/CactivaHooks";
 import CactivaTraits from "./components/traits/CactivaTraits";
 import api from "./libs/api";
 import editor from "./store/editor";
 import Welcome from "./Welcome";
-
-const fs = require("fs");
 
 const generateFonts = (fonts: any) => {
   const css: any = document.createElement("style");
@@ -110,8 +107,8 @@ export default observer(() => {
   useEffect(() => {
     if (current && current.renderfont) {
       const load = async () => {
-        const filetree = await api.get("assets/font-list");
-        generateFonts(filetree.children);
+        const fontlist = await api.get("assets/font-list");
+        generateFonts(fontlist.children);
       };
       load();
       current.renderfont = false;
@@ -147,7 +144,8 @@ export default observer(() => {
           <div className="cactiva-pane">
             <CactivaTree editor={editor} />
           </div>
-          {editor.status === "loading" ? (
+          {editor.status === "loading" ||
+          Object.keys(tree.list).length === 0 ? (
             <div className="cactiva-editor-loading">
               <Spinner size={18} />
               <Text color="muted" size={300} style={{ marginLeft: 8 }}>
@@ -161,13 +159,7 @@ export default observer(() => {
                 e.preventDefault();
               }}
             >
-              {current && current.source ? (
-                <>
-                  <CactivaEditor editor={current} />
-                </>
-              ) : (
-                <div>Please Choose A Component</div>
-              )}
+              {current && current.source && <CactivaEditor editor={current} />}
             </div>
           )}
 

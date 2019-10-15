@@ -1,8 +1,9 @@
-import * as _ from 'lodash';
-import { SyntaxKind } from '../syntaxkinds';
+import * as _ from "lodash";
+import { SyntaxKind } from "../syntaxkinds";
+import { toJS } from "mobx";
 
 export const generateSource = (node: any): string => {
-  if (!node) return '';
+  if (!node) return "";
 
   const kind = node.kind;
 
@@ -30,10 +31,10 @@ export const generateSource = (node: any): string => {
       return `(${generateSource(node.value)})`;
     case SyntaxKind.BinaryExpression:
       return (() => {
-        let operator = '=';
+        let operator = "=";
         switch (node.operator) {
           case SyntaxKind.EqualsToken:
-            operator = '=';
+            operator = "=";
             break;
         }
 
@@ -45,13 +46,13 @@ export const generateSource = (node: any): string => {
       return `return ${generateSource(node.value)}`;
     case SyntaxKind.ArrowFunction:
       return (() => {
-        return `(${node.params.join(',')}) => { 
-${node.body.map((e: any) => generateSource(e)).join('\n')} 
+        return `(${node.params.join(",")}) => { 
+${node.body.map((e: any) => generateSource(e)).join("\n")} 
 }`;
       })();
     case SyntaxKind.JsxFragment:
       return (() => {
-        return `<>${node.children
+        return `<>${(node.children || [])
           .map((e: any) => {
             return generateSource(e);
           })
@@ -61,21 +62,21 @@ ${node.body.map((e: any) => generateSource(e)).join('\n')}
       return (() => {
         return `<${node.name} ${_.map(node.props, (e, name) => {
           return `${name}={${generateSource(e)}}`;
-        }).join(' ')}>${node.children
+        }).join(" ")}>${(node.children || [])
           .map((e: any) => {
             const res = generateSource(e);
             return res;
           })
-          .join('')}</${node.name}>`;
+          .join("")}</${node.name}>`;
       })();
     case SyntaxKind.JsxSelfClosingElement:
       return (() => {
         return `<${node.name} ${_.map(node.props, (e, name) => {
           return `${name}={${generateSource(e)}}`;
-        }).join('')}/>`;
+        }).join("")}/>`;
       })();
   }
 
-  if (typeof node === 'object' && node.value) return node.value;
+  if (typeof node === "object" && node.value) return node.value;
   return node;
 };

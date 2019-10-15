@@ -34,9 +34,11 @@
       flex-direction: row;
       text-decoration: none;
       > div {
-        margin-right:10px;
+        margin-right: 10px;
       }
-      > svg {margin-left:10px}
+      > svg {
+        margin-left: 10px;
+      }
     }
   }
 }
@@ -101,7 +103,7 @@
   }
 
   > .right {
-    padding: 0px 15px;
+    padding: 0px 7px 0px 15px;
     display: flex;
     flex-direction: row;
     position: relative;
@@ -120,6 +122,7 @@
       border-radius: 6px;
       background: rgba(255, 255, 255, 0) !important;
       box-shadow: none !important;
+      &.active-pane,
       &:hover {
         border: 1px solid #ddd !important;
         background: rgba(255, 255, 255, 1) !important;
@@ -143,6 +146,11 @@
         margin: 0px 3px 0px 5px;
       }
     }
+  }
+
+  .cactiva-head-divider {
+    height: 26px;
+    border-right: 1px solid #ccc;
   }
 }
 

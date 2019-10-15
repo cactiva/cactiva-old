@@ -14,4 +14,5 @@ r.keys().forEach(key => {
     allTags.push(name);
   }
 });
+
 export default tags;

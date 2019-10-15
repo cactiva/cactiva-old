@@ -6,6 +6,8 @@ import { parseJsx, getEntryPoint } from "./libs/morph/parseJsx";
 import * as _ from "lodash";
 import { kindNames } from "./libs/morph/kindNames";
 import { replaceReturn } from "./libs/morph/replaceReturn";
+import { getImport } from "./libs/morph/getImport";
+import { removeImports } from "./libs/morph/removeImports";
 
 export class Morph {
   project: TProject = new TProject();
@@ -47,7 +49,53 @@ export class Morph {
       .toString()
       .slice(2, 11);
   }
+  prepareSourceForWrite(source: string, imports: any[]) {
+    const sf = this.project.createSourceFile(
+      "__tempfile" + this.randomDigits() + "__.tsx",
+      source
+    );
+    let result = "";
+    try {
+      removeImports(sf);
+      result = sf.getText();
+      const imresult: any = {};
+      Object.keys(imports).map((i: any) => {
+        const im = imports[i];
+        if (!imresult[im.from]) {
+          imresult[im.from] = {
+            default: null,
+            named: []
+          };
+        }
 
+        if (im.type === "default") {
+          imresult[im.from].default = i;
+        } else {
+          imresult[im.from].named.push(i);
+        }
+      });
+      const importText: string[] = [];
+      Object.keys(imresult).map((i: any) => {
+        const v = imresult[i];
+        const from = i;
+        const imtext = [];
+        if (v.default) {
+          imtext.push(v.default);
+        }
+        if (v.named.length > 0) {
+          imtext.push(`{ ${v.named.join(",")} }`);
+        }
+        importText.push(`import ${imtext.join(",")} from "${from}";`);
+      });
+      result = importText.join("\n") + "\n\n" + result;
+    } catch (e) {
+      console.log(e);
+    } finally {
+      sf.forget();
+    }
+
+    return result;
+  }
   parseSource(source: string, showKindName = false) {
     const sf = this.project.createSourceFile(
       "__tempfile" + this.randomDigits() + "__.tsx",
@@ -75,6 +123,7 @@ export class Morph {
     const ps = parseJsx(getEntryPoint(de), showKindName);
     return {
       file: replaceReturn(sf, "<<<<cactiva>>>>"),
+      imports: getImport(sf),
       component: ps
     };
   }

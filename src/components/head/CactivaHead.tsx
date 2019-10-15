@@ -74,7 +74,16 @@ export default observer(({ editor }: any) => {
           content={
             <div className="project-popover">
               <div className="console">
-                <CactivaCli cliref={terminal} initialText={meta.logText} />
+                {meta.logText === "" && editor.cli.status === "stopped" ? (
+                  <div className="empty">
+                    <Icon icon="cell-tower" color="white" size={30} />
+                    <Text color="white" marginTop={10} size={300}>
+                      Please start the server
+                    </Text>
+                  </div>
+                ) : (
+                  <CactivaCli cliref={terminal} initialText={meta.logText} />
+                )}
               </div>
               <div className="commands">
                 <Button
@@ -93,7 +102,9 @@ export default observer(({ editor }: any) => {
                       }
                       meta.logText = "";
                       meta.url = "";
-                      terminal.current.clear();
+                      if (terminal.current) {
+                        terminal.current.clear();
+                      }
                     })();
                   }}
                 >
@@ -104,7 +115,7 @@ export default observer(({ editor }: any) => {
 
                 {meta.url ? (
                   <a href={meta.url} target="_blank">
-                    <Text size={300}>Web Preview</Text>
+                    <Text size={300}>Open Web Preview</Text>
                     <Icon icon="share" size={11} color="#999" />
                   </a>
                 ) : editor.cli.status === "running" ? (
@@ -189,9 +200,13 @@ export default observer(({ editor }: any) => {
             <Icon icon="redo" size={12} />
           </Button>
         </Tooltip>
-        <Tooltip content="Traits" position={"bottom"}>
+        <div
+          className="cactiva-head-divider"
+          style={{ margin: "0px 8px 0px 7px" }}
+        />
+        <Tooltip content="Style &amp; Props" position={"bottom"}>
           <IconButton
-            icon="contrast"
+            icon="column-layout"
             className={`btn ${editor.current.traitPane ? "active-pane" : ""}`}
             onClick={() => {
               editor.current.traitPane = !editor.current.traitPane;

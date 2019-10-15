@@ -33,20 +33,30 @@ export class ProjectController {
 
   @Post("write-source")
   private writeSource(req: Request, res: Response) {
-    const source = JSON.parse(req.body.value);
-    const result = morph.parseSource(source, false);
     if (!!req.query.path) {
+      const source = JSON.parse(req.body.value);
+      const preparedSource = morph.prepareSourceForWrite(
+        source,
+        req.body.imports
+      );
       const sf = morph.project.createSourceFile(
         morph.getAppPath() + req.query.path,
-        source,
+        preparedSource,
         {
           overwrite: true
         }
       );
+      sf.organizeImports();
       sf.saveSync();
       morph.project.saveSync();
+
+      const result = morph.readTsx(req.query.path, false);
+      res.status(200).json(result);
+      return;
     }
-    res.status(200).json(result);
+    res.status(500).json({
+      error: "insufficient query param"
+    });
   }
 
   @Get("start-server")
@@ -58,8 +68,6 @@ export class ProjectController {
     }
     this.buffer = "";
     this.lastBufferIndex = 0;
-
-
 
     this.cli = execa("yarn", ["web"], {
       all: true
@@ -92,8 +100,6 @@ export class ProjectController {
   private logServer(req: Request, res: Response) {
     const result = this.buffer.substr(this.lastBufferIndex);
     this.lastBufferIndex = this.buffer.length;
-    res
-      .status(200)
-      .send(result);
+    res.status(200).send(result);
   }
 }

@@ -9,13 +9,15 @@ import {
   Spinner
 } from "evergreen-ui";
 import _ from "lodash";
-import { observable } from "mobx";
+import { observable, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import { useDrop } from "react-dnd-cjs";
 import useAsyncEffect from "use-async-effect";
 import CactivaDraggable from "../editor/CactivaDraggable";
 import "./CactivaTree.scss";
+
+export let tree = observable({ list: {} as any });
 
 const meta = observable({
   list: [] as any[],
@@ -40,6 +42,7 @@ export default observer(({ editor }: any) => {
   useAsyncEffect(reloadList, []);
 
   useEffect(() => {
+    tree.list = {};
     expandSelected(selected, meta.list, null);
   }, [meta.list]);
 
@@ -244,6 +247,8 @@ const expandSelected = (path: string, list: any, parent: any) => {
         e.expanded = true;
       }
       expandSelected(path, e.children, e);
+    } else {
+      tree.list[e.name.substr(0, e.name.length - 4)] = e;
     }
   });
 };
