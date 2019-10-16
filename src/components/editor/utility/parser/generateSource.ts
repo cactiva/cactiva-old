@@ -45,9 +45,14 @@ export const generateSource = (node: any): string => {
     case SyntaxKind.ReturnStatement:
       return `return ${generateSource(node.value)}`;
     case SyntaxKind.ArrowFunction:
+      let body = node.body.map((e: any) => generateSource(e)).join("\n");
+      if (_.get(node, "body.0.kind") === SyntaxKind.ParenthesizedExpression) {
+        body = `return ${body}`;
+      }
+
       return (() => {
         return `(${node.params.join(",")}) => { 
-${node.body.map((e: any) => generateSource(e)).join("\n")} 
+${body}
 }`;
       })();
     case SyntaxKind.JsxFragment:

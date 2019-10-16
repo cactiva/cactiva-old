@@ -37,7 +37,6 @@ export default observer(({ editor }: any) => {
           if (!editor.rootSelected) {
             editor.jsx = false;
           }
-          console.log(editor);
         }}
       >
         <div>

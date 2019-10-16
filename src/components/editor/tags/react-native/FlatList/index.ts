@@ -10,10 +10,16 @@ const styles = {
 export default class extends CactivaTag {
   static tagName = "FlatList";
   static from = "react-native";
+  static insertTo = "props.renderItem.body";
   static structure = {
     kind: SyntaxKind.JsxElement,
     name: "FlatList",
-    props: {},
+    props: {
+      renderItem: {
+        kind: SyntaxKind.ArrowFunction,
+        body: [{ kind: SyntaxKind.ParenthesizedExpression }]
+      }
+    },
     children: []
   };
 

@@ -31,6 +31,7 @@ export interface ICactivaTrait {
 export abstract class CactivaTag {
   static tagName: string = '';
   static from: string = '';
+  static insertTo: string = 'children';
   static traits: ICactivaTrait[] = [];
   static element: any;
   static structure: any;

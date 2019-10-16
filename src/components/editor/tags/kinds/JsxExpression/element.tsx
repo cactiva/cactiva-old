@@ -40,35 +40,36 @@ export default observer((props: any) => {
               backgroundColor: "rgba(255,255,255,1)"
             }}
           >
-            {expressions.map((exp: any, key: number) => {
-              if (typeof exp === "string") {
-                return exp;
-              }
-              return (
-                <div key={key} style={{ paddingLeft: 10 }}>
-                  <CactivaChildren
-                    source={{
-                      kind: cactiva.source.kind,
-                      id: cactiva.source.id,
-                      child: {
-                        id: cactiva.source.id + "_" + key,
-                        value: exp
-                      }
-                    }}
-                    cactiva={cactiva}
-                    parentInfo={() => ({
-                      canDropAfter: false,
-                      onDropped: (item: any, type: string) => {
-                        console.log(toJS(exp));
-                      }
-                    })}
-                  />
-                </div>
-              );
-            })}
+            <Expression expressions={expressions} cactiva={cactiva} />
           </Text>
         </CactivaSelectable>
       </CactivaDraggable>
     </CactivaDroppable>
   );
+});
+
+const Expression = observer(({ expressions, cactiva }: any) => {
+  return expressions.map((exp: any, key: number) => {
+    if (typeof exp === "string") {
+      return exp;
+    }
+    return (
+      <div key={key} style={{ paddingLeft: 10 }}>
+        <CactivaChildren
+          source={{
+            kind: cactiva.source.kind,
+            id: cactiva.source.id,
+            child: {
+              id: cactiva.source.id + "_" + key,
+              value: exp
+            }
+          }}
+          cactiva={cactiva}
+          parentInfo={() => ({
+            canDropAfter: false
+          })}
+        />
+      </div>
+    );
+  });
 });

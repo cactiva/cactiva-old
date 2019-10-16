@@ -76,15 +76,24 @@ export const findElementById = (root: any, id: string | string[]): any => {
   for (let i in ids) {
     currentIds.push(ids[i]);
     const cid = parseInt(ids[i]);
-    const hasChild = _.get(el, `children.${cid}`, false);
-    if (hasChild) {
-      el = el.children[cid];
+    let child = _.get(el, `children.${cid}`, false);
+    if (isTag(el)) {
+      const tag: any = tags[el.name];
+      if (tag.insertTo !== "children") {
+        child = _.get(el, `${tag.insertTo}.${cid}`, false);
+      }
+    }
+
+    if (child) {
+      el = child;
     } else {
-      if (!!el && !!el.value) {
-        if (el.kind === SyntaxKind.JsxExpression) {
-          el = recurseElementById(currentIds.join("_"), el);
-        } else {
-          el = el.value;
+      if (el) {
+        switch (el.kind) {
+          case SyntaxKind.JsxExpression:
+            el = recurseElementById(currentIds.join("_"), el);
+            break;
+          default:
+            el = el.value;
         }
       }
     }
@@ -179,23 +188,33 @@ export const removeElementById = (root: any, id: string | string[]) => {
 export const insertAfterElementId = (
   root: any,
   id: string | string[],
-  child: any
+  child: any,
+  insertTo = "children"
 ) => {
   const ids = getIds(id);
   const parent = findParentElementById(root, id);
   const index = parseInt(ids[ids.length - 1] || "-1");
-  if (parent && parent.children && parent.children[index]) {
-    parent.children.splice(index + 1, 0, child);
+  const children = _.get(parent, insertTo, []);
+  if (children[index]) {
+    children.splice(index + 1, 0, child);
+    _.set(parent, insertTo, children);
   }
 };
 
-export const addChildInId = (root: any, id: string | string[], child: any) => {
+export const addChildInId = (
+  root: any,
+  id: string | string[],
+  child: any,
+  insertTo = "children"
+) => {
   const parent = findElementById(root, id);
   if (parent) {
-    if (!parent.children) {
-      parent.children = [];
+    let children = _.get(parent, insertTo);
+    if (!children) {
+      _.set(parent, insertTo, []);
     }
-    parent.children.unshift(child);
+    children.unshift(child);
+    _.set(parent, insertTo, children);
   }
 };
 

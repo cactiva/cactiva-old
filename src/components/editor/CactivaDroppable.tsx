@@ -3,17 +3,7 @@ import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect } from "react";
 import { useDrop } from "react-dnd-cjs";
 import CactivaDropMarker from "./CactivaDropMarker";
-import {
-  addChildInId,
-  commitChanges,
-  createNewElement,
-  findElementById,
-  insertAfterElementId,
-  isParentOf,
-  prepareChanges,
-  removeElementById
-} from "./utility/elements/tools";
-import { toJS } from "mobx";
+import { addChildInId, commitChanges, createNewElement, findElementById, insertAfterElementId, isParentOf, prepareChanges, removeElementById } from "./utility/elements/tools";
 
 export default observer(
   ({
@@ -25,7 +15,8 @@ export default observer(
     canDropOver = true,
     canDropAfter = true
   }: any) => {
-    const { root, source, editor, parentInfo } = cactiva;
+    const { root, tag, source, editor, parentInfo } = cactiva;
+    const insertTo = (tag && tag.insertTo) || "children";
     const afterDirection = _.get(parentInfo, "afterDirection", "column");
     const isLastChild = _.get(parentInfo, "isLastChild", false);
     const parentJustifyContent = _.get(
@@ -56,7 +47,7 @@ export default observer(
           el = removeElementById(root, afterItem.id);
         }
         if (el) {
-          insertAfterElementId(root, child.id, el);
+          insertAfterElementId(root, child.id, el, insertTo);
         }
         commitChanges(editor);
       }
@@ -72,7 +63,7 @@ export default observer(
           el = removeElementById(root, childItem.id);
         }
         if (el) {
-          addChildInId(root, child.id, el);
+          addChildInId(root, child.id, el, insertTo);
         }
         commitChanges(editor);
       }

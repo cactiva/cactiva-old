@@ -69,7 +69,7 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
     case SyntaxKind.ArrowFunction:
       return (() => {
         const params = node.parameters.map((e: any) => {
-          return e.name.escapedText;
+          return e.getText();
         });
         const body: any = [];
         if (node.body.statements) {

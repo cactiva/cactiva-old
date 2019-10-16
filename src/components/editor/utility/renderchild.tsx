@@ -32,6 +32,10 @@ export const renderChildren = (
     editor.cactivaRefs = {};
   }
 
+  if (!children.map) {
+    return null;
+  }
+
   const result = children.map((refChild: any, key: number) => {
     if (typeof refChild === "object") {
       let child = refChild;

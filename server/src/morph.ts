@@ -119,6 +119,7 @@ export class Morph {
   }
   readTsx(filename: string, showKindName = false) {
     const sf = this.getSourceFile(filename);
+    sf.refreshFromFileSystemSync();
     const de = defaultExport(sf);
     const ps = parseJsx(getEntryPoint(de), showKindName);
     return {
