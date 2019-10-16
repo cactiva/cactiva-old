@@ -43,7 +43,7 @@ export default observer((props: any) => {
               hover={meta.dropOver}
               direction={_.get(tagProps.style, "flexDirection", "column")}
             />
-            <CactivaChildren source={cactiva.source} cactiva={cactiva} />
+            <CactivaChildren cactiva={cactiva} />
           </CactivaSelectable>
         </CactivaDraggable>
       </CactivaDropChild>

@@ -57,7 +57,6 @@ export default observer((props: any) => {
               }}
             >
               <CactivaChildren
-                source={cactiva.source}
                 cactiva={cactiva}
                 parentInfo={(c: any) => ({
                   isLastChild: c.isLastChild,

@@ -99,7 +99,6 @@ export default observer((props: any) => {
                 />
               ) : (
                 <CactivaChildren
-                  source={cactiva.source}
                   cactiva={cactiva}
                   parentInfo={() => ({
                     canDropAfter: false

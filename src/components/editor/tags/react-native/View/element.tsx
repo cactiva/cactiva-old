@@ -28,7 +28,6 @@ export default observer((props: any) => {
             stretch={hasNoChildren}
           />
           <CactivaChildren
-            source={cactiva.source}
             cactiva={cactiva}
             parentInfo={(c: any) => ({
               isFirstChild: c.isFirstChild,

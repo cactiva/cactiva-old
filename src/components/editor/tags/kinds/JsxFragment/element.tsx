@@ -33,7 +33,6 @@ export default observer((props: any) => {
           >
             <CactivaDropMarker hover={meta.dropOver} stretch={hasNoChildren} />
             <CactivaChildren
-              source={cactiva.source}
               cactiva={cactiva}
               parentInfo={(c: any) => ({
                 isLastChild: c.isLastChild

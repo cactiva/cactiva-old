@@ -8,6 +8,7 @@ import { renderChildren } from "../../../utility/renderchild";
 import CactivaDropMarker from "@src/components/editor/CactivaDropMarker";
 import _ from "lodash";
 import { toJS } from "mobx";
+import CactivaChildren from "@src/components/editor/CactivaChildren";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -27,11 +28,15 @@ export default observer((props: any) => {
             direction={direction}
             stretch={hasNoChildren}
           />
-          {renderChildren(cactiva.source, cactiva.editor, cactiva.root, c => ({
-            isLastChild: c.isLastChild,
-            afterDirection: direction,
-            style
-          }))}
+          <CactivaChildren
+            cactiva={cactiva}
+            parentInfo={(c: any) => ({
+              isFirstChild: c.isFirstChild,
+              isLastChild: c.isLastChild,
+              afterDirection: direction,
+              style
+            })}
+          />
         </CactivaSelectable>
       </CactivaDraggable>
     </CactivaDropChild>
