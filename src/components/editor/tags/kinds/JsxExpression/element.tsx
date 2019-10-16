@@ -28,7 +28,13 @@ export default observer((props: any) => {
   return (
     <CactivaDroppable cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
-        <CactivaSelectable cactiva={cactiva}>
+        <CactivaSelectable
+          cactiva={cactiva}
+          onDoubleClick={(e: any) => {
+            e.preventDefault();
+            cactiva.editor.jsx = true;
+          }}
+        >
           <Text
             style={{
               padding: 5,

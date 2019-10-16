@@ -9,13 +9,13 @@ const styles = {
 };
 
 export default class extends CactivaTag {
-  static tagName = "Button";
+  static tagName = "CheckBox";
   static from = "react-native-ui-kitten";
   static structure = {
     kind: SyntaxKind.JsxElement,
-    name: "Button",
+    name: "CheckBox",
     props: {},
-    children: [{ kind: SyntaxKind.StringLiteral, value: "Button" }]
+    children: [{ kind: SyntaxKind.StringLiteral, value: "CheckBox" }]
   };
   static traits = [
     {
@@ -25,7 +25,7 @@ export default class extends CactivaTag {
           name: "Status",
           path: "status",
           kind: SyntaxKind.StringLiteral,
-          default: "primary",
+          default: "basic",
           mode: "select",
           options: {
             styles: styles,
@@ -40,35 +40,11 @@ export default class extends CactivaTag {
           }
         },
         {
-          name: "Size",
-          path: "size",
-          kind: SyntaxKind.StringLiteral,
-          default: "medium",
-          mode: "select",
+          name: "Checked",
+          path: "checked",
+          kind: SyntaxKind.FalseKeyword,
           options: {
-            styles: styles,
-            items: [
-              { value: "tiny", label: "Tiny" },
-              { value: "small", label: "Small" },
-              { value: "medium", label: "Medium" },
-              { value: "large", label: "Large" },
-              { value: "giant", label: "Giant" }
-            ]
-          }
-        },
-        {
-          name: "Appearance",
-          path: "appearance",
-          kind: SyntaxKind.StringLiteral,
-          default: "filled",
-          mode: "select",
-          options: {
-            styles: styles,
-            items: [
-              { value: "filled", label: "Filled" },
-              { value: "outline", label: "Outline" },
-              { value: "ghost", label: "Ghost" }
-            ]
+            styles: styles
           }
         },
         {
@@ -80,8 +56,8 @@ export default class extends CactivaTag {
           }
         },
         {
-          name: "On Press",
-          path: "onPress",
+          name: "On Change",
+          path: "onChange",
           kind: SyntaxKind.ArrowFunction,
           options: {
             styles: styles

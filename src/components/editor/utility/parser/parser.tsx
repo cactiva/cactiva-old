@@ -11,6 +11,8 @@ export const parseValue = (node: any): any => {
       return parseInt(node.value);
     case SyntaxKind.StringLiteral:
       return node.value.substring(1, node.value.length - 1);
+    case SyntaxKind.Identifier:
+    case SyntaxKind.PropertyAccessExpression:
     case SyntaxKind.CallExpression:
       return node.value;
     case SyntaxKind.PropertyAccessExpression:

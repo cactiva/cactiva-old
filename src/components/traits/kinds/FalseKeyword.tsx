@@ -1,9 +1,9 @@
-import { observer } from 'mobx-react-lite';
-import React from 'react';
-import { ICactivaTraitFieldProps } from '../CactivaTraitField';
-import './FalseKeyword.scss';
-import { SyntaxKind } from '@src/components/editor/utility/syntaxkinds';
-import { Checkbox } from 'evergreen-ui';
+import { observer } from "mobx-react-lite";
+import React from "react";
+import { ICactivaTraitFieldProps } from "../CactivaTraitField";
+import "./FalseKeyword.scss";
+import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
+import { Checkbox } from "evergreen-ui";
 
 export default observer((trait: ICactivaTraitFieldProps) => {
   return (
@@ -12,7 +12,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
       checked={false}
       margin={0}
       onChange={() => {
-        trait.update(undefined, SyntaxKind.TrueKeyword);
+        trait.update("true", SyntaxKind.TrueKeyword);
       }}
     />
   );

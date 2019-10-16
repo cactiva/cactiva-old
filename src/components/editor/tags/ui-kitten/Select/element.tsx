@@ -22,7 +22,7 @@ export default observer((props: any) => {
           className="cactiva-element"
         >
           <div className="uik-field">
-            <div className="uik-input uik-select">
+            <div className="uik-input uik-select medium">
               {tagProps.defaultValue ? (
                 tagProps.defaultValue
               ) : (

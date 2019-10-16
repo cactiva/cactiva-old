@@ -93,6 +93,18 @@ const toolbar = [
     label: "Button"
   },
   {
+    icon: "th",
+    label: "Datepicker"
+  },
+  {
+    icon: "ring",
+    label: "RadioGroup"
+  },
+  {
+    icon: "tick-circle",
+    label: "CheckBox"
+  },
+  {
     divider: "Media"
   },
   {
