@@ -76,6 +76,11 @@ export default observer(({ editor }: any) => {
             showElementTag={false}
             onBeforeSelect={() => {
               meta.shouldUpdateNav = false;
+              if (editor.selectedId === v.source.id) {
+                editor.jsx = !editor.jsx;
+              } else if (!editor.jsx) {
+                editor.jsx = true;
+              }
             }}
           >
             <CactivaDraggable cactiva={cactiva}>

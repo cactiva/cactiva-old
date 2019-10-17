@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { Morph } from "../morph";
 import config from "../config";
 import * as execa from "execa";
+import * as fkill from "fkill";
 
 const morph = Morph.getInstance();
 @Controller("api/project")
@@ -84,10 +85,13 @@ export class ProjectController {
   }
 
   @Get("stop-server")
-  private stopServer(req: Request, res: Response) {
+  private async stopServer(req: Request, res: Response) {
     if (this.cli && this.cli.cancel) {
       this.buffer = "";
+      const pid = this.cli.pid;
+      await fkill(pid, { tree: true });
       this.cli.cancel();
+
       this.lastBufferIndex = 0;
       this.cli = null;
     }
