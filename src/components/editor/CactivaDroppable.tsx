@@ -10,7 +10,7 @@ export default observer(
     cactiva,
     children,
     onDropOver,
-    onBeforeDropOver,
+    modifyDropOver,
     onDropped,
     canDropOver = true,
     canDropAfter = true
@@ -109,13 +109,6 @@ export default observer(
     });
 
     useEffect(() => {
-      if (onBeforeDropOver) {
-        const type = !!afterItem ? "after" : "child";
-        const item = afterItem || childItem;
-        const result = onBeforeDropOver(item, type);
-        if (!result) return;
-      }
-
       meta.canDropAfter =
         canDropAfter && afterOver && canDrop(afterItem.id, id);
 
@@ -138,6 +131,14 @@ export default observer(
 
       if (onDropOver) {
         onDropOver(meta.canDropChild);
+      }
+
+      if (modifyDropOver) {
+        modifyDropOver({
+          meta,
+          childItem,
+          afterItem
+        })
       }
     }, [childOver, afterOver, canDropAfter, canDropOver]);
 

@@ -41,6 +41,34 @@ const generateFonts = (fonts: any) => {
   root.insertBefore(css, root.firstChild);
 };
 
+
+hotkeys("ctrl+s,command+s", (event, handler) => {
+  if (editor.current) {
+    editor.current.save();
+  }
+  event.preventDefault();
+});
+hotkeys("ctrl+z,command+z", (event, handler) => {
+  if (editor.current) editor.current.history.undo();
+  event.preventDefault();
+});
+hotkeys(
+  "ctrl+shift+z,command+shift+z, ctrl+y,command+y",
+  (event, handler) => {
+    if (editor.current) editor.current.history.redo();
+    event.preventDefault();
+  }
+);
+hotkeys("backspace, delete", (event, handler) => {
+  const current = editor.current;
+  if (current) {
+    prepareChanges(current);
+    removeElementById(current.source, current.selectedId);
+    commitChanges(current);
+  }
+  event.preventDefault();
+});
+
 export default observer(() => {
   const current = editor.current;
   const meta = useObservable({
@@ -57,32 +85,6 @@ export default observer(() => {
   }, []);
 
   useAsyncEffect(async () => {
-    hotkeys("ctrl+s,command+s", (event, handler) => {
-      event.preventDefault();
-      if (editor.current) {
-        editor.current.save();
-      }
-    });
-    hotkeys("ctrl+z,command+z", (event, handler) => {
-      event.preventDefault();
-      if (editor.current) editor.current.history.undo();
-    });
-    hotkeys(
-      "ctrl+shift+z,command+shift+z, ctrl+y,command+y",
-      (event, handler) => {
-        event.preventDefault();
-        if (editor.current) editor.current.history.redo();
-      }
-    );
-    hotkeys("backspace, delete", (event, handler) => {
-      event.preventDefault();
-      const current = editor.current;
-      if (current) {
-        prepareChanges(current);
-        removeElementById(current.source, current.selectedId);
-        commitChanges(current);
-      }
-    });
     await editor.load(
       localStorage.getItem("cactiva-current-path") || "/src/Home.tsx"
     );
@@ -145,23 +147,23 @@ export default observer(() => {
             <CactivaTree editor={editor} />
           </div>
           {editor.status === "loading" ||
-          Object.keys(tree.list).length === 0 ? (
-            <div className="cactiva-editor-loading">
-              <Spinner size={18} />
-              <Text color="muted" size={300} style={{ marginLeft: 8 }}>
-                Loading
+            Object.keys(tree.list).length === 0 ? (
+              <div className="cactiva-editor-loading">
+                <Spinner size={18} />
+                <Text color="muted" size={300} style={{ marginLeft: 8 }}>
+                  Loading
               </Text>
-            </div>
-          ) : (
-            <div
-              className="cactiva-pane cactiva-editor-container"
-              onContextMenu={(e: any) => {
-                e.preventDefault();
-              }}
-            >
-              {current && current.source && <CactivaEditor editor={current} />}
-            </div>
-          )}
+              </div>
+            ) : (
+              <div
+                className="cactiva-pane cactiva-editor-container"
+                onContextMenu={(e: any) => {
+                  e.preventDefault();
+                }}
+              >
+                {current && current.source && <CactivaEditor editor={current} />}
+              </div>
+            )}
 
           {meta.traitPane && editor.status !== "loading" ? (
             <div className="cactiva-pane">
@@ -186,20 +188,20 @@ export default observer(() => {
                   {current && current.source && current.selected ? (
                     <CactivaTraits editor={current} />
                   ) : (
-                    <Pane
-                      display="flex"
-                      flexDirection="column"
-                      padding={10}
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <img
-                        src="/images/reindeer.svg"
-                        style={{ width: "50%", margin: 20, opacity: 0.4 }}
-                      />
-                      <Text size={300}>Please select a component</Text>
-                    </Pane>
-                  )}
+                      <Pane
+                        display="flex"
+                        flexDirection="column"
+                        padding={10}
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <img
+                          src="/images/reindeer.svg"
+                          style={{ width: "50%", margin: 20, opacity: 0.4 }}
+                        />
+                        <Text size={300}>Please select a component</Text>
+                      </Pane>
+                    )}
                 </>
                 {/* {meta.currentPane === "hooks" && (
                   <CactivaHooks editor={current} />
@@ -207,8 +209,8 @@ export default observer(() => {
               </div>
             </div>
           ) : (
-            <div style={{ flex: 1 }}></div>
-          )}
+              <div style={{ flex: 1 }}></div>
+            )}
         </Split>
       </div>
     </DndProvider>

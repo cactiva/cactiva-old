@@ -13,6 +13,7 @@ import {
   prepareChanges,
   commitChanges
 } from "@src/components/editor/utility/elements/tools";
+import CactivaChildren from "@src/components/editor/CactivaChildren";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -29,14 +30,15 @@ export default observer((props: any) => {
   return (
     <CactivaDroppable
       cactiva={cactiva}
-      onBeforeDropOver={(item: any, type: string) => {
-        if (type === "after") {
-          return true;
-        } else {
-          if (item && item.name === "JsxExpression") {
+      modifyDropOver={(d: any) => {
+        const item = d.childItem;
+        d.meta.canDropOver = false;
+        meta.canDropOver = false;
+        if (item) {
+          if (item.name === "JsxExpression") {
             meta.canDropOver = true;
+            d.meta.canDropOver = true;
             meta.dropOver = true;
-            return true;
           }
         }
       }}
@@ -53,7 +55,6 @@ export default observer((props: any) => {
       onDropOver={(value: boolean) => {
         meta.dropOver = value;
       }}
-      canDropOver={meta.canDropOver}
     >
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable
@@ -78,22 +79,20 @@ export default observer((props: any) => {
           style={{ flexDirection: "row", ...style, lineHeight: "auto" }}
           className="cactiva-element rn-text"
         >
-          {meta.canDropOver ? (
+          {meta.canDropOver && (
             <CactivaDropMarker
               hover={meta.dropOver}
               stretch={true}
               style={{ margin: "0px 5px" }}
             />
-          ) : (
-            renderChildren(
-              cactiva.source,
-              cactiva.editor,
-              cactiva.root,
-              () => ({
-                canDropAfter: false
-              })
-            )
           )}
+
+          <CactivaChildren
+            cactiva={cactiva}
+            parentInfo={(c: any) => ({
+              canDropAfter: false
+            })}
+          />
         </CactivaSelectable>
       </CactivaDraggable>
     </CactivaDroppable>
