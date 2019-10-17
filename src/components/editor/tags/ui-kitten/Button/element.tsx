@@ -80,7 +80,7 @@ export default observer((props: any) => {
           className="cactiva-element"
         >
           <div
-            className={`uik-field uik-button ${_.get(
+            className={`uik-field uik-button active ${_.get(
               tagProps,
               "status",
               "primary"
@@ -88,7 +88,7 @@ export default observer((props: any) => {
               tagProps,
               "appearance",
               "filled"
-            )}`}
+            )} ${tagProps.disabled === "true" ? "disabled" : ""}`}
           >
             <div className={`uik-text`}>
               {meta.canDropOver ? (
