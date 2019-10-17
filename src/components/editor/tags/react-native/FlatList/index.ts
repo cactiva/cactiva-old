@@ -15,9 +15,21 @@ export default class extends CactivaTag {
     kind: SyntaxKind.JsxElement,
     name: "FlatList",
     props: {
+      data: '[]',
       renderItem: {
         kind: SyntaxKind.ArrowFunction,
-        body: [{ kind: SyntaxKind.ParenthesizedExpression }]
+        params: ["item:any"],
+        body: [
+          {
+            kind: SyntaxKind.ParenthesizedExpression,
+            value: {
+              kind: SyntaxKind.JsxElement,
+              name: "View",
+              props: {},
+              children: []
+            }
+          }
+        ]
       }
     },
     children: []

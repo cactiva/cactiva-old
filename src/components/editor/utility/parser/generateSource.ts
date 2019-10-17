@@ -51,7 +51,7 @@ export const generateSource = (node: any): string => {
       }
 
       return (() => {
-        return `(${node.params.join(",")}) => { 
+        return `(${(node.params || []).join(",")}) => { 
 ${body}
 }`;
       })();
