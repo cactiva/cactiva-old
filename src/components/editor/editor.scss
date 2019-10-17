@@ -19,6 +19,7 @@
   }
   &.kind {
     padding: 0;
+    min-height:15px !important;
     &.selected,
     &.hover {
       border: 1px solid #3ba0fb;
@@ -34,6 +35,10 @@
       #e3e3e3 100%
     );
     background-size: 31.11px 31.11px;
+    > span {
+      padding: 0px 5px !important;
+      margin: 2px !important;
+    }
   }
   &.horizontal {
     flex-direction: row;
