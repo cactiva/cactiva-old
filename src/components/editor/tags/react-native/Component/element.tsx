@@ -9,6 +9,7 @@ import CactivaDropMarker from "@src/components/editor/CactivaDropMarker";
 import _ from "lodash";
 import { Text } from "evergreen-ui";
 import CactivaChildren from "@src/components/editor/CactivaChildren";
+import tags from "@src/components/traits/tags";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -23,7 +24,13 @@ export default observer((props: any) => {
       onDropOver={(value: boolean) => (meta.dropOver = value)}
     >
       <CactivaDraggable cactiva={cactiva}>
-        <CactivaSelectable cactiva={cactiva}>
+        <CactivaSelectable cactiva={cactiva} onDoubleClick={() => {
+          const editor = cactiva.editor;
+          const selected = editor.selected;
+          if (!tags[selected.source.name] && !!editor.imports[selected.source.name]) {
+            editor.project.load(editor.imports[selected.source.name].from)
+          }
+        }}>
           <Text
             style={{ fontSize: "9px", color: "#000", position: "absolute" }}
           >
@@ -36,12 +43,12 @@ export default observer((props: any) => {
             style={
               children.length > 0
                 ? {
-                    marginTop: 15,
-                    position: "absolute",
-                    height: 5,
-                    left: 5,
-                    right: 5
-                  }
+                  marginTop: 15,
+                  position: "absolute",
+                  height: 5,
+                  left: 5,
+                  right: 5
+                }
                 : {}
             }
           />

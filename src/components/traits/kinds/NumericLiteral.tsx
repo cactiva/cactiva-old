@@ -54,6 +54,8 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             const val = parseInt(meta.value);
             if (!isNaN(val)) {
               trait.update(val);
+            } else {
+              trait.update(undefined);
             }
           }}
         />

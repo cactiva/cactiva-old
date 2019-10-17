@@ -44,7 +44,7 @@ export default observer(({ editor }: any) => {
   useEffect(() => {
     tree.list = {};
     expandSelected(selected, meta.list, null);
-  }, [meta.list]);
+  }, [meta.list, editor.path]);
 
   const [{ dragItem, childrenOver }, dropChildrenRef] = useDrop({
     accept: ["element", "directory"],

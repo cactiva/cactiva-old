@@ -112,17 +112,19 @@ const generatePath = (editor: any, source: any) => {
   const currentId = [...selectedId];
   for (let id in selectedId) {
     const el = findElementById(source, currentId);
-    if (!!el && !!el.name)
-      nav.push({
-        name: el.name,
-        source: el
-      });
-    else
-      nav.push({
-        name: kindNames[el.kind],
-        source: el
-      });
-    currentId.pop();
+    if (!!el) {
+      if (!!el.name)
+        nav.push({
+          name: el.name,
+          source: el
+        });
+      else
+        nav.push({
+          name: kindNames[el.kind],
+          source: el
+        });
+      currentId.pop();
+    }
   }
   return nav.reverse();
 };

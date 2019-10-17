@@ -212,6 +212,7 @@ export const addChildInId = (
     let children = _.get(parent, insertTo);
     if (!children) {
       _.set(parent, insertTo, []);
+      children = [];
     }
     children.unshift(child);
     _.set(parent, insertTo, children);
