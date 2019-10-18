@@ -21,6 +21,7 @@ import {
 } from "./utility/elements/tools";
 import { renderChildren } from "./utility/renderchild";
 import { SyntaxKind } from "./utility/syntaxkinds";
+import { toJS } from "mobx";
 
 const uploadImage = async (file: any) => {
   var formDataToUpload = new FormData();
@@ -92,7 +93,7 @@ export default observer(({ editor }: any) => {
         }
       }
     };
-    if (editor.source.children.length > 0) {
+    if (_.get(editor, "source.children.length", 0) > 0) {
       const idx = editor.source.children.length - 1;
       insertAfterElementId(editor.source, editor.source.children[idx].id, el);
     } else {

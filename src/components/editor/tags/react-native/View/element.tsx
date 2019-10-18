@@ -1,5 +1,5 @@
 import { observer, useObservable } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect } from "react";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDropChild from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
@@ -15,6 +15,7 @@ export default observer((props: any) => {
   const meta = useObservable({ dropOver: false });
   const direction = _.get(style, "flexDirection", "column");
   const hasNoChildren = _.get(cactiva.source, "children.length", 0) === 0;
+
   return (
     <CactivaDropChild
       cactiva={cactiva}

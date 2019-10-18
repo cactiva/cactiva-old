@@ -53,6 +53,23 @@ export default class extends CactivaTag {
           options: {
             styles
           }
+        },
+        {
+          name: "Size",
+          path: "size",
+          kind: SyntaxKind.NumericLiteral,
+          options: {
+            styles
+          }
+        },
+        {
+          name: "Color",
+          path: "color",
+          kind: SyntaxKind.StringLiteral,
+          mode: "color",
+          options: {
+            styles
+          }
         }
       ]
     },

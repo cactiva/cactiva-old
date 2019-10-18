@@ -66,7 +66,7 @@ export default observer(() => {
   const nav = useNavigation();
   const meta = useObservable({});
 
-  return <View />;
+  return <View></View>;
 });`,
       {
         overwrite: true

@@ -3,7 +3,16 @@ import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect } from "react";
 import { useDrop } from "react-dnd-cjs";
 import CactivaDropMarker from "./CactivaDropMarker";
-import { addChildInId, commitChanges, createNewElement, findElementById, insertAfterElementId, isParentOf, prepareChanges, removeElementById } from "./utility/elements/tools";
+import {
+  addChildInId,
+  commitChanges,
+  createNewElement,
+  findElementById,
+  insertAfterElementId,
+  isParentOf,
+  prepareChanges,
+  removeElementById
+} from "./utility/elements/tools";
 
 export default observer(
   ({
@@ -63,6 +72,7 @@ export default observer(
           el = removeElementById(root, childItem.id);
         }
         if (el) {
+          console.log(child.id, el, insertTo);
           addChildInId(root, child.id, el, insertTo);
         }
         commitChanges(editor);
@@ -138,7 +148,7 @@ export default observer(
           meta,
           childItem,
           afterItem
-        })
+        });
       }
     }, [childOver, afterOver, canDropAfter, canDropOver]);
 
