@@ -292,3 +292,9 @@ export function createNewElement(name: string) {
   const type: any = tag ? tag : kind;
   return _.clone(type.structure);
 }
+
+export function uuid(prefix: string) {
+  return `${prefix}-${new Date().getTime()}${Math.floor(
+    10000000 + Math.random() * 90000000
+  )}`;
+}

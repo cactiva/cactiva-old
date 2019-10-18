@@ -87,19 +87,19 @@ export default observer(() => {
     currentPane: "props",
     sizeScreen: [15, 85]
   });
-  const renderFont = () => (current ? current.renderfont : false);
-  const traitPane = () => (current ? current.traitPane : false);
+  const renderFont = current ? current.renderfont : false;
+  const traitPane = current ? current.traitPane : false;
 
   useEffect(() => {
-    if (renderFont()) {
+    if (renderFont) {
       generateFonts();
       current && (current.renderfont = false);
     }
-  }, [renderFont()]);
+  }, [renderFont]);
 
   useEffect(() => {
-    meta.sizeScreen = traitPane() ? [15, 70, 15] : [15, 85];
-  }, [traitPane()]);
+    meta.sizeScreen = traitPane ? [15, 70, 15] : [15, 85];
+  }, [traitPane]);
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="cactiva-container">
@@ -158,8 +158,9 @@ const CactivaEditorCanvas = observer(() => {
 
 const CactivaTraitsCanvas = observer(() => {
   const { current } = editor;
-
-  const traitPane = () => (current ? current.traitPane : false);
+  const traitPane = current ? current.traitPane : false;
+  const activeTraits =
+    current && current.source && current.selected && traitPane;
 
   useEffect(() => {
     current &&
@@ -168,33 +169,28 @@ const CactivaTraitsCanvas = observer(() => {
           ? true
           : false);
   }, []);
-
-  let Canvas = observer(() => (
-    <Pane
-      display="flex"
-      flexDirection="column"
-      padding={10}
-      alignItems="center"
-      justifyContent="center"
-    >
-      <img
-        src="/images/reindeer.svg"
-        style={{ width: "50%", margin: 20, opacity: 0.4 }}
-      />
-      <Text size={300}>Please select a component</Text>
-    </Pane>
-  ));
-
-  if (current && current.source && current.selected && traitPane()) {
-    Canvas = observer(() => <CactivaTraits editor={current} />);
-  }
-
-  if (!traitPane()) return <div style={{ flex: 1 }}></div>;
+  if (!traitPane) return <div style={{ flex: 1 }}></div>;
 
   return (
     <div className="cactiva-pane">
       <div className="cactiva-pane-inner">
-        <Canvas />
+        {activeTraits ? (
+          <CactivaTraits editor={current} />
+        ) : (
+          <Pane
+            display="flex"
+            flexDirection="column"
+            padding={10}
+            alignItems="center"
+            justifyContent="center"
+          >
+            <img
+              src="/images/reindeer.svg"
+              style={{ width: "50%", margin: 20, opacity: 0.4 }}
+            />
+            <Text size={300}>Please select a component</Text>
+          </Pane>
+        )}
       </div>
     </div>
   );

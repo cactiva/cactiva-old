@@ -100,7 +100,7 @@ export default observer(({ editor }: any) => {
       monacoEdRef.current.layout();
     }
   };
-  console.log("Optimize", rootProps);
+  console.log("Optimize");
   return (
     <div className="cactiva-editor" {...rootProps}>
       {meta.onDrag && <input {...getInputProps()} />}
@@ -278,7 +278,6 @@ const CactivaEditorSource = observer((props: any) => {
     editor.jsx,
     editor.undoStack.length
   ]);
-  console.log("Boom");
   if (isSelected && editor.jsx) {
     let Action = () => (
       <div className="action-toolbar">

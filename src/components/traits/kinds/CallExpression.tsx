@@ -1,15 +1,31 @@
+import { IconButton, Tooltip } from "evergreen-ui";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect } from "react";
 import { ICactivaTraitFieldProps } from "../CactivaTraitField";
 import "./CallExpression.scss";
-import { SelectMenu, IconButton, Tooltip } from "evergreen-ui";
 import ImageBrowse from "./components/ImageBrowse";
-import IconBrowse from "./components/IconBrowse";
 export default observer((trait: ICactivaTraitFieldProps) => {
   const meta = useObservable({
     value: trait.value,
     isShown: false
   });
+  const update = (v: any) => {
+    trait.update(`${meta.value}`);
+  };
+  const onClickImage = () => {
+    meta.isShown = true;
+  };
+  const onChange = (e: any) => {
+    meta.value = e.target.value;
+  };
+  const onFocus = (e: any) => {
+    e.target.select();
+  };
+  const onChangeImage = (v: any) => {
+    meta.value = v;
+    trait.update(`${meta.value}`);
+  };
+  const onDismissImage = (v: any) => (meta.isShown = v);
 
   useEffect(() => {
     meta.value = trait.value || trait.default;
@@ -25,15 +41,9 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             className={`cactiva-trait-input`}
             type="text"
             value={meta.value || ""}
-            onChange={e => {
-              meta.value = e.target.value;
-            }}
-            onFocus={e => {
-              e.target.select();
-            }}
-            onBlur={() => {
-              trait.update(`"${meta.value}"`);
-            }}
+            onChange={onChange}
+            onFocus={onFocus}
+            onBlur={update}
           />
         </div>
       )}
@@ -47,15 +57,9 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             className={`cactiva-trait-input`}
             type="text"
             value={meta.value || ""}
-            onChange={e => {
-              meta.value = e.target.value;
-            }}
-            onFocus={e => {
-              e.target.select();
-            }}
-            onBlur={() => {
-              trait.update(`${meta.value}`);
-            }}
+            onChange={onChange}
+            onFocus={onFocus}
+            onBlur={update}
           />
 
           <Tooltip content="Browse" position="bottom">
@@ -64,19 +68,14 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               height={24}
               paddingLeft={6}
               paddingRight={6}
-              onClick={() => {
-                meta.isShown = true;
-              }}
+              onClick={onClickImage}
             />
           </Tooltip>
           <ImageBrowse
             value={meta.value}
-            onChange={(v: any) => {
-              meta.value = v;
-              trait.update(`${meta.value}`);
-            }}
+            onChange={onChangeImage}
             isShown={meta.isShown}
-            onDismiss={(v: any) => (meta.isShown = v)}
+            onDismiss={onDismissImage}
           />
         </div>
       )}

@@ -508,10 +508,31 @@ const CactivaTraitStyle: any = {
   Spacing: [
     {
       name: "Margin",
+      path: "style.value.margin",
+      kind: SyntaxKind.NumericLiteral,
+      divider: "Spacing",
+      options: {
+        styles: {
+          root: {
+            flex: "0 0 99%",
+            paddingRight: 0,
+            marginBottom: -5
+          },
+          field: {
+            borderBottomLeftRadius: 0,
+            borderBottomRightRadius: 0
+          }
+        },
+        fields: {
+          name: "All"
+        }
+      }
+    },
+    {
+      name: "",
       path: "style.value.marginTop",
       kind: SyntaxKind.NumericLiteral,
       mode: "multiple",
-      divider: "Spacing",
       options: {
         className: "group-first",
         styles: {
@@ -581,6 +602,27 @@ const CactivaTraitStyle: any = {
     },
     {
       name: "Padding",
+      path: "style.value.padding",
+      kind: SyntaxKind.NumericLiteral,
+      options: {
+        styles: {
+          root: {
+            flex: "0 0 99%",
+            paddingRight: 0,
+            marginBottom: -5
+          },
+          field: {
+            borderBottomLeftRadius: 0,
+            borderBottomRightRadius: 0
+          }
+        },
+        fields: {
+          name: "All"
+        }
+      }
+    },
+    {
+      name: "",
       path: "style.value.paddingTop",
       kind: SyntaxKind.NumericLiteral,
       options: {
@@ -808,9 +850,88 @@ const CactivaTraitStyle: any = {
       options: {
         styles: {
           root: {
-            flex: "0 0 60%",
+            flex: "0 0 99%",
+            paddingRight: 0,
+            marginBottom: -5
+          },
+          field: {
+            borderBottomLeftRadius: 0,
+            borderBottomRightRadius: 0
+          }
+        },
+        fields: {
+          name: "All"
+        }
+      }
+    },
+    {
+      name: "",
+      path: "style.value.borderTopWidth",
+      kind: SyntaxKind.NumericLiteral,
+      options: {
+        className: "group-first",
+        styles: {
+          root: {
+            flex: "0 0 45%",
             paddingRight: 0
           }
+        },
+        fields: {
+          name: "Top"
+        }
+      }
+    },
+    {
+      label: false,
+      name: "Right Width",
+      path: "style.value.borderRightWidth",
+      kind: SyntaxKind.NumericLiteral,
+      options: {
+        className: "group-middle",
+        styles: {
+          root: {
+            flex: "0 0 18%",
+            paddingRight: 0
+          }
+        },
+        fields: {
+          name: "Right"
+        }
+      }
+    },
+    {
+      label: false,
+      name: "Bottom Width",
+      path: "style.value.borderBottomWidth",
+      kind: SyntaxKind.NumericLiteral,
+      options: {
+        className: "group-middle",
+        styles: {
+          root: {
+            flex: "0 0 18%",
+            paddingRight: 0
+          }
+        },
+        fields: {
+          name: "Bottom"
+        }
+      }
+    },
+    {
+      label: false,
+      name: "Left Width",
+      path: "style.value.borderLeftWidth",
+      kind: SyntaxKind.NumericLiteral,
+      options: {
+        className: "group-last",
+        styles: {
+          root: {
+            flex: "0 0 18%",
+            paddingRight: 0
+          }
+        },
+        fields: {
+          name: "Left"
         }
       }
     },
@@ -854,7 +975,7 @@ const CactivaTraitStyle: any = {
     },
     {
       label: false,
-      name: "Border Radius",
+      name: "Top Right Radius",
       path: "style.value.borderTopRightRadius",
       kind: SyntaxKind.NumericLiteral,
       options: {
@@ -872,7 +993,7 @@ const CactivaTraitStyle: any = {
     },
     {
       label: false,
-      name: "Border Radius",
+      name: "Bottom Right Radius",
       path: "style.value.borderBottomRightRadius",
       kind: SyntaxKind.NumericLiteral,
       options: {
@@ -890,7 +1011,7 @@ const CactivaTraitStyle: any = {
     },
     {
       label: false,
-      name: "Border Radius",
+      name: "Bottom Left Radius",
       path: "style.value.borderBottomLeftRadius",
       kind: SyntaxKind.NumericLiteral,
       options: {

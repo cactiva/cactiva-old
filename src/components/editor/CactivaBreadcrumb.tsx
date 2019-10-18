@@ -1,11 +1,11 @@
+import { Icon } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect } from "react";
 import CactivaDraggable from "./CactivaDraggable";
 import CactivaSelectable from "./CactivaSelectable";
-import { findElementById, getIds } from "./utility/elements/tools";
+import { findElementById, getIds, uuid } from "./utility/elements/tools";
 import { kindNames } from "./utility/kinds";
-import { Icon } from "evergreen-ui";
 
 export default observer(({ editor }: any) => {
   const meta = useObservable({
@@ -34,29 +34,6 @@ export default observer(({ editor }: any) => {
       editor.jsx = false;
     }
   };
-  let Draggable = () => <div />;
-  if (
-    !editor.rootSelected &&
-    lastId === editor.selectedId &&
-    lastId &&
-    editor.cactivaRefs[lastId]
-  ) {
-    Draggable = () => (
-      <div className={`breadcrumb-tag last selected`}>
-        <CactivaDraggable cactiva={editor.cactivaRefs[lastId]}>
-          <CactivaSelectable
-            cactiva={editor.cactivaRefs[lastId]}
-            style={{}}
-            className=""
-            showElementTag={false}
-            onBeforeSelect={() => {
-              meta.shouldUpdateNav = false;
-            }}
-          ></CactivaSelectable>
-        </CactivaDraggable>
-      </div>
-    );
-  }
   return (
     <div className="cactiva-breadcrumb">
       <div
@@ -85,16 +62,39 @@ export default observer(({ editor }: any) => {
           </span>
         </div>
       </div>
-      {_.map(meta.nav, (v: any, i) => {
-        const key = v.source.id;
-        return <ElementTag key={key} value={v} editor={editor} meta={meta} />;
+      {_.map(meta.nav, (v: any) => {
+        return (
+          <ElementTag
+            key={uuid("breadcrumb")}
+            value={v}
+            editor={editor}
+            meta={meta}
+          />
+        );
       })}
-      <Draggable />
+      {!editor.rootSelected &&
+        lastId === editor.selectedId &&
+        lastId &&
+        editor.cactivaRefs[lastId] && (
+          <div className={`breadcrumb-tag last selected`}>
+            <CactivaDraggable cactiva={editor.cactivaRefs[lastId]}>
+              <CactivaSelectable
+                cactiva={editor.cactivaRefs[lastId]}
+                style={{}}
+                className=""
+                showElementTag={false}
+                onBeforeSelect={() => {
+                  meta.shouldUpdateNav = false;
+                }}
+              ></CactivaSelectable>
+            </CactivaDraggable>
+          </div>
+        )}
     </div>
   );
 });
 
-const ElementTag = (props: any) => {
+const ElementTag = observer((props: any) => {
   const { editor, value, meta } = props;
   const cactiva = editor.cactivaRefs[value.source.id];
   const onBeforeSelect = () => {
@@ -122,7 +122,7 @@ const ElementTag = (props: any) => {
       </CactivaDraggable>
     </CactivaSelectable>
   );
-};
+});
 
 const generatePath = (editor: any, source: any) => {
   const nav: any = [];

@@ -25,6 +25,7 @@ export default class extends CactivaTag {
           name: "Source",
           path: "source",
           kind: SyntaxKind.StringLiteral,
+          mode: "image",
           options: {
             styles
           }

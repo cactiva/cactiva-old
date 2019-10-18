@@ -6,14 +6,8 @@ import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
 import { Checkbox } from "evergreen-ui";
 
 export default observer((trait: ICactivaTraitFieldProps) => {
-  return (
-    <Checkbox
-      label={null}
-      checked={false}
-      margin={0}
-      onChange={() => {
-        trait.update("true", SyntaxKind.TrueKeyword);
-      }}
-    />
-  );
+  const update = () => {
+    trait.update("true", SyntaxKind.TrueKeyword);
+  };
+  return <Checkbox label={null} checked={false} margin={0} onChange={update} />;
 });
