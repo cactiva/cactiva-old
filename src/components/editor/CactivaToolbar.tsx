@@ -4,8 +4,11 @@ import React from "react";
 import CactivaDraggable from "./CactivaDraggable";
 import tags from "./utility/tags";
 import kinds from "./utility/kinds";
+import { observer } from "mobx-react-lite";
 
-export default () => {
+export default observer((props: any) => {
+  const { editor } = props;
+  if (editor.rootSelected) return <div />;
   return (
     <div className="cactiva-toolbar">
       {_.map(toolbar, (v: any, i) => {
@@ -39,7 +42,7 @@ export default () => {
       })}
     </div>
   );
-};
+});
 
 const toolbar = [
   // {

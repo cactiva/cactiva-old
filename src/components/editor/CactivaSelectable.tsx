@@ -28,48 +28,55 @@ export default observer(
     });
 
     const name = cactiva.kind ? cactiva.kind.kindName : cactiva.tag.tagName;
+    const onClick = async (e: any) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (!(await editor.applySelectedSource())) {
+        return;
+      }
+
+      if (onBeforeSelect) {
+        onBeforeSelect(source.id);
+      }
+
+      editor.rootSelected = false;
+      editor.selectedId = source.id;
+
+      if (onSelected) {
+        onSelected(source.id);
+      }
+    };
+    const onMouseOut = (e: any) => {
+      e.stopPropagation();
+      meta.hover = false;
+    };
+    const onMouseOver = (e: any) => {
+      e.stopPropagation();
+      meta.hover = true;
+    };
+    let ElementTag = () => <div />;
+    if (showElementTag) {
+      ElementTag = () => (
+        <div
+          className={`cactiva-element-tag ${classes.hover} ${classes.selected}`}
+        >
+          <Text size={300} color={"white"}>
+            {name}
+          </Text>
+        </div>
+      );
+    }
     return (
       <div
         style={{ ...style, opacity: 1 }}
         className={` ${Object.values(classes).join(" ")} ${className}`}
-        onMouseOver={e => {
-          e.stopPropagation();
-          meta.hover = true;
-        }}
-        onMouseOut={e => {
-          e.stopPropagation();
-          meta.hover = false;
-        }}
+        onMouseOver={onMouseOver}
+        onMouseOut={onMouseOut}
         onDoubleClick={onDoubleClick}
-        onClick={async e => {
-          e.preventDefault();
-          e.stopPropagation();
-
-          if (!(await editor.applySelectedSource())) {
-            return;
-          }
-
-          if (onBeforeSelect) {
-            onBeforeSelect(source.id);
-          }
-
-          editor.rootSelected = false;
-          editor.selectedId = source.id;
-
-          if (onSelected) {
-            onSelected(source.id);
-          }
-        }}
+        onClick={onClick}
       >
-        {showElementTag && (
-          <div
-            className={`cactiva-element-tag ${classes.hover} ${classes.selected}`}
-          >
-            <Text size={300} color={"white"}>
-              {name}
-            </Text>
-          </div>
-        )}
+        <ElementTag />
         {children}
       </div>
     );

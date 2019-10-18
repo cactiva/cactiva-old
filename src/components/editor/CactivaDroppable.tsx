@@ -72,7 +72,6 @@ export default observer(
           el = removeElementById(root, childItem.id);
         }
         if (el) {
-          console.log(child.id, el, insertTo);
           addChildInId(root, child.id, el, insertTo);
         }
         commitChanges(editor);

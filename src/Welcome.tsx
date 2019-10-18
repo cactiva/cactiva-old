@@ -1,70 +1,89 @@
-import {
-  Button,
-  Dialog,
-  Icon,
-  Spinner,
-  TextInputField,
-  Pane
-} from 'evergreen-ui';
-import { observer, useObservable } from 'mobx-react-lite';
-import React from 'react';
-import './Welcome.scss';
+import { Button, Dialog, Icon, Spinner, TextInputField } from "evergreen-ui";
+import { observer, useObservable } from "mobx-react-lite";
+import React, { useEffect } from "react";
+import App from "./App";
+import api from "./libs/api";
+import editor from "./store/editor";
+import "./Welcome.scss";
 
-export default observer(({ editor }: any) => {
-  // if (editor.status === 'loading') {
-  return <Loading />;
-  // }
-  return (
-    <div className='welcome-wrapper'>
-      <div className='welcome-canvas'>
-        <div className='canvas-left'>
-          <div className='logo'>
-            <div className='title'>
-              <img src='./logo512.png' />
-              <label>CACTIVA</label>
-            </div>
-            <div className='subtitle'>
-              <label>
-                Hello! <br /> Welcome to CACTIVA.
-              </label>
-              <p>
-                Cactiva is an application designed to make react apps easily and
-                the GUI editor makes it easier to write code and is more fun.
-              </p>
-            </div>
-          </div>
+export default observer(() => {
+  const { status, current } = editor;
+  useEffect(() => {
+    api.get("project/info").then(res => {
+      editor.name = res.app;
+      editor.cli.status = res.status;
+    });
+    editor.load(
+      localStorage.getItem("cactiva-current-path") || "/src/Home.tsx"
+    );
+  }, []);
 
-          <div className='background'>
-            <img src='./images/code.png' />
-          </div>
-        </div>
-        <div className='canvas-right'>
-          <div className='navigation'>
-            <label>Recent</label>
-            <div className='menu'>
-              <Icon icon='control' color='#38c7cd' size={20} />
-              <div className='title'>
-                <label>sfa-knm</label>
-                <p>/app/sfa-knm</p>
+  useEffect(() => {
+    if (status === "failed") {
+      editor.load("/src/Home.tsx");
+    }
+  }, [status]);
+
+  if (status === "ready" && !!current) {
+    return <App />;
+  }
+
+  if (!!current && (status === "ready" || status === "failed")) {
+    return (
+      <div className="welcome-wrapper">
+        <div className="welcome-canvas">
+          <div className="canvas-left">
+            <div className="logo">
+              <div className="title">
+                <img src="./logo512.png" />
+                <label>CACTIVA</label>
+              </div>
+              <div className="subtitle">
+                <label>
+                  Hello! <br /> Welcome to CACTIVA.
+                </label>
+                <p>
+                  Cactiva is an application designed to make react apps easily
+                  and the GUI editor makes it easier to write code and is more
+                  fun.
+                </p>
               </div>
             </div>
-            <div className='menu'>
-              <Icon icon='control' color='#38c7cd' size={20} />
-              <div className='title'>
-                <label>pelindo</label>
-                <p>/app/pelindo</p>
-              </div>
+
+            <div className="background">
+              <img src="./images/code.png" />
             </div>
           </div>
-          <div className='action'>
-            <NewProject />
-            <div className='divider' />
-            <Button iconBefore='folder-open'>Open...</Button>
+          <div className="canvas-right">
+            <div className="navigation">
+              <label>Recent</label>
+              <div className="menu">
+                <Icon icon="control" color="#38c7cd" size={20} />
+                <div className="title">
+                  <label>sfa-knm</label>
+                  <p>/app/sfa-knm</p>
+                </div>
+              </div>
+              <div className="menu">
+                <Icon icon="control" color="#38c7cd" size={20} />
+                <div className="title">
+                  <label>pelindo</label>
+                  <p>/app/pelindo</p>
+                </div>
+              </div>
+            </div>
+            <div className="action">
+              <NewProject />
+              <div className="divider" />
+              <Button iconBefore="folder-open">Open...</Button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  return <Loading />;
 });
 
 const NewProject = observer(() => {
@@ -72,7 +91,7 @@ const NewProject = observer(() => {
     isShown: false,
     loading: false,
     isInvalid: false,
-    projectName: ''
+    projectName: ""
   });
   return (
     <>
@@ -83,22 +102,22 @@ const NewProject = observer(() => {
         onCloseComplete={() => (meta.isShown = false)}
         preventBodyScrolling
       >
-        <div className='modal-wrapper'>
-          <div className='modal-create'>
+        <div className="modal-wrapper">
+          <div className="modal-create">
             <TextInputField
-              label='Project Name'
+              label="Project Name"
               required
-              flexDirection='column'
+              flexDirection="column"
               flex={1}
               value={meta.projectName}
               onChange={(e: any) => {
                 meta.projectName = e.nativeEvent.target.value;
               }}
               isInvalid={meta.isInvalid}
-              validationMessage='This field is required'
+              validationMessage="This field is required"
             />
             <Button
-              appearance='primary'
+              appearance="primary"
               onClick={() => {
                 meta.isInvalid = false;
                 if (!meta.projectName) meta.isInvalid = true;
@@ -107,28 +126,28 @@ const NewProject = observer(() => {
                   setTimeout(() => {
                     meta.isShown = false;
                     meta.loading = false;
-                    meta.projectName = '';
+                    meta.projectName = "";
                   }, 5000);
                 }
               }}
-              iconBefore='folder-new'
+              iconBefore="folder-new"
             >
               Create
             </Button>
           </div>
 
           {meta.loading && (
-            <div className='loading-content'>
-              <div className='loading-message'>
-                <Icon icon='tick-circle' color='success' size={24} />
+            <div className="loading-content">
+              <div className="loading-message">
+                <Icon icon="tick-circle" color="success" size={24} />
                 <label>Creating folder...</label>
               </div>
-              <div className='loading-message'>
-                <Spinner size={24} display='block' />
+              <div className="loading-message">
+                <Spinner size={24} display="block" />
                 <label>Setup project...</label>
               </div>
-              <div className='loading-message'>
-                <Spinner size={24} display='block' />
+              <div className="loading-message">
+                <Spinner size={24} display="block" />
                 <label> Opening CACTIVA...</label>
               </div>
             </div>
@@ -136,11 +155,11 @@ const NewProject = observer(() => {
         </div>
       </Dialog>
       <Button
-        appearance='primary'
+        appearance="primary"
         onClick={() => {
           meta.isShown = true;
         }}
-        iconBefore='folder-new'
+        iconBefore="folder-new"
       >
         New Project...
       </Button>
@@ -150,9 +169,9 @@ const NewProject = observer(() => {
 
 const Loading = () => {
   return (
-    <div className='wrapper'>
-      <div className='loading-screen'>
-        <Spinner size={32} display='block' />
+    <div className="welcome-wrapper">
+      <div className="loading-screen">
+        <Spinner size={32} display="block" />
         <label>Loading...</label>
       </div>
     </div>

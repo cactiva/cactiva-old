@@ -82,16 +82,18 @@ body {
       display: block;
       height: 100%;
     }
-    > .cactiva-editor-loading {
-      display: flex;
-      align-items: center;
-      flex-direction: row;
-      justify-content: center;
-    }
     .gutter {
       z-index: 10;
       cursor: col-resize;
       border-right: 1px solid #ccc;
     }
   }
+}
+
+.cactiva-editor-loading {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  flex: 1;
 }
