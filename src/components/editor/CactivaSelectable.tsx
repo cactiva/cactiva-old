@@ -53,20 +53,8 @@ export default observer(
     };
     const onMouseOver = (e: any) => {
       e.stopPropagation();
-      meta.hover = true;
+      if (!meta.hover) meta.hover = true;
     };
-    let ElementTag = () => <div />;
-    if (showElementTag) {
-      ElementTag = () => (
-        <div
-          className={`cactiva-element-tag ${classes.hover} ${classes.selected}`}
-        >
-          <Text size={300} color={"white"}>
-            {name}
-          </Text>
-        </div>
-      );
-    }
     return (
       <div
         style={{ ...style, opacity: 1 }}
@@ -76,7 +64,15 @@ export default observer(
         onDoubleClick={onDoubleClick}
         onClick={onClick}
       >
-        <ElementTag />
+        {showElementTag && (
+          <div
+            className={`cactiva-element-tag ${classes.hover} ${classes.selected}`}
+          >
+            <Text size={300} color={"white"}>
+              {name}
+            </Text>
+          </div>
+        )}
         {children}
       </div>
     );
