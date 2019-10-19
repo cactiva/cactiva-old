@@ -13,7 +13,7 @@ export default observer((props: any) => {
     <CactivaDropChild cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva} style={style}>
-          <div className="cactiva-element rn-text-input" style={style}>
+          <div className="rn-text-input" style={style}>
             {tagProps.defaultValue ? (
               tagProps.defaultValue
             ) : (

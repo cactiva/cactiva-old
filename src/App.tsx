@@ -88,7 +88,7 @@ export default observer(() => {
   const { current, status } = editor;
   const meta = useObservable({
     currentPane: "props",
-    sizeScreen: [15, 85]
+    sizeScreen: [15, 85, 0]
   });
   const renderFont = current ? current.renderfont : false;
   const traitPane = current ? current.traitPane : false;
@@ -101,7 +101,7 @@ export default observer(() => {
   }, [renderFont]);
 
   useEffect(() => {
-    meta.sizeScreen = traitPane ? [15, 70, 15] : [15, 85];
+    meta.sizeScreen = traitPane ? [15, 70, 15] : [15, 85, 0];
   }, [traitPane]);
   return (
     <DndProvider backend={HTML5Backend}>
