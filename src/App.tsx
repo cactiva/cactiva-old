@@ -1,6 +1,6 @@
 import "@src/App.scss";
 import CactivaEditor from "@src/components/editor/CactivaEditor";
-import { Pane, Spinner, Text } from "evergreen-ui";
+import { Pane, Text } from "evergreen-ui";
 import hotkeys from "hotkeys-js";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
@@ -10,7 +10,6 @@ import HTML5Backend from "react-dnd-html5-backend-cjs";
 import Split from "react-split";
 import CactivaTree, { tree } from "./components/ctree/CactivaTree";
 import {
-  addChildInId,
   commitChanges,
   findParentElementById,
   prepareChanges,
@@ -20,7 +19,6 @@ import CactivaHead from "./components/head/CactivaHead";
 import CactivaTraits from "./components/traits/CactivaTraits";
 import api from "./libs/api";
 import editor from "./store/editor";
-import { toJS } from "mobx";
 
 const generateFonts = () => {
   api.get("assets/font-list").then(res => {
@@ -129,17 +127,17 @@ export default observer(() => {
               e.preventDefault();
             }}
           >
-            <CactivaEditorCanvas />
+            <CactivaEditorCanvas current={current} />
           </div>
-          <CactivaTraitsCanvas />
+          <CactivaTraitsCanvas current={current} />
         </Split>
       </div>
     </DndProvider>
   );
 });
 
-const CactivaEditorCanvas = observer(() => {
-  const { current } = editor;
+const CactivaEditorCanvas = observer((props: any) => {
+  const { current } = props;
 
   if (Object.keys(tree.list).length > 0 && current && current.source) {
     return <CactivaEditor editor={current} />;
@@ -148,8 +146,8 @@ const CactivaEditorCanvas = observer(() => {
   return <div />;
 });
 
-const CactivaTraitsCanvas = observer(() => {
-  const { current } = editor;
+const CactivaTraitsCanvas = observer((props: any) => {
+  const { current } = props;
   const traitPane = current ? current.traitPane : false;
   const activeTraits =
     current && current.source && current.selected && traitPane;

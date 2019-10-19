@@ -4,7 +4,6 @@ import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDropChild from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
 import { parseProps, parseValue } from "../../../utility/parser/parser";
-import { toJS } from "mobx";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;

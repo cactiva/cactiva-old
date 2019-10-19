@@ -24,7 +24,6 @@ export default observer(() => {
     }
   }, [status]);
 
-
   if (!!current) {
     if (status !== "failed") {
       return <App />;
@@ -93,6 +92,21 @@ const NewProject = observer(() => {
     isInvalid: false,
     projectName: ""
   });
+  const onClick = () => {
+    meta.isInvalid = false;
+    if (!meta.projectName) meta.isInvalid = true;
+    else {
+      meta.loading = true;
+      setTimeout(() => {
+        meta.isShown = false;
+        meta.loading = false;
+        meta.projectName = "";
+      }, 5000);
+    }
+  };
+  const onChange = (e: any) => {
+    meta.projectName = e.nativeEvent.target.value;
+  };
   return (
     <>
       <Dialog
@@ -110,26 +124,13 @@ const NewProject = observer(() => {
               flexDirection="column"
               flex={1}
               value={meta.projectName}
-              onChange={(e: any) => {
-                meta.projectName = e.nativeEvent.target.value;
-              }}
+              onChange={onChange}
               isInvalid={meta.isInvalid}
               validationMessage="This field is required"
             />
             <Button
               appearance="primary"
-              onClick={() => {
-                meta.isInvalid = false;
-                if (!meta.projectName) meta.isInvalid = true;
-                else {
-                  meta.loading = true;
-                  setTimeout(() => {
-                    meta.isShown = false;
-                    meta.loading = false;
-                    meta.projectName = "";
-                  }, 5000);
-                }
-              }}
+              onClick={onClick}
               iconBefore="folder-new"
             >
               Create

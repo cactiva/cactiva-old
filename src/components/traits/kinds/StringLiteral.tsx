@@ -19,17 +19,6 @@ export default observer((trait: ICactivaTraitFieldProps) => {
     isShown: false
   });
 
-  const metaIcon = useObservable({
-    source: "Entypo",
-    search: "",
-    list: Icons["Entypo"]
-  });
-
-  const metaFont = useObservable({
-    list: [],
-    isShown: false
-  });
-
   const optionItems = _.get(trait, "options.items", []);
   const update = (e: any) => {
     meta.value = e.target.value;
@@ -39,21 +28,6 @@ export default observer((trait: ICactivaTraitFieldProps) => {
     meta.value = trait.value || trait.default;
   }, [trait.value]);
 
-  useEffect(() => {
-    if (_.get(trait, "mode") === "icon") {
-      metaIcon.source = parseValue(trait.source.props.source);
-      metaIcon.list = Icons[metaIcon.source].filter((x: string) =>
-        x.toLowerCase().includes(metaIcon.search)
-      );
-    }
-    if (_.get(trait, "mode") === "font") {
-      const load = async () => {
-        const filetree = await api.get("assets/font-list");
-        metaFont.list = filetree.children;
-      };
-      load();
-    }
-  }, [trait]);
   return (
     <>
       {!trait.mode && (
@@ -105,9 +79,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
           </div>
         )}
 
-      {trait.mode === "icon" && (
-        <IconsEl trait={trait} meta={meta} metaIcon={metaIcon} />
-      )}
+      {trait.mode === "icon" && <IconsEl trait={trait} meta={meta} />}
 
       {trait.mode === "color" && <ColorEl trait={trait} meta={meta} />}
 
@@ -126,9 +98,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
         </div>
       )}
 
-      {trait.mode === "font" && (
-        <FontsEl trait={trait} meta={meta} metaFont={metaFont} />
-      )}
+      {trait.mode === "font" && <FontsEl trait={trait} meta={meta} />}
     </>
   );
 });
@@ -153,7 +123,7 @@ function textColor(bgColor: string, lightColor: string, darkColor: string) {
 }
 
 const IconsEl = observer((props: any) => {
-  const { trait, meta, metaIcon } = props;
+  const { trait, meta } = props;
   const onChange = (e: any) => {
     let v = e.target.value.toLowerCase();
     metaIcon.search = v;
@@ -161,6 +131,19 @@ const IconsEl = observer((props: any) => {
       x.toLowerCase().includes(v)
     );
   };
+
+  const metaIcon = useObservable({
+    source: "Entypo",
+    search: "",
+    list: Icons["Entypo"]
+  });
+
+  useEffect(() => {
+    metaIcon.source = parseValue(trait.source.props.source);
+    metaIcon.list = Icons[metaIcon.source].filter((x: string) =>
+      x.toLowerCase().includes(metaIcon.search)
+    );
+  }, []);
   return (
     <div
       className={`trait-string-literal cactiva-trait-icon`}
@@ -217,16 +200,18 @@ const IconEl = observer((props: any) => {
 
 const ColorEl = observer((props: any) => {
   const { meta, trait } = props;
+  const metaColor = useObservable({
+    value: meta.value
+  });
   const onChange = (v: any) => {
-    meta.value = v.hex;
+    metaColor.value = v.hex;
     if (v.rgb.a < 1) {
-      meta.value = `rgba(${Object.values(v.rgb)})`;
+      metaColor.value = `rgba(${Object.values(v.rgb)})`;
     }
-    trait.update(`"${meta.value}"`);
   };
-  const content = () => (
-    <SketchPicker onChangeComplete={onChange} color={meta.value} />
-  );
+  const update = () => {
+    trait.update(`"${metaColor.value}"`);
+  };
   return (
     <div className="cactiva-trait-color-picker">
       <div
@@ -236,23 +221,26 @@ const ColorEl = observer((props: any) => {
         <input
           className={`cactiva-trait-input`}
           type="text"
-          value={meta.value || ""}
+          value={metaColor.value || ""}
           style={{
-            backgroundColor: meta.value,
-            color: textColor(meta.value || "#fff", "#fff", "#000")
+            backgroundColor: metaColor.value,
+            color: textColor(metaColor.value || "#fff", "#fff", "#000")
           }}
           onChange={e => {
-            meta.value = e.target.value;
+            metaColor.value = e.target.value;
           }}
           onFocus={e => {
             e.target.select();
           }}
-          onBlur={() => {
-            trait.update(`"${meta.value}"`);
-          }}
+          onBlur={update}
         />
       </div>
-      <Popover content={content}>
+      <Popover
+        onCloseComplete={update}
+        content={
+          <SketchPicker onChangeComplete={onChange} color={metaColor.value} />
+        }
+      >
         <IconButton icon="helper-management" height={20} boxShadow="0px" />
       </Popover>
     </div>
@@ -304,7 +292,11 @@ const RadioEl = observer((props: any) => {
 });
 
 const FontsEl = observer((props: any) => {
-  const { meta, trait, metaFont } = props;
+  const { meta, trait } = props;
+  const metaFont = useObservable({
+    list: [],
+    isShown: false
+  });
   const onChange = (v: any) => {
     meta.value = v;
     trait.update(`"${meta.value}"`);
@@ -313,6 +305,12 @@ const FontsEl = observer((props: any) => {
     metaFont.list = v.list;
     trait.editor.renderfont = v.render;
   };
+
+  useEffect(() => {
+    api.get("assets/font-list").then(res => {
+      metaFont.list = res.children;
+    });
+  }, []);
   return (
     <div className="cactiva-trait-font">
       <select

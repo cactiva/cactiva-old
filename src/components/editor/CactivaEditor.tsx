@@ -100,7 +100,6 @@ export default observer(({ editor }: any) => {
       monacoEdRef.current.layout();
     }
   };
-  console.log("Optimize");
   return (
     <div className="cactiva-editor" {...rootProps}>
       {meta.onDrag && <input {...getInputProps()} />}
@@ -138,7 +137,7 @@ export default observer(({ editor }: any) => {
           </Split>
         </div>
       </div>
-      <CactivaEditorFooter editor={editor} meta={meta} />
+      <CactivaEditorFooter editor={editor} />
     </div>
   );
 });
@@ -361,29 +360,27 @@ const CactivaEditorSource = observer((props: any) => {
 
 const CactivaEditorFooter = observer((props: any) => {
   const { editor } = props;
+  const { jsx } = editor;
   const btnSourceClick = () => {
-    editor.jsx = !editor.jsx;
-    if (editor.jsx === false) {
+    editor.jsx = !jsx;
+    if (jsx === false) {
       editor.rootSelected = false;
       editor.selectedSource = "";
     }
   };
 
   useEffect(() => {
-    localStorage.setItem(
-      "cactiva-editor-source-visible",
-      editor.jsx ? "y" : "n"
-    );
-  }, [editor.jsx]);
+    localStorage.setItem("cactiva-editor-source-visible", jsx ? "y" : "n");
+  }, [jsx]);
 
   return (
     <div className="cactiva-editor-footer">
       <CactivaBreadcrumb editor={editor} />
       <div
-        className={`toggle-jsx ${editor.jsx ? "active" : ""}`}
+        className={`toggle-jsx ${jsx ? "active" : ""}`}
         onClick={btnSourceClick}
       >
-        <Icon icon={editor.jsx ? "eye-off" : "eye-open"} size={12} />
+        <Icon icon={jsx ? "eye-off" : "eye-open"} size={12} />
         <div style={{ marginLeft: 5 }}>Code</div>
       </div>
     </div>

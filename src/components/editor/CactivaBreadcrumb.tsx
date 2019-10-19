@@ -12,14 +12,6 @@ export default observer(({ editor }: any) => {
     nav: [],
     shouldUpdateNav: true
   });
-  useEffect(() => {
-    if (!meta.shouldUpdateNav) {
-      meta.shouldUpdateNav = true;
-      return;
-    }
-    meta.nav = generatePath(editor, editor.source);
-  }, [editor.selectedId, editor.undoStack.length]);
-
   const lastNav: any = meta.nav[meta.nav.length - 1];
   const lastId = _.get(lastNav, "source.id");
   const onClick = () => {
@@ -34,6 +26,15 @@ export default observer(({ editor }: any) => {
       editor.jsx = false;
     }
   };
+
+  useEffect(() => {
+    if (!meta.shouldUpdateNav) {
+      meta.shouldUpdateNav = true;
+      return;
+    }
+    meta.nav = generatePath(editor, editor.source);
+  }, [editor.selectedId, editor.undoStack.length]);
+
   return (
     <div className="cactiva-breadcrumb">
       <div
@@ -127,8 +128,8 @@ const ElementTag = observer((props: any) => {
 const generatePath = (editor: any, source: any) => {
   const nav: any = [];
   const selectedId = getIds(editor.selectedId);
-  const currentId = [...selectedId];
-  for (let id in selectedId) {
+  const currentId = _.clone(selectedId);
+  selectedId.map(_ => {
     const el = findElementById(source, currentId);
     if (!!el) {
       if (!!el.name)
@@ -143,6 +144,6 @@ const generatePath = (editor: any, source: any) => {
         });
       currentId.pop();
     }
-  }
+  });
   return nav.reverse();
 };

@@ -47,6 +47,22 @@ export default class extends CactivaTag {
           }
         },
         {
+          name: "Height",
+          path: "height",
+          kind: SyntaxKind.NumericLiteral,
+          options: {
+            styles
+          }
+        },
+        {
+          name: "Width",
+          path: "width",
+          kind: SyntaxKind.NumericLiteral,
+          options: {
+            styles
+          }
+        },
+        {
           name: "Blur Radius",
           path: "blurRadius",
           kind: SyntaxKind.NumericLiteral,

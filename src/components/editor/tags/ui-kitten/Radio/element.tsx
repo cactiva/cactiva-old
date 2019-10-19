@@ -1,21 +1,18 @@
-import CactivaChildren from "@src/components/editor/CactivaChildren";
-import CactivaDropMarker from "@src/components/editor/CactivaDropMarker";
+import {
+  commitChanges,
+  prepareChanges
+} from "@src/components/editor/utility/elements/tools";
+import {
+  parseProps,
+  parseValue
+} from "@src/components/editor/utility/parser/parser";
+import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React from "react";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDropChild from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
-import { Text } from "evergreen-ui";
-import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
-import {
-  prepareChanges,
-  commitChanges
-} from "@src/components/editor/utility/elements/tools";
-import {
-  parseValue,
-  parseProps
-} from "@src/components/editor/utility/parser/parser";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
