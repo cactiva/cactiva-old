@@ -19,6 +19,7 @@ import CactivaHead from "./components/head/CactivaHead";
 import CactivaTraits from "./components/traits/CactivaTraits";
 import api from "./libs/api";
 import editor from "./store/editor";
+import { toJS } from "mobx";
 
 const generateFonts = () => {
   api.get("assets/font-list").then(res => {
@@ -86,7 +87,7 @@ export default observer(() => {
   const { current, status } = editor;
   const meta = useObservable({
     currentPane: "props",
-    sizeScreen: [15, 85, 0]
+    sizeScreen: [15, 85]
   });
   const renderFont = current ? current.renderfont : false;
   const traitPane = current ? current.traitPane : false;
@@ -99,7 +100,7 @@ export default observer(() => {
   }, [renderFont]);
 
   useEffect(() => {
-    meta.sizeScreen = traitPane ? [15, 70, 15] : [15, 85, 0];
+    meta.sizeScreen = traitPane ? [15, 70, 15] : [15, 85];
   }, [traitPane]);
   return (
     <DndProvider backend={HTML5Backend}>
@@ -159,7 +160,7 @@ const CactivaTraitsCanvas = observer((props: any) => {
           ? true
           : false);
   }, []);
-  if (!traitPane) return <div style={{ flex: 1 }}></div>;
+  if (!traitPane) return <div style={{ flex: 1 }} />;
 
   return (
     <div className="cactiva-pane">
