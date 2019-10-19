@@ -137,23 +137,16 @@ export default observer(() => {
 
 const CactivaEditorCanvas = observer(() => {
   const { current } = editor;
-  let Canvas = observer(() => (
-    <div className="cactiva-editor-loading">
-      <Spinner size={18} />
-      <Text color="muted" size={300} style={{ marginLeft: 8 }}>
-        Loading
-      </Text>
-    </div>
-  ));
+
   if (
-    editor.status === "ready" &&
     Object.keys(tree.list).length > 0 &&
     current &&
     current.source
   ) {
-    Canvas = observer(() => <CactivaEditor editor={current} />);
+    return <CactivaEditor editor={current} />;
   }
-  return <Canvas />;
+
+  return <div />;
 });
 
 const CactivaTraitsCanvas = observer(() => {
@@ -177,20 +170,20 @@ const CactivaTraitsCanvas = observer(() => {
         {activeTraits ? (
           <CactivaTraits editor={current} />
         ) : (
-          <Pane
-            display="flex"
-            flexDirection="column"
-            padding={10}
-            alignItems="center"
-            justifyContent="center"
-          >
-            <img
-              src="/images/reindeer.svg"
-              style={{ width: "50%", margin: 20, opacity: 0.4 }}
-            />
-            <Text size={300}>Please select a component</Text>
-          </Pane>
-        )}
+            <Pane
+              display="flex"
+              flexDirection="column"
+              padding={10}
+              alignItems="center"
+              justifyContent="center"
+            >
+              <img
+                src="/images/reindeer.svg"
+                style={{ width: "50%", margin: 20, opacity: 0.4 }}
+              />
+              <Text size={300}>Please select a component</Text>
+            </Pane>
+          )}
       </div>
     </div>
   );

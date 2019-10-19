@@ -87,12 +87,14 @@ export default observer((props: any) => {
             />
           )}
 
-          <CactivaChildren
-            cactiva={cactiva}
-            parentInfo={(c: any) => ({
-              canDropAfter: false
-            })}
-          />
+          <div className="text">
+            <CactivaChildren
+              cactiva={cactiva}
+              parentInfo={(c: any) => ({
+                canDropAfter: false
+              })}
+            />
+          </div>
         </CactivaSelectable>
       </CactivaDraggable>
     </CactivaDroppable>

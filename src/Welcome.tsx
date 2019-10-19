@@ -24,11 +24,11 @@ export default observer(() => {
     }
   }, [status]);
 
-  if (status === "ready" && !!current) {
-    return <App />;
-  }
 
-  if (!!current && (status === "ready" || status === "failed")) {
+  if (!!current) {
+    if (status !== "failed") {
+      return <App />;
+    }
     return (
       <div className="welcome-wrapper">
         <div className="welcome-canvas">

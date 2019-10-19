@@ -58,7 +58,8 @@ export default observer((trait: ICactivaTraitFieldProps) => {
       } else if (maxValue !== undefined && v > maxValue) {
         v = maxValue;
       }
-      meta.value = v;
+      // meta.value = v;
+      trait.update(v);
     }
   };
   const onClickedMouseUpCapture = (e: any) => {
@@ -117,6 +118,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
       trait.update(undefined);
     }
   };
+
   useEffect(() => {
     meta.value = trait.value || trait.default;
   }, [trait.value]);

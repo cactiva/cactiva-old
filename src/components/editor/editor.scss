@@ -19,7 +19,7 @@
   }
   &.kind {
     padding: 0;
-    min-height:15px !important;
+    min-height: 15px !important;
     &.selected,
     &.hover {
       border: 1px solid #3ba0fb;
@@ -46,6 +46,10 @@
     display: flex;
     padding: 5px 0px;
   }
+}
+
+.text > div > div > .kind {
+  margin: 0px 5px;
 }
 
 .cactiva-element-tag {
