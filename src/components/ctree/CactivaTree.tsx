@@ -71,6 +71,34 @@ export default observer(({ editor }: any) => {
     }
   });
   let hover = canDrop(dragItem, { relativePath: "/src" }, childrenOver);
+  const onSearch = (e: any) => {
+    meta.keyword = e.nativeEvent.target.value;
+    if (meta.keyword.length === 0) {
+      meta.list = meta.source;
+    } else {
+      meta.list = [];
+
+      const recurse = (list: any[]) => {
+        for (let i in list) {
+          const item: any = list[i];
+          if (item.type === "file") {
+            if (
+              fuzzyMatch(item.name.toLowerCase(), meta.keyword.toLowerCase())
+            ) {
+              meta.list.push(item);
+            }
+          } else {
+            item.type === "dir";
+          }
+          {
+            recurse(item.children);
+          }
+        }
+      };
+      recurse(meta.source);
+    }
+  };
+
   return (
     <div
       className="cactiva-tree"
@@ -85,36 +113,7 @@ export default observer(({ editor }: any) => {
           width="100%"
           height={25}
           spellCheck={false}
-          onChange={(e: any) => {
-            meta.keyword = e.nativeEvent.target.value;
-            if (meta.keyword.length === 0) {
-              meta.list = meta.source;
-            } else {
-              meta.list = [];
-
-              const recurse = (list: any[]) => {
-                for (let i in list) {
-                  const item: any = list[i];
-                  if (item.type === "file") {
-                    if (
-                      fuzzyMatch(
-                        item.name.toLowerCase(),
-                        meta.keyword.toLowerCase()
-                      )
-                    ) {
-                      meta.list.push(item);
-                    }
-                  } else {
-                    item.type === "dir";
-                  }
-                  {
-                    recurse(item.children);
-                  }
-                }
-              };
-              recurse(meta.source);
-            }
-          }}
+          onChange={onSearch}
         />
 
         {meta.newShown && (
@@ -134,63 +133,7 @@ export default observer(({ editor }: any) => {
         )}
         <Popover
           isShown={meta.newShown}
-          content={
-            <div className="ctree-menu">
-              <Menu>
-                <Menu.Item
-                  icon="new-text-box"
-                  onSelect={() => {
-                    meta.newShown = false;
-                    setTimeout(async () => {
-                      const newname = prompt("New component name:");
-                      if (newname) {
-                        const path =
-                          "/src/" +
-                          _.startCase(newname).replace(/[^0-9a-zA-Z]/g, "") +
-                          ".tsx";
-                        editor.status = "creating";
-                        try {
-                          await api.get(`ctree/newfile?path=${path}`);
-                        } catch (e) {
-                          console.log(e);
-                        }
-                        await reloadList();
-                        editor.status = "ready";
-                      }
-                    });
-                  }}
-                >
-                  New Component
-                </Menu.Item>
-                <Menu.Item
-                  icon="folder-new"
-                  onSelect={() => {
-                    meta.newShown = false;
-                    setTimeout(async () => {
-                      const newname = prompt("New folder name:");
-                      if (newname) {
-                        editor.status = "creating";
-                        try {
-                          await api.get(
-                            `ctree/newdir?path=/src/${newname.replace(
-                              /[^0-9a-zA-Z]/g,
-                              ""
-                            )}`
-                          );
-                        } catch (e) {
-                          console.log(e);
-                        }
-                        await reloadList();
-                        editor.status = "ready";
-                      }
-                    });
-                  }}
-                >
-                  New folder
-                </Menu.Item>
-              </Menu>
-            </div>
-          }
+          content={<ContentEl editor={editor} />}
         >
           <Button
             className={`search-opt`}
@@ -226,6 +169,58 @@ export default observer(({ editor }: any) => {
           <div style={{ height: 100 }} />
         </div>
       </div>
+    </div>
+  );
+});
+
+const ContentEl = observer((props: any) => {
+  const { editor } = props;
+  const onSelectFolder = () => {
+    meta.newShown = false;
+    setTimeout(async () => {
+      const newname = prompt("New folder name:");
+      if (newname) {
+        editor.status = "creating";
+        try {
+          await api.get(
+            `ctree/newdir?path=/src/${newname.replace(/[^0-9a-zA-Z]/g, "")}`
+          );
+        } catch (e) {
+          console.log(e);
+        }
+        await reloadList();
+        editor.status = "ready";
+      }
+    });
+  };
+  const onSelectComponent = () => {
+    meta.newShown = false;
+    setTimeout(async () => {
+      const newname = prompt("New component name:");
+      if (newname) {
+        const path =
+          "/src/" + _.startCase(newname).replace(/[^0-9a-zA-Z]/g, "") + ".tsx";
+        editor.status = "creating";
+        try {
+          await api.get(`ctree/newfile?path=${path}`);
+        } catch (e) {
+          console.log(e);
+        }
+        await reloadList();
+        editor.status = "ready";
+      }
+    });
+  };
+  return (
+    <div className="ctree-menu">
+      <Menu>
+        <Menu.Item icon="new-text-box" onSelect={onSelectComponent}>
+          New Component
+        </Menu.Item>
+        <Menu.Item icon="folder-new" onSelect={onSelectFolder}>
+          New folder
+        </Menu.Item>
+      </Menu>
     </div>
   );
 });
@@ -267,6 +262,10 @@ const File = ({
   if (ref && ref.current) {
     getRef(ref.current);
   }
+  const onClick = () => {
+    localStorage.setItem("cactiva-current-path", e.relativePath);
+    editor.load(e.relativePath);
+  };
 
   return (
     <CactivaDraggable
@@ -286,10 +285,7 @@ const File = ({
         onContextMenu={() => {
           toggle();
         }}
-        onClick={() => {
-          localStorage.setItem("cactiva-current-path", e.relativePath);
-          editor.load(e.relativePath);
-        }}
+        onClick={onClick}
         style={{ paddingLeft: level * 10 }}
         className={`item ${selected === e.relativePath ? "selected" : ""}`}
       >
@@ -375,6 +371,17 @@ const Directory = ({
     dropItemRef(ref.current);
     getRef(ref.current);
   }
+  const onClick = () => {
+    e.expanded = !e.expanded;
+    if (e.expanded) {
+      meta.expandedDir.push(e.relativePath);
+    } else {
+      const idx = meta.expandedDir.indexOf(e.relativePath);
+      if (idx >= 0) {
+        meta.expandedDir.splice(idx, 1);
+      }
+    }
+  };
 
   return (
     <CactivaDraggable
@@ -394,17 +401,7 @@ const Directory = ({
         ref={ref}
         className={`item ${hover ? "hover" : ""}`}
         style={{ paddingLeft: level * 10 }}
-        onClick={() => {
-          e.expanded = !e.expanded;
-          if (e.expanded) {
-            meta.expandedDir.push(e.relativePath);
-          } else {
-            const idx = meta.expandedDir.indexOf(e.relativePath);
-            if (idx >= 0) {
-              meta.expandedDir.splice(idx, 1);
-            }
-          }
-        }}
+        onClick={onClick}
         onContextMenu={() => {
           toggle();
         }}
@@ -482,6 +479,114 @@ const Tree = observer(({ editor, tree, selected, level }: any) => {
 
 const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
   const toggleRef = useRef(null as any);
+  const newComponent = () => {
+    const toggle = _.get(toggleRef, "current");
+    toggle();
+    setTimeout(async () => {
+      const newname = prompt("New component name:");
+      if (newname) {
+        const path = e.relativePath.split("/");
+        if (e.type === "file") {
+          path.pop();
+        }
+        path.push(_.startCase(newname).replace(/[^0-9a-zA-Z]/g, "") + ".tsx");
+
+        editor.status = "creating";
+        try {
+          await api.get(`ctree/newfile?path=${path.join("/")}`);
+        } catch (e) {
+          console.log(e);
+        }
+        await reloadList();
+        editor.status = "ready";
+      }
+    });
+  };
+  const newFolder = () => {
+    const toggle = _.get(toggleRef, "current");
+    toggle();
+    setTimeout(async () => {
+      const newname = prompt("New folder name:");
+      if (newname) {
+        const path = e.relativePath.split("/");
+        if (e.type === "file") {
+          path.pop();
+        }
+        path.push(newname.replace(/[^0-9a-zA-Z]/g, ""));
+        editor.status = "creating";
+        try {
+          await api.get(`ctree/newdir?path=${path.join("/")}}`);
+        } catch (e) {
+          console.log(e);
+        }
+        await reloadList();
+        editor.status = "ready";
+      }
+    });
+  };
+  const duplicateFile = () => {
+    const toggle = _.get(toggleRef, "current");
+    toggle();
+    setTimeout(async () => {
+      const newname = prompt("Duplicate to:", name + "Copy");
+      if (newname) {
+        editor.status = "duplicating";
+        const path = e.relativePath.split("/");
+        path.pop();
+        path.push(_.startCase(newname).replace(/[^0-9a-zA-Z]/g, "") + ".tsx");
+        try {
+          await api.get(
+            `ctree/duplicate?path=${e.relativePath}&to=${path.join("/")}`
+          );
+        } catch (e) {
+          console.log(e);
+        }
+        await reloadList();
+        editor.status = "ready";
+      }
+    });
+  };
+  const renameFile = () => {
+    const toggle = _.get(toggleRef, "current");
+    toggle();
+    setTimeout(async () => {
+      const newname = prompt("Rename to:", name.replace(".tsx", ""));
+      if (newname && e.name !== newname) {
+        const path = e.relativePath.split("/");
+        path.pop();
+        if (e.type === "file") {
+          path.push(_.startCase(newname).replace(/[^0-9a-zA-Z]/g, "") + ".tsx");
+        } else {
+          path.push(newname.replace(/[^0-9a-zA-Z]/g, ""));
+        }
+
+        editor.status = "renaming";
+        try {
+          await api.get(
+            `ctree/move?old=${e.relativePath}&new=${path.join("/")}`
+          );
+        } catch (e) {
+          console.log(e);
+        }
+        await reloadList();
+        editor.status = "ready";
+      }
+    });
+  };
+  const deleteFile = async () => {
+    const toggle = _.get(toggleRef, "current");
+    toggle();
+    if (confirm(`Are you sure want to delete ${e.relativePath}?`)) {
+      editor.status = "deleting";
+      try {
+        await api.get(`ctree/delete?path=${e.relativePath}`);
+      } catch (e) {
+        console.log(e);
+      }
+      await reloadList();
+      editor.status = "ready";
+    }
+  };
   return (
     <Popover
       content={
@@ -490,154 +595,22 @@ const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
             <Text>{name}</Text>
           </div>
           <Menu>
-            <Menu.Item
-              icon="new-text-box"
-              onSelect={() => {
-                const toggle = _.get(toggleRef, "current");
-                toggle();
-                setTimeout(async () => {
-                  const newname = prompt("New component name:");
-                  if (newname) {
-                    const path = e.relativePath.split("/");
-                    if (e.type === "file") {
-                      path.pop();
-                    }
-                    path.push(
-                      _.startCase(newname).replace(/[^0-9a-zA-Z]/g, "") + ".tsx"
-                    );
-
-                    editor.status = "creating";
-                    try {
-                      await api.get(`ctree/newfile?path=${path.join("/")}`);
-                    } catch (e) {
-                      console.log(e);
-                    }
-                    await reloadList();
-                    editor.status = "ready";
-                  }
-                });
-              }}
-            >
+            <Menu.Item icon="new-text-box" onSelect={newComponent}>
               New Component
             </Menu.Item>
-            <Menu.Item
-              icon="folder-new"
-              onSelect={() => {
-                const toggle = _.get(toggleRef, "current");
-                toggle();
-                setTimeout(async () => {
-                  const newname = prompt("New folder name:");
-                  if (newname) {
-                    const path = e.relativePath.split("/");
-                    if (e.type === "file") {
-                      path.pop();
-                    }
-                    path.push(newname.replace(/[^0-9a-zA-Z]/g, ""));
-                    editor.status = "creating";
-                    try {
-                      await api.get(`ctree/newdir?path=${path.join("/")}}`);
-                    } catch (e) {
-                      console.log(e);
-                    }
-                    await reloadList();
-                    editor.status = "ready";
-                  }
-                });
-              }}
-            >
+            <Menu.Item icon="folder-new" onSelect={newFolder}>
               New folder
             </Menu.Item>
             <Menu.Divider />
             {e.type === "file" && (
-              <Menu.Item
-                icon="duplicate"
-                onSelect={() => {
-                  const toggle = _.get(toggleRef, "current");
-                  toggle();
-                  setTimeout(async () => {
-                    const newname = prompt("Duplicate to:", name + "Copy");
-                    if (newname) {
-                      editor.status = "duplicating";
-                      const path = e.relativePath.split("/");
-                      path.pop();
-                      path.push(
-                        _.startCase(newname).replace(/[^0-9a-zA-Z]/g, "") +
-                          ".tsx"
-                      );
-                      try {
-                        await api.get(
-                          `ctree/duplicate?path=${
-                            e.relativePath
-                          }&to=${path.join("/")}`
-                        );
-                      } catch (e) {
-                        console.log(e);
-                      }
-                      await reloadList();
-                      editor.status = "ready";
-                    }
-                  });
-                }}
-              >
+              <Menu.Item icon="duplicate" onSelect={duplicateFile}>
                 Duplicate
               </Menu.Item>
             )}
-            <Menu.Item
-              icon="text-highlight"
-              onSelect={() => {
-                const toggle = _.get(toggleRef, "current");
-                toggle();
-                setTimeout(async () => {
-                  const newname = prompt(
-                    "Rename to:",
-                    name.replace(".tsx", "")
-                  );
-                  if (newname && e.name !== newname) {
-                    const path = e.relativePath.split("/");
-                    path.pop();
-                    if (e.type === "file") {
-                      path.push(
-                        _.startCase(newname).replace(/[^0-9a-zA-Z]/g, "") +
-                          ".tsx"
-                      );
-                    } else {
-                      path.push(newname.replace(/[^0-9a-zA-Z]/g, ""));
-                    }
-
-                    editor.status = "renaming";
-                    try {
-                      await api.get(
-                        `ctree/move?old=${e.relativePath}&new=${path.join("/")}`
-                      );
-                    } catch (e) {
-                      console.log(e);
-                    }
-                    await reloadList();
-                    editor.status = "ready";
-                  }
-                });
-              }}
-            >
+            <Menu.Item icon="text-highlight" onSelect={renameFile}>
               Rename
             </Menu.Item>
-            <Menu.Item
-              icon="trash"
-              intent="danger"
-              onSelect={async () => {
-                const toggle = _.get(toggleRef, "current");
-                toggle();
-                if (confirm(`Are you sure want to delete ${e.relativePath}?`)) {
-                  editor.status = "deleting";
-                  try {
-                    await api.get(`ctree/delete?path=${e.relativePath}`);
-                  } catch (e) {
-                    console.log(e);
-                  }
-                  await reloadList();
-                  editor.status = "ready";
-                }
-              }}
-            >
+            <Menu.Item icon="trash" intent="danger" onSelect={deleteFile}>
               Delete
             </Menu.Item>
           </Menu>

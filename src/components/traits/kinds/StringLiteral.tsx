@@ -1,29 +1,16 @@
+import { uuid } from "@src/components/editor/utility/elements/tools";
 import { parseValue } from "@src/components/editor/utility/parser/parser";
-import {
-  Button,
-  IconButton,
-  Pane,
-  Popover,
-  Text,
-  Tooltip,
-  Icon
-} from "evergreen-ui";
+import api from "@src/libs/api";
+import { Button, IconButton, Popover, Text, Tooltip } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
-import React, { useEffect, useRef } from "react";
-import {
-  SketchPicker,
-  PhotoshopPicker,
-  MaterialPicker,
-  ChromePicker
-} from "react-color";
+import React, { useEffect } from "react";
+import { SketchPicker } from "react-color";
 import * as IconSource from "react-web-vector-icons";
 import { ICactivaTraitFieldProps } from "../CactivaTraitField";
+import FontBrowser from "./components/FontBrowser";
 import IconMaps from "./components/IconMaps";
 import "./StringLiteral.scss";
-import api from "@src/libs/api";
-import { toJS } from "mobx";
-import FontBrowser from "./components/FontBrowser";
 
 const Icons = IconMaps();
 export default observer((trait: ICactivaTraitFieldProps) => {
@@ -44,6 +31,10 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   });
 
   const optionItems = _.get(trait, "options.items", []);
+  const update = (e: any) => {
+    meta.value = e.target.value;
+    trait.update(`"${meta.value}"`);
+  };
   useEffect(() => {
     meta.value = trait.value || trait.default;
   }, [trait.value]);
@@ -102,226 +93,49 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             <select
               className={`cactiva-trait-select`}
               value={meta.value}
-              onChange={e => {
-                meta.value = e.target.value;
-                trait.update(`"${meta.value}"`);
-              }}
+              onChange={update}
             >
               <option disabled={trait.default} value={""}>
                 Select ...
               </option>
-              {trait.options.items.map((item: any, i: number) => {
-                return (
-                  <option key={i} value={`${item.value}`}>
-                    {item.label}
-                  </option>
-                );
+              {trait.options.items.map((item: any) => {
+                return <OptionEl key={uuid("traitstringoption")} item={item} />;
               })}
             </select>
           </div>
         )}
 
       {trait.mode === "icon" && (
-        <div
-          className={`trait-string-literal cactiva-trait-icon`}
-          style={{ ...trait.style, flexDirection: "row", alignItems: "center" }}
-        >
-          <div className="icon-wrapper">
-            <div className="toolbar">
-              <div className={`icon-selected`}>
-                <CustomIcon
-                  source={metaIcon.source}
-                  name={meta.value}
-                  size={20}
-                />
-              </div>
-              <input
-                className={`cactiva-trait-input input`}
-                placeholder="Search"
-                type="text"
-                value={metaIcon.search}
-                onChange={e => {
-                  let v = e.target.value.toLowerCase();
-                  metaIcon.search = v;
-                  metaIcon.list = Icons[metaIcon.source].filter((x: string) =>
-                    x.toLowerCase().includes(v)
-                  );
-                }}
-                onFocus={e => {
-                  e.target.select();
-                }}
-              />
-            </div>
-            <div className={`list`}>
-              {metaIcon.list.map((name: any, idx: number) => {
-                return (
-                  <div
-                    key={idx}
-                    className={`icon ${meta.value === name ? "active" : ""}`}
-                    onClick={() => {
-                      trait.update(`"${name}"`);
-                    }}
-                  >
-                    <CustomIcon
-                      source={metaIcon.source}
-                      name={name}
-                      size={18}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+        <IconsEl trait={trait} meta={meta} metaIcon={metaIcon} />
       )}
 
-      {trait.mode === "color" && (
-        <div className="cactiva-trait-color-picker">
-          <div
-            className={`trait-string-literal`}
-            style={{ ...trait.style, flexDirection: "row" }}
-          >
-            <input
-              className={`cactiva-trait-input`}
-              type="text"
-              value={meta.value || ""}
-              style={{
-                backgroundColor: meta.value,
-                color: textColor(meta.value || "#fff", "#fff", "#000")
-              }}
-              onChange={e => {
-                meta.value = e.target.value;
-              }}
-              onFocus={e => {
-                e.target.select();
-              }}
-              onBlur={() => {
-                trait.update(`"${meta.value}"`);
-              }}
-            />
-          </div>
-          <Popover
-            content={
-              <SketchPicker
-                onChangeComplete={(v: any) => {
-                  meta.value = v.hex;
-                  if (v.rgb.a < 1) {
-                    meta.value = `rgba(${Object.values(v.rgb)})`;
-                  }
-                  trait.update(`"${meta.value}"`);
-                }}
-                color={meta.value}
-              />
-            }
-          >
-            <IconButton icon="helper-management" height={20} boxShadow="0px" />
-          </Popover>
-        </div>
-      )}
+      {trait.mode === "color" && <ColorEl trait={trait} meta={meta} />}
 
       {trait.mode === "radio" && optionItems.length > 0 && (
         <div className="cactiva-trait-radio">
-          {optionItems.map((item: any, idx: number) => {
+          {optionItems.map((item: any) => {
             return (
-              <Tooltip
-                key={idx}
-                showDelay={1000}
-                content={
-                  <Text
-                    color={"white"}
-                    fontSize={"10px"}
-                    textTransform={"capitalize"}
-                  >
-                    {item.label}
-                  </Text>
-                }
-                position="top"
-              >
-                {item.mode === "icon" ? (
-                  <IconButton
-                    icon={item.icon}
-                    isActive={item.value === meta.value}
-                    height={20}
-                    onClick={() => {
-                      meta.value = item.value;
-                      trait.update(`"${meta.value}"`);
-                    }}
-                    flexGrow={1}
-                  />
-                ) : (
-                  <Button
-                    isActive={item.value === meta.value}
-                    iconBefore={item.icon}
-                    height={20}
-                    onClick={() => {
-                      meta.value = item.value;
-                      trait.update(`"${meta.value}"`);
-                    }}
-                    flexGrow={1}
-                    fontSize={10}
-                    padding={0}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    {item.label}
-                  </Button>
-                )}
-              </Tooltip>
+              <RadioEl
+                key={uuid("traitradio")}
+                item={item}
+                meta={meta}
+                trait={trait}
+              />
             );
           })}
         </div>
       )}
 
       {trait.mode === "font" && (
-        <div className="cactiva-trait-font">
-          <select
-            className={`cactiva-trait-select`}
-            value={meta.value}
-            onChange={e => {
-              meta.value = e.target.value;
-              trait.update(`"${meta.value}"`);
-            }}
-          >
-            <option disabled={meta.value} value={""}>
-              Select ...
-            </option>
-            {metaFont.list.map((item: any, i: number) => {
-              const name = item.name.substr(0, item.name.length - 4);
-              return (
-                <option key={i} value={`${name}`}>
-                  {name}
-                </option>
-              );
-            })}
-          </select>
-          <IconButton
-            icon="folder-new"
-            height={20}
-            onClick={e => {
-              e.stopPropagation();
-              metaFont.isShown = true;
-            }}
-          />
-          <FontBrowser
-            value={meta.value}
-            isShown={metaFont.isShown}
-            onDismiss={(v: any) => {
-              metaFont.isShown = v;
-            }}
-            onChange={(v: any) => {
-              meta.value = v;
-              trait.update(`"${meta.value}"`);
-            }}
-            onAddFont={(v: any) => {
-              metaFont.list = v.list;
-              trait.editor.renderfont = v.render;
-            }}
-          />
-        </div>
+        <FontsEl trait={trait} meta={meta} metaFont={metaFont} />
       )}
     </>
   );
+});
+
+const OptionEl = observer((props: any) => {
+  const { item } = props;
+  return <option value={`${item.value}`}>{item.label}</option>;
 });
 
 const CustomIcon = ({ source, name, size, color, style }: any) => {
@@ -337,3 +151,205 @@ function textColor(bgColor: string, lightColor: string, darkColor: string) {
   var b = parseInt(color.substring(4, 6), 16); // hexToB
   return r * 0.299 + g * 0.587 + b * 0.114 > 186 ? darkColor : lightColor;
 }
+
+const IconsEl = observer((props: any) => {
+  const { trait, meta, metaIcon } = props;
+  const onChange = (e: any) => {
+    let v = e.target.value.toLowerCase();
+    metaIcon.search = v;
+    metaIcon.list = Icons[metaIcon.source].filter((x: string) =>
+      x.toLowerCase().includes(v)
+    );
+  };
+  return (
+    <div
+      className={`trait-string-literal cactiva-trait-icon`}
+      style={{ ...trait.style, flexDirection: "row", alignItems: "center" }}
+    >
+      <div className="icon-wrapper">
+        <div className="toolbar">
+          <div className={`icon-selected`}>
+            <CustomIcon source={metaIcon.source} name={meta.value} size={20} />
+          </div>
+          <input
+            className={`cactiva-trait-input input`}
+            placeholder="Search"
+            type="text"
+            value={metaIcon.search}
+            onChange={onChange}
+            onFocus={e => {
+              e.target.select();
+            }}
+          />
+        </div>
+        <div className={`list`}>
+          {metaIcon.list.map((name: any) => {
+            return (
+              <IconEl
+                key={uuid("traiticon")}
+                name={name}
+                meta={meta}
+                trait={trait}
+                metaIcon={metaIcon}
+              />
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+});
+
+const IconEl = observer((props: any) => {
+  const { trait, meta, metaIcon, name } = props;
+  const onClick = () => {
+    trait.update(`"${name}"`);
+  };
+  return (
+    <div
+      className={`icon ${meta.value === name ? "active" : ""}`}
+      onClick={onClick}
+    >
+      <CustomIcon source={metaIcon.source} name={name} size={18} />
+    </div>
+  );
+});
+
+const ColorEl = observer((props: any) => {
+  const { meta, trait } = props;
+  const onChange = (v: any) => {
+    meta.value = v.hex;
+    if (v.rgb.a < 1) {
+      meta.value = `rgba(${Object.values(v.rgb)})`;
+    }
+    trait.update(`"${meta.value}"`);
+  };
+  const content = () => (
+    <SketchPicker onChangeComplete={onChange} color={meta.value} />
+  );
+  return (
+    <div className="cactiva-trait-color-picker">
+      <div
+        className={`trait-string-literal`}
+        style={{ ...trait.style, flexDirection: "row" }}
+      >
+        <input
+          className={`cactiva-trait-input`}
+          type="text"
+          value={meta.value || ""}
+          style={{
+            backgroundColor: meta.value,
+            color: textColor(meta.value || "#fff", "#fff", "#000")
+          }}
+          onChange={e => {
+            meta.value = e.target.value;
+          }}
+          onFocus={e => {
+            e.target.select();
+          }}
+          onBlur={() => {
+            trait.update(`"${meta.value}"`);
+          }}
+        />
+      </div>
+      <Popover content={content}>
+        <IconButton icon="helper-management" height={20} boxShadow="0px" />
+      </Popover>
+    </div>
+  );
+});
+
+const RadioEl = observer((props: any) => {
+  const { item, meta, trait } = props;
+  const onClick = () => {
+    meta.value = item.value;
+    trait.update(`"${meta.value}"`);
+  };
+  return (
+    <Tooltip
+      showDelay={1000}
+      content={
+        <Text color={"white"} fontSize={"10px"} textTransform={"capitalize"}>
+          {item.label}
+        </Text>
+      }
+      position="top"
+    >
+      {item.mode === "icon" ? (
+        <IconButton
+          icon={item.icon}
+          isActive={item.value === meta.value}
+          height={20}
+          onClick={onClick}
+          flexGrow={1}
+        />
+      ) : (
+        <Button
+          isActive={item.value === meta.value}
+          iconBefore={item.icon}
+          height={20}
+          onClick={onClick}
+          flexGrow={1}
+          fontSize={10}
+          padding={0}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          {item.label}
+        </Button>
+      )}
+    </Tooltip>
+  );
+});
+
+const FontsEl = observer((props: any) => {
+  const { meta, trait, metaFont } = props;
+  const onChange = (v: any) => {
+    meta.value = v;
+    trait.update(`"${meta.value}"`);
+  };
+  const onAddFont = (v: any) => {
+    metaFont.list = v.list;
+    trait.editor.renderfont = v.render;
+  };
+  return (
+    <div className="cactiva-trait-font">
+      <select
+        className={`cactiva-trait-select`}
+        value={meta.value}
+        onChange={onChange}
+      >
+        <option disabled={meta.value} value={""}>
+          Select ...
+        </option>
+        {metaFont.list.map((item: any) => {
+          return <FontFile key={uuid("traitfont")} item={item} />;
+        })}
+      </select>
+      <IconButton
+        icon="folder-new"
+        height={20}
+        onClick={e => {
+          e.stopPropagation();
+          metaFont.isShown = true;
+        }}
+      />
+      <FontBrowser
+        value={meta.value}
+        isShown={metaFont.isShown}
+        onDismiss={(v: any) => {
+          metaFont.isShown = v;
+        }}
+        onChange={onChange}
+        onAddFont={onAddFont}
+      />
+    </div>
+  );
+});
+
+const FontFile = observer((props: any) => {
+  const { item } = props;
+  const name = item.name.substr(0, item.name.length - 4);
+  return <option value={`${name}`}>{name}</option>;
+});
