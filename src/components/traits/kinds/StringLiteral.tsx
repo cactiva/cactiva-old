@@ -250,8 +250,13 @@ const ColorEl = observer((props: any) => {
 const RadioEl = observer((props: any) => {
   const { item, meta, trait } = props;
   const onClick = () => {
-    meta.value = item.value;
-    trait.update(`"${meta.value}"`);
+    if (meta.value === item.value) {
+      meta.value = undefined;
+      trait.update(meta.value);
+    } else {
+      meta.value = item.value;
+      trait.update(`"${meta.value}"`);
+    }
   };
   return (
     <Tooltip

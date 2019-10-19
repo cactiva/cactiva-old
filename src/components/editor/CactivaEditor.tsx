@@ -367,6 +367,7 @@ const CactivaEditorFooter = observer((props: any) => {
       editor.rootSelected = false;
       editor.selectedSource = "";
     }
+    console.log(editor.jsx);
   };
 
   useEffect(() => {

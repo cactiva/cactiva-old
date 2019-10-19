@@ -84,7 +84,7 @@ hotkeys("ctrl+d,command+d", (event, handler) => {
 });
 
 export default observer(() => {
-  const { current, status } = editor;
+  const { current } = editor;
   const meta = useObservable({
     currentPane: "props",
     sizeScreen: [15, 85]
@@ -150,6 +150,7 @@ const CactivaEditorCanvas = observer((props: any) => {
 const CactivaTraitsCanvas = observer((props: any) => {
   const { current } = props;
   const traitPane = current ? current.traitPane : false;
+  const path = current ? current.path : false;
   const activeTraits =
     current && current.source && current.selected && traitPane;
 
@@ -159,7 +160,7 @@ const CactivaTraitsCanvas = observer((props: any) => {
         localStorage.getItem("cactiva-editor-trait-visible") === "y"
           ? true
           : false);
-  }, []);
+  }, [path]);
   if (!traitPane) return <div style={{ flex: 1 }} />;
 
   return (
