@@ -1,13 +1,11 @@
+import CactivaChildren from "@src/components/editor/CactivaChildren";
+import CactivaDropMarker from "@src/components/editor/CactivaDropMarker";
+import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React from "react";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDropChild from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
-import { parseValue } from "../../../utility/parser/parser";
-import { renderChildren } from "../../../utility/renderchild";
-import CactivaDropMarker from "@src/components/editor/CactivaDropMarker";
-import _ from "lodash";
-import CactivaChildren from "@src/components/editor/CactivaChildren";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;

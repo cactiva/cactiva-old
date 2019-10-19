@@ -23,47 +23,47 @@ export default observer((props: any) => {
   const tagProps = parseProps(props);
   const meta = useObservable({ dropOver: false });
   const body: any = _.get(cactiva.source, "props.text", {});
-
+  const onDoubleClick = (e: any) => {
+    e.preventDefault();
+    const StringLiteral = _.get(body, "kind") === SyntaxKind.StringLiteral;
+    let text = prompt(
+      `Use double quotes ("text") to return string:`,
+      _.get(body, "value")
+    );
+    if (text !== null) {
+      prepareChanges(cactiva.editor);
+      if (StringLiteral) {
+        let newbody = {
+          kind: SyntaxKind.StringLiteral,
+          value: text
+        };
+        cactiva.source.props.text = newbody;
+      } else {
+        let newbody = {
+          kind: body.kind,
+          value: text
+        };
+        cactiva.source.props.text = newbody;
+      }
+      commitChanges(cactiva.editor);
+    }
+  };
+  const onBeforeDropOver = (item: any, type: string) => {
+    if (type === "after" && item.name === "Radio") {
+      return true;
+    }
+  };
   return (
     <CactivaDropChild
       cactiva={cactiva}
       onDropOver={(value: boolean) => (meta.dropOver = value)}
       canDropOver={false}
-      onBeforeDropOver={(item: any, type: string) => {
-        if (type === "after" && item.name === "Radio") {
-          return true;
-        }
-      }}
+      onBeforeDropOver={onBeforeDropOver}
     >
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable
           cactiva={cactiva}
-          onDoubleClick={(e: any) => {
-            e.preventDefault();
-            const StringLiteral =
-              _.get(body, "kind") === SyntaxKind.StringLiteral;
-            let text = prompt(
-              `Use double quotes ("text") to return string:`,
-              _.get(body, "value")
-            );
-            if (text !== null) {
-              prepareChanges(cactiva.editor);
-              if (StringLiteral) {
-                let newbody = {
-                  kind: SyntaxKind.StringLiteral,
-                  value: text
-                };
-                cactiva.source.props.text = newbody;
-              } else {
-                let newbody = {
-                  kind: body.kind,
-                  value: text
-                };
-                cactiva.source.props.text = newbody;
-              }
-              commitChanges(cactiva.editor);
-            }
-          }}
+          onDoubleClick={onDoubleClick}
           style={style}
           className={`cactiva-element uik-toggle ${_.get(
             tagProps,

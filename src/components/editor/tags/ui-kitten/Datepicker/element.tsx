@@ -10,7 +10,6 @@ export default observer((props: any) => {
   const cactiva = props._cactiva;
   const style = parseValue(props.style);
   const tagProps = parseProps(props);
-  console.log(toJS(props));
 
   return (
     <CactivaDropChild cactiva={cactiva} canDropOver={false}>
