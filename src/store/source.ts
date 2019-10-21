@@ -82,8 +82,8 @@ export class SourceStore {
       if (source.length > 0) {
         const popped = source.pop();
         const prevSource = toJS(this.source);
-        this.source = applyDiff(this.source, popped);
-        target.push(getDiff(this.source, prevSource));
+        this.source = toJS(popped);
+        target.push(prevSource);
       }
     },
     undo: () => {

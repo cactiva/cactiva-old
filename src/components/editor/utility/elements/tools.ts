@@ -260,12 +260,11 @@ export const commitChanges = (editor: any) => {
       isUndoStackSimilar(lastStack1, diff) &&
       isUndoStackSimilar(lastStack2, diff)
     ) {
-      editor.undoStack[editor.undoStack.length - 1] = diff;
+      editor.undoStack[editor.undoStack.length - 1] = toJS(editor.prevSource);
       return;
     }
   }
-  const jsdiff = toJS(diff);
-  editor.undoStack.push(jsdiff);
+  editor.undoStack.push(editor.prevSource);
 };
 
 const isUndoStackSimilar = (compare: any, diff: any) => {

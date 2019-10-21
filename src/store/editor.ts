@@ -1,7 +1,14 @@
-import { commitChanges, findElementById, insertAfterElementId, prepareChanges, removeElementById } from "@src/components/editor/utility/elements/tools";
 import Axios from "axios";
 import { computed, observable, toJS } from "mobx";
 import { SourceStore } from "./source";
+import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
+import {
+  insertAfterElementId,
+  findElementById,
+  removeElementById,
+  prepareChanges,
+  commitChanges
+} from "@src/components/editor/utility/elements/tools";
 
 interface IEditorSources {
   [key: string]: SourceStore;
@@ -45,7 +52,7 @@ class EditorStore {
 
   async cut() {
     if (this.current && this.current.selectedId) {
-      prepareChanges(this.current);
+    prepareChanges(this.current);
       this.copied = toJS(
         findElementById(this.current.source, this.current.selectedId)
       );
@@ -53,8 +60,8 @@ class EditorStore {
         delete this.copied.id;
       }
       removeElementById(this.current.source, this.current.selectedId);
-      commitChanges(this.current);
     }
+    commitChanges(this.current);
   }
   async copy() {
     if (this.current && this.current.selectedId) {
