@@ -44,24 +44,26 @@ const Expression = observer(({ expressions, cactiva }: any) => {
   }
 
   return expressions.map((exp: any, key: number) => {
+    const source = {
+      kind: cactiva.source.kind,
+      id: cactiva.source.id,
+      child: {
+        id: cactiva.source.id + "_" + key,
+        value: exp
+      }
+    };
+    const parentInfo = () => ({
+      canDropAfter: false
+    });
     if (typeof exp === "string") {
       return exp;
     }
     return (
       <div key={key} style={{ paddingLeft: 10 }}>
         <CactivaChildren
-          source={{
-            kind: cactiva.source.kind,
-            id: cactiva.source.id,
-            child: {
-              id: cactiva.source.id + "_" + key,
-              value: exp
-            }
-          }}
+          source={source}
           cactiva={cactiva}
-          parentInfo={() => ({
-            canDropAfter: false
-          })}
+          parentInfo={parentInfo}
         />
       </div>
     );

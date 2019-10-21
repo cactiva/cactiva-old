@@ -1,6 +1,6 @@
 import "@src/App.scss";
 import CactivaEditor from "@src/components/editor/CactivaEditor";
-import { Pane, Spinner, Text } from "evergreen-ui";
+import { Pane, Text } from "evergreen-ui";
 import hotkeys from "hotkeys-js";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
@@ -10,7 +10,6 @@ import HTML5Backend from "react-dnd-html5-backend-cjs";
 import Split from "react-split";
 import CactivaTree, { tree } from "./components/ctree/CactivaTree";
 import {
-  addChildInId,
   commitChanges,
   findParentElementById,
   prepareChanges,
@@ -20,6 +19,7 @@ import CactivaHead from "./components/head/CactivaHead";
 import CactivaTraits from "./components/traits/CactivaTraits";
 import api from "./libs/api";
 import editor from "./store/editor";
+import { toJS } from "mobx";
 
 const generateFonts = () => {
   api.get("assets/font-list").then(res => {
@@ -73,16 +73,18 @@ hotkeys("ctrl+d,command+d", (event, handler) => {
   if (current) {
     const duplicateSource = _.cloneDeep(current.selected.source);
     const parent = findParentElementById(current.source, current.selectedId);
-    const path = _.get(current, "selected.tag.insertTo", "children");
+    const children = _.cloneDeep(parent.children);
+    const idx = children.findIndex((x: any) => x.id === current.selectedId);
+    children.splice(idx, 0, duplicateSource);
     prepareChanges(current);
-    addChildInId(current.source, parent.id, duplicateSource, path);
+    parent.children = children;
     commitChanges(current);
   }
   event.preventDefault();
 });
 
 export default observer(() => {
-  const { current, status } = editor;
+  const { current } = editor;
   const meta = useObservable({
     currentPane: "props",
     sizeScreen: [15, 85]
@@ -126,32 +128,29 @@ export default observer(() => {
               e.preventDefault();
             }}
           >
-            <CactivaEditorCanvas />
+            <CactivaEditorCanvas current={current} />
           </div>
-          <CactivaTraitsCanvas />
+          <CactivaTraitsCanvas current={current} />
         </Split>
       </div>
     </DndProvider>
   );
 });
 
-const CactivaEditorCanvas = observer(() => {
-  const { current } = editor;
+const CactivaEditorCanvas = observer((props: any) => {
+  const { current } = props;
 
-  if (
-    Object.keys(tree.list).length > 0 &&
-    current &&
-    current.source
-  ) {
+  if (Object.keys(tree.list).length > 0 && current && current.source) {
     return <CactivaEditor editor={current} />;
   }
 
   return <div />;
 });
 
-const CactivaTraitsCanvas = observer(() => {
-  const { current } = editor;
+const CactivaTraitsCanvas = observer((props: any) => {
+  const { current } = props;
   const traitPane = current ? current.traitPane : false;
+  const path = current ? current.path : false;
   const activeTraits =
     current && current.source && current.selected && traitPane;
 
@@ -161,8 +160,8 @@ const CactivaTraitsCanvas = observer(() => {
         localStorage.getItem("cactiva-editor-trait-visible") === "y"
           ? true
           : false);
-  }, []);
-  if (!traitPane) return <div style={{ flex: 1 }}></div>;
+  }, [path]);
+  if (!traitPane) return <div style={{ flex: 1 }} />;
 
   return (
     <div className="cactiva-pane">
@@ -170,20 +169,20 @@ const CactivaTraitsCanvas = observer(() => {
         {activeTraits ? (
           <CactivaTraits editor={current} />
         ) : (
-            <Pane
-              display="flex"
-              flexDirection="column"
-              padding={10}
-              alignItems="center"
-              justifyContent="center"
-            >
-              <img
-                src="/images/reindeer.svg"
-                style={{ width: "50%", margin: 20, opacity: 0.4 }}
-              />
-              <Text size={300}>Please select a component</Text>
-            </Pane>
-          )}
+          <Pane
+            display="flex"
+            flexDirection="column"
+            padding={10}
+            alignItems="center"
+            justifyContent="center"
+          >
+            <img
+              src="/images/reindeer.svg"
+              style={{ width: "50%", margin: 20, opacity: 0.4 }}
+            />
+            <Text size={300}>Please select a component</Text>
+          </Pane>
+        )}
       </div>
     </div>
   );

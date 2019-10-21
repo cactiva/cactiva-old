@@ -1,40 +1,25 @@
-import {
-  commitChanges,
-  prepareChanges
-} from "@src/components/editor/utility/elements/tools";
+import CactivaChildren from "@src/components/editor/CactivaChildren";
+import { uuid } from "@src/components/editor/utility/elements/tools";
 import { generateExpression } from "@src/components/editor/utility/parser/generateExpression";
-import { generateSource } from "@src/components/editor/utility/parser/generateSource";
-import { renderChildren } from "@src/components/editor/utility/renderchild";
-import api from "@src/libs/api";
-import { Popover, Text } from "evergreen-ui";
-import { toJS } from "mobx";
-import { observer, useObservable } from "mobx-react-lite";
-import React, { useRef } from "react";
-import MonacoEditor from "react-monaco-editor";
+import { Text } from "evergreen-ui";
+import { observer } from "mobx-react-lite";
+import React from "react";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDroppable from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
-import CactivaChildren from "@src/components/editor/CactivaChildren";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  const meta = useObservable({
-    loading: false,
-    source: ""
-  });
-  const ref = useRef(null);
   const expressions = generateExpression(cactiva.source.value);
+  const onDoubleClick = (e: any) => {
+    e.preventDefault();
+    cactiva.editor.jsx = true;
+  };
 
   return (
     <CactivaDroppable cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
-        <CactivaSelectable
-          cactiva={cactiva}
-          onDoubleClick={(e: any) => {
-            e.preventDefault();
-            cactiva.editor.jsx = true;
-          }}
-        >
+        <CactivaSelectable cactiva={cactiva} onDoubleClick={onDoubleClick}>
           <Text
             style={{
               padding: 5,
@@ -46,7 +31,16 @@ export default observer((props: any) => {
               backgroundColor: "rgba(255,255,255,1)"
             }}
           >
-            <Expression expressions={expressions} cactiva={cactiva} />
+            {expressions.map((exp: any, i: number) => {
+              return (
+                <Expression
+                  key={uuid("kindexpression")}
+                  expressions={exp}
+                  cactiva={cactiva}
+                  idx={i}
+                />
+              );
+            })}
           </Text>
         </CactivaSelectable>
       </CactivaDraggable>
@@ -54,28 +48,29 @@ export default observer((props: any) => {
   );
 });
 
-const Expression = observer(({ expressions, cactiva }: any) => {
-  return expressions.map((exp: any, key: number) => {
-    if (typeof exp === "string") {
-      return exp;
+const Expression = observer((props: any) => {
+  const { expressions, cactiva, idx } = props;
+  const source = {
+    kind: cactiva.source.kind,
+    id: cactiva.source.id,
+    child: {
+      id: cactiva.source.id + "_" + idx,
+      value: expressions
     }
-    return (
-      <div key={key} style={{ paddingLeft: 10 }}>
-        <CactivaChildren
-          source={{
-            kind: cactiva.source.kind,
-            id: cactiva.source.id,
-            child: {
-              id: cactiva.source.id + "_" + key,
-              value: exp
-            }
-          }}
-          cactiva={cactiva}
-          parentInfo={() => ({
-            canDropAfter: false
-          })}
-        />
-      </div>
-    );
+  };
+  const parentInfo = () => ({
+    canDropAfter: false
   });
+  if (typeof expressions === "string") {
+    return <div>{expressions}</div>;
+  }
+  return (
+    <div style={{ paddingLeft: 10 }}>
+      <CactivaChildren
+        source={source}
+        cactiva={cactiva}
+        parentInfo={parentInfo}
+      />
+    </div>
+  );
 });

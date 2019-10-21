@@ -180,7 +180,7 @@ export const removeElementById = (root: any, id: string | string[]) => {
     parent.children[index]
   ) {
     const result = parent.children[index];
-    parent.children.splice(index, 1);
+    parent.children.remove(result);
     return result;
   }
 };

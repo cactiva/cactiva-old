@@ -1,9 +1,9 @@
+import CactivaChildren from "@src/components/editor/CactivaChildren";
 import CactivaDropMarker from "@src/components/editor/CactivaDropMarker";
 import {
   commitChanges,
   prepareChanges
 } from "@src/components/editor/utility/elements/tools";
-import { renderChildren } from "@src/components/editor/utility/renderchild";
 import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
@@ -12,7 +12,6 @@ import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDroppable from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
 import { parseProps, parseValue } from "../../../utility/parser/parser";
-import CactivaChildren from "@src/components/editor/CactivaChildren";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -24,33 +23,52 @@ export default observer((props: any) => {
   });
   const children = cactiva.source.children;
   const clength = (children && children.length) || 0;
+  const onBeforeDropOver = (item: any, type: string) => {
+    if (type === "after") {
+      return true;
+    } else {
+      if (item && item.name === "JsxExpression") {
+        meta.canDropOver = true;
+        meta.dropOver = true;
+        return true;
+      }
+    }
+  };
+  const onDropped = (item: any, type: string) => {
+    if (type === "child") {
+      const child = children.filter(
+        (e: any) => e.kind === SyntaxKind.JsxExpression
+      );
+      if (child.length > 0) cactiva.source.children = child;
+      meta.dropOver = false;
+      meta.canDropOver = false;
+    }
+  };
+  const onDoubleClick = (e: any) => {
+    e.preventDefault();
+    const hasJsxExpression =
+      _.get(children, "0.kind") === SyntaxKind.JsxExpression;
+
+    if (!hasJsxExpression) {
+      let text = prompt("Text:", _.get(children, "0.value"));
+      if (text !== null) {
+        prepareChanges(cactiva.editor);
+        children[0] = {
+          kind: SyntaxKind.JsxText,
+          value: text
+        };
+        commitChanges(cactiva.editor);
+      }
+    }
+  };
   useEffect(() => {
     meta.canDropOver = clength === 0;
   }, [clength, meta.dropOver]);
   return (
     <CactivaDroppable
       cactiva={cactiva}
-      onBeforeDropOver={(item: any, type: string) => {
-        if (type === "after") {
-          return true;
-        } else {
-          if (item && item.name === "JsxExpression") {
-            meta.canDropOver = true;
-            meta.dropOver = true;
-            return true;
-          }
-        }
-      }}
-      onDropped={(item: any, type: string) => {
-        if (type === "child") {
-          const child = children.filter(
-            (e: any) => e.kind === SyntaxKind.JsxExpression
-          );
-          if (child.length > 0) cactiva.source.children = child;
-          meta.dropOver = false;
-          meta.canDropOver = false;
-        }
-      }}
+      onBeforeDropOver={onBeforeDropOver}
+      onDropped={onDropped}
       onDropOver={(value: boolean) => {
         meta.dropOver = value;
       }}
@@ -59,23 +77,7 @@ export default observer((props: any) => {
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable
           cactiva={cactiva}
-          onDoubleClick={(e: any) => {
-            e.preventDefault();
-            const hasJsxExpression =
-              _.get(children, "0.kind") === SyntaxKind.JsxExpression;
-
-            if (!hasJsxExpression) {
-              let text = prompt("Text:", _.get(children, "0.value"));
-              if (text !== null) {
-                prepareChanges(cactiva.editor);
-                children[0] = {
-                  kind: SyntaxKind.JsxText,
-                  value: text
-                };
-                commitChanges(cactiva.editor);
-              }
-            }
-          }}
+          onDoubleClick={onDoubleClick}
           style={{ flexDirection: "row", ...style, lineHeight: "auto" }}
           className="cactiva-element"
         >

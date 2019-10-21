@@ -15,6 +15,10 @@ export default observer((props: any) => {
   const meta = useObservable({ dropOver: false });
   const direction = _.get(style, "flexDirection", "column");
   const hasNoChildren = _.get(cactiva.source, "children.length", 0) === 0;
+  const parentInfo = (c: any) => ({
+    isLastChild: c.isLastChild,
+    afterDirection: direction
+  });
   return (
     <CactivaDropChild
       cactiva={cactiva}
@@ -27,13 +31,7 @@ export default observer((props: any) => {
             direction={direction}
             stretch={hasNoChildren}
           />
-          <CactivaChildren
-            cactiva={cactiva}
-            parentInfo={(c: any) => ({
-              isLastChild: c.isLastChild,
-              afterDirection: direction
-            })}
-          />
+          <CactivaChildren cactiva={cactiva} parentInfo={parentInfo} />
         </CactivaSelectable>
       </CactivaDraggable>
     </CactivaDropChild>

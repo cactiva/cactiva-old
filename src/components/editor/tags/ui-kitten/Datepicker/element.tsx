@@ -4,13 +4,11 @@ import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDropChild from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
 import { parseProps, parseValue } from "../../../utility/parser/parser";
-import { toJS } from "mobx";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
   const style = parseValue(props.style);
   const tagProps = parseProps(props);
-  console.log(toJS(props));
 
   return (
     <CactivaDropChild cactiva={cactiva} canDropOver={false}>

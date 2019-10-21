@@ -1,19 +1,25 @@
-import { observer, useObservable } from 'mobx-react-lite';
-import React from 'react';
-import CactivaDraggable from '../../../CactivaDraggable';
-import CactivaDropChild from '../../../CactivaDroppable';
-import CactivaSelectable from '../../../CactivaSelectable';
-import { parseValue } from '../../../utility/parser/parser';
-import { renderChildren } from '../../../utility/renderchild';
-import CactivaDropMarker from '@src/components/editor/CactivaDropMarker';
-import _ from 'lodash';
+import { observer, useObservable } from "mobx-react-lite";
+import React from "react";
+import CactivaDraggable from "../../../CactivaDraggable";
+import CactivaDropChild from "../../../CactivaDroppable";
+import CactivaSelectable from "../../../CactivaSelectable";
+import { parseValue } from "../../../utility/parser/parser";
+import { renderChildren } from "../../../utility/renderchild";
+import CactivaDropMarker from "@src/components/editor/CactivaDropMarker";
+import _ from "lodash";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
   const style = parseValue(props.style);
   const meta = useObservable({ dropOver: false });
-  const direction = _.get(style, 'flexDirection', 'column');
-  const hasNoChildren = _.get(cactiva.source, 'children.length', 0) === 0;
+  const direction = _.get(style, "flexDirection", "column");
+  const hasNoChildren = _.get(cactiva.source, "children.length", 0) === 0;
+  const parentInfo = (c: any) => ({
+    isFirstChild: c.isFirstChild,
+    isLastChild: c.isLastChild,
+    afterDirection: direction,
+    style
+  });
   return (
     <CactivaDropChild
       cactiva={cactiva}
@@ -26,12 +32,12 @@ export default observer((props: any) => {
             direction={direction}
             stretch={hasNoChildren}
           />
-          {renderChildren(cactiva.source, cactiva.editor, cactiva.root, c => ({
-            isFirstChild: c.isFirstChild,
-            isLastChild: c.isLastChild,
-            afterDirection: direction,
-            style
-          }))}
+          {renderChildren(
+            cactiva.source,
+            cactiva.editor,
+            cactiva.root,
+            parentInfo
+          )}
         </CactivaSelectable>
       </CactivaDraggable>
     </CactivaDropChild>

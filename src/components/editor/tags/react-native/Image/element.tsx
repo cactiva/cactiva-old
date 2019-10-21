@@ -29,44 +29,44 @@ export default observer((props: any) => {
   useEffect(() => {
     meta.source = tagProps.source;
   }, [tagProps.source]);
+  const onChangeImage = (v: any) => {
+    prepareChanges(cactiva.editor);
+    if (!props.source) {
+      cactiva.source.props.source = {
+        kind: SyntaxKind.CallExpression,
+        value: v
+      };
+    } else {
+      props.source.value = v;
+    }
+    commitChanges(cactiva.editor);
+  };
+  const onDoubleClick = (e: any) => {
+    e.preventDefault();
+    e.stopPropagation();
+    meta.edited = true;
+  };
+  const onError = (e: any) => {
+    e.target.onerror = null;
+    e.target.src = "images/sample.jpg";
+  };
   return (
     <>
       <CactivaDropChild cactiva={cactiva} canDropOver={false}>
         <CactivaDraggable cactiva={cactiva}>
-          <CactivaSelectable
-            cactiva={cactiva}
-            onDoubleClick={(e: any) => {
-              e.preventDefault();
-              e.stopPropagation();
-              meta.edited = true;
-            }}
-          >
+          <CactivaSelectable cactiva={cactiva} onDoubleClick={onDoubleClick}>
             <img
-              {...tagProps}
+              style={tagProps.style}
+              src={tagProps.src}
               className={`${tagProps.source ? "" : "img-sample"}`}
-              onError={(e: any) => {
-                e.target.onerror = null;
-                e.target.src = "images/sample.jpg";
-              }}
+              onError={onError}
             />
           </CactivaSelectable>
         </CactivaDraggable>
       </CactivaDropChild>
-
       <ImageBrowse
         value={meta.source}
-        onChange={(v: any) => {
-          prepareChanges(cactiva.editor);
-          if (!props.source) {
-            cactiva.source.props.source = {
-              kind: SyntaxKind.CallExpression,
-              value: v
-            };
-          } else {
-            props.source.value = v;
-          }
-          commitChanges(cactiva.editor);
-        }}
+        onChange={onChangeImage}
         onDismiss={(e: any) => (meta.edited = e)}
         isShown={meta.edited}
       />

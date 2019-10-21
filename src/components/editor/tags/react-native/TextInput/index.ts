@@ -100,6 +100,14 @@ export default class extends CactivaTag {
           }
         },
         {
+          name: "Secure Text Entry",
+          path: "secureTextEntry",
+          kind: SyntaxKind.FalseKeyword,
+          options: {
+            styles: styles
+          }
+        },
+        {
           name: "Auto Correct",
           path: "autoCorrect",
           kind: SyntaxKind.FalseKeyword,

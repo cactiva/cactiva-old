@@ -1,14 +1,12 @@
+import CactivaChildren from "@src/components/editor/CactivaChildren";
+import CactivaDropMarker from "@src/components/editor/CactivaDropMarker";
+import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React from "react";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDropChild from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
 import { parseValue } from "../../../utility/parser/parser";
-import { renderChildren } from "../../../utility/renderchild";
-import CactivaDropMarker from "@src/components/editor/CactivaDropMarker";
-import _ from "lodash";
-import CactivaChildren from "@src/components/editor/CactivaChildren";
-import { toJS } from "mobx";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -16,6 +14,12 @@ export default observer((props: any) => {
   const meta = useObservable({ dropOver: false });
   const direction = _.get(style, "flexDirection", "column");
   const hasNoChildren = _.get(cactiva.source, "children.length", 0) === 0;
+  const parentInfo = (c: any) => ({
+    isFirstChild: c.isFirstChild,
+    isLastChild: c.isLastChild,
+    afterDirection: direction,
+    style
+  });
   return (
     <CactivaDropChild
       cactiva={cactiva}
@@ -29,15 +33,7 @@ export default observer((props: any) => {
             direction={direction}
             stretch={hasNoChildren}
           />
-          <CactivaChildren
-            cactiva={cactiva}
-            parentInfo={(c: any) => ({
-              isFirstChild: c.isFirstChild,
-              isLastChild: c.isLastChild,
-              afterDirection: direction,
-              style
-            })}
-          />
+          <CactivaChildren cactiva={cactiva} parentInfo={parentInfo} />
         </CactivaSelectable>
       </CactivaDraggable>
     </CactivaDropChild>
