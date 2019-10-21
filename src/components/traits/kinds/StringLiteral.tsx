@@ -203,7 +203,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
           <Popover
             content={
               <SketchPicker
-                onChangeComplete={(v: any) => {
+                onChange={(v: any) => {
                   meta.value = v.hex;
                   if (v.rgb.a < 1) {
                     meta.value = `rgba(${Object.values(v.rgb)})`;
