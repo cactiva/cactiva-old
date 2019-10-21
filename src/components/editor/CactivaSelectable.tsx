@@ -15,7 +15,10 @@ export default observer(
     onSelected
   }: any) => {
     const { editor, source } = cactiva;
-    const meta = useObservable({ hover: false });
+    const meta = useObservable({
+      hover: false,
+      menuVisible: false
+    });
     const classes: any = {
       hover: meta.hover ? "hover" : "",
       selected: editor.selectedId === source.id ? "selected" : "",
@@ -56,7 +59,7 @@ export default observer(
       if (!meta.hover) meta.hover = true;
     };
     const onContextMenu = () => {
-      
+      meta.menuVisible = true;
     }
     return (
       <div

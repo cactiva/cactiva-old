@@ -154,8 +154,12 @@ const TraitFieldEl = observer((props: any) => {
       const tpath = trait.path.split(".");
       const lastpath = tpath.pop();
       const currentValue = _.get(selected.source.props, tpath.join("."));
-      delete currentValue[lastpath as any];
-      _.set(selected.source.props, tpath.join("."), currentValue);
+      if (currentValue) {
+        delete currentValue[lastpath as any];
+        _.set(selected.source.props, tpath.join("."), currentValue);
+      } else {
+        return;
+      }
     }
     commitChanges(editor);
   });

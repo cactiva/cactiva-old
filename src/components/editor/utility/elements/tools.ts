@@ -252,18 +252,18 @@ export const commitChanges = (editor: any) => {
   }
   const diff = getDiff(editor.source, editor.prevSource);
 
-  // if (editor.undoStack.length > 2) {
-  //   const lastStack1 = editor.undoStack[editor.undoStack.length - 1];
-  //   const lastStack2 = editor.undoStack[editor.undoStack.length - 2];
+  if (editor.undoStack.length > 2) {
+    const lastStack1 = editor.undoStack[editor.undoStack.length - 1];
+    const lastStack2 = editor.undoStack[editor.undoStack.length - 2];
 
-  //   if (
-  //     isUndoStackSimilar(lastStack1, diff) &&
-  //     isUndoStackSimilar(lastStack2, diff)
-  //   ) {
-  //     editor.undoStack[editor.undoStack.length - 1] = diff;
-  //     return;
-  //   }
-  // }
+    if (
+      isUndoStackSimilar(lastStack1, diff) &&
+      isUndoStackSimilar(lastStack2, diff)
+    ) {
+      editor.undoStack[editor.undoStack.length - 1] = diff;
+      return;
+    }
+  }
 
   editor.undoStack.push(toJS(diff));
 };
