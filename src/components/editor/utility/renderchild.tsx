@@ -133,16 +133,18 @@ const renderTag = (
   if (tag) {
     editor.imports[tag.tagName] = {
       from: tag.from,
-      mode: "default"
+      type: tag.fromType
     };
     const Component = tag.element;
     return <Component {...source.props} key={key} _cactiva={cactiva} />;
   } else {
     const file = tree.list[source.name];
     if (file) {
+      const path =
+        "@" + file.relativePath.substring(1, file.relativePath.length - 4);
       editor.imports[source.name] = {
-        from: file.relativePath,
-        mode: "default"
+        from: path,
+        type: "default"
       };
     }
     cactiva.tag = tags["Component"];
