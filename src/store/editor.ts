@@ -1,5 +1,5 @@
 import Axios from "axios";
-import { computed, observable } from "mobx";
+import { computed, observable, toJS } from "mobx";
 import { SourceStore } from "./source";
 import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
 
@@ -18,7 +18,7 @@ class EditorStore {
   @observable cli = {
     status: "stopped",
     logs: ""
-  }
+  };
 
   async load(path: string) {
     this.status = "loading";
