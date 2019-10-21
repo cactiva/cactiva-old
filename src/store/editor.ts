@@ -1,7 +1,7 @@
+import { commitChanges, findElementById, insertAfterElementId, prepareChanges, removeElementById } from "@src/components/editor/utility/elements/tools";
 import Axios from "axios";
-import { computed, observable } from "mobx";
+import { computed, observable, toJS } from "mobx";
 import { SourceStore } from "./source";
-import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
 
 interface IEditorSources {
   [key: string]: SourceStore;
@@ -14,10 +14,57 @@ class EditorStore {
   @observable name = "";
   @observable path = "";
   @observable status = "loading";
+  @observable copied: any = null;
 
   @observable cli = {
     status: "stopped",
     logs: ""
+  };
+
+  async paste() {
+    if (this.copied && this.current) {
+      if (this.current.selectedId) {
+        prepareChanges(this.current);
+        insertAfterElementId(
+          this.current.source,
+          this.current.selectedId,
+          toJS(this.copied)
+        );
+        commitChanges(this.current);
+      } else {
+        prepareChanges(this.current);
+        insertAfterElementId(
+          this.current.source,
+          this.current.source.id,
+          toJS(this.copied)
+        );
+        commitChanges(this.current);
+      }
+    }
+  }
+
+  async cut() {
+    if (this.current && this.current.selectedId) {
+      prepareChanges(this.current);
+      this.copied = toJS(
+        findElementById(this.current.source, this.current.selectedId)
+      );
+      if (this.copied) {
+        delete this.copied.id;
+      }
+      removeElementById(this.current.source, this.current.selectedId);
+      commitChanges(this.current);
+    }
+  }
+  async copy() {
+    if (this.current && this.current.selectedId) {
+      this.copied = toJS(
+        findElementById(this.current.source, this.current.selectedId)
+      );
+      if (this.copied) {
+        delete this.copied.id;
+      }
+    }
   }
 
   async load(path: string) {

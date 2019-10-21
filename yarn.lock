@@ -9340,9 +9340,10 @@ realpath-native@^1.1.0:
   dependencies:
     util.promisify "^1.0.0"
 
-recursive-diff@cactiva/recursive-diff:
+recursive-diff@^0.2.0:
   version "0.2.0"
-  resolved "https://codeload.github.com/cactiva/recursive-diff/tar.gz/3b543a296bfe986fb5f934b6d3b6b6ab03ecd22d"
+  resolved "https://registry.yarnpkg.com/recursive-diff/-/recursive-diff-0.2.0.tgz#3843477eb90ff809f42b8ff73792fd3240b1fea5"
+  integrity sha512-NzFJLIsY1tiXefHj+tAyXB7FzbVR9hignou6OiNZ6tY6QGBfbWopqzJTSp5smc5TOgfT2q0xYT1Rk8O+0iT1KQ==
 
 recursive-readdir@2.2.2:
   version "2.2.2"

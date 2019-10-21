@@ -12,9 +12,11 @@ export default observer((props: any) => {
   if (editor.rootSelected) return <div />;
   return (
     <div className="cactiva-toolbar">
-      {_.map(toolbar, (v: any) => {
-        return <Component key={uuid("toolbar")} value={v} />;
-      })}
+      <div className="cactiva-toolbar-inner">
+        {_.map(toolbar, (v: any) => {
+          return <Component key={uuid("toolbar")} value={v} />;
+        })}
+      </div>
     </div>
   );
 });

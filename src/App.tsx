@@ -45,6 +45,18 @@ const generateFonts = () => {
   });
 };
 
+hotkeys("ctrl+x,command+x", (event, handler) => {
+  editor.cut();
+  event.preventDefault();
+});
+hotkeys("ctrl+c,command+c", (event, handler) => {
+  editor.copy();
+  event.preventDefault();
+});
+hotkeys("ctrl+v,command+v", (event, handler) => {
+  editor.paste();
+  event.preventDefault();
+});
 hotkeys("ctrl+s,command+s", (event, handler) => {
   if (editor.current) {
     editor.current.save();
@@ -169,20 +181,20 @@ const CactivaTraitsCanvas = observer((props: any) => {
         {activeTraits ? (
           <CactivaTraits editor={current} />
         ) : (
-          <Pane
-            display="flex"
-            flexDirection="column"
-            padding={10}
-            alignItems="center"
-            justifyContent="center"
-          >
-            <img
-              src="/images/reindeer.svg"
-              style={{ width: "50%", margin: 20, opacity: 0.4 }}
-            />
-            <Text size={300}>Please select a component</Text>
-          </Pane>
-        )}
+            <Pane
+              display="flex"
+              flexDirection="column"
+              padding={10}
+              alignItems="center"
+              justifyContent="center"
+            >
+              <img
+                src="/images/reindeer.svg"
+                style={{ width: "50%", margin: 20, opacity: 0.4 }}
+              />
+              <Text size={300}>Please select a component</Text>
+            </Pane>
+          )}
       </div>
     </div>
   );

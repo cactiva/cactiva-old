@@ -182,6 +182,7 @@ export const findParentElementById = (
 export const removeElementById = (root: any, id: string | string[]) => {
   const ids = getIds(id);
   const parent = findParentElementById(root, id);
+
   const index = parseInt(ids[ids.length - 1] || "-1");
   if (
     parent &&
@@ -190,7 +191,7 @@ export const removeElementById = (root: any, id: string | string[]) => {
     parent.children[index]
   ) {
     const result = parent.children[index];
-    parent.children.remove(result);
+    parent.children.splice(index, 1);
     return result;
   }
 };
@@ -251,7 +252,6 @@ export const commitChanges = (editor: any) => {
     editor.tempSelected = undefined;
   }
   const diff = getDiff(editor.source, editor.prevSource);
-
   if (editor.undoStack.length > 2) {
     const lastStack1 = editor.undoStack[editor.undoStack.length - 1];
     const lastStack2 = editor.undoStack[editor.undoStack.length - 2];
@@ -264,8 +264,8 @@ export const commitChanges = (editor: any) => {
       return;
     }
   }
-
-  editor.undoStack.push(toJS(diff));
+  const jsdiff = toJS(diff);
+  editor.undoStack.push(jsdiff);
 };
 
 const isUndoStackSimilar = (compare: any, diff: any) => {
