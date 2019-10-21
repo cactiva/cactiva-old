@@ -14,6 +14,7 @@ export default observer(({ editor }: any) => {
   });
   const lastNav: any = meta.nav[meta.nav.length - 1];
   const lastId = _.get(lastNav, "source.id");
+  const cactivaRef = editor.cactivaRefs.length > 0 && editor.cactivaRefs[lastId];
   const onClick = () => {
     if (!editor.rootSelected) {
       if (!editor.applySelectedSource()) {
@@ -76,11 +77,11 @@ export default observer(({ editor }: any) => {
       {!editor.rootSelected &&
         lastId === editor.selectedId &&
         lastId &&
-        editor.cactivaRefs[lastId] && (
+        cactivaRef && (
           <div className={`breadcrumb-tag last selected`}>
-            <CactivaDraggable cactiva={editor.cactivaRefs[lastId]}>
+            <CactivaDraggable cactiva={cactivaRef}>
               <CactivaSelectable
-                cactiva={editor.cactivaRefs[lastId]}
+                cactiva={cactivaRef}
                 style={{}}
                 className=""
                 showElementTag={false}

@@ -1031,20 +1031,20 @@ const CactivaTraitStyle: any = {
 };
 
 export default (
-  excep?: ("Layout" | "Spacing" | "Size" | "Typography" | "Border")[]
+  exclude?: ("Layout" | "Spacing" | "Size" | "Typography" | "Border")[]
 ) => {
-  const fields: ICactivaTraitField[] = [];
+  const results: any = {};
+
   Object.keys(CactivaTraitStyle).map((key: any) => {
-    if (!excep || excep.indexOf(key) === -1) {
-      fields.push(...CactivaTraitStyle[key]);
+    if (!exclude || exclude.indexOf(key) === -1) {
+      results[key] = CactivaTraitStyle[key];
     }
   });
-  return [
-    {
-      name: "style",
-      kind: SyntaxKind.ObjectLiteralExpression,
-      default: {},
-      fields: fields
-    }
-  ] as ICactivaTrait[];
+
+  return Object.keys(results).map(key => {
+    return {
+      name: key,
+      fields: results[key]
+    };
+  });
 };

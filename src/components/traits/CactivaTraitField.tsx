@@ -7,6 +7,7 @@ import { kindNames } from "../editor/utility/kinds";
 import { SyntaxKind } from "../editor/utility/syntaxkinds";
 import kinds from "./tags";
 import { generateSource } from "../editor/utility/parser/generateSource";
+import editor from "@src/store/editor";
 
 export interface ICactivaTraitFieldProps extends ICactivaTraitField {
   editor: any;
@@ -31,12 +32,6 @@ export default observer((trait: ICactivaTraitFieldProps) => {
 
   return (
     <>
-      {!!trait.divider && (
-        <div className="cactiva-trait-field-divider">
-          <span>{trait.divider}</span>
-          <div className="line" />
-        </div>
-      )}
       <div className="cactiva-trait-field" style={rootStyle}>
         {trait.label !== false && (
           <div className="label" style={labelStyle}>
@@ -92,43 +87,43 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                 }}
               />
             ) : (
-              <Tooltip
-                content={
-                  <code
-                    style={{ color: "white", fontSize: 11 }}
-                  >{`{${generateSource(trait.rawValue)}}`}</code>
-                }
-              >
-                <Pane
-                  style={{
-                    flex: 1,
-                    height: "18px",
-                    padding: "0px",
-                    display: "flex",
-
-                    alignItems: "center",
-                    justifyContent: "center",
-                    ...fieldStyle,
-                    position: "relative"
-                  }}
+                <Tooltip
+                  content={
+                    <code
+                      style={{ color: "white", fontSize: 11 }}
+                    >{`{${generateSource(trait.rawValue)}}`}</code>
+                  }
                 >
-                  <div
-                    className={`cactiva-trait-input`}
+                  <Pane
                     style={{
                       flex: 1,
                       height: "18px",
                       padding: "0px",
                       display: "flex",
+
                       alignItems: "center",
                       justifyContent: "center",
+                      ...fieldStyle,
                       position: "relative"
                     }}
                   >
-                    <Icon icon="function" size={13} color={"#666"} />
-                  </div>
-                </Pane>
-              </Tooltip>
-            )}
+                    <div
+                      className={`cactiva-trait-input`}
+                      style={{
+                        flex: 1,
+                        height: "18px",
+                        padding: "0px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        position: "relative"
+                      }}
+                    >
+                      <Icon icon="function" size={13} color={"#666"} />
+                    </div>
+                  </Pane>
+                </Tooltip>
+              )}
           </Pane>
         </Tooltip>
       </div>

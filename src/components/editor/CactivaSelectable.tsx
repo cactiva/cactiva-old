@@ -55,6 +55,9 @@ export default observer(
       e.stopPropagation();
       if (!meta.hover) meta.hover = true;
     };
+    const onContextMenu = () => {
+      
+    }
     return (
       <div
         style={{ ...style, opacity: 1 }}
@@ -63,6 +66,7 @@ export default observer(
         onMouseOut={onMouseOut}
         onDoubleClick={onDoubleClick}
         onClick={onClick}
+        onContextMenu={onContextMenu}
       >
         {showElementTag && (
           <div

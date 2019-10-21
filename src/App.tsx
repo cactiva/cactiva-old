@@ -109,7 +109,7 @@ export default observer(() => {
           <CactivaHead editor={editor} />
         </div>
         <Split
-          sizes={meta.sizeScreen}
+          sizes={toJS(meta.sizeScreen)}
           minSize={200}
           expandToMin={false}
           gutterSize={5}

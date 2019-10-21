@@ -76,11 +76,21 @@ export const findElementById = (root: any, id: string | string[]): any => {
   for (let i in ids) {
     currentIds.push(ids[i]);
     const cid = parseInt(ids[i]);
-    let child = _.get(el, `children.${cid}`, false);
-    if (isTag(el)) {
-      const tag: any = tags[el.name];
-      if (tag.insertTo !== "children") {
-        child = _.get(el, `${tag.insertTo}.${cid}`, false);
+    let child = null;
+    if (
+      el &&
+      el.children &&
+      el.children.length &&
+      el.children.length - 1 >= cid
+    ) {
+      child = el.children[cid];
+      if (isTag(el)) {
+        const tag: any = tags[el.name];
+        if (tag) {
+          if (tag.insertTo !== "children") {
+            child = _.get(el, `${tag.insertTo}.${cid}`, false);
+          }
+        }
       }
     }
 

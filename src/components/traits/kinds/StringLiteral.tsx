@@ -208,6 +208,7 @@ const ColorEl = observer((props: any) => {
     if (v.rgb.a < 1) {
       metaColor.value = `rgba(${Object.values(v.rgb)})`;
     }
+    update()
   };
   const update = () => {
     trait.update(`"${metaColor.value}"`);
@@ -238,7 +239,7 @@ const ColorEl = observer((props: any) => {
       <Popover
         onCloseComplete={update}
         content={
-          <SketchPicker onChangeComplete={onChange} color={metaColor.value} />
+          <SketchPicker onChange={onChange} color={metaColor.value} />
         }
       >
         <IconButton icon="helper-management" height={20} boxShadow="0px" />

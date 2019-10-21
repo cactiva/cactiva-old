@@ -1,23 +1,15 @@
-import { Text } from "evergreen-ui";
+import { Icon, Text } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import { ICactivaTrait, ICactivaTraitField } from "../editor/utility/classes";
-import {
-  commitChanges,
-  prepareChanges,
-  uuid
-} from "../editor/utility/elements/tools";
+import { commitChanges, prepareChanges, uuid } from "../editor/utility/elements/tools";
 import { kindNames } from "../editor/utility/kinds";
-import {
-  generateValueByKind,
-  parseValue
-} from "../editor/utility/parser/parser";
+import { generateValueByKind, parseValue } from "../editor/utility/parser/parser";
 import { isTag } from "../editor/utility/tagmatcher";
+import tags from "../editor/utility/tags";
 import CactivaTraitField from "./CactivaTraitField";
 import "./traits.scss";
-import { toJS } from "mobx";
-import tags from "../editor/utility/tags";
 
 export default observer(({ editor }: any) => {
   const traits = _.get(editor, "selected.tag.traits", []) as ICactivaTrait[];
@@ -84,6 +76,17 @@ const TraitEl = observer((props: any) => {
   }, [containerRef.current]);
   return (
     <React.Fragment>
+      <div
+        className={`heading ${isExpanded ? "" : "collapsed"}`}
+        onClick={() => {
+          const idx = meta.expanded.indexOf(item.name);
+          if (idx >= 0) meta.expanded.splice(idx, 1);
+          else meta.expanded.push(item.name);
+        }}
+      >
+        <Text>{item.name}</Text>
+        <Icon icon={!isExpanded ? "small-plus" : "small-minus"} />
+      </div>
       <div
         className={`cactiva-trait-body ${meta.wide ? "wide" : ""}`}
         ref={containerRef}

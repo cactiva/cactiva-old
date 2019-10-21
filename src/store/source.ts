@@ -28,6 +28,9 @@ export class SourceStore {
   @observable renderfont = true;
   @observable jsx = false;
   @observable traitPane = false;
+  @observable trait = {
+    dividerExpanded: [] as string[]
+  };
 
   async applySelectedSource() {
     if (!this.selectedSource) {
