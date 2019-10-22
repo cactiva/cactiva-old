@@ -318,7 +318,7 @@ export function setProp(source: any, path: string, value: any) {
   for (let i in tpathsplit) {
     const t = tpathsplit[i];
     tpath.push(t);
-    if (parseInt(i) < tpathlength - 1) {
+    if (parseInt(i) < tpathlength - 2) {
       if (current[t] === undefined) {
         current[t] = {
           kind: SyntaxKind.ObjectLiteralExpression,

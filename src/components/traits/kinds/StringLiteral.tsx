@@ -327,7 +327,8 @@ const FontsEl = observer((props: any) => {
         value={meta.value}
         onChange={onSelect}
       >
-        <option disabled={meta.value} value={""}>
+        
+        <option value={undefined}>
           Select ...
         </option>
         {metaFont.list.map((item: any) => {
