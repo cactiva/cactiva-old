@@ -4,16 +4,17 @@ import React from 'react';
 import CactivaDraggable from '../../../CactivaDraggable';
 import CactivaDropChild from '../../../CactivaDroppable';
 import CactivaSelectable from '../../../CactivaSelectable';
-import { parseProps } from '../../../utility/parser/parser';
+import { parseProps, parseStyle } from '../../../utility/parser/parser';
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
   const tagProps = parseProps(props);
+  const style = parseStyle(props.style);
   return (
     <CactivaDropChild cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva} style={tagProps.style}>
-          <Icon {...tagProps} />
+          <Icon {...tagProps} style={style} />
         </CactivaSelectable>
       </CactivaDraggable>
     </CactivaDropChild>
@@ -22,18 +23,18 @@ export default observer((props: any) => {
 
 interface IconProps {
   source:
-    | 'AntDesign'
-    | 'Entypo'
-    | 'EvilIcons'
-    | 'Feather'
-    | 'FontAwesome'
-    | 'Foundation'
-    | 'Ionicons'
-    | 'MaterialCommunityIcons'
-    | 'MaterialIcons'
-    | 'Octicons'
-    | 'SimpleLineIcons'
-    | 'Zocial';
+  | 'AntDesign'
+  | 'Entypo'
+  | 'EvilIcons'
+  | 'Feather'
+  | 'FontAwesome'
+  | 'Foundation'
+  | 'Ionicons'
+  | 'MaterialCommunityIcons'
+  | 'MaterialIcons'
+  | 'Octicons'
+  | 'SimpleLineIcons'
+  | 'Zocial';
   name: string;
   size?: number;
   color?: string;

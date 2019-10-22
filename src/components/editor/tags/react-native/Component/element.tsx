@@ -8,11 +8,11 @@ import React from "react";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDropChild from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
-import { parseValue } from "../../../utility/parser/parser";
+import { parseStyle } from "../../../utility/parser/parser";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  const style = parseValue(props.style);
+  const style = parseStyle(props.style);
   const meta = useObservable({ dropOver: false });
   const direction = _.get(style, "flexDirection", "column");
   const hasNoChildren = _.get(cactiva.source, "children.length", 0) === 0;

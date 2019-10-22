@@ -7,17 +7,17 @@ import React from "react";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDropChild from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
-import { parseProps } from "../../../utility/parser/parser";
+import { parseStyle } from "../../../utility/parser/parser";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  const tagProps = parseProps(props);
+  const style = parseStyle(props.style);
   const meta = useObservable({
     dropOver: false,
     edited: false,
     source: ""
   });
-  const sourceImg = tagProps.source || "";
+  const sourceImg = props.source || "";
   const quotedImg = sourceImg
     .match(/\(([^)]+)\)/)[1]
     .replace("@src/assets/images/", "");
@@ -35,11 +35,11 @@ export default observer((props: any) => {
         <CactivaDraggable cactiva={cactiva}>
           <CactivaSelectable
             cactiva={cactiva}
-            style={{ ...tagProps.style, backgroundImage }}
+            style={{ ...style, backgroundImage }}
           >
             <CactivaDropMarker
               hover={meta.dropOver}
-              direction={_.get(tagProps.style, "flexDirection", "column")}
+              direction={_.get(style, "flexDirection", "column")}
             />
             <CactivaChildren cactiva={cactiva} />
           </CactivaSelectable>

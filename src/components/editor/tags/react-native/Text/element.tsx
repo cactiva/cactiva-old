@@ -1,9 +1,6 @@
 import CactivaChildren from "@src/components/editor/CactivaChildren";
 import CactivaDropMarker from "@src/components/editor/CactivaDropMarker";
-import {
-  commitChanges,
-  prepareChanges
-} from "@src/components/editor/utility/elements/tools";
+import { commitChanges, prepareChanges } from "@src/components/editor/utility/elements/tools";
 import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
@@ -11,11 +8,11 @@ import React, { useEffect } from "react";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDroppable from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
-import { parseValue } from "../../../utility/parser/parser";
+import { parseStyle } from "../../../utility/parser/parser";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  const style = parseValue(props.style);
+  const style = parseStyle(props.style);
   const meta = useObservable({
     dropOver: false,
     canDropOver: true

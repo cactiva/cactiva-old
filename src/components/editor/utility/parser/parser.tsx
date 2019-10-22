@@ -1,6 +1,14 @@
 import _ from "lodash";
 import { SyntaxKind } from "../syntaxkinds";
 
+export const parseStyle = (node:any):any => {
+  const result = parseValue(node);
+  if (typeof result !== "object") {
+    return null;
+  }
+  return result;
+}
+
 export const parseValue = (node: any): any => {
   if (!node) return node;
   const kind = node.kind;

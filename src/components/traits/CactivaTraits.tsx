@@ -76,6 +76,8 @@ const TraitEl = observer((props: any) => {
       meta.wide = div.offsetWidth > 250;
     }
   }, [containerRef.current]);
+
+
   return (
     <React.Fragment>
       <div

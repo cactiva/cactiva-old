@@ -7,10 +7,11 @@ import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDropChild from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
 import { Text } from "evergreen-ui";
+import { parseStyle } from "@src/components/editor/utility/parser/parser";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  const style = {};
+  const style = parseStyle(props.style);
   const meta = useObservable({ dropOver: false });
   const direction = _.get(style, "flexDirection", "column");
   const body: any = _.get(cactiva.source, "props.renderItem.body", []);
