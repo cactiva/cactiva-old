@@ -208,7 +208,7 @@ const ColorEl = observer((props: any) => {
     if (v.rgb.a < 1) {
       metaColor.value = `rgba(${Object.values(v.rgb)})`;
     }
-    update()
+    update();
   };
   const update = () => {
     trait.update(`"${metaColor.value}"`);
@@ -238,9 +238,7 @@ const ColorEl = observer((props: any) => {
       </div>
       <Popover
         onCloseComplete={update}
-        content={
-          <SketchPicker onChange={onChange} color={metaColor.value} />
-        }
+        content={<SketchPicker onChange={onChange} color={metaColor.value} />}
       >
         <IconButton icon="helper-management" height={20} boxShadow="0px" />
       </Popover>
@@ -311,18 +309,23 @@ const FontsEl = observer((props: any) => {
     metaFont.list = v.list;
     trait.editor.renderfont = v.render;
   };
+  const onSelect = (v: any) => {
+    meta.value = v.target.value;
+    trait.update(`"${meta.value}"`);
+  };
 
   useEffect(() => {
     api.get("assets/font-list").then(res => {
       metaFont.list = res.children;
     });
   }, []);
+
   return (
     <div className="cactiva-trait-font">
       <select
         className={`cactiva-trait-select`}
         value={meta.value}
-        onChange={onChange}
+        onChange={onSelect}
       >
         <option disabled={meta.value} value={""}>
           Select ...
