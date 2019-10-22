@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { SyntaxKind } from "../syntaxkinds";
+import { toJS } from "mobx";
 
 export const generateExpression = (node: any): any[] => {
   const rawResult = generateExpressionArray(node);
@@ -34,6 +35,10 @@ export const generateExpressionArray = (node: any): any[] => {
     case SyntaxKind.StringLiteral:
       return [`${node.value}`];
     case SyntaxKind.CallExpression:
+      const args: any[] = node.arguments.map((i: any) => {
+        return generateExpressionArray(i);
+      });
+      return [node.expression, `(`, ...args, `)`];
     case SyntaxKind.PropertyAccessExpression:
       return [node.value];
     case SyntaxKind.ObjectLiteralExpression:

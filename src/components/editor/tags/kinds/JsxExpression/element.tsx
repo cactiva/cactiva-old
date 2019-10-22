@@ -35,7 +35,7 @@ export default observer((props: any) => {
               return (
                 <Expression
                   key={uuid("kindexpression")}
-                  expressions={exp}
+                  exp={exp}
                   cactiva={cactiva}
                   idx={i}
                 />
@@ -49,20 +49,20 @@ export default observer((props: any) => {
 });
 
 const Expression = observer((props: any) => {
-  const { expressions, cactiva, idx } = props;
+  const { exp, cactiva, idx } = props;
   const source = {
     kind: cactiva.source.kind,
     id: cactiva.source.id,
     child: {
       id: cactiva.source.id + "_" + idx,
-      value: expressions
+      value: exp
     }
   };
   const parentInfo = () => ({
     canDropAfter: false
   });
-  if (typeof expressions === "string") {
-    return <div>{expressions}</div>;
+  if (typeof exp === "string") {
+    return <div>{exp}</div>;
   }
   return (
     <div style={{ paddingLeft: 10 }}>

@@ -12,6 +12,11 @@ export const generateSource = (node: any): string => {
     case SyntaxKind.NumericLiteral:
       return `${node.value}`;
     case SyntaxKind.CallExpression:
+      return `${node.expression}(
+    ${_.map(node.arguments, (e, key) => {
+      return generateSource(e);
+    }).join(`,`)}
+  )`;
     case SyntaxKind.PropertyAccessExpression:
       return node.value;
     case SyntaxKind.ObjectLiteralExpression:
