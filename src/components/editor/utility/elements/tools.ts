@@ -206,6 +206,7 @@ export const insertAfterElementId = (
   const parent = findParentElementById(root, id);
   const index = parseInt(ids[ids.length - 1] || "-1");
   const children = _.get(parent, insertTo, []);
+  console.log(child);
   if (children[index]) {
     children.splice(index + 1, 0, child);
     _.set(parent, insertTo, children);
@@ -219,6 +220,7 @@ export const addChildInId = (
   insertTo = "children"
 ) => {
   const parent = findElementById(root, id);
+  console.log(child);  
   if (parent) {
     let children = _.get(parent, insertTo);
     if (!children) {

@@ -225,7 +225,7 @@ const ColorEl = observer((props: any) => {
           value={metaColor.value || ""}
           style={{
             backgroundColor: metaColor.value,
-            color: textColor(metaColor.value || "#fff", "#fff", "#000")
+            color: textColor(metaColor.value || "#000", "#fff", "#000")
           }}
           onChange={e => {
             metaColor.value = e.target.value;
