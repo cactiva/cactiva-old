@@ -9,6 +9,7 @@ import {
   prepareChanges,
   commitChanges
 } from "@src/components/editor/utility/elements/tools";
+import StringLiteral from "@src/components/traits/kinds/StringLiteral";
 
 interface IEditorSources {
   [key: string]: SourceStore;
@@ -84,13 +85,13 @@ class EditorStore {
     const apiPath = "/project/read-source?path=";
     await Axios.get(`${baseUrl}${apiPath}${path}`)
       .then(res => {
-        let root = res.data.component;
 
-        this.sources[path] = new SourceStore(root, path);
+        this.sources[path] = new SourceStore();
+        this.sources[path].path = path;
+        this.sources[path].source = res.data.component;
         this.sources[path].rootSource = res.data.file;
         this.sources[path].project = this;
         this.sources[path].imports = res.data.imports;
-
         this.path = path;
         this.status = "ready";
         localStorage.setItem("cactiva-current-path", path);

@@ -116,11 +116,6 @@ export class SourceStore {
     return false;
   }
 
-  constructor(source: any, path: any) {
-    this.source = source;
-    this.path = path;
-  }
-
   setupMonaco(monaco: any) {
     // compiler options
     monaco.languages.typescript.typescriptDefaults.setCompilerOptions({

@@ -3,13 +3,15 @@ import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import { ICactivaTrait, ICactivaTraitField } from "../editor/utility/classes";
-import { commitChanges, prepareChanges, uuid } from "../editor/utility/elements/tools";
+import { commitChanges, prepareChanges, uuid, setProp } from "../editor/utility/elements/tools";
 import { kindNames } from "../editor/utility/kinds";
 import { generateValueByKind, parseValue } from "../editor/utility/parser/parser";
 import { isTag } from "../editor/utility/tagmatcher";
 import tags from "../editor/utility/tags";
 import CactivaTraitField from "./CactivaTraitField";
 import "./traits.scss";
+import { SyntaxKind } from "../editor/utility/syntaxkinds";
+import { toJS } from "mobx";
 
 export default observer(({ editor }: any) => {
   const traits = _.get(editor, "selected.tag.traits", []) as ICactivaTrait[];
@@ -149,14 +151,14 @@ const TraitFieldEl = observer((props: any) => {
         valueByKind = generateValueByKind(kind, value);
       }
 
-      _.set(selected.source.props, trait.path, valueByKind);
+      setProp(selected.source.props, trait.path, valueByKind);
     } else {
       const tpath = trait.path.split(".");
       const lastpath = tpath.pop();
       const currentValue = _.get(selected.source.props, tpath.join("."));
       if (currentValue) {
         delete currentValue[lastpath as any];
-        _.set(selected.source.props, tpath.join("."), currentValue);
+        setProp(selected.source.props, tpath.join("."), currentValue);
       } else {
         return;
       }

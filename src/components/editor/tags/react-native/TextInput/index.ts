@@ -18,7 +18,8 @@ export default class extends CactivaTag {
       placeholder: {
         kind: SyntaxKind.StringLiteral,
         value: `"TextInput"`
-      }
+      },
+      style: {}
     },
     children: []
   };

@@ -220,7 +220,7 @@ export const addChildInId = (
   insertTo = "children"
 ) => {
   const parent = findElementById(root, id);
-  console.log(child);  
+  console.log(child);
   if (parent) {
     let children = _.get(parent, insertTo);
     if (!children) {
@@ -308,4 +308,27 @@ export function uuid(prefix: string) {
   return `${prefix}-${new Date().getTime()}${Math.floor(
     10000000 + Math.random() * 90000000
   )}`;
+}
+
+export function setProp(source: any, path: string, value: any) {
+  const tpath = [];
+  const tpathsplit = path.split(".");
+  const tpathlength = tpathsplit.length;
+  let current = source;
+  for (let i in tpathsplit) {
+    const t = tpathsplit[i];
+    tpath.push(t);
+    if (parseInt(i) < tpathlength - 1) {
+      if (current[t] === undefined) {
+        current[t] = {
+          kind: SyntaxKind.ObjectLiteralExpression,
+          value: {}
+        };
+      }
+      if (current[t].value) {
+        current = current[t].value;
+      }
+    }
+  }
+  _.set(source, path, value);
 }
