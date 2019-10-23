@@ -89,7 +89,6 @@ class EditorStore {
         this.sources[path] = new SourceStore();
         this.sources[path].path = path;
         this.sources[path].source = res.data.component;
-        console.log(res.data.component);
         this.sources[path].rootSource = res.data.file;
         this.sources[path].project = this;
         this.sources[path].imports = res.data.imports;

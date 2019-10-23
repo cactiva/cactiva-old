@@ -95,7 +95,7 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
             const name = p.name.escapedText || p.name.text;
             result[name] = parseJsx(p.initializer, showKindName);
           } else {
-            console.log(parseJsx(p.expression));
+            // console.log(p, parseJsx(p.expression));
           }
         });
 

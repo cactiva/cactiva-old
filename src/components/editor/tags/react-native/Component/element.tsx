@@ -21,7 +21,10 @@ export default observer((props: any) => {
     const editor = cactiva.editor;
     const selected = editor.selected;
     if (!tags[selected.source.name] && !!editor.imports[selected.source.name]) {
-      editor.project.load(editor.imports[selected.source.name].from);
+      const from = editor.imports[selected.source.name].from;
+      if (from.indexOf('@') === 0) {
+        editor.project.load('/' + from.substr(1) + '.tsx');
+      }
     }
   };
   const parentInfo = (c: any) => ({
@@ -47,12 +50,12 @@ export default observer((props: any) => {
             style={
               children.length > 0
                 ? {
-                    marginTop: 15,
-                    position: "absolute",
-                    height: 5,
-                    left: 5,
-                    right: 5
-                  }
+                  marginTop: 15,
+                  position: "absolute",
+                  height: 5,
+                  left: 5,
+                  right: 5
+                }
                 : {}
             }
           />
