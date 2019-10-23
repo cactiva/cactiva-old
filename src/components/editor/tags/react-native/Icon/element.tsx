@@ -9,7 +9,7 @@ import { parseProps, parseStyle } from '../../../utility/parser/parser';
 export default observer((props: any) => {
   const cactiva = props._cactiva;
   const tagProps = parseProps(props);
-  const style = parseStyle(props.style);
+  const style = parseStyle(props.style, cactiva);
   return (
     <CactivaDropChild cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>

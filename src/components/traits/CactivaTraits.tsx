@@ -16,7 +16,7 @@ import { toJS } from "mobx";
 export default observer(({ editor }: any) => {
   const traits = _.get(editor, "selected.tag.traits", []) as ICactivaTrait[];
   const meta = useObservable({
-    expanded: ["attributes", "style"] as string[],
+    expanded: [] as string[],
     wide: false
   });
   const selected = editor.selected;
@@ -30,6 +30,17 @@ export default observer(({ editor }: any) => {
   ) {
     componentFrom = editor.imports[selected.source.name].from;
   }
+
+  useEffect(() => {
+    let push = false;
+    traits.map((item: ICactivaTrait) => {
+      if (push) return;
+      if (item.fields.length === 0) return null;
+      meta.expanded.push(item.name);
+      push = true;
+    });
+  }, [editor.selectedId])
+
 
   return (
     <>
@@ -50,6 +61,7 @@ export default observer(({ editor }: any) => {
 
       <div className="cactiva-traits-inner">
         {traits.map((item: ICactivaTrait) => {
+          if (item.fields.length === 0) return null;
           return (
             <TraitEl
               meta={meta}

@@ -7,7 +7,7 @@ import { parseProps, parseStyle } from "../../../utility/parser/parser";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  const style = parseStyle(props.style);
+  const style = parseStyle(props.style, cactiva);
   const tagProps = parseProps(props);
   return (
     <CactivaDropChild cactiva={cactiva} canDropOver={false}>
@@ -17,8 +17,8 @@ export default observer((props: any) => {
             {tagProps.defaultValue ? (
               tagProps.defaultValue
             ) : (
-              <div className="placeholder">{tagProps.placeholder}</div>
-            )}
+                <div className="placeholder">{tagProps.placeholder}</div>
+              )}
           </div>
         </CactivaSelectable>
       </CactivaDraggable>

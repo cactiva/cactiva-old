@@ -12,7 +12,7 @@ import { parseStyle } from "../../../utility/parser/parser";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  const style = parseStyle(props.style);
+  const style = parseStyle(props.style, cactiva);
   const meta = useObservable({
     dropOver: false,
     canDropOver: true

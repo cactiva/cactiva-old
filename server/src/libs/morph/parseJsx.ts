@@ -57,7 +57,7 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
     case SyntaxKind.ConditionalExpression:
       return {
         kind: kindName,
-        trueKeyword: node.trueKeyword,
+        condition: parseJsx(node.condition, showKindName),
         whenTrue: parseJsx(node.whenTrue, showKindName),
         whenFalse: parseJsx(node.whenFalse, showKindName)
       };
@@ -91,8 +91,12 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
       return (() => {
         const result: any = {};
         node.properties.forEach((p: any) => {
-          const name = p.name.escapedText || p.name.text;
-          result[name] = parseJsx(p.initializer, showKindName);
+          if (p.name) {
+            const name = p.name.escapedText || p.name.text;
+            result[name] = parseJsx(p.initializer, showKindName);
+          } else {
+            console.log(parseJsx(p.expression));
+          }
         });
 
         return { kind: kindName, value: result };
@@ -106,10 +110,14 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
         const je = jsxElement as any;
         name = je.tagName.escapedText;
         je.attributes.properties.forEach((p: any) => {
-          props[p.name.escapedText] = parseJsx(
-            p.initializer.expression,
-            showKindName
-          );
+          if (p.name) {
+            props[p.name.escapedText] = parseJsx(
+              p.initializer.expression,
+              showKindName
+            );
+          } else {
+            console.log(Object.keys(p));
+          }
         });
 
         if (props.children) {

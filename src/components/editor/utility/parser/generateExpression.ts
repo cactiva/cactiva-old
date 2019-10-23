@@ -57,10 +57,10 @@ export const generateExpressionArray = (node: any): any[] => {
       return [...generateExpressionArray(node.value), ` as any`];
     case SyntaxKind.ConditionalExpression:
       return [
-        node.trueKeyword,
-        "?",
+        ...generateExpressionArray(node.condition),
+        " ? ",
         ...generateExpressionArray(node.whenTrue),
-        ":",
+        " : ",
         ...generateExpressionArray(node.whenFalse)
       ];
     case SyntaxKind.JsxFragment:
