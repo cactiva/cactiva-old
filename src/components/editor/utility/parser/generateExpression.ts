@@ -46,10 +46,15 @@ export const generateExpressionArray = (node: any): any[] => {
         const result = [] as any;
         const keys = _.keys(node.value);
         keys.map((key, idx) => {
-          const isFirstKey = idx === 0;
-          const child = generateExpressionArray(node.value[key]);
-          result.push(`${!isFirstKey ? "," : ""}${key}:`);
-          child.map(v => result.push(child));
+          if (key.indexOf("_spread_") === 0) {
+            result.push(`...`);
+            result.push(generateExpressionArray(node.value[key]));
+          } else {
+            const isFirstKey = idx === 0;
+            const child = generateExpressionArray(node.value[key]);
+            result.push(`${!isFirstKey ? "," : ""}${key}:`);
+            child.map(v => result.push(child));
+          }
         });
         return [`{`, ...result, `}`];
       })();

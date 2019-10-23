@@ -95,7 +95,13 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
             const name = p.name.escapedText || p.name.text;
             result[name] = parseJsx(p.initializer, showKindName);
           } else {
-            // console.log(p, parseJsx(p.expression));
+            if (p.kind === SyntaxKind.SpreadAssignment) {
+              let spreadKey = 0;
+              while (result[`_spread_${spreadKey}`]) {
+                spreadKey++;
+              }
+              result[`_spread_${spreadKey}`] = parseJsx(p.expression);
+            }
           }
         });
 

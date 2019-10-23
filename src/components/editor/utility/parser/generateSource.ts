@@ -22,6 +22,10 @@ export const generateSource = (node: any): string => {
     case SyntaxKind.ObjectLiteralExpression:
       return `{
   ${_.map(node.value, (e, key) => {
+    if (key.indexOf("_spread_") === 0) {
+      return `...${generateSource(e)}`;
+    }
+
     return `${key}: ${generateSource(e)}`;
   }).join(`,\n\t`)}
 }`;
@@ -34,12 +38,19 @@ export const generateSource = (node: any): string => {
       return `${generateSource(node.exp)}[${generateSource(node.argExp)}]`;
     case SyntaxKind.ParenthesizedExpression:
       return `(${generateSource(node.value)})`;
+    case SyntaxKind.ConditionalExpression:
+      return `${generateSource(node.condition)} ? ${generateSource(
+        node.whenTrue
+      )}: ${generateSource(node.whenFalse)}`;
     case SyntaxKind.BinaryExpression:
       return (() => {
         let operator = "=";
         switch (node.operator) {
           case SyntaxKind.EqualsToken:
             operator = "=";
+            break;
+          case SyntaxKind.AmpersandAmpersandToken:
+            operator = "&&";
             break;
         }
 
@@ -88,5 +99,7 @@ ${body}
   }
 
   if (typeof node === "object" && node.value) return node.value;
+  console.log(toJS(node));
+
   return node;
 };

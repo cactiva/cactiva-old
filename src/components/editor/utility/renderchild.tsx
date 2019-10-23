@@ -5,6 +5,7 @@ import kinds, { kindNames } from "./kinds";
 import { SyntaxKind } from "./syntaxkinds";
 import { isTag } from "./tagmatcher";
 import tags from "./tags";
+import { toJS } from "mobx";
 
 export const renderChildren = (
   source: any,
@@ -91,14 +92,14 @@ const renderKind = (
   }
 
   const kind = kinds[kindNames[source.kind]] as any;
+  const cactiva = {
+    kind,
+    root: root,
+    source: source,
+    editor,
+    parentInfo
+  };
   if (kind) {
-    const cactiva = {
-      kind,
-      root: root,
-      source: source,
-      editor,
-      parentInfo
-    };
     editor.cactivaRefs[source.id] = cactiva;
     const Component = kind.element;
     if (editor.selectedId === source.id) {
@@ -106,6 +107,8 @@ const renderKind = (
     }
 
     return <Component {...source.props} key={key} _cactiva={cactiva} />;
+  } else {
+    console.log(toJS(source), cactiva, key);
   }
   return null;
 };
