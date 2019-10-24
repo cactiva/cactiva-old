@@ -15,6 +15,7 @@ export const generateSource = (node: any): string => {
     case SyntaxKind.CallExpression:
       return `${node.expression}(
     ${_.map(node.arguments, (e, key) => {
+      if (typeof e === "string") return `'${e}'`;
       return generateSource(e);
     }).join(`,`)}
   )`;

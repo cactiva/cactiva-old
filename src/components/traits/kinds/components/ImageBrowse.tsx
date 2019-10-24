@@ -39,7 +39,7 @@ export default observer(({ value, onChange, isShown, onDismiss }: any) => {
     });
   };
   useEffect(() => {
-    if (Array.isArray(value)) {
+    if (Array.isArray(value) && value.length > 0) {
       meta.source = value[0]
         .replace("require('", "")
         .replace("@src/assets/images/", "")
@@ -108,7 +108,7 @@ const FileEl = observer((props: any) => {
     meta.source = file.name;
     meta.isShown = false;
     onDismiss && onDismiss(false);
-    onChange(`require('@src/assets/images/${file.name}')`);
+    onChange(`@src/assets/images/${file.name}`);
   };
   const onClickDelete = () => {
     deleteFile(file.name).then((res: any) => {

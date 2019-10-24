@@ -93,6 +93,12 @@ export const generateValueByKind = (kind: number, value: any): any => {
         kind,
         value
       };
+    case SyntaxKind.CallExpression:
+      return {
+        kind: kind,
+        expression: value.expression,
+        arguments: value.arguments
+      }
     case SyntaxKind.ArrowFunction:
       return {
         kind,

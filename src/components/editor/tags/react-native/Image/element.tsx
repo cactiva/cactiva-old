@@ -33,7 +33,8 @@ export default observer((props: any) => {
       ? baseUrl + "/assets/" + quotedImg
       : "images/sample.jpg";
   }, [props.source]);
-  const onChangeImage = (v: any) => {
+  const onChangeImage = (v: string) => {
+    console.log(v);
     prepareChanges(cactiva.editor);
     if (!props.source) {
       cactiva.source.props.source = {
