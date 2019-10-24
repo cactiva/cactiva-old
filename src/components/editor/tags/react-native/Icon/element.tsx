@@ -13,7 +13,7 @@ export default observer((props: any) => {
   return (
     <CactivaDropChild cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
-        <CactivaSelectable cactiva={cactiva} style={tagProps.style}>
+        <CactivaSelectable cactiva={cactiva} style={style}>
           <Icon {...tagProps} style={style} />
         </CactivaSelectable>
       </CactivaDraggable>
@@ -42,6 +42,7 @@ interface IconProps {
 }
 const Icon = ({ source, name, size, color, style }: IconProps) => {
   const Icon: any = (IconSource as any)[source];
+  if (!Icon) return null;
 
   return <Icon name={name} size={size} color={color} style={style} />;
 };

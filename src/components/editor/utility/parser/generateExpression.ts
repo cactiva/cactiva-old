@@ -25,12 +25,29 @@ export const generateExpression = (node: any): any[] => {
 
   return result;
 };
+
+export const getToken = (op: number) => {
+  switch (op) {
+    case SyntaxKind.EqualsToken:
+      return "=";
+    case SyntaxKind.EqualsEqualsToken:
+      return "==";
+    case SyntaxKind.EqualsEqualsEqualsToken:
+      return "===";
+    case SyntaxKind.AmpersandAmpersandToken:
+      return "&&";
+  }
+  return null;
+};
+
 export const generateExpressionArray = (node: any): any[] => {
   if (!node) return [""];
 
   const kind = node.kind;
 
   switch (kind) {
+    case SyntaxKind.BinaryExpression:
+      return [node.left," " + getToken(node.operator) + " ", node.right];
     case SyntaxKind.NumericLiteral:
     case SyntaxKind.StringLiteral:
       return [`${node.value}`];

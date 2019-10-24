@@ -7,6 +7,7 @@ import React from "react";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDroppable from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
+import { toJS } from "mobx";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -48,7 +49,7 @@ export default observer((props: any) => {
   );
 });
 
-const Expression = observer((props: any) => {
+export const Expression = observer((props: any) => {
   const { exp, cactiva, idx } = props;
   const source = {
     kind: cactiva.source.kind,

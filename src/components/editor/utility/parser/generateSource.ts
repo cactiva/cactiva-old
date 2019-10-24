@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 import { SyntaxKind } from "../syntaxkinds";
 import { toJS } from "mobx";
+import { getToken } from "./generateExpression";
 
 export const generateSource = (node: any): string => {
   if (!node) return "";
@@ -44,19 +45,9 @@ export const generateSource = (node: any): string => {
       )}: ${generateSource(node.whenFalse)}`;
     case SyntaxKind.BinaryExpression:
       return (() => {
-        let operator = "=";
-        switch (node.operator) {
-          case SyntaxKind.EqualsToken:
-            operator = "=";
-            break;
-          case SyntaxKind.AmpersandAmpersandToken:
-            operator = "&&";
-            break;
-        }
-
-        return `${generateSource(node.left)} ${operator} ${generateSource(
-          node.right
-        )}`;
+        return `${generateSource(node.left)} ${getToken(
+          node.operator
+        )} ${generateSource(node.right)}`;
       })();
     case SyntaxKind.ReturnStatement:
       return `return ${generateSource(node.value)}`;

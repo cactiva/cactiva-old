@@ -91,7 +91,11 @@ const renderKind = (
       return "false";
   }
 
-  const kind = kinds[kindNames[source.kind]] as any;
+  let kind = kinds[kindNames[source.kind]] as any;
+  if (!kind) {
+    kind = kinds.SyntaxKind;
+  }
+
   const cactiva = {
     kind,
     root: root,
@@ -99,18 +103,12 @@ const renderKind = (
     editor,
     parentInfo
   };
-  if (kind) {
-    editor.cactivaRefs[source.id] = cactiva;
-    const Component = kind.element;
-    if (editor.selectedId === source.id) {
-      editor.selected = cactiva;
-    }
-
-    return <Component {...source.props} key={key} _cactiva={cactiva} />;
-  } else {
-    console.log(toJS(source), cactiva, key);
+  editor.cactivaRefs[source.id] = cactiva;
+  const Component = kind.element;
+  if (editor.selectedId === source.id) {
+    editor.selected = cactiva;
   }
-  return null;
+  return <Component {...source.props} key={key} _cactiva={cactiva} />;
 };
 
 const renderTag = (
