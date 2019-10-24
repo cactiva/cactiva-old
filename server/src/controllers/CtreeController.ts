@@ -19,7 +19,7 @@ export class CtreeController {
     );
 
     tree.children = tree.children.filter((e: any) => {
-      if (["assets", "libs"].indexOf(e.name) >= 0) {
+      if (["assets", "libs", "config"].indexOf(e.name) >= 0) {
         return false;
       }
       return true;

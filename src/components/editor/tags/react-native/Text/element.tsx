@@ -9,6 +9,7 @@ import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDroppable from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
 import { parseStyle } from "../../../utility/parser/parser";
+import { toJS } from "mobx";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -64,6 +65,7 @@ export default observer((props: any) => {
   useEffect(() => {
     meta.canDropOver = clength === 0;
   }, [clength, meta.dropOver]);
+
   return (
     <CactivaDroppable
       cactiva={cactiva}

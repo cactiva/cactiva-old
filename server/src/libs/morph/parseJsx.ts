@@ -31,6 +31,12 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
     kind = node.getKind();
   }
   const kindName = showKindName ? kindNames[kind] : kind;
+  if (node.expression === undefined && !!node.getExpression) {
+    node.expression = node.getExpression();
+  }
+  if (node.parameters === undefined && !!node.getParameters) {
+    node.parameters = node.getParameters();
+  }
 
   switch (kind) {
     case SyntaxKind.BinaryExpression:
@@ -71,19 +77,26 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
     case SyntaxKind.JsxExpression:
     case SyntaxKind.AsExpression:
     case SyntaxKind.ParenthesizedExpression:
-      return { kind: kindName, value: parseJsx(node.expression, showKindName) };
+      if (!!node.expression) {
+        return {
+          kind: kindName,
+          value: parseJsx(node.expression, showKindName)
+        };
+      }
     case SyntaxKind.ArrowFunction:
       return (() => {
-        const params = node.parameters.map((e: any) => {
+        const params = (node.parameters || []).map((e: any) => {
           return e.getText();
         });
         const body: any = [];
-        if (node.body.statements) {
-          node.body.statements.map((s: any) => {
-            body.push(parseJsx(s, showKindName));
-          });
-        } else {
-          body.push(parseJsx(node.body, showKindName));
+        if (node.body) {
+          if (node.body.statements) {
+            node.body.statements.map((s: any) => {
+              body.push(parseJsx(s, showKindName));
+            });
+          } else {
+            body.push(parseJsx(node.body, showKindName));
+          }
         }
         return { kind: kindName, params, body };
       })();

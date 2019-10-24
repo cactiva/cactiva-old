@@ -6,6 +6,17 @@ export const parseStyle = (node: any, cactiva: any): any => {
   if (typeof result !== "object") {
     return null;
   }
+  for (let i in result) {
+    const value = result[i];
+    if (typeof value === "string") {
+      if (value.indexOf('color.') === 0) {
+        const colorList: any = {
+          'color.primary': '#007ACC'
+        };
+        result[i] = colorList[value];
+      }
+    }
+  }
 
   return result;
 }

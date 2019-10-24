@@ -79,17 +79,6 @@ const renderKind = (
   root: any,
   parentInfo: any
 ): any => {
-  switch (source.kind) {
-    case SyntaxKind.StringLiteral:
-      return source.value;
-    case SyntaxKind.JsxText:
-    case SyntaxKind.NumericLiteral:
-      return source.value;
-    case SyntaxKind.TrueKeyword:
-      return "true";
-    case SyntaxKind.FalseKeyword:
-      return "false";
-  }
 
   let kind = kinds[kindNames[source.kind]] as any;
   if (!kind) {
