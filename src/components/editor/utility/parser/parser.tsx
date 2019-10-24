@@ -25,16 +25,21 @@ export const parseValue = (node: any): any => {
   if (!node) return node;
   const kind = node.kind;
   switch (kind) {
-    case SyntaxKind.CactivaCode:
-      return node.value;
     case SyntaxKind.NumericLiteral:
       return parseInt(node.value);
     case SyntaxKind.StringLiteral:
       return node.value.substring(1, node.value.length - 1);
     case SyntaxKind.Identifier:
     case SyntaxKind.PropertyAccessExpression:
-    case SyntaxKind.CallExpression:
       return node.value;
+    case SyntaxKind.CallExpression:
+      return (() => {
+        const result: any = [];
+        _.map(node.arguments, (e, key) => {
+          result.push(parseValue(e));
+        });
+        return result;
+      })();
     case SyntaxKind.PropertyAccessExpression:
       return undefined;
     case SyntaxKind.ObjectLiteralExpression:

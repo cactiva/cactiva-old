@@ -39,12 +39,13 @@ export default observer(({ value, onChange, isShown, onDismiss }: any) => {
     });
   };
   useEffect(() => {
-    value &&
-      (meta.source = value
+    if (Array.isArray(value)) {
+      meta.source = value[0]
         .replace("require('", "")
         .replace("@src/assets/images/", "")
-        .replace("')", ""));
-    meta.isShown = isShown;
+        .replace("')", "");
+      meta.isShown = isShown;
+    }
   }, [value, isShown]);
 
   useEffect(() => {

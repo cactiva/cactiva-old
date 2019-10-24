@@ -3,11 +3,11 @@ import CactivaDropMarker from "@src/components/editor/CactivaDropMarker";
 import { baseUrl } from "@src/store/editor";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect } from "react";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDropChild from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
-import { parseStyle } from "../../../utility/parser/parser";
+import { parseStyle, parseProps } from "../../../utility/parser/parser";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -15,17 +15,27 @@ export default observer((props: any) => {
   const meta = useObservable({
     dropOver: false,
     edited: false,
-    source: ""
+    source: "",
+    bg: ""
   });
-  const sourceImg = props.source || "";
-  const quotedImg = sourceImg
-    .match(/\(([^)]+)\)/)[1]
-    .replace("@src/assets/images/", "");
-  const imgPath = `${baseUrl}/assets/${quotedImg.substr(
-    1,
-    quotedImg.length - 2
-  )}`;
-  const backgroundImage = `url(${imgPath}), url('images/sample.jpg')`;
+
+  const tagProps = parseProps(props);
+
+  useEffect(() => {
+    let sourceImg = "";
+    if (Array.isArray(tagProps.source)) {
+      tagProps.source.map((i: any) => {
+        sourceImg += i;
+      })
+    }
+    const quotedImg = sourceImg.replace("@src/assets/images/", "");
+
+    meta.source = !!tagProps.source
+      ? baseUrl + "/assets/" + quotedImg
+      : "images/sample.jpg";
+    meta.bg = `url(${meta.source}), url('images/sample.jpg')`;
+  }, [props.source]);
+
   return (
     <>
       <CactivaDropChild
@@ -35,7 +45,7 @@ export default observer((props: any) => {
         <CactivaDraggable cactiva={cactiva}>
           <CactivaSelectable
             cactiva={cactiva}
-            style={{ ...style, backgroundImage }}
+            style={{ ...style, backgroundImage: meta.source }}
           >
             <CactivaDropMarker
               hover={meta.dropOver}

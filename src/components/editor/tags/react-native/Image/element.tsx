@@ -19,16 +19,20 @@ export default observer((props: any) => {
   });
   const cactiva = props._cactiva;
   const tagProps = parseProps(props);
-  const sourceImg = tagProps.source || "";
-  const quotedImg =
-    sourceImg &&
-    sourceImg.match(/\(([^)]+)\)/)[1].replace("@src/assets/images/", "");
-  tagProps.src = !!tagProps.source
-    ? baseUrl + "/assets/" + quotedImg.substr(1, quotedImg.length - 2)
-    : "images/sample.jpg";
+
   useEffect(() => {
-    meta.source = tagProps.source;
-  }, [tagProps.source]);
+    let sourceImg = "";
+    if (Array.isArray(tagProps.source)) {
+      tagProps.source.map((i: any) => {
+        sourceImg += i;
+      })
+    }
+    const quotedImg = sourceImg.replace("@src/assets/images/", "");
+
+    meta.source = !!tagProps.source
+      ? baseUrl + "/assets/" + quotedImg
+      : "images/sample.jpg";
+  }, [props.source]);
   const onChangeImage = (v: any) => {
     prepareChanges(cactiva.editor);
     if (!props.source) {
@@ -57,7 +61,7 @@ export default observer((props: any) => {
           <CactivaSelectable cactiva={cactiva} onDoubleClick={onDoubleClick}>
             <img
               style={tagProps.style}
-              src={tagProps.src}
+              src={meta.source}
               className={`${tagProps.source ? "" : "img-sample"}`}
               onError={onError}
             />
