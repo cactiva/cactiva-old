@@ -85,7 +85,6 @@ class EditorStore {
     const apiPath = "/project/read-source?path=";
     await Axios.get(`${baseUrl}${apiPath}${path}`)
       .then(res => {
-
         this.sources[path] = new SourceStore();
         this.sources[path].path = path;
         this.sources[path].source = res.data.component;
