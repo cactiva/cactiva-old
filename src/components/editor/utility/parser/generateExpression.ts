@@ -34,6 +34,10 @@ export const getToken = (op: number) => {
       return "==";
     case SyntaxKind.EqualsEqualsEqualsToken:
       return "===";
+    case SyntaxKind.BarToken:
+      return "|";
+    case SyntaxKind.BarBarToken:
+      return "||";
     case SyntaxKind.AmpersandAmpersandToken:
       return "&&";
   }
@@ -47,7 +51,7 @@ export const generateExpressionArray = (node: any): any[] => {
 
   switch (kind) {
     case SyntaxKind.BinaryExpression:
-      return [node.left," " + getToken(node.operator) + " ", node.right];
+      return [node.left, " " + getToken(node.operator) + " ", node.right];
     case SyntaxKind.NumericLiteral:
     case SyntaxKind.StringLiteral:
       return [`${node.value}`];

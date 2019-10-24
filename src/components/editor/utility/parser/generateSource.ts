@@ -90,7 +90,5 @@ ${body}
   }
 
   if (typeof node === "object" && node.value) return node.value;
-  console.log(toJS(node));
-
   return node;
 };
