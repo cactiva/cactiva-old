@@ -334,5 +334,5 @@ const CactivaEditorFooter = observer((props: any) => {
 });
 
 export const showAddInParent = (cactiva: any) => {
-  return getParentId(cactiva.editor.selectedId) === cactiva.source.id;
+  return getParentId(cactiva.editor.selectedId) === cactiva.source.id || cactiva.source.id === cactiva.editor.selectedId;
 }

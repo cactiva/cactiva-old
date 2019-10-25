@@ -542,6 +542,7 @@ declare module "evergreen-ui" {
         }) => React.ReactNode)
       | React.ReactNode;
     display?: string;
+    statelessProps?: any;
     minWidth?: number | string;
     minHeight?: number | string;
     animationDuration?: number;

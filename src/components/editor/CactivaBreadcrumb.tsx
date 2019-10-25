@@ -80,15 +80,11 @@ export default observer(({ editor }: any) => {
         cactivaRef && (
           <div className={`breadcrumb-tag last selected`}>
             <CactivaDraggable cactiva={cactivaRef}>
-              <CactivaSelectable
-                cactiva={cactivaRef}
-                style={{}}
-                className=""
-                showElementTag={false}
-                onBeforeSelect={() => {
-                  meta.shouldUpdateNav = false;
+              <div
+                onClick={() => {
+                  editor.selectedId = cactivaRef.source.id;
                 }}
-              ></CactivaSelectable>
+              ></div>
             </CactivaDraggable>
           </div>
         )}
@@ -99,30 +95,28 @@ export default observer(({ editor }: any) => {
 const ElementTag = observer((props: any) => {
   const { editor, value, meta } = props;
   const cactiva = editor.cactivaRefs[value.source.id];
-  const onBeforeSelect = () => {
-    meta.shouldUpdateNav = false;
-    if (editor.selectedId === value.source.id) {
-      editor.jsx = !editor.jsx;
-    } else if (!editor.jsx) {
-      editor.jsx = true;
-    }
-  };
   if (!cactiva) return null;
   const isSelected = !!(
     editor.rootSelected === false && editor.selectedId === value.source.id
   );
   return (
-    <CactivaSelectable
-      cactiva={cactiva}
+    <div
       className={`breadcrumb-tag ${isSelected ? "selected" : ""}`}
-      ignoreClassName={["selected"]}
-      showElementTag={false}
-      onBeforeSelect={onBeforeSelect}
+      onClick={() => {
+        meta.shouldUpdateNav = false;
+        if (editor.selectedId === value.source.id) {
+          editor.jsx = !editor.jsx;
+        } else if (!editor.jsx) {
+          editor.jsx = true;
+        }
+        editor.rootSelected = false;
+        editor.selectedId = cactiva.source.id;
+      }}
     >
       <CactivaDraggable cactiva={cactiva}>
         <span>{value.name}</span>
       </CactivaDraggable>
-    </CactivaSelectable>
+    </div>
   );
 });
 

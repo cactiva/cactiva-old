@@ -24,6 +24,7 @@ const meta = observable({
   source: [],
   expandedDir: [] as any[],
   newShown: false,
+  coord: { top: 0, left: 0 },
   keyword: ""
 });
 
@@ -144,8 +145,8 @@ export default observer(({ editor }: any) => {
             {isLoading ? (
               <Spinner size={12} />
             ) : (
-              <Icon icon={"plus"} size={11} color={"#aaa"} />
-            )}
+                <Icon icon={"plus"} size={11} color={"#aaa"} />
+              )}
           </Button>
         </Popover>
       </div>
@@ -162,10 +163,10 @@ export default observer(({ editor }: any) => {
               level={0}
             />
           ) : (
-            <Text fontSize={10} marginLeft={10}>
-              No item to display.
+              <Text fontSize={10} marginLeft={10}>
+                No item to display.
             </Text>
-          )}
+            )}
           <div style={{ height: 100 }} />
         </div>
       </div>
@@ -202,7 +203,9 @@ const ContentEl = observer((props: any) => {
           "/src/" + _.startCase(newname).replace(/[^0-9a-zA-Z]/g, "") + ".tsx";
         editor.status = "creating";
         try {
-          await api.get(`ctree/newfile?path=${path}`);
+          const newpath = path;
+          await api.get(`ctree/newfile?path=${newpath}`);
+          editor.load(newpath);
         } catch (e) {
           console.log(e);
         }
@@ -282,7 +285,9 @@ const File = ({
     >
       <div
         ref={ref}
-        onContextMenu={() => {
+        onContextMenu={(e: any) => {
+          meta.coord.top = e.pageY;
+          meta.coord.left = e.pageX;
           toggle();
         }}
         onClick={onClick}
@@ -402,7 +407,9 @@ const Directory = ({
         className={`item ${hover ? "hover" : ""}`}
         style={{ paddingLeft: level * 10 }}
         onClick={onClick}
-        onContextMenu={() => {
+        onContextMenu={(e: any) => {
+          meta.coord.top = e.pageY;
+          meta.coord.left = e.pageX;
           toggle();
         }}
       >
@@ -445,12 +452,12 @@ const Tree = observer(({ editor, tree, selected, level }: any) => {
                   color="#66788a"
                 />
               ) : (
-                <Icon
-                  icon="code"
-                  size={10}
-                  color={unsaved ? "red" : "#66788a"}
-                />
-              )}
+                  <Icon
+                    icon="code"
+                    size={10}
+                    color={unsaved ? "red" : "#66788a"}
+                  />
+                )}
             </div>
             <Text
               color={unsaved ? "red" : "#333"}
@@ -493,7 +500,9 @@ const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
 
         editor.status = "creating";
         try {
-          await api.get(`ctree/newfile?path=${path.join("/")}`);
+          const newpath = path.join("/");
+          await api.get(`ctree/newfile?path=${newpath}`);
+          editor.load(newpath);
         } catch (e) {
           console.log(e);
         }
@@ -589,6 +598,12 @@ const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
   };
   return (
     <Popover
+      statelessProps={{
+        style: {
+          top: meta.coord.top,
+          left: meta.coord.left
+        }
+      }}
       content={
         <div className="ctree-menu">
           <div className="cactiva-trait-cmenu-heading">
@@ -633,18 +648,18 @@ const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
                 {el}
               </Directory>
             ) : (
-              <File
-                name={name}
-                e={e}
-                selected={selected}
-                editor={editor}
-                level={level}
-                getRef={getRef}
-                toggle={toggle}
-              >
-                {el}
-              </File>
-            )}
+                <File
+                  name={name}
+                  e={e}
+                  selected={selected}
+                  editor={editor}
+                  level={level}
+                  getRef={getRef}
+                  toggle={toggle}
+                >
+                  {el}
+                </File>
+              )}
             {isShown && (
               <div
                 style={{
@@ -667,13 +682,13 @@ const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
 const findLargestSmallest = (a: string, b: string) =>
   a.length > b.length
     ? {
-        largest: a,
-        smallest: b
-      }
+      largest: a,
+      smallest: b
+    }
     : {
-        largest: b,
-        smallest: a
-      };
+      largest: b,
+      smallest: a
+    };
 
 const fuzzyMatch = (strA: string, strB: string, fuzziness = 1) => {
   if (strA === "" || strB === "") {

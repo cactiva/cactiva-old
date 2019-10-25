@@ -153,7 +153,8 @@ export default observer(
 
     let shouldShowAdd = false;
     if (id === editor.selectedId) {
-      shouldShowAdd = true;
+      if (id !== "0")
+        shouldShowAdd = true;
     } else {
       const sid = editor.selectedId.split("_");
       if (sid[sid.length - 1] > 0) {
