@@ -14,6 +14,7 @@ import { observer, useObservable } from "mobx-react-lite";
 import React, { useRef } from "react";
 import CactivaCli from "./CactivaCli";
 import "./CactivaHead.scss";
+import CactivaExpoCli from "./CactivaExpoCli";
 
 export default observer(({ editor }: any) => {
   const current = editor.current;
@@ -35,85 +36,6 @@ export default observer(({ editor }: any) => {
   if (editor.current && !editor.current.isSaved && status === "ready") {
     status = "unsaved";
   }
-  const meta = useObservable({
-    logText: "",
-    url: ""
-  });
-  const timercli = useRef(null as any);
-  const streamCLILog = () => {
-    const exec = async () => {
-      const res = await api.get("project/log-server");
-      if (res.indexOf("Webpack on port") >= 0) {
-        meta.url = `http://localhost:${res
-          .split("Webpack on port")[1]
-          .split("in")[0]
-          .trim()}`;
-      }
-      meta.logText += res;
-      terminal.current.write(res);
-    };
-    exec();
-    timercli.current = setInterval(exec, 500);
-  };
-  const terminal = useRef(null as any);
-  const content = () => (
-    <div className="project-popover">
-      <div className="console">
-        {meta.logText === "" && editor.cli.status === "stopped" ? (
-          <div className="empty">
-            <Icon icon="cell-tower" color="white" size={30} />
-            <Text color="white" marginTop={10} size={300}>
-              Please start the server
-            </Text>
-          </div>
-        ) : (
-          <CactivaCli cliref={terminal} initialText={meta.logText} />
-        )}
-      </div>
-      <div className="commands">
-        <Button
-          size={300}
-          userSelect="none"
-          onClick={() => {
-            (async () => {
-              if (editor.cli.status === "stopped") {
-                await api.get("project/start-server");
-                editor.cli.status = "running";
-                streamCLILog();
-              } else {
-                await api.get("project/stop-server");
-                editor.cli.status = "stopped";
-                clearInterval(timercli.current);
-              }
-              meta.logText = "";
-              meta.url = "";
-              if (terminal.current) {
-                terminal.current.clear();
-              }
-            })();
-          }}
-        >
-          {editor.cli.status === "running" ? "Stop Server" : "Start Server"}
-        </Button>
-
-        {meta.url ? (
-          <a href={meta.url} target="_blank">
-            <Text size={300}>Open Web Preview</Text>
-            <Icon icon="share" size={11} color="#999" />
-          </a>
-        ) : editor.cli.status === "running" ? (
-          <a>
-            <Spinner size={18} color="#999" />
-            <Text size={300}>Loading...</Text>
-          </a>
-        ) : (
-          <a>
-            <Text size={300}>Preview not available</Text>
-          </a>
-        )}
-      </div>
-    </div>
-  );
   const onClickPane = () => {
     editor.current.traitPane = !editor.current.traitPane;
     localStorage.setItem(
@@ -121,21 +43,24 @@ export default observer(({ editor }: any) => {
       editor.current.traitPane ? "y" : "n"
     );
   };
+  const cliref = useRef({} as any);
   return (
     <div className="cactiva-head">
       <div className="left">
         <Popover
           onCloseComplete={() => {
-            if (timercli.current) {
-              clearInterval(timercli.current);
+            if (cliref.current.timer) {
+              clearInterval(cliref.current.timer);
             }
           }}
           onOpenComplete={() => {
             if (editor.cli.status === "running") {
-              streamCLILog();
+              cliref.current.stream();
             }
           }}
-          content={content}
+          content={() => {
+            return <CactivaExpoCli cliref={cliref} editor={editor} />
+          }}
           position="right"
         >
           <Pane>

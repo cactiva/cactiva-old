@@ -101,11 +101,16 @@ export class ProjectController {
             )
           );
         }
+
+        this.cli.cancel();
+        this.lastBufferIndex = 0;
+        this.cli = null;
+
+        res.status(200).json({
+          status: "ok"
+        });
       });
     }
-    res.status(200).json({
-      status: "ok"
-    });
   }
 
   @Get("log-server")
