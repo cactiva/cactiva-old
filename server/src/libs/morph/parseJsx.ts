@@ -130,10 +130,17 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
         name = je.tagName.escapedText;
         je.attributes.properties.forEach((p: any) => {
           if (p.name) {
-            props[p.name.escapedText] = parseJsx(
-              p.initializer.expression,
-              showKindName
-            );
+            if (!p.initializer.expression && p.initializer.text) {
+              props[p.name.escapedText] = {
+                kind: SyntaxKind.StringLiteral,
+                value: `"${p.initializer.text}"`
+              };
+            } else {
+              props[p.name.escapedText] = parseJsx(
+                p.initializer.expression,
+                showKindName
+              );
+            }
           } else {
             console.log(Object.keys(p));
           }

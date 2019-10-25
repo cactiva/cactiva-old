@@ -1,28 +1,12 @@
 import { Button, Dialog, Icon, Spinner, TextInputField } from "evergreen-ui";
 import { observer, useObservable } from "mobx-react-lite";
-import React, { useEffect } from "react";
+import React from "react";
 import App from "./App";
-import api from "./libs/api";
 import editor from "./store/editor";
 import "./Welcome.scss";
 
 export default observer(() => {
   const { status, current } = editor;
-  useEffect(() => {
-    api.get("project/info").then(res => {
-      editor.name = res.app;
-      editor.cli.status = res.status;
-    });
-    editor.load(
-      localStorage.getItem("cactiva-current-path") || "/src/Home.tsx"
-    );
-  }, []);
-
-  useEffect(() => {
-    if (status === "failed") {
-      editor.load("/src/Home.tsx");
-    }
-  }, [status]);
 
   if (!!current) {
     if (status !== "failed") {

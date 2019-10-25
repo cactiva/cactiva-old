@@ -15,7 +15,6 @@ export default observer(({ editor, cliref }: any) => {
             if (editor.cli.status === "running") {
                 const res = await api.get("project/log-server");
                 meta.logText += res;
-
                 if (!meta.url) {
                     if (meta.logText.indexOf("Webpack on port") >= 0) {
                         meta.url = `http://localhost:${meta.logText

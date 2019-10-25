@@ -105,6 +105,23 @@ export default observer(() => {
   const traitPane = current ? current.traitPane : false;
 
   useEffect(() => {
+    api.get("project/info").then(res => {
+      editor.name = res.app;
+      editor.cli.status = res.status;
+    });
+    editor.load(
+      localStorage.getItem("cactiva-current-path") || "/src/Home.tsx"
+    );
+  }, []);
+
+  useEffect(() => {
+    if (status === "failed") {
+      editor.load("/src/Home.tsx");
+    }
+  }, [status]);
+
+
+  useEffect(() => {
     if (renderFont) {
       generateFonts();
       current && (current.renderfont = false);
@@ -114,6 +131,8 @@ export default observer(() => {
   useEffect(() => {
     meta.sizeScreen = traitPane ? [15, 70, 15] : [15, 85];
   }, [traitPane]);
+  
+  if (!editor.name || !editor.current) return null;
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="cactiva-container">
