@@ -2,6 +2,8 @@ import { Menu, Popover, Text } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useRef } from "react";
+import { default as ceditor } from "@src/store/editor";
+import { getParentId, addChildInId, removeElementById, prepareChanges, commitChanges } from "./utility/elements/tools";
 export default observer(
   ({
     cactiva,
@@ -80,15 +82,54 @@ export default observer(
         content={
           <div className="ctree-menu" onClick={(e: any) => { e.stopPropagation(); }}>
             <Menu>
-              <Menu.Item icon="new-text-box" onSelect={() => {
+              <Menu.Item icon="add-to-folder" onSelect={() => {
                 toggleRef.current();
               }}>
-                New Component
+                Wrap In...
               </Menu.Item>
-              <Menu.Item icon="folder-new" onSelect={() => {
+              {source.id.indexOf("_") > 0 && <>
+                <Menu.Divider />
+                <Menu.Item icon="select" onSelect={() => {
+                  toggleRef.current();
+                  if (ceditor.current) {
+                    ceditor.current.selectedId = getParentId(source.id);
+                  }
+                }}>
+                  Select Parent
+</Menu.Item>
+                <Menu.Item icon="arrow-up" onSelect={() => {
+                  toggleRef.current();
+                  if (ceditor.current) {
+                    prepareChanges(ceditor.current);
+                    const pid = getParentId(getParentId(source.id));
+                    const el = removeElementById(ceditor.current.source, source.id);
+                    addChildInId(ceditor.current.source, pid, el);
+                    commitChanges(ceditor.current);
+                  }
+                }}>Move To Parent</Menu.Item>
+
+              </>}
+              <Menu.Divider />
+              <Menu.Item icon="cut" onSelect={() => {
                 toggleRef.current();
+                editor.selectedId = source.id;
+                ceditor.cut();
               }}>
-                New folder
+                Cut (Ctrl+X)
+              </Menu.Item>
+              <Menu.Item icon="duplicate" onSelect={() => {
+                toggleRef.current();
+                editor.selectedId = source.id;
+                ceditor.copy();
+              }}>
+                Copy (Ctrl+C)
+              </Menu.Item>
+              <Menu.Item icon="clipboard" onSelect={() => {
+                toggleRef.current();
+                editor.selectedId = source.id;
+                ceditor.paste();
+              }}>
+                Paste (Ctrl+V)
               </Menu.Item>
             </Menu>
           </div>

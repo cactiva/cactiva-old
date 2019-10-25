@@ -416,14 +416,7 @@
   justify-content: flex-start;
   &.selected {
     background-size: auto auto;
-    background-color: transparent;
-    background-image: repeating-linear-gradient(
-      135deg,
-      transparent,
-      transparent 10px,
-      rgba(59, 160, 251, 0.18) 10px,
-      rgba(59, 160, 251, 0.18) 20px
-    );
+    background-color: rgba(59, 160, 251, 0.05);
   }
 }
 .cactiva-el-cmenu {
