@@ -2,6 +2,7 @@
 import { css, jsx } from "@emotion/core";
 import React, { forwardRef } from "react";
 import { Icon } from "evergreen-ui";
+import editor from "@src/store/editor";
 
 export default forwardRef(
   (
@@ -54,9 +55,18 @@ export default forwardRef(
             background: ${hover || showAdd ? "rgba(54, 172, 232, .4)" : "transparent"};
           `}
         >
-          {showAdd && <div className="add-btn" onClick={(e) => {
-            e.nativeEvent.stopPropagation();
-            e.nativeEvent.preventDefault();
+          {!hover && showAdd && <div className="add-btn" onClickCapture={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            if (editor.current) {
+              let id = editor.current.selectedId;
+              if (placement === "child") {
+                const cid = editor.current.selectedId.split("_")
+                cid.pop();
+                id = cid.join("_");
+              }
+              console.log(id, placement);
+            }
           }}><Icon icon={'small-plus'} size={15} color={"#fff"} /></div>}</div>
       </div>
     );

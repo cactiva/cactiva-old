@@ -58,23 +58,27 @@ export default observer(
       e.stopPropagation();
       if (!meta.hover) meta.hover = true;
     };
-    const onContextMenu = () => {
+    const onContextMenu = (e: any) => {
+      e.stopPropagation();
+      e.preventDefault();
       toggleRef.current();
       meta.menuVisible = true;
     }
     const toggleRef = useRef(null as any);
+    const ref = useRef(null as any);
     return (
       <Popover
         content={
-          <div className="ctree-menu">
-            <div className="cactiva-trait-cmenu-heading">
-              <Text>{name}</Text>
-            </div>
+          <div className="ctree-menu" onClick={(e: any) => { e.stopPropagation(); }}>
             <Menu>
-              <Menu.Item icon="new-text-box">
+              <Menu.Item icon="new-text-box" onSelect={() => {
+                toggleRef.current();
+              }}>
                 New Component
               </Menu.Item>
-              <Menu.Item icon="folder-new">
+              <Menu.Item icon="folder-new" onSelect={() => {
+                toggleRef.current();
+              }}>
                 New folder
               </Menu.Item>
             </Menu>
@@ -83,8 +87,10 @@ export default observer(
       >
         {({ toggle, getRef, isShown }: any) => {
           toggleRef.current = toggle;
+          getRef(ref.current);
           return (<div
-            style={{ ...style, opacity: 1 }}
+            ref={ref}
+            style={{ ...style, opacity: 1, position: "relative" }}
             className={` ${Object.values(classes).join(" ")} ${className}`}
             onMouseOver={onMouseOver}
             onMouseOut={onMouseOut}
@@ -101,7 +107,29 @@ export default observer(
                 </Text>
               </div>
             )}
+            {classes.selected && <div className="cactiva-el-cmenu"></div>}
             {children}
+            {isShown && <div className="cactiva-el-cmenu"></div>}
+            {isShown && <div
+              onContextMenu={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                toggleRef.current();
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                toggleRef.current();
+              }}
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                bottom: 0,
+                right: 0,
+                zIndex: 11
+              }}
+            ></div>}
           </div>)
         }}
       </Popover>
