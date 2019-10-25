@@ -1,5 +1,6 @@
 import CactivaChildren from "@src/components/editor/CactivaChildren";
 import CactivaDropMarker from "@src/components/editor/CactivaDropMarker";
+import { showAddInParent } from "@src/components/editor/CactivaEditor";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React from "react";
@@ -27,6 +28,7 @@ export default observer((props: any) => {
         <CactivaSelectable cactiva={cactiva} style={style}>
           <CactivaDropMarker
             hover={meta.dropOver}
+            showAdd={showAddInParent(cactiva)}
             direction={direction}
             stretch={hasNoChildren}
           />

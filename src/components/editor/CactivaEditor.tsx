@@ -2,25 +2,16 @@ import api from "@src/libs/api";
 import { Icon, Text } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
-import React, { useCallback, useEffect, useRef } from "react";
-import { useDropzone } from "react-dropzone";
+import React, { useEffect, useRef } from "react";
 import MonacoEditor from "react-monaco-editor";
 import Split from "react-split";
 import CactivaBreadcrumb from "./CactivaBreadcrumb";
-import CactivaToolbar from "./CactivaToolbar";
 import "./editor.scss";
 import "./tags/kinds/kinds.scss";
 import "./tags/react-native/react-native.scss";
 import "./tags/ui-kitten/ui-kitten.scss";
-import {
-  addChildInId,
-  commitChanges,
-  createNewElement,
-  insertAfterElementId,
-  prepareChanges
-} from "./utility/elements/tools";
 import { renderChildren } from "./utility/renderchild";
-import { SyntaxKind } from "./utility/syntaxkinds";
+import { getParentId } from "./utility/elements/tools";
 
 const uploadImage = async (file: any) => {
   var formDataToUpload = new FormData();
@@ -39,48 +30,6 @@ export default observer(({ editor }: any) => {
       localStorage.getItem("cactiva-editor-source-height") || "40"
     )
   });
-
-  const onDrop = useCallback(async acceptedFiles => {
-    if (!acceptedFiles[0].type.includes("image/")) {
-      alert("Images only!");
-      return;
-    }
-    prepareChanges(editor);
-    const el = createNewElement("Image");
-    const file: any = await uploadImage(acceptedFiles[0]);
-    el.props["source"] = {
-      kind: SyntaxKind.CallExpression,
-      value: `require('@src/assets/images/${file.filename}')`
-    };
-    el.props["style"] = {
-      kind: SyntaxKind.ObjectLiteralExpression,
-      value: {
-        width: {
-          kind: SyntaxKind.NumericLiteral,
-          value: 250
-        }
-      }
-    };
-    if (_.get(editor, "source.children.length", 0) > 0) {
-      const idx = editor.source.children.length - 1;
-      insertAfterElementId(editor.source, editor.source.children[idx].id, el);
-    } else {
-      addChildInId(editor.source, editor.source.id, el);
-    }
-    commitChanges(editor);
-    meta.onDrag = false;
-  }, []);
-  const onDragEnter = (e: any) => {
-    meta.onDrag = true;
-  };
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    onDragEnter
-  });
-  const rootProps = getRootProps();
-  delete rootProps.onClick;
-  delete rootProps.onFocus;
-  delete rootProps.onBlur;
   const sourceRef = useRef(null as any);
   const monacoEdRef = useRef(null as any);
   const screenSize = [100 - meta.edHeight, meta.edHeight];
@@ -101,11 +50,8 @@ export default observer(({ editor }: any) => {
     }
   };
   return (
-    <div className="cactiva-editor" {...rootProps}>
-      {meta.onDrag && <input {...getInputProps()} />}
-
+    <div className="cactiva-editor">
       <div className="cactiva-wrapper">
-        <CactivaToolbar editor={editor} />
         <div className="cactiva-editor-wrapper">
           <Split
             sizes={screenSize}
@@ -119,7 +65,7 @@ export default observer(({ editor }: any) => {
                   ? "resplit"
                   : "split"
                 : "unsplit"
-            }`}
+              }`}
             onDrag={onDragScreen}
           >
             <CactivaEditorRender editor={editor} />
@@ -171,17 +117,17 @@ const CactivaEditorSource = observer((props: any) => {
   };
   const editorDidMount = (ed: any, monaco: any) => {
     monacoEdRef.current = ed;
-    ed.onDidBlurEditorText(function(e: any) {
+    ed.onDidBlurEditorText(function (e: any) {
       monacoEditorChange(ed.getValue());
     });
-    ed.onMouseLeave(function(e: any) {
+    ed.onMouseLeave(function (e: any) {
       monacoEditorChange(ed.getValue());
     });
     ed.addAction({
       id: "cactiva-apply-changes",
       label: "Apply Changes",
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
-      run: function(ed: any) {
+      run: function (ed: any) {
         meta.showAction = false;
         monacoEditorChange(ed.getValue());
         if (editor.selectedSource.length > 0) {
@@ -197,7 +143,7 @@ const CactivaEditorSource = observer((props: any) => {
       id: "cactiva-save",
       label: "Save",
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S],
-      run: function(ed: any) {
+      run: function (ed: any) {
         monacoEditorChange(ed.getValue());
         editor.save();
         return null;
@@ -386,3 +332,7 @@ const CactivaEditorFooter = observer((props: any) => {
     </div>
   );
 });
+
+export const showAddInParent = (cactiva: any) => {
+  return getParentId(cactiva.editor.selectedId) === cactiva.source.id;
+}

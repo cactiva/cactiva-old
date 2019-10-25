@@ -9,6 +9,7 @@ import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDropChild from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
 import { parseStyle } from "../../../utility/parser/parser";
+import editor from "@src/store/editor";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;

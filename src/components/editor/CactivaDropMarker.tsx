@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core";
 import React, { forwardRef } from "react";
+import { Icon } from "evergreen-ui";
 
 export default forwardRef(
   (
@@ -10,6 +11,7 @@ export default forwardRef(
       direction,
       style,
       stretch = false,
+      showAdd = false,
       placement = "child"
     }: any,
     ref: any
@@ -42,13 +44,20 @@ export default forwardRef(
             margin: ${placement === "child" && stretch
               ? "5px 0px"
               : stretch && direction === "row"
-              ? "0px 5px"
-              : "0px"};
+                ? "0px 5px"
+                : "0px"};
             min-width: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             min-height: 5px;
-            background: ${hover ? "rgba(54, 172, 232, .4)" : "transparent"};
+            background: ${hover || showAdd ? "rgba(54, 172, 232, .4)" : "transparent"};
           `}
-        ></div>
+        >
+          {showAdd && <div className="add-btn" onClick={(e) => {
+            e.nativeEvent.stopPropagation();
+            e.nativeEvent.preventDefault();
+          }}><Icon icon={'small-plus'} size={15} color={"#fff"} /></div>}</div>
       </div>
     );
   }

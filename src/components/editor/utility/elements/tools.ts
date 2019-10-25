@@ -9,6 +9,15 @@ import kinds from "../kinds";
 export const getIds = (id: string | string[]) =>
   Array.isArray(id) ? _.clone(id) : id.split("_");
 
+export const getParentId = (ids: string) => {
+  const sid = ids.split("_");
+  if (sid.length > 0) {
+    sid.pop();
+  }
+  return sid.join("_");
+};
+
+
 const recurseElementById = (
   id: string,
   root: any,
@@ -206,7 +215,6 @@ export const insertAfterElementId = (
   const parent = findParentElementById(root, id);
   const index = parseInt(ids[ids.length - 1] || "-1");
   const children = _.get(parent, insertTo, []);
-  console.log(child);
   if (children[index]) {
     children.splice(index + 1, 0, child);
     _.set(parent, insertTo, children);
@@ -220,7 +228,6 @@ export const addChildInId = (
   insertTo = "children"
 ) => {
   const parent = findElementById(root, id);
-  console.log(child);
   if (parent) {
     let children = _.get(parent, insertTo);
     if (!children) {
@@ -253,8 +260,8 @@ export const commitChanges = (editor: any) => {
     editor.selectedId = editor.tempSelected.id;
     editor.tempSelected = undefined;
   }
-  const diff = getDiff(editor.source, editor.prevSource);
   if (editor.undoStack.length > 2) {
+    const diff = getDiff(toJS(editor.source), editor.prevSource);
     const lastStack1 = editor.undoStack[editor.undoStack.length - 1];
     const lastStack2 = editor.undoStack[editor.undoStack.length - 2];
 

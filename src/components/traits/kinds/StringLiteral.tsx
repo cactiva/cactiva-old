@@ -1,18 +1,15 @@
 import { uuid } from "@src/components/editor/utility/elements/tools";
-import { parseValue } from "@src/components/editor/utility/parser/parser";
 import api from "@src/libs/api";
 import { Button, IconButton, Popover, Text, Tooltip } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect } from "react";
 import { SketchPicker } from "react-color";
-import * as IconSource from "react-web-vector-icons";
 import { ICactivaTraitFieldProps } from "../CactivaTraitField";
 import FontBrowser from "./components/FontBrowser";
-import IconMaps from "./components/IconMaps";
+import IconsEl from "./components/IconMaps";
 import "./StringLiteral.scss";
 
-const Icons = IconMaps();
 export default observer((trait: ICactivaTraitFieldProps) => {
   const meta = useObservable({
     value: trait.value,
@@ -108,12 +105,6 @@ const OptionEl = observer((props: any) => {
   return <option value={`${item.value}`}>{item.label}</option>;
 });
 
-const CustomIcon = ({ source, name, size, color, style }: any) => {
-  const Icon: any = (IconSource as any)[source];
-
-  return <Icon name={name} size={size} color={color} style={style} />;
-};
-
 function textColor(bgColor: string, lightColor: string, darkColor: string) {
   var color = bgColor.charAt(0) === "#" ? bgColor.substring(1, 7) : bgColor;
   var r = parseInt(color.substring(0, 2), 16); // hexToR
@@ -122,81 +113,6 @@ function textColor(bgColor: string, lightColor: string, darkColor: string) {
   return r * 0.299 + g * 0.587 + b * 0.114 > 186 ? darkColor : lightColor;
 }
 
-const IconsEl = observer((props: any) => {
-  const { trait, meta } = props;
-  const onChange = (e: any) => {
-    let v = e.target.value.toLowerCase();
-    metaIcon.search = v;
-    metaIcon.list = Icons[metaIcon.source].filter((x: string) =>
-      x.toLowerCase().includes(v)
-    );
-  };
-
-  const metaIcon = useObservable({
-    source: "Entypo",
-    search: "",
-    list: Icons["Entypo"]
-  });
-
-  useEffect(() => {
-    metaIcon.source = parseValue(trait.source.props.source);
-    metaIcon.list = Icons[metaIcon.source].filter((x: string) =>
-      x.toLowerCase().includes(metaIcon.search)
-    );
-  }, []);
-  return (
-    <div
-      className={`trait-string-literal cactiva-trait-icon`}
-      style={{ ...trait.style, flexDirection: "row", alignItems: "center" }}
-    >
-      <div className="icon-wrapper">
-        <div className="toolbar">
-          <div className={`icon-selected`}>
-            <CustomIcon source={metaIcon.source} name={meta.value} size={20} />
-          </div>
-          <input
-            className={`cactiva-trait-input input`}
-            placeholder="Search"
-            type="text"
-            value={metaIcon.search}
-            onChange={onChange}
-            onFocus={e => {
-              e.target.select();
-            }}
-          />
-        </div>
-        <div className={`list`}>
-          {metaIcon.list.map((name: any) => {
-            return (
-              <IconEl
-                key={uuid("traiticon")}
-                name={name}
-                meta={meta}
-                trait={trait}
-                metaIcon={metaIcon}
-              />
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-});
-
-const IconEl = observer((props: any) => {
-  const { trait, meta, metaIcon, name } = props;
-  const onClick = () => {
-    trait.update(`"${name}"`);
-  };
-  return (
-    <div
-      className={`icon ${meta.value === name ? "active" : ""}`}
-      onClick={onClick}
-    >
-      <CustomIcon source={metaIcon.source} name={name} size={18} />
-    </div>
-  );
-});
 
 const ColorEl = observer((props: any) => {
   const { meta, trait } = props;
@@ -276,21 +192,21 @@ const RadioEl = observer((props: any) => {
           flexGrow={1}
         />
       ) : (
-        <Button
-          isActive={item.value === meta.value}
-          iconBefore={item.icon}
-          height={20}
-          onClick={onClick}
-          flexGrow={1}
-          fontSize={10}
-          padding={0}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          {item.label}
-        </Button>
-      )}
+          <Button
+            isActive={item.value === meta.value}
+            iconBefore={item.icon}
+            height={20}
+            onClick={onClick}
+            flexGrow={1}
+            fontSize={10}
+            padding={0}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            {item.label}
+          </Button>
+        )}
     </Tooltip>
   );
 });
@@ -327,7 +243,7 @@ const FontsEl = observer((props: any) => {
         value={meta.value}
         onChange={onSelect}
       >
-        
+
         <option value={undefined}>
           Select ...
         </option>

@@ -1,7 +1,7 @@
 import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
 import { CactivaTag } from "@src/components/editor/utility/classes";
 import traitStyle from "@src/components/traits/templates/traitStyle";
-import IconMaps from "@src/components/traits/kinds/components/IconMaps";
+import { IconMaps } from "@src/components/traits/kinds/components/IconMaps";
 import _ from "lodash";
 
 const styles = {

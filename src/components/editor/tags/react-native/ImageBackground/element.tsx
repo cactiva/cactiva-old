@@ -1,5 +1,6 @@
 import CactivaChildren from "@src/components/editor/CactivaChildren";
 import CactivaDropMarker from "@src/components/editor/CactivaDropMarker";
+import { showAddInParent } from "@src/components/editor/CactivaEditor";
 import { baseUrl } from "@src/store/editor";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
@@ -7,7 +8,7 @@ import React, { useEffect } from "react";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDropChild from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
-import { parseStyle, parseProps } from "../../../utility/parser/parser";
+import { parseProps, parseStyle } from "../../../utility/parser/parser";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -48,6 +49,7 @@ export default observer((props: any) => {
             style={{ ...style, backgroundImage: meta.source }}
           >
             <CactivaDropMarker
+              showAdd={showAddInParent(cactiva)}
               hover={meta.dropOver}
               direction={_.get(style, "flexDirection", "column")}
             />

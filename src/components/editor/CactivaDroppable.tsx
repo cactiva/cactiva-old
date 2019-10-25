@@ -151,6 +151,20 @@ export default observer(
       }
     }, [childOver, afterOver, canDropAfter, canDropOver]);
 
+    let shouldShowAdd = false;
+    if (id === editor.selectedId) {
+      shouldShowAdd = true;
+    } else {
+      const sid = editor.selectedId.split("_");
+      if (sid[sid.length - 1] > 0) {
+        sid[sid.length - 1] = sid[sid.length - 1] - 1;
+        if (id === sid.join("_")) {
+          shouldShowAdd = true;
+        }
+      }
+    }
+
+
     return (
       <>
         <div ref={childDropRef} className={`cactiva-drop-children`}>
@@ -165,6 +179,7 @@ export default observer(
               }
             }}
             hover={meta.canDropAfter}
+            showAdd={shouldShowAdd}
             direction={afterDirection}
             stretch={isAfterStretched}
             placement="after"

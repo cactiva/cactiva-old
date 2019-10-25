@@ -31,24 +31,13 @@
     }
 
     .list {
-      display: flex;
-      flex: 1;
-      flex-direction: row;
-      flex-wrap: wrap;
-      max-height: 160px;
-      overflow-y: auto;
-      background: white;
-      border: 1px solid #ececeb;
-      justify-content: space-around;
-
       .icon {
         cursor: pointer;
-        width: 20px;
+        width: 35px;
+        display: flex;
         align-items: center;
-        padding: 5px;
         border-radius: 4px;
-        margin: 2px;
-        justify-content: space-between;
+        justify-content: center;
 
         &:hover {
           background: rgba(16, 112, 202, 0.09);
@@ -57,7 +46,6 @@
           }
         }
       }
-
       .active {
         background: rgba(16, 112, 202, 0.09);
         i {

@@ -7,6 +7,8 @@ import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDropChild from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
 import { parseStyle } from "../../../utility/parser/parser";
+import { getParentId } from "@src/components/editor/utility/elements/tools";
+import { showAddInParent } from "@src/components/editor/CactivaEditor";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -29,6 +31,7 @@ export default observer((props: any) => {
         <CactivaSelectable cactiva={cactiva} style={style}>
           <CactivaDropMarker
             hover={meta.dropOver}
+            showAdd={showAddInParent(cactiva)}
             direction={direction}
             stretch={hasNoChildren}
           />
