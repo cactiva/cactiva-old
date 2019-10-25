@@ -1,7 +1,7 @@
-import { Text } from "evergreen-ui";
+import { Text, Popover, Menu } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
-import React from "react";
+import React, { useRef } from "react";
 export default observer(
   ({
     cactiva,
@@ -59,29 +59,52 @@ export default observer(
       if (!meta.hover) meta.hover = true;
     };
     const onContextMenu = () => {
+      toggleRef.current();
       meta.menuVisible = true;
     }
+    const toggleRef = useRef(null as any);
     return (
-      <div
-        style={{ ...style, opacity: 1 }}
-        className={` ${Object.values(classes).join(" ")} ${className}`}
-        onMouseOver={onMouseOver}
-        onMouseOut={onMouseOut}
-        onDoubleClick={onDoubleClick}
-        onClick={onClick}
-        onContextMenu={onContextMenu}
-      >
-        {showElementTag && (
-          <div
-            className={`cactiva-element-tag ${classes.hover} ${classes.selected}`}
-          >
-            <Text size={300} color={"white"}>
-              {name}
-            </Text>
+      <Popover
+        content={
+          <div className="ctree-menu">
+            <div className="cactiva-trait-cmenu-heading">
+              <Text>{name}</Text>
+            </div>
+            <Menu>
+              <Menu.Item icon="new-text-box">
+                New Component
+              </Menu.Item>
+              <Menu.Item icon="folder-new">
+                New folder
+              </Menu.Item>
+            </Menu>
           </div>
-        )}
-        {children}
-      </div>
+        }
+      >
+        {({ toggle, getRef, isShown }: any) => {
+          toggleRef.current = toggle;
+          return (<div
+            style={{ ...style, opacity: 1 }}
+            className={` ${Object.values(classes).join(" ")} ${className}`}
+            onMouseOver={onMouseOver}
+            onMouseOut={onMouseOut}
+            onDoubleClick={onDoubleClick}
+            onClick={onClick}
+            onContextMenu={onContextMenu}
+          >
+            {showElementTag && (
+              <div
+                className={`cactiva-element-tag ${classes.hover} ${classes.selected}`}
+              >
+                <Text size={300} color={"white"}>
+                  {name}
+                </Text>
+              </div>
+            )}
+            {children}
+          </div>)
+        }}
+      </Popover>
     );
   }
 );

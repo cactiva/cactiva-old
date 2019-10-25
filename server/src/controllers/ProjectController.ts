@@ -3,7 +3,8 @@ import { Request, Response } from "express";
 import { Morph } from "../morph";
 import config from "../config";
 import * as execa from "execa";
-import * as fkill from "fkill";
+import * as cp from "child_process";
+import * as pstree from "ps-tree";
 
 const morph = Morph.getInstance();
 @Controller("api/project")
@@ -89,11 +90,18 @@ export class ProjectController {
     if (this.cli && this.cli.cancel) {
       this.buffer = "";
       const pid = this.cli.pid;
-      await fkill(pid, { tree: true });
-      this.cli.cancel();
-
-      this.lastBufferIndex = 0;
-      this.cli = null;
+      pstree(pid, (err: any, children: readonly any[]) => {
+        if (process.platform !== "win32") {
+          cp.spawn(
+            "kill",
+            ["-9"].concat(
+              children.map(function(p) {
+                return p.PID;
+              })
+            )
+          );
+        }
+      });
     }
     res.status(200).json({
       status: "ok"

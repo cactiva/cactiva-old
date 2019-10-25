@@ -11,6 +11,8 @@
     "run": "node build/start.js"
   },
   "dependencies": {
+    "@types/ps-tree": "^1.1.0",
+    "ps-tree": "^1.2.0",
     "@overnightjs/core": "^1.6.9",
     "@overnightjs/logger": "^1.1.4",
     "@types/cheerio": "^0.22.13",
