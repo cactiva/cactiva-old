@@ -7,7 +7,8 @@ import {
   findElementById,
   removeElementById,
   prepareChanges,
-  commitChanges
+  commitChanges,
+  addChildInId
 } from "@src/components/editor/utility/elements/tools";
 import StringLiteral from "@src/components/traits/kinds/StringLiteral";
 
@@ -41,7 +42,7 @@ class EditorStore {
         commitChanges(this.current);
       } else {
         prepareChanges(this.current);
-        insertAfterElementId(
+        addChildInId(
           this.current.source,
           this.current.source.id,
           toJS(this.copied)
