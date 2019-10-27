@@ -4,6 +4,7 @@ import React, { forwardRef, useRef, useState } from "react";
 import { Icon, Popover } from "evergreen-ui";
 import editor from "@src/store/editor";
 import CactivaComponentChooser from "./CactivaComponentChooser";
+import { insertAfterElementId, addChildInId } from "./utility/elements/tools";
 
 export default forwardRef(
   (
@@ -74,22 +75,27 @@ export default forwardRef(
               if (toggleRef && toggleRef.current)
                 toggleRef.current();
 
+              if (editor.current) {
+                let id = editor.current.selectedId;
+                if (placement === "child") {
+                  const cid = editor.current.selectedId.split("_")
+                  cid.pop();
+                  id = cid.join("_");
+                }
 
-              console.log(value);
+                if (placement === "after") {
+                  // insertAfterElementId(editor.current.source, id, {source: {id: null}, tag, kind})
+                } else {
+                  // addChildInId(editor.current.source, id,  {source: {id: null}, tag, kind});
+                }
+                console.log(value, id, placement);
+              }
             }} />}>
             {({ toggle, getRef, isShown }: any) => {
               toggleRef.current = toggle;
               return <div className="add-btn" onClickCapture={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                if (editor.current) {
-                  let id = editor.current.selectedId;
-                  if (placement === "child") {
-                    const cid = editor.current.selectedId.split("_")
-                    cid.pop();
-                    id = cid.join("_");
-                  }
-                }
                 toggle();
               }}><Icon icon={'small-plus'} size={15} color={"#fff"} />
                 {isShown && <div
