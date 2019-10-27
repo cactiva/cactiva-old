@@ -690,7 +690,7 @@ const findLargestSmallest = (a: string, b: string) =>
       smallest: a
     };
 
-const fuzzyMatch = (strA: string, strB: string, fuzziness = 1) => {
+export const fuzzyMatch = (strA: string, strB: string, fuzziness = 1) => {
   if (strA === "" || strB === "") {
     return false;
   }

@@ -1,8 +1,9 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core";
-import React, { forwardRef } from "react";
-import { Icon } from "evergreen-ui";
+import React, { forwardRef, useRef, useState } from "react";
+import { Icon, Popover } from "evergreen-ui";
 import editor from "@src/store/editor";
+import CactivaComponentChooser from "./CactivaComponentChooser";
 
 export default forwardRef(
   (
@@ -18,6 +19,7 @@ export default forwardRef(
     ref: any
   ) => {
     const mode = `${direction === "row" ? "width" : "height"}`;
+    const toggleRef = useRef(null as any);
     return (
       <div
         className="cactiva-drop-marker"
@@ -55,19 +57,66 @@ export default forwardRef(
             background: ${hover || showAdd ? "rgba(54, 172, 232, .4)" : "transparent"};
           `}
         >
-          {!hover && showAdd && <div className="add-btn" onClickCapture={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            if (editor.current) {
-              let id = editor.current.selectedId;
-              if (placement === "child") {
-                const cid = editor.current.selectedId.split("_")
-                cid.pop();
-                id = cid.join("_");
-              }
-              console.log(id, placement);
+          {!hover && showAdd && <Popover statelessProps={{
+            style: {
+              top: '50%',
+              left: '50%',
+              position: "fixed",
+              marginLeft: '-150px',
+              marginTop: '-200px',
+              width: '300px',
+              height: '400px'
             }
-          }}><Icon icon={'small-plus'} size={15} color={"#fff"} /></div>}</div>
+          }} content={<CactivaComponentChooser
+            title={"Add Component"}
+            icon={"plus"}
+            onSelect={(value: any) => {
+              if (toggleRef && toggleRef.current)
+                toggleRef.current();
+
+
+              console.log(value);
+            }} />}>
+            {({ toggle, getRef, isShown }: any) => {
+              toggleRef.current = toggle;
+              return <div className="add-btn" onClickCapture={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                if (editor.current) {
+                  let id = editor.current.selectedId;
+                  if (placement === "child") {
+                    const cid = editor.current.selectedId.split("_")
+                    cid.pop();
+                    id = cid.join("_");
+                  }
+                }
+                toggle();
+              }}><Icon icon={'small-plus'} size={15} color={"#fff"} />
+                {isShown && <div
+                  onContextMenu={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    toggle();
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    toggle();
+                  }}
+                  style={{
+                    position: "fixed",
+                    top: 0,
+                    cursor: "pointer",
+                    left: 0,
+                    backgroundColor: 'rgba(0,0,0,0.1)',
+                    bottom: 0,
+                    right: 0,
+                    zIndex: 11
+                  }}
+                ></div>}
+              </div>
+            }}</Popover>}
+        </div>
       </div>
     );
   }
