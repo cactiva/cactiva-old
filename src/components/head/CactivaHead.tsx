@@ -1,20 +1,12 @@
-import api from "@src/libs/api";
-import {
-  Button,
-  Icon,
-  Pane,
-  Popover,
-  Spinner,
-  Text,
-  Tooltip,
-  IconButton
-} from "evergreen-ui";
+import { Button, Dialog, Icon, IconButton, Pane, Popover, Spinner, Text, Tooltip } from "evergreen-ui";
 import _ from "lodash";
-import { observer, useObservable } from "mobx-react-lite";
+import { observer } from "mobx-react-lite";
 import React, { useRef } from "react";
-import CactivaCli from "./CactivaCli";
-import "./CactivaHead.scss";
+import "./CactivaDialogEditor.scss";
 import CactivaExpoCli from "./CactivaExpoCli";
+import "./CactivaHead.scss";
+import CactivaStoreEditor from "./CactivaStoreEditor";
+
 
 export default observer(({ editor }: any) => {
   const current = editor.current;
@@ -72,6 +64,54 @@ export default observer(({ editor }: any) => {
             </div>
           </Pane>
         </Popover>
+
+        <div
+          className="cactiva-head-divider"
+          style={{ margin: "0px 4px 0px 10px" }}
+        />
+        <Tooltip content="Store Variable" position={"bottom"}>
+          <IconButton
+            icon="box"
+            iconSize={14}
+            className={`btn`}
+            onClick={() => {
+              editor.modals.store = true;
+            }}
+          />
+        </Tooltip>
+        <Dialog
+          isShown={editor.modals.store}
+          hasFooter={false}
+          width={800}
+          minHeightContent={600}
+          hasHeader={false}
+          contentContainerProps={{
+            style: { display: 'flex' }
+          }}
+          onCloseComplete={() => editor.modals.store = false}
+        ><CactivaStoreEditor /></Dialog>
+
+        <Tooltip content="API" position={"bottom"}>
+          <IconButton
+            icon="changes"
+            iconSize={14}
+            className={`btn`}
+            onClick={() => {
+              editor.modals.api = true;
+            }}
+          />
+        </Tooltip>
+        <Dialog
+          isShown={editor.modals.api}
+          hasFooter={false}
+          width={800}
+          minHeightContent={600}
+          hasHeader={false}
+          contentContainerProps={{
+            style: { display: 'flex' }
+          }}
+          onCloseComplete={() => editor.modals.api = false}
+        ><CactivaStoreEditor /></Dialog>
       </div>
       <div className="center">
         <Text
@@ -142,6 +182,6 @@ export default observer(({ editor }: any) => {
           />
         </Tooltip>
       </div>
-    </div>
+    </div >
   );
 });

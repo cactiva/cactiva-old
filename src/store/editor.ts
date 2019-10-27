@@ -25,6 +25,11 @@ class EditorStore {
   @observable status = "loading";
   @observable copied: any = null;
 
+  @observable modals = {
+    store: false,
+    api: false
+  };
+
   @observable cli = {
     status: "stopped",
     logs: ""
@@ -54,7 +59,7 @@ class EditorStore {
 
   async cut() {
     if (this.current && this.current.selectedId) {
-    prepareChanges(this.current);
+      prepareChanges(this.current);
       this.copied = toJS(
         findElementById(this.current.source, this.current.selectedId)
       );

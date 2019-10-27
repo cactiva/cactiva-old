@@ -52,6 +52,10 @@
   flex: 1;
 
   > .left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
     .project {
       user-select: none;
       cursor: pointer;
@@ -109,50 +113,50 @@
     display: flex;
     flex-direction: row;
     position: relative;
-
-    .btn {
-      user-select: none;
-      margin: 0px 2px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      flex-direction: row;
-      padding: 0px 4px;
-      min-height: auto;
-      height: 24px;
-      border: 1px solid transparent !important;
-      border-radius: 6px;
-      background: rgba(255, 255, 255, 0) !important;
-      box-shadow: none !important;
-      &.active-pane,
-      &:hover {
-        border: 1px solid #ddd !important;
-        background: rgba(255, 255, 255, 1) !important;
-      }
-
-      span,
-      svg {
-        color: #999 !important;
-      }
-
-      > .badge {
-        font-weight: bold;
-        font-size: 9px;
-        display: flex;
-        color: #999;
-        padding: 2px;
-        border: 1px solid #999;
-        border-radius: 3px;
-        height: 10px;
-        line-height: 10px;
-        margin: 0px 3px 0px 5px;
-      }
-    }
   }
 
   .cactiva-head-divider {
     height: 26px;
     border-right: 1px solid #ccc;
+  }
+
+  .btn {
+    user-select: none;
+    margin: 0px 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    padding: 0px 4px;
+    min-height: auto;
+    height: 24px;
+    border: 1px solid transparent !important;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0) !important;
+    box-shadow: none !important;
+    &.active-pane,
+    &:hover {
+      border: 1px solid #ddd !important;
+      background: rgba(255, 255, 255, 1) !important;
+    }
+
+    span,
+    svg {
+      color: #999 !important;
+    }
+
+    > .badge {
+      font-weight: bold;
+      font-size: 9px;
+      display: flex;
+      color: #999;
+      padding: 2px;
+      border: 1px solid #999;
+      border-radius: 3px;
+      height: 10px;
+      line-height: 10px;
+      margin: 0px 3px 0px 5px;
+    }
   }
 }
 
