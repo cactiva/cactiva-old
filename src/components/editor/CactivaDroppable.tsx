@@ -28,18 +28,22 @@ export default observer(
     const insertTo = (tag && tag.insertTo) || "children";
     const afterDirection = _.get(parentInfo, "afterDirection", "column");
     const isLastChild = _.get(parentInfo, "isLastChild", false);
+    const isFirstChild = _.get(parentInfo, "isFirstChild", false);
     const parentJustifyContent = _.get(
       parentInfo,
       "style.justifyContent",
       "flex-start"
     );
     let isAfterStretched = isLastChild;
+
     if (parentJustifyContent === "space-between") {
       if (isLastChild) {
         isAfterStretched = false;
       } else {
         isAfterStretched = true;
       }
+    } else if (parentJustifyContent !== "flex-start") {
+      isAfterStretched = false;
     }
 
     const { id } = source;
