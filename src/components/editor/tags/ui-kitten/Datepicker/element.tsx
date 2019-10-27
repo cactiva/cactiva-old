@@ -4,6 +4,7 @@ import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDropChild from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
 import { parseProps, parseValue } from "../../../utility/parser/parser";
+import _ from "lodash";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -19,7 +20,7 @@ export default observer((props: any) => {
           className="cactiva-element"
         >
           <div className="uik-field">
-            <div className="uik-input">
+            <div className={`uik-input  ${_.get(tagProps, "size", "medium")} `}>
               {tagProps.date ? (
                 tagProps.date
               ) : (

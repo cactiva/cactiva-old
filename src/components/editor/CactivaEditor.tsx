@@ -1,5 +1,5 @@
 import api from "@src/libs/api";
-import { Icon, Text } from "evergreen-ui";
+import { Icon, Text, Dialog } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
@@ -11,7 +11,15 @@ import "./tags/kinds/kinds.scss";
 import "./tags/react-native/react-native.scss";
 import "./tags/ui-kitten/ui-kitten.scss";
 import { renderChildren } from "./utility/renderchild";
-import { getParentId } from "./utility/elements/tools";
+import {
+  getParentId,
+  insertAfterElementId,
+  addChildInId,
+  createNewElement
+} from "./utility/elements/tools";
+import CactivaComponentChooser from "./CactivaComponentChooser";
+import kinds from "./utility/kinds";
+import tags from "./utility/tags";
 
 const uploadImage = async (file: any) => {
   var formDataToUpload = new FormData();
@@ -65,7 +73,7 @@ export default observer(({ editor }: any) => {
                   ? "resplit"
                   : "split"
                 : "unsplit"
-              }`}
+            }`}
             onDrag={onDragScreen}
           >
             <CactivaEditorRender editor={editor} />
@@ -84,6 +92,7 @@ export default observer(({ editor }: any) => {
         </div>
       </div>
       <CactivaEditorFooter editor={editor} />
+      <CactivaEditorAddComponent editor={editor} />
     </div>
   );
 });
@@ -117,17 +126,17 @@ const CactivaEditorSource = observer((props: any) => {
   };
   const editorDidMount = (ed: any, monaco: any) => {
     monacoEdRef.current = ed;
-    ed.onDidBlurEditorText(function (e: any) {
+    ed.onDidBlurEditorText(function(e: any) {
       monacoEditorChange(ed.getValue());
     });
-    ed.onMouseLeave(function (e: any) {
+    ed.onMouseLeave(function(e: any) {
       monacoEditorChange(ed.getValue());
     });
     ed.addAction({
       id: "cactiva-apply-changes",
       label: "Apply Changes",
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
-      run: function (ed: any) {
+      run: function(ed: any) {
         meta.showAction = false;
         monacoEditorChange(ed.getValue());
         if (editor.selectedSource.length > 0) {
@@ -143,7 +152,7 @@ const CactivaEditorSource = observer((props: any) => {
       id: "cactiva-save",
       label: "Save",
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S],
-      run: function (ed: any) {
+      run: function(ed: any) {
         monacoEditorChange(ed.getValue());
         editor.save();
         return null;
@@ -332,7 +341,45 @@ const CactivaEditorFooter = observer((props: any) => {
     </div>
   );
 });
+const CactivaEditorAddComponent = observer((props: any) => {
+  const { editor } = props;
+  const compInfo = editor.addComponentInfo;
+  const onCloseDialog = () => {
+    editor.addComponentInfo = null;
+  };
 
+  return (
+    <Dialog
+      isShown={!!compInfo}
+      hasHeader={false}
+      hasFooter={false}
+      preventBodyScrolling
+      onCloseComplete={onCloseDialog}
+      minHeightContent={600}
+      width={400}
+    >
+      <CactivaComponentChooser
+        title={"Add Component"}
+        icon={"plus"}
+        onSelect={(value: any) => {
+          if (compInfo.placement === "after") {
+            insertAfterElementId(
+              editor.source,
+              compInfo.id,
+              createNewElement(value)
+            );
+          } else {
+            addChildInId(editor.source, compInfo.id, createNewElement(value));
+          }
+          editor.addComponentInfo = null;
+        }}
+      />
+    </Dialog>
+  );
+});
 export const showAddInParent = (cactiva: any) => {
-  return getParentId(cactiva.editor.selectedId) === cactiva.source.id || cactiva.source.id === cactiva.editor.selectedId;
-}
+  return (
+    getParentId(cactiva.editor.selectedId) === cactiva.source.id ||
+    cactiva.source.id === cactiva.editor.selectedId
+  );
+};

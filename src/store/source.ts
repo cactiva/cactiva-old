@@ -28,6 +28,7 @@ export class SourceStore {
   @observable renderfont = true;
   @observable jsx = false;
   @observable traitPane = false;
+  @observable addComponentInfo: any = null;
   @observable trait = {
     dividerExpanded: [] as string[]
   };
