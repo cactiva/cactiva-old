@@ -190,6 +190,7 @@ const RadioEl = observer((props: any) => {
           height={20}
           onClick={onClick}
           flexGrow={1}
+          className={trait.options.className + " " + item.value}
         />
       ) : (
           <Button

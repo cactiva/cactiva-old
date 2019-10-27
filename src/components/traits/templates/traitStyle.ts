@@ -3,6 +3,7 @@ import {
   ICactivaTraitField
 } from "@src/components/editor/utility/classes";
 import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
+import editor from "@src/store/editor";
 
 const CactivaTraitStyle: any = {
   Typography: [
@@ -308,7 +309,7 @@ const CactivaTraitStyle: any = {
           {
             value: "center",
             label: "Center",
-            icon: "horizontal-distribution",
+            icon: "vertical-distribution",
             mode: "icon"
           },
           {
@@ -354,7 +355,7 @@ const CactivaTraitStyle: any = {
           {
             value: "center",
             label: "Center",
-            icon: "vertical-distribution",
+            icon: "horizontal-distribution",
             mode: "icon"
           },
           {

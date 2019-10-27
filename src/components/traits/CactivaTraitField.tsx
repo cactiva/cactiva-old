@@ -8,6 +8,7 @@ import { SyntaxKind } from "../editor/utility/syntaxkinds";
 import kinds from "./tags";
 import { generateSource } from "../editor/utility/parser/generateSource";
 import editor from "@src/store/editor";
+import { toJS } from "mobx";
 
 export interface ICactivaTraitFieldProps extends ICactivaTraitField {
   editor: any;
@@ -29,6 +30,8 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   const labelStyle = _.get(trait, `options.styles.label`, {});
   const rootStyle = _.get(trait, `options.styles.root`, {});
   const fieldName = _.get(trait, `options.fields.name`, null);
+
+
 
   return (
     <>
@@ -77,7 +80,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             {KindField ? (
               <KindField
                 {...trait}
-                options={trait.options}
+                options={prepareTraitOptions(trait)}
                 style={{
                   flex: 1,
                   height: "20px",
@@ -130,3 +133,46 @@ export default observer((trait: ICactivaTraitFieldProps) => {
     </>
   );
 });
+
+
+const prepareTraitOptions = (trait: any) => {
+  if (["style.value.alignItems", "style.value.justifyContent"].indexOf(trait.path) >= 0 && editor.current) {
+    const s = editor.current.selected;
+    if (s) {
+      const props = s.source.props;
+      const flexDirection = getPropValue(props, 'style.value.flexDirection.value');
+      if (flexDirection === 'column') {
+        return {
+          ...trait.options,
+          className: "rotate-90"
+        }
+      } else if (flexDirection === 'row') {
+        return {
+          ...trait.options,
+          className: "rotate-0"
+        }
+      } else if (flexDirection === 'rowreverse') {
+        return {
+          ...trait.options,
+          className: "rotate-0 flip-h"
+        }
+      } else if (flexDirection === 'columnreverse') {
+        return {
+          ...trait.options,
+          className: "rotate-90 flip-v"
+        }
+      }
+    }
+
+  }
+
+  return trait.options;
+}
+
+const getPropValue = (props: any, path: string) => {
+  const value = _.get(props, path, "");
+  if (typeof value === "string") {
+    return value.replace(/\W/ig, '');
+  }
+  return value;
+}

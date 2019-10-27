@@ -111,3 +111,39 @@
     }
   }
 }
+
+.rotate-90 {
+  svg {
+    transform: rotate(90deg);
+  }
+
+  &.stretch {
+    svg {
+      transform: none;
+    }
+  }
+}
+
+.rotate-0 {
+  svg {
+    transform: rotate(0deg);
+  }
+
+  &.stretch {
+    svg {
+      transform: rotate(90deg);
+    }
+  }
+}
+
+.flip-v {
+  svg {
+    transform: scaleY(-1);
+  }
+}
+
+.flip-h {
+  svg {
+    transform: scaleX(-1);
+  }
+}
