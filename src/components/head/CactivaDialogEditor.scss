@@ -8,7 +8,8 @@
   flex-direction: row;
   align-items: stretch;
   margin: 0px;
-  border-radius: 10px;
+  background: white;
+  border-radius: 4px;
 
   .list {
     flex-basis: 150px;
@@ -24,9 +25,40 @@
     .list-items {
       flex: 1;
       overflow-y: auto;
+
+      > .item {
+        cursor: default;
+        user-select: none;
+        display: flex;
+        flex-direction: row;
+        .icon {
+          &.file {
+            margin-top: 2px;
+          }
+          flex-basis: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        span {
+          flex: 1;
+          text-transform: capitalize;
+          font-size: 11px;
+        }
+        &:hover,
+        &.hover {
+          background: #ececeb;
+        }
+        &.selected {
+          background: #e3f2ff;
+        }
+      }
     }
   }
   .content {
     flex: 1;
+    display: flex;
+    overflow: hidden;
+    position: relative;
   }
 }

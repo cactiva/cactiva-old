@@ -41,17 +41,20 @@ export default observer(
       if (!(await editor.applySelectedSource())) {
         return;
       }
-
-      if (onBeforeSelect) {
-        onBeforeSelect(source.id);
-      }
-
       editor.rootSelected = false;
-      editor.selectedId = source.id;
+      if (editor.selectedId === source.id) {
+        editor.selectedId = "";
+      } else {
+        if (onBeforeSelect) {
+          onBeforeSelect(source.id);
+        }
 
-      if (onSelected) {
-        onSelected(source.id);
+        editor.selectedId = source.id;
+        if (onSelected) {
+          onSelected(source.id);
+        }
       }
+
     };
     const onMouseOut = (e: any) => {
       e.stopPropagation();

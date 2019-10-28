@@ -355,7 +355,7 @@ const CactivaEditorAddComponent = observer((props: any) => {
       hasFooter={false}
       preventBodyScrolling
       onCloseComplete={onCloseDialog}
-      minHeightContent={600}
+      minHeightContent={400}
       width={400}
     >
       <CactivaComponentChooser

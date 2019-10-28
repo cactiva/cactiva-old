@@ -3,9 +3,9 @@ import _ from "lodash";
 import { observer } from "mobx-react-lite";
 import React, { useRef } from "react";
 import "./CactivaDialogEditor.scss";
-import CactivaExpoCli from "./CactivaExpoCli";
+import CactivaExpoCli from "./cli/CactivaExpoCli";
 import "./CactivaHead.scss";
-import CactivaStoreEditor from "./CactivaStoreEditor";
+import CactivaStoreEditor from "./store/CactivaStoreEditor";
 
 
 export default observer(({ editor }: any) => {
@@ -53,6 +53,7 @@ export default observer(({ editor }: any) => {
           content={() => {
             return <CactivaExpoCli cliref={cliref} editor={editor} />
           }}
+          minWidth={800}
           position="right"
         >
           <Pane>

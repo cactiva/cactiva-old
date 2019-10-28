@@ -13,6 +13,7 @@ const styles = {
 export default class extends CactivaTag {
   static tagName = "Icon";
   static from = "@src/libs";
+  static insertTo ="";
   static structure = {
     kind: SyntaxKind.JsxElement,
     name: "Icon",

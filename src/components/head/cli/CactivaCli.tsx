@@ -7,7 +7,7 @@ import "xterm/css/xterm.css";
 
 export default observer(({ cliref, initialText }: any) => {
   useEffect(() => {
-    const terminal = new Terminal({ fontSize: 9, convertEol: true });
+    const terminal = new Terminal({ fontSize: 10, convertEol: true });
     const fitAddon = new FitAddon();
     terminal.loadAddon(fitAddon);
     terminal.loadAddon(new WebLinksAddon());

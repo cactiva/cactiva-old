@@ -1,14 +1,15 @@
+import api from "@src/libs/api";
 import { Button, Icon, Spinner, Text } from "evergreen-ui";
+import { observable } from "mobx";
+import { observer } from "mobx-react-lite";
 import React, { useRef } from 'react';
 import CactivaCli from './CactivaCli';
-import api from "@src/libs/api";
-import { useObservable, observer } from "mobx-react-lite";
 
+const meta = observable({
+    logText: "",
+    url: ""
+});
 export default observer(({ editor, cliref }: any) => {
-    const meta = useObservable({
-        logText: "",
-        url: ""
-    });
     const timercli = useRef(null as any);
     const streamCLILog = () => {
         const exec = async () => {
