@@ -21,7 +21,7 @@ export default observer((props: any) => {
     afterDirection: direction,
     style
   });
-  const sid = cactiva.editor.selectedId.split("_")
+  const sid = cactiva.editor.selectedId.split("_");
   if (sid.length > 1) {
     sid.pop();
   }
@@ -31,7 +31,7 @@ export default observer((props: any) => {
       onDropOver={(value: boolean) => (meta.dropOver = value)}
     >
       <CactivaDraggable cactiva={cactiva}>
-        <CactivaSelectable cactiva={cactiva} style={style || {}}>
+        <CactivaSelectable cactiva={cactiva} style={style || { minWidth: 100 }}>
           <CactivaDropMarker
             hover={meta.dropOver}
             showAdd={showAddInParent(cactiva)}

@@ -15,9 +15,10 @@ import {
   getParentId,
   insertAfterElementId,
   addChildInId,
-  createNewElement
+  createNewElement,
+  wrapInElementId
 } from "./utility/elements/tools";
-import CactivaComponentChooser from "./CactivaComponentChooser";
+import CactivaComponentChooser, { toolbar } from "./CactivaComponentChooser";
 import kinds from "./utility/kinds";
 import tags from "./utility/tags";
 
@@ -73,7 +74,7 @@ export default observer(({ editor }: any) => {
                   ? "resplit"
                   : "split"
                 : "unsplit"
-              }`}
+            }`}
             onDrag={onDragScreen}
           >
             <CactivaEditorRender editor={editor} />
@@ -126,17 +127,17 @@ const CactivaEditorSource = observer((props: any) => {
   };
   const editorDidMount = (ed: any, monaco: any) => {
     monacoEdRef.current = ed;
-    ed.onDidBlurEditorText(function (e: any) {
+    ed.onDidBlurEditorText(function(e: any) {
       monacoEditorChange(ed.getValue());
     });
-    ed.onMouseLeave(function (e: any) {
+    ed.onMouseLeave(function(e: any) {
       monacoEditorChange(ed.getValue());
     });
     ed.addAction({
       id: "cactiva-apply-changes",
       label: "Apply Changes",
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
-      run: function (ed: any) {
+      run: function(ed: any) {
         meta.showAction = false;
         monacoEditorChange(ed.getValue());
         if (editor.selectedSource.length > 0) {
@@ -152,7 +153,7 @@ const CactivaEditorSource = observer((props: any) => {
       id: "cactiva-save",
       label: "Save",
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S],
-      run: function (ed: any) {
+      run: function(ed: any) {
         monacoEditorChange(ed.getValue());
         editor.save();
         return null;
@@ -343,10 +344,45 @@ const CactivaEditorFooter = observer((props: any) => {
 });
 const CactivaEditorAddComponent = observer((props: any) => {
   const { editor } = props;
+  const meta = useObservable({
+    toolbar: [] as any[]
+  });
   const compInfo = editor.addComponentInfo;
   const onCloseDialog = () => {
     editor.addComponentInfo = null;
   };
+  let title = "Add Component";
+  let status = "add";
+  let icon = "plus";
+  if (compInfo) {
+    status = compInfo.status;
+    icon = compInfo.status === "add" ? "plus" : "add-to-folder";
+    title = compInfo.status === "add" ? "Add Component" : "Wrap in Component";
+  }
+  const addHandle = (value: any) => {
+    if (compInfo.placement === "after") {
+      insertAfterElementId(editor.source, compInfo.id, createNewElement(value));
+    } else {
+      addChildInId(editor.source, compInfo.id, createNewElement(value));
+    }
+  };
+  const wrapHandle = (value: any) => {
+    const newEl = createNewElement(value);
+    wrapInElementId(editor.source, compInfo.id, newEl);
+  };
+  const filterToolbar = () => {
+    return toolbar.filter((item: any) => {
+      const tag: any = tags[item.label];
+      const kind: any = tags[item.label];
+      if (!tag && !kind) return false;
+      if (!!tag.insertTo || !!kind.insertTo) return true;
+      return false;
+    });
+  };
+
+  useEffect(() => {
+    meta.toolbar = filterToolbar();
+  }, []);
 
   return (
     <Dialog
@@ -359,17 +395,14 @@ const CactivaEditorAddComponent = observer((props: any) => {
       width={400}
     >
       <CactivaComponentChooser
-        title={"Add Component"}
-        icon={"plus"}
+        title={title}
+        icon={icon}
+        items={status === "add" ? [] : meta.toolbar}
         onSelect={(value: any) => {
-          if (compInfo.placement === "after") {
-            insertAfterElementId(
-              editor.source,
-              compInfo.id,
-              createNewElement(value)
-            );
+          if (status === "add") {
+            addHandle(value);
           } else {
-            addChildInId(editor.source, compInfo.id, createNewElement(value));
+            wrapHandle(value);
           }
           editor.addComponentInfo = null;
         }}
@@ -378,9 +411,9 @@ const CactivaEditorAddComponent = observer((props: any) => {
   );
 });
 export const showAddInParent = (cactiva: any) => {
-  if (
-    cactiva.source.id === cactiva.editor.selectedId
-  ) { return true }
+  if (cactiva.source.id === cactiva.editor.selectedId) {
+    return true;
+  }
   if (getParentId(cactiva.editor.selectedId) === cactiva.source.id) {
     return cactiva.source.id;
   }

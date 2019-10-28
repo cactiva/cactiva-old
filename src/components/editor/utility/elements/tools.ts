@@ -262,6 +262,26 @@ export const addChildInId = (root: any, id: string | string[], child: any) => {
   }
 };
 
+export const wrapInElementId = (
+  root: any,
+  id: string | string[],
+  wrapEl: any
+) => {
+  const currentEl = findElementById(root, id);
+  if (currentEl && wrapEl) {
+    const elementTag = tags[wrapEl.name];
+    const insertTo = (elementTag as any).insertTo || "children";
+    let children = _.get(wrapEl, insertTo);
+    if (!children) {
+      _.set(wrapEl, insertTo, []);
+      children = [];
+    }
+    children.unshift(currentEl);
+    _.set(wrapEl, insertTo, children);
+    replaceElementById(root, id, wrapEl);
+  }
+};
+
 export const isParentOf = (parentId: string, childId: string): boolean => {
   if (parentId === childId) return false;
   if (childId.indexOf(parentId) === 0) return true;

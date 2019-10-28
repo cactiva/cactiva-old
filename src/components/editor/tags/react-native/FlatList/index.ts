@@ -15,7 +15,7 @@ export default class extends CactivaTag {
     kind: SyntaxKind.JsxElement,
     name: "FlatList",
     props: {
-      data: '[]',
+      data: "[]",
       renderItem: {
         kind: SyntaxKind.ArrowFunction,
         params: ["{item}:any"],
@@ -34,7 +34,6 @@ export default class extends CactivaTag {
     },
     children: []
   };
-
   static traits = [
     {
       name: "attributes",

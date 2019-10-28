@@ -39,23 +39,23 @@ export default forwardRef(
       >
         <div
           css={css`
-              align-self: stretch;
-              flex: 1;
-              border-radius: 3px;
-              margin: ${placement === "child" && stretch
+            align-self: stretch;
+            flex: 1;
+            border-radius: 3px;
+            margin: ${placement === "child" && stretch
               ? "5px 0px"
               : stretch && direction === "row"
-                ? "0px 5px"
-                : "0px"};
-              min-width: 5px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              min-height: 5px;
-              background: ${hover || showAdd
+              ? "0px 5px"
+              : "0px"};
+            min-width: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 5px;
+            background: ${hover || showAdd
               ? "rgba(54, 172, 232, .4)"
               : "transparent"};
-            `}
+          `}
         >
           {!hover && showAdd && (
             <div
@@ -71,7 +71,8 @@ export default forwardRef(
                   }
                   editor.current.addComponentInfo = {
                     id,
-                    placement
+                    placement,
+                    status: "add"
                   };
                 }
               }}

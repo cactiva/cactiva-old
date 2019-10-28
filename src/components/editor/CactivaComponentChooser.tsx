@@ -1,13 +1,17 @@
 import { Icon, SearchInput } from "evergreen-ui";
 import { observer, useObservable } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect } from "react";
 import { fuzzyMatch } from "../ctree/CactivaTree";
 import { uuid } from "./utility/elements/tools";
 
-export default observer(({ title, icon, onSelect }: any) => {
+export default observer(({ title, icon, onSelect, items = [] }: any) => {
   const meta = useObservable({
-    filter: ""
+    filter: "",
+    toolbar: toolbar
   });
+  useEffect(() => {
+    if (items.length > 0) meta.toolbar = items;
+  }, [items]);
   return (
     <div
       className="choose-component"
@@ -40,8 +44,8 @@ export default observer(({ title, icon, onSelect }: any) => {
       <div className="list">
         <div className="components">
           <div>
-            {toolbar
-              .filter(item => {
+            {meta.toolbar
+              .filter((item: any) => {
                 if (meta.filter.length > 0)
                   return fuzzyMatch(
                     meta.filter.toLowerCase(),
@@ -49,7 +53,7 @@ export default observer(({ title, icon, onSelect }: any) => {
                   );
                 return true;
               })
-              .map(item => {
+              .map((item: any) => {
                 return (
                   <div
                     onClick={() => {
@@ -104,7 +108,7 @@ export default observer(({ title, icon, onSelect }: any) => {
   );
 });
 
-const toolbar = [
+export const toolbar = [
   {
     icon: "font",
     label: "Text"
