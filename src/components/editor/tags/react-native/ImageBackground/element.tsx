@@ -40,7 +40,7 @@ export default observer((props: any) => {
   const direction = _.get(style, "flexDirection", "column");
   const hasNoChildren = _.get(cactiva.source, "children.length", 0) === 0;
   const parentInfo = (c: any) => ({
-    ...cactiva.parentInfo,
+    
     isLastChild: c.isLastChild,
     afterDirection: direction
   });
