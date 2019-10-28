@@ -5,6 +5,7 @@ import { isTag } from "../tagmatcher";
 import tags from "../tags";
 import { SyntaxKind } from "../syntaxkinds";
 import kinds from "../kinds";
+import editor from "@src/store/editor";
 
 export const getIds = (id: string | string[]) =>
   Array.isArray(id) ? _.clone(id) : id.split("_");
@@ -105,13 +106,36 @@ export const findElementById = (root: any, id: string | string[]): any => {
     if (child) {
       el = child;
     } else {
-      if (el) {
-        switch (el.kind) {
-          case SyntaxKind.JsxExpression:
-            el = recurseElementById(currentIds.join("_"), el);
-            break;
-          default:
-            el = el.value;
+      const cids = currentIds.join("_");
+      let i = 0;
+      while (!!el && el.id !== cids) {
+        i++;
+        if (i > 1000) {
+          throw new Error(`${cids} not found!`);
+        }
+        if (el) {
+          const cids = currentIds.join("_");
+          switch (el.kind) {
+            case SyntaxKind.JsxExpression:
+              el = recurseElementById(cids, el);
+              break;
+            case SyntaxKind.JsxElement:
+              let res: any = null;
+              Object.keys(el.props).map(key => {
+                if (!res) {
+                  const r = recurseElementById(cids, el.props[key]);
+                  if (!!r) {
+                    res = r;
+                  }
+                }
+              });
+              el = res;
+              break;
+            case SyntaxKind.ArrowFunction:
+              el = el.body;
+            default:
+              el = el.value;
+          }
         }
       }
     }
@@ -190,7 +214,6 @@ export const findParentElementById = (
 export const removeElementById = (root: any, id: string | string[]) => {
   const ids = getIds(id);
   const parent = findParentElementById(root, id);
-
   const index = parseInt(ids[ids.length - 1] || "-1");
   if (
     parent &&
@@ -200,6 +223,7 @@ export const removeElementById = (root: any, id: string | string[]) => {
   ) {
     const result = parent.children[index];
     parent.children.splice(index, 1);
+
     return result;
   }
 };
@@ -207,29 +231,27 @@ export const removeElementById = (root: any, id: string | string[]) => {
 export const insertAfterElementId = (
   root: any,
   id: string | string[],
-  child: any,
-  insertTo = "children"
+  child: any
 ) => {
   const ids = getIds(id);
   const parent = findParentElementById(root, id);
   const index = parseInt(ids[ids.length - 1] || "-1");
+  const parentTag = tags[parent.name];
+  const insertTo = (parentTag as any).insertTo || "children";
   const children = _.get(parent, insertTo, []);
   if (children && children.length) {
-    if (children.length - 1 > index && children[index]) {
+    if (children.length > index && children[index]) {
       children.splice(index + 1, 0, child);
       _.set(parent, insertTo, children);
     }
   }
 };
 
-export const addChildInId = (
-  root: any,
-  id: string | string[],
-  child: any,
-  insertTo = "children"
-) => {
+export const addChildInId = (root: any, id: string | string[], child: any) => {
   const parent = findElementById(root, id);
   if (parent) {
+    const parentTag = tags[parent.name];
+    const insertTo = (parentTag as any).insertTo || "children";
     let children = _.get(parent, insertTo);
     if (!children) {
       _.set(parent, insertTo, []);
@@ -258,7 +280,10 @@ export const prepareChanges = (editor: any) => {
 
 export const commitChanges = (editor: any) => {
   if (editor.tempSelected && editor.tempSelected.id) {
-    editor.selectedId = editor.tempSelected.id;
+    if (findElementById(editor.source, editor.tempSelected.id))
+      editor.selectedId = editor.tempSelected.id;
+    else editor.selectedId = "";
+
     editor.tempSelected = undefined;
   }
   if (editor.undoStack.length > 2) {

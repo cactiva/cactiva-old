@@ -11,8 +11,11 @@ import {
   insertAfterElementId,
   isParentOf,
   prepareChanges,
-  removeElementById
+  removeElementById,
+  getParentId,
+  findParentElementById
 } from "./utility/elements/tools";
+import { toJS } from "mobx";
 
 export default observer(
   ({
@@ -24,8 +27,7 @@ export default observer(
     canDropOver = true,
     canDropAfter = true
   }: any) => {
-    const { root, tag, source, editor, parentInfo } = cactiva;
-    const insertTo = (tag && tag.insertTo) || "children";
+    const { root, source, editor, parentInfo } = cactiva;
     const afterDirection = _.get(parentInfo, "afterDirection", "column");
     const isLastChild = _.get(parentInfo, "isLastChild", false);
     const isFirstChild = _.get(parentInfo, "isFirstChild", false);
@@ -60,7 +62,7 @@ export default observer(
           el = removeElementById(root, afterItem.id);
         }
         if (el) {
-          insertAfterElementId(root, child.id, el, insertTo);
+          insertAfterElementId(root, child.id, el);
         }
         commitChanges(editor);
       }
@@ -76,7 +78,7 @@ export default observer(
           el = removeElementById(root, childItem.id);
         }
         if (el) {
-          addChildInId(root, child.id, el, insertTo);
+          addChildInId(root, child.id, el);
         }
         commitChanges(editor);
       }
@@ -165,6 +167,12 @@ export default observer(
         sid[sid.length - 1] = sid[sid.length - 1] - 1;
         if (id === sid.join("_")) {
           shouldShowAdd = true;
+        }
+      }
+
+      if (!shouldShowAdd) {
+        if (isLastChild && getParentId(source.id) === getParentId(editor.selectedId)) {
+          shouldShowAdd = source.id;
         }
       }
     }

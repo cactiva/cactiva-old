@@ -37,6 +37,13 @@ export default observer((props: any) => {
     meta.bg = `url(${meta.source}), url('images/sample.jpg')`;
   }, [props.source]);
 
+  const direction = _.get(style, "flexDirection", "column");
+  const hasNoChildren = _.get(cactiva.source, "children.length", 0) === 0;
+  const parentInfo = (c: any) => ({
+    ...cactiva.parentInfo,
+    isLastChild: c.isLastChild,
+    afterDirection: direction
+  });
   return (
     <>
       <CactivaDropChild
@@ -51,9 +58,10 @@ export default observer((props: any) => {
             <CactivaDropMarker
               showAdd={showAddInParent(cactiva)}
               hover={meta.dropOver}
-              direction={_.get(style, "flexDirection", "column")}
+              direction={direction}
+              stretch={hasNoChildren}
             />
-            <CactivaChildren cactiva={cactiva} />
+            <CactivaChildren cactiva={cactiva} parentInfo={parentInfo} />
           </CactivaSelectable>
         </CactivaDraggable>
       </CactivaDropChild>

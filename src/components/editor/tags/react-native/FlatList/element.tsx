@@ -26,12 +26,6 @@ export default observer((props: any) => {
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva} style={style}>
           <Text size={300}>renderItem:</Text>
-          <CactivaDropMarker
-            hover={meta.dropOver}
-            direction={direction}
-            showAdd={showAddInParent(cactiva)}
-            stretch={hasNoChildren}
-          />
           <div style={{ marginLeft: -10 }}>
             <Expression expressions={body} cactiva={cactiva} />
           </div>

@@ -37,15 +37,14 @@ export default forwardRef(
         `}
         style={style}
       >
-        {!hover && showAdd && (
-          <div
-            css={css`
+        <div
+          css={css`
               align-self: stretch;
               flex: 1;
               border-radius: 3px;
               margin: ${placement === "child" && stretch
-                ? "5px 0px"
-                : stretch && direction === "row"
+              ? "5px 0px"
+              : stretch && direction === "row"
                 ? "0px 5px"
                 : "0px"};
               min-width: 5px;
@@ -54,10 +53,11 @@ export default forwardRef(
               justify-content: center;
               min-height: 5px;
               background: ${hover || showAdd
-                ? "rgba(54, 172, 232, .4)"
-                : "transparent"};
+              ? "rgba(54, 172, 232, .4)"
+              : "transparent"};
             `}
-          >
+        >
+          {!hover && showAdd && (
             <div
               className="add-btn"
               onClickCapture={e => {
@@ -65,10 +65,9 @@ export default forwardRef(
                 e.preventDefault();
                 if (editor && editor.current) {
                   let id = editor.current.selectedId;
-                  if (placement === "child") {
-                    const cid = editor.current.selectedId.split("_");
-                    cid.pop();
-                    id = cid.join("_");
+
+                  if (showAdd !== true && !!showAdd) {
+                    id = showAdd;
                   }
                   editor.current.addComponentInfo = {
                     id,
@@ -79,8 +78,8 @@ export default forwardRef(
             >
               <Icon icon={"small-plus"} size={15} color={"#fff"} />
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     );
   }

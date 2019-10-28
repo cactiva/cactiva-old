@@ -9,6 +9,7 @@ export default observer((props: any): any => {
   const exps = generateExpressionArray(cactiva.source);
   const parentInfo = (c: any) => ({
     isLastChild: c.isLastChild,
+    canDropAfter: false,
     id: cactiva.source.id
   });
   return exps.map((value) => {

@@ -29,6 +29,7 @@ export default observer((props: any) => {
     }
   };
   const parentInfo = (c: any) => ({
+    ...cactiva.parentInfo,
     isLastChild: c.isLastChild,
     afterDirection: direction
   });
