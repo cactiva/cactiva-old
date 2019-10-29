@@ -21,6 +21,7 @@ import {
 import CactivaComponentChooser, { toolbar } from "./CactivaComponentChooser";
 import kinds from "./utility/kinds";
 import tags from "./utility/tags";
+import CactivaExpressionDialog from "./CactivaExpressionDialog";
 
 const uploadImage = async (file: any) => {
   var formDataToUpload = new FormData();
@@ -94,6 +95,7 @@ export default observer(({ editor }: any) => {
       </div>
       <CactivaEditorFooter editor={editor} />
       <CactivaEditorAddComponent editor={editor} />
+      <CactivaExpressionDialog />
     </div>
   );
 });

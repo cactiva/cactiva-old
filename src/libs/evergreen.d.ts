@@ -343,15 +343,20 @@ declare module "evergreen-ui" {
       toggle: () => void;
       getRef: (ref: React.RefObject) => void;
       isShown: NonNullable<PopoverProps["isShown"]>;
-      getInputProps: () => {
+      getInputProps: (
+        p?: any
+      ) => {
         onKeyDown: (e: React.ChangeEvent<any>) => void;
         onChange: (e: React.ChangeEvent<any>) => void;
         onBlur: (e: React.ChangeEvent<any>) => void;
       };
+      toggleMenu?: any;
+      getToggleButtonProps?: any;
       openMenu: () => any;
       inputValue: string;
     }) => React.ReactNode;
     itemSize?: number;
+    onSelect?: any;
     position?: PositionTypes;
     isFilterDisabled?: boolean;
     popoverMinWidth?: number;

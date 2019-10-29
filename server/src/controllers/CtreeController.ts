@@ -20,7 +20,6 @@ export class CtreeController {
 
     const exclude = ["./assets", "./libs", "./config", "./stores"];
     tree.children = tree.children.filter((e: any) => {
-      console.log(e.relativePath);
       for (let ex of exclude) {
         if (e.relativePath.indexOf(ex) === 0) return false;
       }

@@ -1,10 +1,13 @@
-import { Controller, Get } from "@overnightjs/core";
+import { Controller, Get, Post } from "@overnightjs/core";
 import { Request, Response } from "express";
 import { Morph } from "../morph";
 import * as jetpack from "fs-jetpack";
 import * as path from "path";
 import * as fs from "fs";
-import { SourceFile } from "ts-morph";
+import { SourceFile, SyntaxKind } from "ts-morph";
+import { get } from "http";
+import { defaultExport } from "../libs/morph/defaultExport";
+import { parseJsx } from "../libs/morph/parseJsx";
 
 let morph = Morph.getInstance();
 @Controller("api/store")
@@ -43,11 +46,49 @@ export default observable({
 
   @Get("readfile")
   private readfile(req: Request, res: Response) {
-    console.log(morph.getAppPath() + req.query.path);
     const sf = morph.project.getSourceFile(
       req.query.path.replace("./", morph.getAppPath() + "/src/stores/")
     ) as SourceFile;
 
     res.send(sf.getText());
+  }
+
+  @Get("definition")
+  private definition(req: Request, res: Response) {
+    const files = morph.project.getSourceFiles();
+    const result: any = {};
+    files
+      .filter((e: any) => {
+        return (
+          e.getFilePath().indexOf(morph.getAppPath() + "/src/stores/") === 0
+        );
+      })
+      .map((e: any) => {
+        const name = e.getBaseName().substr(0, e.getBaseName().length - 3);
+        result[name] = parseJsx(
+          e
+            .getFirstChildByKind(SyntaxKind.ExportAssignment)
+            .getFirstChildByKindOrThrow(SyntaxKind.CallExpression)
+        ).arguments[0];
+      });
+    res.send(result);
+  }
+
+  @Post("writefile")
+  private writefile(req: Request, res: Response) {
+    console.log(req.body);
+    const sf = morph.project.createSourceFile(
+      req.query.path.replace("./", morph.getAppPath() + "/src/stores/"),
+      req.body.value,
+      {
+        overwrite: true
+      }
+    );
+    sf.organizeImports();
+    sf.saveSync();
+    morph.project.saveSync();
+    res.send({
+      status: "ok"
+    });
   }
 }

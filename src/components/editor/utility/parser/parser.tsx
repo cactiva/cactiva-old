@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { SyntaxKind } from "../syntaxkinds";
+import { toJS } from "mobx";
 
 export const parseStyle = (node: any, cactiva: any): any => {
   const result = parseValue(node);
@@ -24,6 +25,7 @@ export const parseStyle = (node: any, cactiva: any): any => {
 export const parseValue = (node: any): any => {
   if (!node) return node;
   const kind = node.kind;
+
   switch (kind) {
     case SyntaxKind.NumericLiteral:
       return parseInt(node.value);

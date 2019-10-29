@@ -270,15 +270,17 @@ export const wrapInElementId = (
   const currentEl = findElementById(root, id);
   if (currentEl && wrapEl) {
     const elementTag = tags[wrapEl.name];
-    const insertTo = (elementTag as any).insertTo || "children";
-    let children = _.get(wrapEl, insertTo);
-    if (!children) {
-      _.set(wrapEl, insertTo, []);
-      children = [];
+    if (elementTag) {
+      const insertTo = (elementTag as any).insertTo || "children";
+      let children = _.get(wrapEl, insertTo);
+      if (!children) {
+        _.set(wrapEl, insertTo, []);
+        children = [];
+      }
+      children.unshift(currentEl);
+      _.set(wrapEl, insertTo, children);
+      replaceElementById(root, id, wrapEl);
     }
-    children.unshift(currentEl);
-    _.set(wrapEl, insertTo, children);
-    replaceElementById(root, id, wrapEl);
   }
 };
 
