@@ -22,6 +22,8 @@ export const getEntryPoint = (node: any): any => {
 };
 
 export const parseJsx = (node: any, showKindName: boolean = false): any => {
+  if (!node) return null;
+
   if (node.compilerNode) {
     node = node.compilerNode;
   }
@@ -39,6 +41,17 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
   }
 
   switch (kind) {
+    case SyntaxKind.ArrayLiteralExpression:
+      return {
+        kind: kindName,
+        value: node.elements.map((e: any) => parseJsx(e))
+      };
+    case SyntaxKind.VariableDeclaration:
+      return {
+        kind: kindName,
+        name: node.name.escapedText,
+        value: parseJsx(node.initializer)
+      };
     case SyntaxKind.BinaryExpression:
       return {
         kind: kindName,
@@ -48,12 +61,6 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
           : node.operatorToken.kind,
         right: parseJsx(node.right, showKindName)
       };
-    // case SyntaxKind.PrefixUnaryExpression:
-    //   if (node.operand.kind === SyntaxKind.NumericLiteral) {
-    //     return parseInt(node.getText());
-    //   } else {
-    //     return node.getText();
-    //   }
     case SyntaxKind.ElementAccessExpression:
       return {
         kind: kindName,

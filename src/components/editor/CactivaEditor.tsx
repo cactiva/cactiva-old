@@ -18,13 +18,15 @@ import {
   createNewElement,
   wrapInElementId,
   prepareChanges,
-  commitChanges
+  commitChanges,
+  getSelectableParent
 } from "./utility/elements/tools";
 import CactivaComponentChooser, { toolbar } from "./CactivaComponentChooser";
 import kinds from "./utility/kinds";
 import tags from "./utility/tags";
 import CactivaExpressionDialog, { promptExpression } from "./CactivaExpressionDialog";
 import { SyntaxKind } from "./utility/syntaxkinds";
+import { toJS } from "mobx";
 
 const uploadImage = async (file: any) => {
   var formDataToUpload = new FormData();
@@ -365,20 +367,24 @@ const CactivaEditorAddComponent = observer((props: any) => {
     title = compInfo.status === "add" ? "Add Component" : "Wrap in Component";
   }
   const addHandle = async (value: any) => {
-    prepareChanges(editor);
     let newEl = await createNewElement(value);
-    if (compInfo.placement === "after") {
-      insertAfterElementId(editor.source, compInfo.id, newEl);
-    } else {
-      addChildInId(editor.source, compInfo.id, newEl);
+    if (newEl) {
+      prepareChanges(editor);
+      if (compInfo.placement === "after") {
+        insertAfterElementId(editor.source, compInfo.id, newEl);
+      } else {
+        addChildInId(editor.source, compInfo.id, newEl);
+      }
+      commitChanges(editor);
     }
-    commitChanges(editor);
   };
   const wrapHandle = async (value: any) => {
-    prepareChanges(editor);
     let newEl = await createNewElement(value);
-    wrapInElementId(editor.source, compInfo.id, newEl);
-    commitChanges(editor);
+    if (newEl) {
+      prepareChanges(editor);
+      wrapInElementId(editor.source, compInfo.id, newEl);
+      commitChanges(editor);
+    }
   };
   const filterToolbar = () => {
     return toolbar.filter((item: any) => {

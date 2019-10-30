@@ -18,6 +18,10 @@ export default forwardRef(
     ref: any
   ) => {
     const mode = `${direction === "row" ? "width" : "height"}`;
+    let bg = "transparent";
+    if (hover) bg = "rgba(54, 172, 232, .4)";
+    if (showAdd) bg = "rgba(54, 172, 232, .1)";
+
     return (
       <div
         className="cactiva-drop-marker"
@@ -45,16 +49,14 @@ export default forwardRef(
             margin: ${placement === "child" && stretch
               ? "5px 0px"
               : stretch && direction === "row"
-              ? "0px 5px"
-              : "0px"};
+                ? "0px 5px"
+                : "0px"};
             min-width: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 5px;
-            background: ${hover || showAdd
-              ? "rgba(54, 172, 232, .4)"
-              : "transparent"};
+            background: ${bg};
           `}
         >
           {!hover && showAdd && (

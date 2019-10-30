@@ -19,7 +19,7 @@ export default observer((props: any): any => {
 
 const Expression = ({ value, cactiva, parentInfo }: any) => {
   if (typeof value === "string") {
-    return <span style={{ fontFamily: 'Consolas, "Courier New", monospace', fontSize: '12px' }}>{value}</span>;
+    return <span style={{ fontFamily: 'Consolas, "Courier New", monospace', fontSize: '10px' }}>{value}</span>;
   } else if (typeof value === "undefined") {
     return null;
   }

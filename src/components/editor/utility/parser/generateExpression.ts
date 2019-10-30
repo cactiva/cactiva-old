@@ -51,6 +51,9 @@ export const generateExpressionArray = (node: any): any[] => {
 
   switch (kind) {
     case SyntaxKind.BinaryExpression:
+      if (getToken(node.operator) === "&&") {
+        return ["if (", node.left, ") then ", node.right];
+      }
       return [node.left, " " + getToken(node.operator) + " ", node.right];
     case SyntaxKind.NumericLiteral:
     case SyntaxKind.StringLiteral:
@@ -83,11 +86,13 @@ export const generateExpressionArray = (node: any): any[] => {
       return [...generateExpressionArray(node.value), ` as any`];
     case SyntaxKind.ConditionalExpression:
       return [
+        "if (",
         ...generateExpressionArray(node.condition),
-        " ? ",
+        ") then ",
         ...generateExpressionArray(node.whenTrue),
-        " : ",
-        ...generateExpressionArray(node.whenFalse)
+        " else ",
+        ...generateExpressionArray(node.whenFalse),
+        ""
       ];
     case SyntaxKind.JsxFragment:
       return [`<>`, ...node.children, `</>`];

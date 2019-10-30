@@ -8,6 +8,7 @@ import { kindNames } from "./libs/morph/kindNames";
 import { replaceReturn } from "./libs/morph/replaceReturn";
 import { getImport } from "./libs/morph/getImport";
 import { removeImports } from "./libs/morph/removeImports";
+import { getHooks } from './libs/morph/getHooks';
 
 export class Morph {
   project: TProject = new TProject();
@@ -138,6 +139,7 @@ export class Morph {
     return {
       file: replaceReturn(sf, "<<<<cactiva>>>>"),
       imports: getImport(sf),
+      hooks: getHooks(sf),
       component: ps
     };
   }

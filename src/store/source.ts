@@ -20,6 +20,7 @@ export class SourceStore {
   @observable source: any = {};
   @observable rootSource: string = "";
   @observable imports = {};
+  @observable hooks = {};
 
   @observable rootSelected = false;
   @observable selectedId = "";

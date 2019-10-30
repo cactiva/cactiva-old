@@ -1,12 +1,12 @@
 import api from '@src/libs/api';
 import editor from '@src/store/editor';
 import { Autocomplete, Dialog, Text } from 'evergreen-ui';
-import { observable, toJS } from 'mobx';
+import { observable } from 'mobx';
 import { observer } from 'mobx-react-lite';
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import AutosizeInput from 'react-input-autosize';
-import useAsyncEffect from 'use-async-effect';
 import { parseValue } from './utility/parser/parser';
+import _ from "lodash";
 
 const onCloseDialog = () => {
     if (document.activeElement) {
@@ -26,7 +26,7 @@ const meta = observable({
     pre: '',
     post: '',
     footer: '',
-    defintions: {} as any,
+    definitions: {} as any,
     suggestions: [] as string[],
     closing: false,
     text: [""],
@@ -37,7 +37,6 @@ const regex = /[^\w.\"\'\`\s]+/ig;
 const generateSuggestions = (value: string) => {
     let path: string[] = [];
     let result = [] as any;
-
 
     const walk = (object: any, parent: string[]) => {
         if (typeof object === "object" && !Array.isArray(object)) {
@@ -53,14 +52,6 @@ const generateSuggestions = (value: string) => {
 }
 
 export default observer(() => {
-    useAsyncEffect(async () => {
-        const res = await api.get("store/definition");
-        meta.defintions = {};
-        Object.keys(res).map((r: string) => {
-            meta.defintions[r] = parseValue(res[r]);
-        })
-        meta.suggestions = generateSuggestions(meta.defintions);
-    }, []);
     const openMenuRefs = useRef({} as any);
     const firstRef = useRef(null as any);
 
@@ -133,7 +124,19 @@ export const promptExpression = (options?: {
     value?: string,
     returnExp?: boolean,
     wrapExp?: string
-}): any => {
+}): Promise<any> => {
+
+    setTimeout(async () => {
+        if (editor.current) {
+            const res = await api.get(`store/definition?path=${editor.current.path}`);
+            meta.definitions = {};
+            Object.keys(res).map((r: string) => {
+                meta.definitions[r] = parseValue(res[r]);
+            })
+            meta.suggestions = generateSuggestions(meta.definitions);
+        }
+    });
+
     return new Promise((resolve) => {
         const opt = options || {};
 
@@ -223,7 +226,7 @@ const ExpInput = observer(({ onSelect, idx, openMenuRefs, item, inputRef, isLast
                                         const sibling = target.parentNode.parentNode.previousSibling;
                                         setTimeout(() => {
                                             if (sibling) {
-                                                const node = sibling.childNodes[0].childNodes[0];
+                                                const node = _.get(sibling, `childNodes.0.childNodes.0`);
                                                 if (node) node.focus()
                                             }
                                         })
@@ -240,7 +243,7 @@ const ExpInput = observer(({ onSelect, idx, openMenuRefs, item, inputRef, isLast
                                     setTimeout(() => {
                                         const sibling = target.parentNode.parentNode.nextSibling;
                                         if (sibling) {
-                                            const node = sibling.childNodes[0].childNodes[0];
+                                            const node = _.get(sibling, `childNodes.0.childNodes.0`);
                                             if (node) node.focus()
                                         }
                                     })
@@ -253,7 +256,7 @@ const ExpInput = observer(({ onSelect, idx, openMenuRefs, item, inputRef, isLast
                                     setTimeout(() => {
                                         const sibling = target.parentNode.parentNode.previousSibling;
                                         if (sibling) {
-                                            const node = sibling.childNodes[0].childNodes[0];
+                                            const node = _.get(sibling, `childNodes.0.childNodes.0`);
                                             if (node) node.focus()
                                         }
                                     })
@@ -265,7 +268,7 @@ const ExpInput = observer(({ onSelect, idx, openMenuRefs, item, inputRef, isLast
                                     setTimeout(() => {
                                         const sibling = target.parentNode.parentNode.nextSibling;
                                         if (sibling) {
-                                            const node = sibling.childNodes[0].childNodes[0];
+                                            const node = _.get(sibling, `childNodes.0.childNodes.0`);
                                             if (node) node.focus()
                                         }
                                     })
@@ -294,7 +297,7 @@ const ExpInput = observer(({ onSelect, idx, openMenuRefs, item, inputRef, isLast
                                             sibling = target.parentNode.parentNode.previousSibling;
                                         }
                                         if (sibling) {
-                                            const node = sibling.childNodes[0].childNodes[0];
+                                            const node = _.get(sibling, `childNodes.0.childNodes.0`);
                                             if (node) node.focus()
                                         }
                                     }

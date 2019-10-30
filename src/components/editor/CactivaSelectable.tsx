@@ -11,7 +11,8 @@ import {
   commitChanges,
   replaceElementById,
   findElementById,
-  findParentElementById
+  findParentElementById,
+  getSelectableParent
 } from "./utility/elements/tools";
 import { SyntaxKind } from "./utility/syntaxkinds";
 import { toJS } from "mobx";
@@ -139,19 +140,15 @@ export default observer(
                           ceditor.current.source,
                           source.id
                         );
-                        let anchor = findParentElementById(ceditor.current.source, source.id);
-                        while (
-                          [SyntaxKind.JsxElement, SyntaxKind.JsxExpression].indexOf(anchor.kind) < 0
-                          && !anchor.name) {
-                          anchor = findParentElementById(ceditor.current.source,anchor.id);
-                        }
-                        console.log(toJS(anchor.id));
+                        let anchor = getSelectableParent(
+                          ceditor.current.source,
+                          source.id);
                         replaceElementById(ceditor.current.source, anchor.id, el);
                         commitChanges(ceditor.current);
                       }
                     }}
                   >
-                    Replace Parent With This
+                    Replace Parent with this
                   </Menu.Item>
                   <Menu.Item
                     icon="arrow-up"
@@ -169,7 +166,7 @@ export default observer(
                       }
                     }}
                   >
-                    Move To Parent
+                    Move to Parent
                   </Menu.Item>
                 </>
               )}

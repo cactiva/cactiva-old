@@ -1,13 +1,12 @@
 import { Controller, Get, Post } from "@overnightjs/core";
 import { Request, Response } from "express";
-import { Morph } from "../morph";
 import * as jetpack from "fs-jetpack";
+import * as _ from "lodash";
 import * as path from "path";
-import * as fs from "fs";
 import { SourceFile, SyntaxKind } from "ts-morph";
-import { get } from "http";
-import { defaultExport } from "../libs/morph/defaultExport";
+import { getHooks } from "../libs/morph/getHooks";
 import { parseJsx } from "../libs/morph/parseJsx";
+import { Morph } from "../morph";
 
 let morph = Morph.getInstance();
 @Controller("api/store")
@@ -71,6 +70,20 @@ export default observable({
             .getFirstChildByKindOrThrow(SyntaxKind.CallExpression)
         ).arguments[0];
       });
+
+    const sf = morph.project.getSourceFile(
+      morph.getAppPath() + req.query.path
+    ) as SourceFile;
+    const hooks = getHooks(sf);
+    hooks.map((h: any) => {
+      if (h && h.name && h.value.expression === "useObservable") {
+        result[h.name] = _.get(h, "value.arguments.0", {
+          kind: 189,
+          value: {}
+        });
+      }
+    });
+
     res.send(result);
   }
 

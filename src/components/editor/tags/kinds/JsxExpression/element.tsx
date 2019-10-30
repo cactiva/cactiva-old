@@ -58,7 +58,7 @@ export const Expression = observer((props: any) => {
     canDropAfter: false
   });
   if (typeof exp === "string") {
-    return <span style={{fontFamily: 'Consolas, "Courier New", monospace'}}>{exp}</span>;
+    return <span style={{ fontFamily: 'Consolas, "Courier New", monospace', fontSize: '10px' }}>{exp}</span>;
   }
   return (
     <span>

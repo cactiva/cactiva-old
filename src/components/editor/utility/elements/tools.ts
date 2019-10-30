@@ -1,19 +1,17 @@
 import _ from "lodash";
-import { toJS, observable } from "mobx";
+import { toJS } from "mobx";
 import { getDiff } from "recursive-diff";
+import { promptExpression } from "../../CactivaExpressionDialog";
+import kinds from "../kinds";
+import { SyntaxKind } from "../syntaxkinds";
 import { isTag } from "../tagmatcher";
 import tags from "../tags";
-import { SyntaxKind } from "../syntaxkinds";
-import kinds from "../kinds";
 import editor from "@src/store/editor";
-import { promptExpression } from "../../CactivaExpressionDialog";
 
 export const getIds = (id: string | string[]) => {
   if (Array.isArray(id)) return _.clone(id);
   if (typeof id === "string") return id.split("_");
-  console.log(id);
-  throw new Error("asd");
-  return [];
+  throw new Error("getIds - id is not recognized");
 };
 
 export const getParentId = (ids: string) => {
@@ -119,7 +117,8 @@ export const findElementById = (root: any, id: string | string[]): any => {
       while (!!el && el.id !== cids) {
         i++;
         if (i > 1000) {
-          throw new Error(`${cids} not found!`);
+          console.log(`${cids} not found!`);
+          break;
         }
         if (el) {
           switch (el.kind) {
@@ -161,11 +160,8 @@ export const replaceElementById = (
   value: any
 ): any => {
   if (id === "0" && root.id === id) {
-    for (let i in root) {
-      delete root[i];
-    }
-    for (let i in value) {
-      root[i] = value[i];
+    if (editor.current) {
+      editor.current.source = value;
     }
     return value;
   }
@@ -189,7 +185,6 @@ export const replaceElementById = (
   if (res && res.parent && res.el) {
     replaceExpValue(res.parent, id, value);
   }
-  console.log(toJS(anchor), id);
 
   return value;
 };
@@ -218,7 +213,6 @@ const replaceExpValue = (
       replaceExpValue(anchor.right, id, value);
       break;
     case SyntaxKind.ConditionalExpression:
-      console.log(toJS(anchor), id);
       replaceExpValue(anchor.whenTrue, id, value);
       replaceExpValue(anchor.whenFalse, id, value);
       break;
@@ -312,9 +306,18 @@ export const wrapInElementId = (
           break;
         default:
           _.set(wrapEl, "value", {
-            kind: SyntaxKind.JsxFragment,
+            kind: SyntaxKind.JsxElement,
+            name: "View",
             children: [wrapEl.value, currentEl]
           });
+      }
+
+      const parent = getSelectableParent(root, id);
+      if (
+        parent.kind === wrapEl.kind &&
+        parent.kind === SyntaxKind.JsxExpression
+      ) {
+        wrapEl = wrapEl.value;
       }
       replaceElementById(root, id, wrapEl);
     } else {
@@ -411,7 +414,7 @@ export async function createNewElement(name: string) {
       pre: "If (",
       post: ")",
       footer: "then <Component />",
-      wrapExp: "{ [[value]] && <View><Text>When True</Text></View> }",
+      wrapExp: "([[value]] && <View><Text>When True</Text></View>)",
       returnExp: true
     });
     if (!res) return;
@@ -423,7 +426,7 @@ export async function createNewElement(name: string) {
       post: ")",
       footer: "then <Component />\nelse <AnotherComponent />",
       wrapExp:
-        "{ [[value]] ? <View><Text>When True</Text></View> : <View><Text>When False</Text></View> }",
+        "([[value]] ? <View><Text>When True</Text></View> : <View><Text>When False</Text></View>)",
       returnExp: true
     });
     if (!res) return;
@@ -434,11 +437,11 @@ export async function createNewElement(name: string) {
       pre: "(",
       post: ")",
       footer: ".map((item:any, key:number) => <Component />)",
-      wrapExp: `{
-         ([[value]]).map((item:any, key: number) => {
+      wrapExp: `
+      [[value]].map((item:any, key: number) => {
            return (<View style={{flexDirection: "row"}}>Row {key}</View>)
-      } 
-    }`,
+      })
+    `,
       returnExp: true
     });
     if (!res) return;
@@ -487,3 +490,18 @@ export function setProp(source: any, path: string, value: any) {
   }
   _.set(source, path, value);
 }
+
+export const getSelectableParent = (root: any, id: string | string[]) => {
+  let anchor = findParentElementById(root, id);
+  while (
+    [
+      SyntaxKind.JsxElement,
+      SyntaxKind.JsxExpression,
+      SyntaxKind.JsxFragment
+    ].indexOf(anchor.kind) < 0 &&
+    !anchor.name
+  ) {
+    anchor = findParentElementById(root, anchor.id);
+  }
+  return anchor;
+};
