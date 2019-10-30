@@ -6,9 +6,15 @@ import tags from "../tags";
 import { SyntaxKind } from "../syntaxkinds";
 import kinds from "../kinds";
 import editor from "@src/store/editor";
+import { promptExpression } from "../../CactivaExpressionDialog";
 
-export const getIds = (id: string | string[]) =>
-  Array.isArray(id) ? _.clone(id) : id.split("_");
+export const getIds = (id: string | string[]) => {
+  if (Array.isArray(id)) return _.clone(id);
+  if (typeof id === "string") return id.split("_");
+  console.log(id);
+  throw new Error("asd");
+  return [];
+};
 
 export const getParentId = (ids: string) => {
   const sid = ids.split("_");
@@ -19,28 +25,30 @@ export const getParentId = (ids: string) => {
 };
 
 const recurseElementById = (
-  id: string,
+  id: string | string[],
   root: any,
-  replacement?: any,
-  replacementParent?: any,
-  replacementChildKey?: any
+  parent?: any
 ): any => {
+  if (Array.isArray(id)) {
+    id = id.join("_");
+  }
+
   if (root.id === id) {
-    if (replacement) {
-      replacementParent[replacementChildKey] = replacement;
-      return replacementParent[replacementChildKey];
-    }
-    return root;
+    return { el: root, parent };
   }
   if (root.value) {
-    return recurseElementById(id, root.value, replacement, root, "value");
+    return recurseElementById(id, root.value, !!root.id ? root : parent);
   }
 
   if (!root.value && !root.children) {
     const result = Object.keys(root)
       .map((c: any) => {
-        if (typeof root[c] === "object") {
-          const res = recurseElementById(id, root[c], replacement, root, c);
+        if (typeof root[c] === "object" && !!root[c]) {
+          const res = recurseElementById(
+            id,
+            root[c],
+            !!root.id ? root : parent
+          );
           if (res) return res;
         }
       })
@@ -52,7 +60,7 @@ const recurseElementById = (
   if (Array.isArray(root.props)) {
     const result = root.props
       .map((c: any, idx: number) => {
-        const res = recurseElementById(id, c, replacement, root, idx);
+        const res = recurseElementById(id, c, !!root.id ? root : parent);
         if (res) return res;
       })
       .filter((e: any) => !!e);
@@ -63,7 +71,7 @@ const recurseElementById = (
   if (Array.isArray(root.children)) {
     const result = root.children
       .map((c: any, idx: number) => {
-        const res = recurseElementById(id, c, replacement, root, idx);
+        const res = recurseElementById(id, c, !!root.id ? root : parent);
         if (res) return res;
       })
       .filter((e: any) => !!e);
@@ -106,7 +114,7 @@ export const findElementById = (root: any, id: string | string[]): any => {
     if (child) {
       el = child;
     } else {
-      const cids = currentIds.join("_");
+      let cids = currentIds.join("_");
       let i = 0;
       while (!!el && el.id !== cids) {
         i++;
@@ -114,10 +122,12 @@ export const findElementById = (root: any, id: string | string[]): any => {
           throw new Error(`${cids} not found!`);
         }
         if (el) {
-          const cids = currentIds.join("_");
           switch (el.kind) {
             case SyntaxKind.JsxExpression:
-              el = recurseElementById(cids, el);
+              const r = recurseElementById(cids, el);
+              if (!!r) {
+                el = r.el;
+              }
               break;
             case SyntaxKind.JsxElement:
               let res: any = null;
@@ -125,7 +135,7 @@ export const findElementById = (root: any, id: string | string[]): any => {
                 if (!res) {
                   const r = recurseElementById(cids, el.props[key]);
                   if (!!r) {
-                    res = r;
+                    res = r.el;
                   }
                 }
               });
@@ -150,55 +160,38 @@ export const replaceElementById = (
   id: string | string[],
   value: any
 ): any => {
-  const ids = getIds(id);
-  if (!root) return null;
-  let el = root;
-
-  if (id === "0") {
+  if (id === "0" && root.id === id) {
     for (let i in root) {
       delete root[i];
     }
     for (let i in value) {
       root[i] = value[i];
     }
-    return root;
+    return value;
   }
-
-  let currentIds = [];
-  for (let i in ids) {
-    const idx = parseInt(i);
-    const cid = parseInt(ids[idx + 1]);
-    const isBeforeLast = ids.length - 2 === idx;
-    const hasChild = !!_.get(el, `children.${cid}`, false);
-    currentIds.push(ids[i]);
-
-    if (hasChild) {
-      if (!isBeforeLast) {
-        el = el.children[cid];
-      } else {
-        el.children[cid] = value;
+  const anchor = findParentElementById(root, id);
+  let children = anchor.children;
+  if (children && children.length > 0) {
+    let foundKey = -1;
+    children.map((c: any, idx: number) => {
+      if (c.id === id) {
+        foundKey = idx;
       }
-    } else {
-      if (!!el && !!el.value) {
-        if (el.kind === SyntaxKind.JsxExpression) {
-          if (!isBeforeLast) {
-            el = recurseElementById(currentIds.join("_"), el);
-          } else {
-            el = recurseElementById(currentIds.join("_"), el, value);
-          }
-        } else {
-          if (!isBeforeLast) {
-            el = el.value;
-          } else {
-            el.value = value;
-          }
-        }
-      }
+    });
+
+    if (foundKey >= 0) {
+      children.splice(foundKey, 1, value);
+      return value;
     }
   }
-  if (el) {
-    return el;
+
+  const res = recurseElementById(id, anchor);
+  if (res && res.parent && res.el) {
+    replaceExpValue(res.parent, id, value);
   }
+  console.log(toJS(anchor), id);
+
+  return value;
 };
 
 export const findParentElementById = (
@@ -211,20 +204,55 @@ export const findParentElementById = (
   if (child) return child;
 };
 
+const replaceExpValue = (
+  anchor: any,
+  id: string | string[],
+  value: any
+): any => {
+  if (typeof id !== "string") {
+    id = id.join("_");
+  }
+
+  switch (anchor.kind) {
+    case SyntaxKind.BinaryExpression:
+      replaceExpValue(anchor.right, id, value);
+      break;
+    case SyntaxKind.ConditionalExpression:
+      console.log(toJS(anchor), id);
+      replaceExpValue(anchor.whenTrue, id, value);
+      replaceExpValue(anchor.whenFalse, id, value);
+      break;
+    default:
+      if (anchor.value) {
+        if (anchor.value.id === id) {
+          anchor.value = value;
+        } else {
+          replaceExpValue(anchor.value, id, value);
+        }
+      }
+  }
+  return anchor;
+};
+
 export const removeElementById = (root: any, id: string | string[]) => {
   const ids = getIds(id);
   const parent = findParentElementById(root, id);
   const index = parseInt(ids[ids.length - 1] || "-1");
-  if (
-    parent &&
-    parent.children &&
-    parent.children.length > index &&
-    parent.children[index]
-  ) {
-    const result = parent.children[index];
-    parent.children.splice(index, 1);
+  if (parent) {
+    if (
+      parent.children &&
+      parent.children.length > index &&
+      parent.children[index]
+    ) {
+      const result = parent.children[index];
+      parent.children.splice(index, 1);
 
-    return result;
+      return result;
+    } else {
+      const res = recurseElementById(id, parent);
+      replaceExpValue(res.parent, id, null);
+      return res.el;
+    }
   }
 };
 
@@ -269,17 +297,39 @@ export const wrapInElementId = (
 ) => {
   const currentEl = findElementById(root, id);
   if (currentEl && wrapEl) {
-    const elementTag = tags[wrapEl.name];
-    if (elementTag) {
-      const insertTo = (elementTag as any).insertTo || "children";
-      let children = _.get(wrapEl, insertTo);
-      if (!children) {
-        _.set(wrapEl, insertTo, []);
-        children = [];
+    if (wrapEl.kind === SyntaxKind.JsxExpression) {
+      switch (wrapEl.value.kind) {
+        case SyntaxKind.CallExpression:
+          if (wrapEl.value.expression.indexOf(".map") >= 0) {
+            _.set(wrapEl, "value.arguments.0.body.0.value.value", currentEl);
+          }
+          break;
+        case SyntaxKind.ConditionalExpression:
+          _.set(wrapEl, "value.whenTrue", currentEl);
+          break;
+        case SyntaxKind.BinaryExpression:
+          _.set(wrapEl, "value.right", currentEl);
+          break;
+        default:
+          _.set(wrapEl, "value", {
+            kind: SyntaxKind.JsxFragment,
+            children: [wrapEl.value, currentEl]
+          });
       }
-      children.unshift(currentEl);
-      _.set(wrapEl, insertTo, children);
       replaceElementById(root, id, wrapEl);
+    } else {
+      const elementTag = tags[wrapEl.name];
+      if (elementTag) {
+        const insertTo = (elementTag as any).insertTo || "children";
+        let children = _.get(wrapEl, insertTo);
+        if (!children) {
+          _.set(wrapEl, insertTo, []);
+          children = [];
+        }
+        children.unshift(currentEl);
+        _.set(wrapEl, insertTo, children);
+        replaceElementById(root, id, wrapEl);
+      }
     }
   }
 };
@@ -344,7 +394,57 @@ const isUndoStackSimilar = (compare: any, diff: any) => {
   return false;
 };
 
-export function createNewElement(name: string) {
+export async function createNewElement(name: string) {
+  if (name === "expr") {
+    const res = await promptExpression({
+      title: "Please type the expression:",
+      returnExp: false
+    });
+    if (!res) return;
+    return {
+      kind: SyntaxKind.JsxExpression,
+      value: { kind: SyntaxKind.StringLiteral, value: JSON.stringify(res) }
+    };
+  } else if (name === "if") {
+    const res = await promptExpression({
+      title: "Please type the condition:",
+      pre: "If (",
+      post: ")",
+      footer: "then <Component />",
+      wrapExp: "{ [[value]] && <View><Text>When True</Text></View> }",
+      returnExp: true
+    });
+    if (!res) return;
+    return { kind: SyntaxKind.JsxExpression, value: res.expression };
+  } else if (name === "if-else") {
+    const res = await promptExpression({
+      title: "Please type the condition:",
+      pre: "If (",
+      post: ")",
+      footer: "then <Component />\nelse <AnotherComponent />",
+      wrapExp:
+        "{ [[value]] ? <View><Text>When True</Text></View> : <View><Text>When False</Text></View> }",
+      returnExp: true
+    });
+    if (!res) return;
+    return { kind: SyntaxKind.JsxExpression, value: res.expression };
+  } else if (name === "map") {
+    const res = await promptExpression({
+      title: "Please type the array you want to map:",
+      pre: "(",
+      post: ")",
+      footer: ".map((item:any, key:number) => <Component />)",
+      wrapExp: `{
+         ([[value]]).map((item:any, key: number) => {
+           return (<View style={{flexDirection: "row"}}>Row {key}</View>)
+      } 
+    }`,
+      returnExp: true
+    });
+    if (!res) return;
+    return { kind: SyntaxKind.JsxExpression, value: res.expression };
+  }
+
   const tag = tags[name];
   const kind = kinds[name];
   if (!tag && !kind) {

@@ -15,7 +15,20 @@ export class Morph {
   getAppPath() {
     return `${execPath}/app/${config.get("app")}`;
   }
-
+  parseExpression(source: string) {
+    const sf = this.project.createSourceFile(
+      "__tempfile" + this.randomDigits() + "__.tsx",
+      `${source}`
+    );
+    let result = null as any;
+    try {
+      const fc = getEntryPoint(sf.getFirstChild()) as any;
+      result = parseJsx(fc);
+    } finally {
+      sf.forget();
+    }
+    return result;
+  }
   parseJsxExpression(source: string) {
     // const sourced = `<div>${source}</div>`;
 

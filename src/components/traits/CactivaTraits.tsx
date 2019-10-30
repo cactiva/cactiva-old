@@ -146,40 +146,50 @@ const TraitFieldEl = observer((props: any) => {
   };
   const updateValue = _.debounce((value: any, kind: any) => {
     prepareChanges(editor);
-    const sp = selected.source.props;
+    if (trait.path.indexOf("children") === 0) {
+      setProp(selected.source, trait.path, JSON.parse(value));
+    } else {
+      const sp = selected.source.props;
 
-    if (!sp[item.name] && item.kind && item.default) {
-      sp[item.name] = generateValueByKind(item.kind, item.default);
-    }
-
-    const isempty =
-      value === undefined ||
-      (typeof value === "object" && Object.keys(value).length === 0);
-    if (!isempty) {
-      const currentValue = _.get(selected.source.props, trait.path);
-
-      let valueByKind = null;
-      if (typeof value === "function") {
-        valueByKind = generateValueByKind(kind, value(currentValue));
-      } else {
-        valueByKind = generateValueByKind(kind, value);
+      if (!sp[item.name] && item.kind && item.default) {
+        sp[item.name] = generateValueByKind(item.kind, item.default);
       }
 
-      setProp(selected.source.props, trait.path, valueByKind);
-    } else {
-      const tpath = trait.path.split(".");
-      const lastpath = tpath.pop();
-      const currentValue = _.get(selected.source.props, tpath.join("."));
-      if (currentValue) {
-        delete currentValue[lastpath as any];
-        setProp(selected.source.props, tpath.join("."), currentValue);
+      const isempty =
+        value === undefined ||
+        (typeof value === "object" && Object.keys(value).length === 0);
+      if (!isempty) {
+        const currentValue = _.get(selected.source.props, trait.path);
+
+        let valueByKind = null;
+        if (typeof value === "function") {
+          valueByKind = generateValueByKind(kind, value(currentValue));
+        } else {
+          valueByKind = generateValueByKind(kind, value);
+        }
+
+        setProp(selected.source.props, trait.path, valueByKind);
       } else {
-        return;
+        const tpath = trait.path.split(".");
+        const lastpath = tpath.pop();
+        const currentValue = _.get(selected.source.props, tpath.join("."));
+        if (currentValue) {
+          delete currentValue[lastpath as any];
+          setProp(selected.source.props, tpath.join("."), currentValue);
+        } else {
+          return;
+        }
       }
     }
     commitChanges(editor);
   });
-  const rawValue = _.get(selected.source.props, `${trait.path}`);
+
+  let path = `props.${trait.path}`
+  if (trait.path.indexOf("children") === 0) {
+    path = trait.path;
+  }
+
+  const rawValue = _.get(selected.source, path);
   const update = (value: any, updatedKind?: any) => {
     updateValue(
       value === undefined ? item.default : value,

@@ -69,8 +69,6 @@ export default observer((props: any) => {
   return (
     <CactivaDroppable
       cactiva={cactiva}
-      modifyDropOver={modifyDropOver}
-      onDropped={onDropped}
       onDropOver={onDropOver}
     >
       <CactivaDraggable cactiva={cactiva}>

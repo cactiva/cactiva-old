@@ -12,21 +12,16 @@ import { toJS } from "mobx";
 export default observer((props: any) => {
   const cactiva = props._cactiva;
   const expressions = generateExpression(cactiva.source.value);
-  const onDoubleClick = (e: any) => {
-    e.preventDefault();
-    cactiva.editor.jsx = true;
-  };
 
   return (
     <CactivaDroppable cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
-        <CactivaSelectable cactiva={cactiva} onDoubleClick={onDoubleClick}>
+        <CactivaSelectable cactiva={cactiva}>
           <Text
             style={{
               padding: 5,
               margin: 5,
               borderRadius: 5,
-              border: "1px solid #ccc",
               fontSize: 10,
               color: "#000",
               backgroundColor: "rgba(255,255,255,1)"
@@ -66,12 +61,12 @@ export const Expression = observer((props: any) => {
     return <span style={{fontFamily: 'Consolas, "Courier New", monospace'}}>{exp}</span>;
   }
   return (
-    <div style={{ paddingLeft: 10 }}>
+    <span>
       <CactivaChildren
         source={source}
         cactiva={cactiva}
         parentInfo={parentInfo}
       />
-    </div>
+    </span>
   );
 });

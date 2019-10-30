@@ -16,12 +16,15 @@ import {
   insertAfterElementId,
   addChildInId,
   createNewElement,
-  wrapInElementId
+  wrapInElementId,
+  prepareChanges,
+  commitChanges
 } from "./utility/elements/tools";
 import CactivaComponentChooser, { toolbar } from "./CactivaComponentChooser";
 import kinds from "./utility/kinds";
 import tags from "./utility/tags";
-import CactivaExpressionDialog from "./CactivaExpressionDialog";
+import CactivaExpressionDialog, { promptExpression } from "./CactivaExpressionDialog";
+import { SyntaxKind } from "./utility/syntaxkinds";
 
 const uploadImage = async (file: any) => {
   var formDataToUpload = new FormData();
@@ -75,7 +78,7 @@ export default observer(({ editor }: any) => {
                   ? "resplit"
                   : "split"
                 : "unsplit"
-            }`}
+              }`}
             onDrag={onDragScreen}
           >
             <CactivaEditorRender editor={editor} />
@@ -129,17 +132,17 @@ const CactivaEditorSource = observer((props: any) => {
   };
   const editorDidMount = (ed: any, monaco: any) => {
     monacoEdRef.current = ed;
-    ed.onDidBlurEditorText(function(e: any) {
+    ed.onDidBlurEditorText(function (e: any) {
       monacoEditorChange(ed.getValue());
     });
-    ed.onMouseLeave(function(e: any) {
+    ed.onMouseLeave(function (e: any) {
       monacoEditorChange(ed.getValue());
     });
     ed.addAction({
       id: "cactiva-apply-changes",
       label: "Apply Changes",
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
-      run: function(ed: any) {
+      run: function (ed: any) {
         meta.showAction = false;
         monacoEditorChange(ed.getValue());
         if (editor.selectedSource.length > 0) {
@@ -155,7 +158,7 @@ const CactivaEditorSource = observer((props: any) => {
       id: "cactiva-save",
       label: "Save",
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S],
-      run: function(ed: any) {
+      run: function (ed: any) {
         monacoEditorChange(ed.getValue());
         editor.save();
         return null;
@@ -361,16 +364,21 @@ const CactivaEditorAddComponent = observer((props: any) => {
     icon = compInfo.status === "add" ? "plus" : "add-to-folder";
     title = compInfo.status === "add" ? "Add Component" : "Wrap in Component";
   }
-  const addHandle = (value: any) => {
+  const addHandle = async (value: any) => {
+    prepareChanges(editor);
+    let newEl = await createNewElement(value);
     if (compInfo.placement === "after") {
-      insertAfterElementId(editor.source, compInfo.id, createNewElement(value));
+      insertAfterElementId(editor.source, compInfo.id, newEl);
     } else {
-      addChildInId(editor.source, compInfo.id, createNewElement(value));
+      addChildInId(editor.source, compInfo.id, newEl);
     }
+    commitChanges(editor);
   };
-  const wrapHandle = (value: any) => {
-    const newEl = createNewElement(value);
+  const wrapHandle = async (value: any) => {
+    prepareChanges(editor);
+    let newEl = await createNewElement(value);
     wrapInElementId(editor.source, compInfo.id, newEl);
+    commitChanges(editor);
   };
   const filterToolbar = () => {
     return toolbar.filter((item: any) => {

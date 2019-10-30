@@ -1,21 +1,36 @@
 import api from '@src/libs/api';
 import editor from '@src/store/editor';
 import { Autocomplete, Dialog, Text } from 'evergreen-ui';
-import { observable } from 'mobx';
+import { observable, toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import AutosizeInput from 'react-input-autosize';
 import useAsyncEffect from 'use-async-effect';
 import { parseValue } from './utility/parser/parser';
 
 const onCloseDialog = () => {
-    return;
+    if (document.activeElement) {
+        (document.activeElement as any).blur();
+    }
+    meta.closing = true;
+    editor.modals.expression = false;
+    setTimeout(() => {
+        meta.shouldFocusFirst = false;
+        setTimeout(() => {
+            meta.closing = false;
+        });
+    });
 }
 const meta = observable({
     title: 'Please type an expression',
+    pre: '',
+    post: '',
+    footer: '',
     defintions: {} as any,
     suggestions: [] as string[],
+    closing: false,
     text: [""],
+    shouldFocusFirst: false,
 });
 const regex = /[^\w.\"\'\`\s]+/ig;
 
@@ -45,24 +60,47 @@ export default observer(() => {
             meta.defintions[r] = parseValue(res[r]);
         })
         meta.suggestions = generateSuggestions(meta.defintions);
-        if (firstRef && firstRef.current) {
-            firstRef.current.focus();
-        }
     }, []);
     const openMenuRefs = useRef({} as any);
     const firstRef = useRef(null as any);
+
+    useEffect(() => {
+        if (meta.shouldFocusFirst) {
+            const finish = () => {
+                meta.shouldFocusFirst = false;
+                firstRef.current.focus();
+            }
+            const iv = setInterval(() => {
+                if (firstRef && firstRef.current) {
+                    finish();
+                }
+                clearInterval(iv);
+            }, 100);
+        }
+    }, [meta.shouldFocusFirst])
+
     return <Dialog isShown={editor.modals.expression}
         hasHeader={false}
         hasFooter={false}
         preventBodyScrolling
-        onCloseComplete={onCloseDialog}
-        minHeightContent={65}
+        overlayProps={{
+            onClick: () => {
+                onCloseDialog();
+            }
+        }}
+        shouldCloseOnOverlayClick={false}
+        minHeightContent={55}
         width={400}>
-        <div className="expr-dialog">
-            <Text>
+        <div className="expr-dialog" onClickCapture={(e: any) => {
+            e.stopPropagation();
+        }}>
+            {meta.title && <Text style={{ marginBottom: '5px' }}>
                 {meta.title}
-            </Text>
+            </Text>}
             <div className="content">
+                {meta.pre && <Text style={{ marginRight: '3px', whiteSpace: 'pre-wrap' }}>
+                    {meta.pre}
+                </Text>}
                 {meta.text.map((item, key: number) => {
                     const onSelect = (changedItem: any) => {
                         meta.text[key] = changedItem;
@@ -71,43 +109,104 @@ export default observer(() => {
                         onSelect={onSelect}
                         key={key}
                         idx={key}
+                        isLast={key === meta.text.length - 1}
                         openMenuRefs={openMenuRefs} item={item} />
                 })
                 }
+                {meta.post && <Text style={{ marginLeft: '3px', whiteSpace: 'pre-wrap' }}>
+                    {meta.post}
+                </Text>}
             </div>
+            {meta.footer && <Text size={300} style={{ whiteSpace: 'pre-wrap', margin: '5px 0px 5px 5px', fontSize: '12px' }}>
+                {meta.footer}
+            </Text>
+            }
         </div>
     </Dialog>
 })
 
-export const getExpression = async (title = '') => {
-    editor.modals.expression = true;
-    meta.title = title;
-    return "";
+export const promptExpression = (options?: {
+    title?: string,
+    pre?: string,
+    post?: string,
+    footer?: string,
+    value?: string,
+    returnExp?: boolean,
+    wrapExp?: string
+}): any => {
+    return new Promise((resolve) => {
+        const opt = options || {};
+
+        if (editor.modals.expression) {
+            onCloseDialog();
+            setTimeout(async () => {
+                resolve(await promptExpression(options));
+            }, 100);
+            return;
+        }
+
+        editor.modals.expression = true;
+        meta.shouldFocusFirst = true;
+        meta.title = opt.title || "";
+        meta.pre = opt.pre || "";
+        meta.post = opt.post || "";
+        meta.footer = opt.footer || "";
+
+        meta.text = splitExp(opt.value || "");
+        if (meta.text.length === 0) { meta.text = [""] }
+
+        const finish = async () => {
+            let text = meta.text.join("");
+            if (text.trim().length > 0) {
+                if (opt.wrapExp) {
+                    text = opt.wrapExp.replace('[[value]]', text);
+                }
+
+                if (!opt.returnExp) {
+                    resolve(text);
+                } else {
+                    const res = await api.post("morph/parse-exp", { value: text });
+                    resolve({ expression: res, imports: [] })
+                }
+            } else {
+                resolve("");
+            }
+            meta.text = [""];
+        }
+
+        const iv = setInterval(() => {
+            if (!editor.modals.expression) {
+                clearInterval(iv);
+                finish();
+            }
+        }, 500)
+    });
 }
 
-const ExpInput = observer(({ onSelect, idx, openMenuRefs, item, inputRef }: any) => {
+const ExpInput = observer(({ onSelect, idx, openMenuRefs, item, inputRef, isLast }: any) => {
     const key = idx;
     return <Autocomplete
         onChange={onSelect}
         onSelect={onSelect}
         items={meta.suggestions}
-        children={(props) => {
+        children={(props: any) => {
             const { getInputProps, getRef, openMenu, isShown } = props
             openMenuRefs.current[idx] = openMenu;
             return (
                 <AutosizeInput
                     ref={inputRef}
                     inputRef={getRef}
-                    className="input"
+                    className={`input ${isLast ? 'last' : ''}`}
                     spellCheck={false}
                     {...getInputProps({
                         onFocus: (e: any) => {
                             const val = e.target.value.match(regex);
                             if (!val || !!val && val.length === 0) {
-                                openMenu();
+                                if (!meta.closing)
+                                    openMenu();
                             }
                         },
-                        value: item,
+                        value: item || "",
                         onBlur: (e: any) => {
                             const val = e.target.value;
                             if (val === "" && meta.text.length > 1) {
@@ -124,7 +223,8 @@ const ExpInput = observer(({ onSelect, idx, openMenuRefs, item, inputRef }: any)
                                         const sibling = target.parentNode.parentNode.previousSibling;
                                         setTimeout(() => {
                                             if (sibling) {
-                                                sibling.childNodes[0].childNodes[0].focus();
+                                                const node = sibling.childNodes[0].childNodes[0];
+                                                if (node) node.focus()
                                             }
                                         })
                                     }
@@ -140,7 +240,8 @@ const ExpInput = observer(({ onSelect, idx, openMenuRefs, item, inputRef }: any)
                                     setTimeout(() => {
                                         const sibling = target.parentNode.parentNode.nextSibling;
                                         if (sibling) {
-                                            sibling.childNodes[0].childNodes[0].focus()
+                                            const node = sibling.childNodes[0].childNodes[0];
+                                            if (node) node.focus()
                                         }
                                     })
                                 }
@@ -152,7 +253,8 @@ const ExpInput = observer(({ onSelect, idx, openMenuRefs, item, inputRef }: any)
                                     setTimeout(() => {
                                         const sibling = target.parentNode.parentNode.previousSibling;
                                         if (sibling) {
-                                            sibling.childNodes[0].childNodes[0].focus()
+                                            const node = sibling.childNodes[0].childNodes[0];
+                                            if (node) node.focus()
                                         }
                                     })
                                 }
@@ -163,62 +265,42 @@ const ExpInput = observer(({ onSelect, idx, openMenuRefs, item, inputRef }: any)
                                     setTimeout(() => {
                                         const sibling = target.parentNode.parentNode.nextSibling;
                                         if (sibling) {
-                                            sibling.childNodes[0].childNodes[0].focus()
+                                            const node = sibling.childNodes[0].childNodes[0];
+                                            if (node) node.focus()
                                         }
                                     })
                                 }
                             }
                             if (e.which === 13) {
-                                if (!isShown) {
-                                    console.log('dismiss');
+                                if (!isShown || props.highlightedIndex === -1) {
+                                    onCloseDialog();
                                 }
                             }
                         },
                         onChange: (e: any) => {
                             const val = e.target.value;
-                            const split = val.split(regex);
-                            const match = val.match(regex);
+                            const res = splitExp(val);
 
-                            if (match && match.length > 0) {
-                                const result = [] as string[];
-                                split.map((s: string, idx: number) => {
-                                    if (match && match.length > 0) {
-                                        const p = match.pop();
-                                        if (s === "" && idx === 0) {
-                                            if (p)
-                                                result.push(p);
-                                        } else {
-                                            result.push(s);
-                                            if (p)
-                                                result.push(p);
+                            if (res.length > 0) {
+                                const length = meta.text.length
+                                meta.text.splice(key || 0, 1, ...res);
+
+                                const target = e.target;
+                                setTimeout(() => {
+                                    if (length !== meta.text.length) {
+                                        let sibling = target.parentNode.parentNode.nextSibling;
+
+                                        if (target.selectionStart < val.length / 2) {
+                                            sibling = target.parentNode.parentNode.previousSibling;
                                         }
-                                    } else {
-                                        result.push(s)
+                                        if (sibling) {
+                                            const node = sibling.childNodes[0].childNodes[0];
+                                            if (node) node.focus()
+                                        }
                                     }
                                 })
-                                if (result.length > 0) {
-                                    if (key === 0 && split.length === 1) {
-                                        return;
-                                    }
-                                    const length = meta.text.length
-                                    const res = result.filter(e => !!e);
-                                    meta.text.splice(key, 1, ...res);
-                                    const target = e.target;
-                                    setTimeout(() => {
-                                        if (length !== meta.text.length) {
-                                            let sibling = target.parentNode.parentNode.nextSibling;
-
-                                            if (target.selectionStart < val.length / 2) {
-                                                sibling = target.parentNode.parentNode.previousSibling;
-                                            }
-                                            if (sibling) {
-                                                sibling.childNodes[0].childNodes[0].focus()
-                                            }
-                                        }
-                                    })
-                                }
                             } else {
-                                item = val;
+                                meta.text[key] = val;
                             }
                         },
                     })}
@@ -228,3 +310,32 @@ const ExpInput = observer(({ onSelect, idx, openMenuRefs, item, inputRef }: any)
         }}
     />
 })
+
+const splitExp = (val: string): string[] => {
+    const split = val.split(regex);
+    const match = val.match(regex);
+
+    if (match && match.length > 0) {
+        const result = [] as string[];
+        split.map((s: string, idx: number) => {
+            if (match && match.length > 0) {
+                const p = match.pop();
+                if (s === "" && idx === 0) {
+                    if (p)
+                        result.push(p);
+                } else {
+                    result.push(s);
+                    if (p)
+                        result.push(p);
+                }
+            } else {
+                result.push(s)
+            }
+        })
+        if (result.length > 0) {
+            const res = result.filter(e => !!e);
+            return res;
+        }
+    }
+    return [];
+}

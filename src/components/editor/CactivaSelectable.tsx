@@ -8,8 +8,13 @@ import {
   addChildInId,
   removeElementById,
   prepareChanges,
-  commitChanges
+  commitChanges,
+  replaceElementById,
+  findElementById,
+  findParentElementById
 } from "./utility/elements/tools";
+import { SyntaxKind } from "./utility/syntaxkinds";
+import { toJS } from "mobx";
 export default observer(
   ({
     cactiva,
@@ -125,6 +130,30 @@ export default observer(
                     Select Parent
                   </Menu.Item>
                   <Menu.Item
+                    icon="circle-arrow-up"
+                    onSelect={() => {
+                      toggleRef.current();
+                      if (ceditor.current) {
+                        prepareChanges(ceditor.current);
+                        const el = findElementById(
+                          ceditor.current.source,
+                          source.id
+                        );
+                        let anchor = findParentElementById(ceditor.current.source, source.id);
+                        while (
+                          [SyntaxKind.JsxElement, SyntaxKind.JsxExpression].indexOf(anchor.kind) < 0
+                          && !anchor.name) {
+                          anchor = findParentElementById(ceditor.current.source,anchor.id);
+                        }
+                        console.log(toJS(anchor.id));
+                        replaceElementById(ceditor.current.source, anchor.id, el);
+                        commitChanges(ceditor.current);
+                      }
+                    }}
+                  >
+                    Replace Parent With This
+                  </Menu.Item>
+                  <Menu.Item
                     icon="arrow-up"
                     onSelect={() => {
                       toggleRef.current();
@@ -195,11 +224,15 @@ export default observer(
         {({ toggle, getRef, isShown }: any) => {
           toggleRef.current = toggle;
           getRef(ref.current);
+          let width = 0;
+          if (ref && ref.current) {
+            width = ref.current.offsetWidth
+          }
           return (
             <div
               className={`cactiva-selectable ${
                 classes.selected ? "selected" : ""
-              }`}
+                }`}
             >
               <div
                 ref={ref}
@@ -211,7 +244,7 @@ export default observer(
                 onClick={onClick}
                 onContextMenu={onContextMenu}
               >
-                {showElementTag && (
+                {showElementTag && width > 100 && (
                   <div
                     className={`cactiva-element-tag ${classes.hover} ${classes.selected}`}
                   >

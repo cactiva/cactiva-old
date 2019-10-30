@@ -6,6 +6,7 @@ import CactivaDraggable from "./CactivaDraggable";
 import CactivaSelectable from "./CactivaSelectable";
 import { findElementById, getIds, uuid } from "./utility/elements/tools";
 import { kindNames } from "./utility/kinds";
+import { toJS } from "mobx";
 
 export default observer(({ editor }: any) => {
   const meta = useObservable({
@@ -138,6 +139,8 @@ const generatePath = (editor: any, source: any) => {
           source: el
         });
       currentId.pop();
+    } else {
+      console.log(toJS(el), toJS(source), currentId)
     }
   });
   return nav.reverse();

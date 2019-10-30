@@ -190,6 +190,7 @@
           overflow-y: auto;
           > div {
             margin: 5px;
+            padding-bottom: 150px;
           }
         }
         &.unsplit {
@@ -546,7 +547,6 @@
 
   .content {
     flex: 1;
-    margin-top: 5px;
     background: #ececeb;
     border-radius: 5px !important;
     padding: 5px 5px 0px 5px;
@@ -562,6 +562,9 @@
     .input {
       margin-right: 5px;
       margin-bottom: 5px;
+      &.last {
+        margin-right: 0px;
+      }
 
       input {
         border: 0px;

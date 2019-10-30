@@ -48,12 +48,12 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
           : node.operatorToken.kind,
         right: parseJsx(node.right, showKindName)
       };
-    case SyntaxKind.PrefixUnaryExpression:
-      if (node.operand.kind === SyntaxKind.NumericLiteral) {
-        return parseInt(node.getText());
-      } else {
-        return node.getText();
-      }
+    // case SyntaxKind.PrefixUnaryExpression:
+    //   if (node.operand.kind === SyntaxKind.NumericLiteral) {
+    //     return parseInt(node.getText());
+    //   } else {
+    //     return node.getText();
+    //   }
     case SyntaxKind.ElementAccessExpression:
       return {
         kind: kindName,

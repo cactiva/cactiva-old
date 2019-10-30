@@ -76,7 +76,6 @@ export default observable({
 
   @Post("writefile")
   private writefile(req: Request, res: Response) {
-    console.log(req.body);
     const sf = morph.project.createSourceFile(
       req.query.path.replace("./", morph.getAppPath() + "/src/stores/"),
       req.body.value,

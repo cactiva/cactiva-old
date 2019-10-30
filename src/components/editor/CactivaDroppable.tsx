@@ -22,8 +22,6 @@ export default observer(
     cactiva,
     children,
     onDropOver,
-    modifyDropOver,
-    onDropped,
     canDropOver = true,
     canDropAfter = true
   }: any) => {
@@ -49,8 +47,6 @@ export default observer(
     }
 
     const { id } = source;
-    const onDroppedEvent =
-      parentInfo && parentInfo.onDropped ? parentInfo.onDropped : onDropped;
     const dropAfter = () => {
       let el = null;
       const child = findElementById(root, id);
@@ -89,9 +85,6 @@ export default observer(
       (item: any) => {
         if (afterOver && meta.canDropAfter) {
           dropAfter();
-          if (onDroppedEvent) {
-            onDroppedEvent(afterItem, "after");
-          }
         }
         meta.canDropAfter = false;
       }
@@ -103,16 +96,10 @@ export default observer(
         if (canDropAfter && !canDropOver) {
           if (childOver && meta.canDropAfter) {
             dropAfter();
-            if (onDroppedEvent) {
-              onDroppedEvent(childItem, "child");
-            }
           }
         } else {
           if (childOver && meta.canDropChild) {
             dropChild();
-            if (onDroppedEvent) {
-              onDroppedEvent(childItem, "child");
-            }
           }
         }
       }
@@ -147,26 +134,18 @@ export default observer(
       if (onDropOver) {
         onDropOver(meta.canDropChild);
       }
-
-      if (modifyDropOver) {
-        modifyDropOver({
-          meta,
-          childItem,
-          afterItem
-        });
-      }
     }, [childOver, afterOver, canDropAfter, canDropOver]);
 
     let shouldShowAdd = false;
     if (id === editor.selectedId) {
       if (id !== "0")
-        shouldShowAdd = true;
+        shouldShowAdd = source.id;
     } else {
       const sid = editor.selectedId.split("_");
       if (sid[sid.length - 1] > 0) {
         sid[sid.length - 1] = sid[sid.length - 1] - 1;
         if (id === sid.join("_")) {
-          shouldShowAdd = true;
+          shouldShowAdd = source.id;
         }
       }
 

@@ -5,11 +5,16 @@ body {
   padding: 0;
   margin: 0;
   background: #fff;
-  font-family: "SF UI Text", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol";
+  font-family: "SF UI Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 [evergreen-portal-container] {
+  div[role="menuitem"] {
+    height: 28px !important;
+    > span {
+      font-size: 11px !important;
+    }
+  }
   div[role="dialog"] {
     z-index: 100 !important;
   }

@@ -22,6 +22,11 @@ export default class extends CactivaTag {
       name: "attributes",
       fields: [
         {
+          name: "Text",
+          path: "children.0.value",
+          kind: SyntaxKind.StringLiteral
+        },
+        {
           name: "Ellipsize Mode",
           path: "ellipsizeMode",
           kind: SyntaxKind.StringLiteral,

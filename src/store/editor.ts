@@ -28,7 +28,7 @@ class EditorStore {
   @observable modals = {
     store: false,
     api: false,
-    expression: true
+    expression: false
   };
 
   @observable cli = {

@@ -38,6 +38,9 @@ export default observer((trait: ICactivaTraitFieldProps) => {
           <input
             className={`cactiva-trait-input`}
             type="text"
+            onKeyDown={e => {
+              if (e.which === 13) (e.target as any).blur();
+            }}
             placeholder={_.get(trait, "options.fields.name")}
             value={meta.value || ""}
             onChange={e => {
@@ -138,6 +141,9 @@ const ColorEl = observer((props: any) => {
         <input
           className={`cactiva-trait-input`}
           type="text"
+          onKeyDown={e => {
+            if (e.which === 13) (e.target as any).blur();
+          }}
           value={metaColor.value || ""}
           style={{
             backgroundColor: metaColor.value,

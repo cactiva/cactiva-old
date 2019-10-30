@@ -73,10 +73,18 @@ export default observer(({ title, icon, onSelect, items = [] }: any) => {
           <div
             className="item"
             onClick={() => {
-              if (onSelect) onSelect("custom");
+              if (onSelect) onSelect("component");
             }}
           >
-            <Icon icon={"code"} size={14} color={"#999"} /> Custom
+            <Icon icon={"code"} size={14} color={"#999"} /> Component
+          </div>
+          <div
+            className="item"
+            onClick={() => {
+              if (onSelect) onSelect("expr");
+            }}
+          >
+            <Icon icon={"code-block"} size={14} color={"#999"} /> Expression
           </div>
           <div
             className="item"
