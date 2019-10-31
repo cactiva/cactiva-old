@@ -6,6 +6,7 @@ import "./CactivaDialogEditor.scss";
 import CactivaExpoCli from "./cli/CactivaExpoCli";
 import "./CactivaHead.scss";
 import CactivaStoreEditor from "./store/CactivaStoreEditor";
+import CactivaApiEditor from "./api/CactivaApiEditor";
 
 
 export default observer(({ editor }: any) => {
@@ -112,7 +113,7 @@ export default observer(({ editor }: any) => {
             style: { display: 'flex' }
           }}
           onCloseComplete={() => editor.modals.api = false}
-        ><CactivaStoreEditor /></Dialog>
+        ><CactivaApiEditor /></Dialog>
       </div>
       <div className="center">
         <Text

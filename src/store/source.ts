@@ -1,15 +1,10 @@
-import {
-  commitChanges,
-  prepareChanges,
-  replaceElementById
-} from "@src/components/editor/utility/elements/tools";
+import { commitChanges, prepareChanges, replaceElementById } from "@src/components/editor/utility/elements/tools";
 import { generateSource } from "@src/components/editor/utility/parser/generateSource";
 import api from "@src/libs/api";
-import { observable, toJS, computed } from "mobx";
+import _ from "lodash";
+import { computed, observable, toJS } from "mobx";
 import typescript from "prettier/parser-typescript";
 import prettier from "prettier/standalone";
-import { applyDiff, getDiff } from "recursive-diff";
-import _ from "lodash";
 
 export class SourceStore {
   project = null as any;
@@ -136,6 +131,8 @@ export class SourceStore {
       `
       declare var meta:any;
       declare var Main:any;
+      declare module '@src/utility/api';
+      declare module 'mobx';
        ,`,
       "filename/meta.d.ts"
     );

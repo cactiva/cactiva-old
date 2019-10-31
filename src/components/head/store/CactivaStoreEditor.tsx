@@ -36,7 +36,9 @@ export default observer(() => {
         const res = await api.get("store/list");
         meta.list = res.children;
 
-        load(monacoEdRef, meta.list[0].relativePath);
+        if (meta.list.length > 0) {
+            load(monacoEdRef, meta.list[0].relativePath);
+        }
     };
     const load = async (monacoEdRef: any, path: any) => {
         if (meta.current.unsaved) {
@@ -248,7 +250,7 @@ export default observer(() => {
                     });
                     monacoEdRef.current.layout();
                 }}
-                language={"javascript"}
+                language={"typescript"}
             />
         </div>
 

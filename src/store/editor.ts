@@ -1,16 +1,7 @@
+import { addChildInId, commitChanges, findElementById, insertAfterElementId, prepareChanges, removeElementById } from "@src/components/editor/utility/elements/tools";
 import Axios from "axios";
 import { computed, observable, toJS } from "mobx";
 import { SourceStore } from "./source";
-import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
-import {
-  insertAfterElementId,
-  findElementById,
-  removeElementById,
-  prepareChanges,
-  commitChanges,
-  addChildInId
-} from "@src/components/editor/utility/elements/tools";
-import StringLiteral from "@src/components/traits/kinds/StringLiteral";
 
 interface IEditorSources {
   [key: string]: SourceStore;
