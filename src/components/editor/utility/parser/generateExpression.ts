@@ -28,18 +28,106 @@ export const generateExpression = (node: any): any[] => {
 
 export const getToken = (op: number) => {
   switch (op) {
-    case SyntaxKind.EqualsToken:
-      return "=";
+    case SyntaxKind.OpenBraceToken:
+      return "{";
+    case SyntaxKind.CloseBraceToken:
+      return "}";
+    case SyntaxKind.OpenParenToken:
+      return "(";
+    case SyntaxKind.CloseParenToken:
+      return ")";
+    case SyntaxKind.OpenBracketToken:
+      return "[";
+    case SyntaxKind.CloseBracketToken:
+      return "]";
+    case SyntaxKind.DotToken:
+      return ".";
+    case SyntaxKind.DotDotDotToken:
+      return "...";
+    case SyntaxKind.SemicolonToken:
+      return ";";
+    case SyntaxKind.CommaToken:
+      return ",";
+    case SyntaxKind.LessThanToken:
+      return "<";
+    case SyntaxKind.LessThanSlashToken:
+      return "</";
+    case SyntaxKind.GreaterThanEqualsToken:
+      return ">=";
     case SyntaxKind.EqualsEqualsToken:
       return "==";
-    case SyntaxKind.EqualsEqualsEqualsToken:
-      return "===";
+    case SyntaxKind.ExclamationEqualsToken:
+      return "!=";
+    case SyntaxKind.ExclamationEqualsEqualsToken:
+      return "!==";
+    case SyntaxKind.EqualsGreaterThanToken:
+      return "=>";
+    case SyntaxKind.PlusToken:
+      return "+";
+    case SyntaxKind.MinusToken:
+      return "-";
+    case SyntaxKind.AsteriskToken:
+      return "*";
+    case SyntaxKind.AsteriskAsteriskToken:
+      return "**";
+    case SyntaxKind.SlashToken:
+      return "/";
+    case SyntaxKind.PercentToken:
+      return "%";
+    case SyntaxKind.PlusPlusToken:
+      return "++";
+    case SyntaxKind.MinusMinusToken:
+      return "--";
+    case SyntaxKind.LessThanLessThanEqualsToken:
+      return "<<";
+    case SyntaxKind.GreaterThanGreaterThanGreaterThanToken:
+      return ">>";
+    case SyntaxKind.AmpersandToken:
+      return "&";
     case SyntaxKind.BarToken:
       return "|";
-    case SyntaxKind.BarBarToken:
-      return "||";
+    case SyntaxKind.CaretToken:
+      return "^";
+    case SyntaxKind.ExclamationToken:
+      return "!";
+    case SyntaxKind.TildeToken:
+      return "~";
     case SyntaxKind.AmpersandAmpersandToken:
       return "&&";
+    case SyntaxKind.BarBarToken:
+      return "||";
+    case SyntaxKind.QuestionToken:
+      return "?";
+    case SyntaxKind.ColonToken:
+      return ":";
+    case SyntaxKind.AtToken:
+      return "@";
+    case SyntaxKind.BacktickToken:
+      return "`";
+    case SyntaxKind.EqualsToken:
+      return "=";
+    case SyntaxKind.PlusEqualsToken:
+      return "+=";
+    case SyntaxKind.MinusEqualsToken:
+      return "-=";
+    case SyntaxKind.AsteriskEqualsToken:
+      return "*=";
+    case SyntaxKind.AsteriskAsteriskEqualsToken:
+      return "**=";
+    case SyntaxKind.SlashEqualsToken:
+      return "/=";
+    case SyntaxKind.PercentEqualsToken:
+      return "%=";
+    case SyntaxKind.LessThanLessThanEqualsToken:
+      return "<<=";
+    case SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken:
+      return ">>=";
+    case SyntaxKind.AmpersandEqualsToken:
+      return "&=";
+    case SyntaxKind.BarEqualsToken:
+      return "|=";
+    case SyntaxKind.CaretEqualsToken:
+      return "^=";
   }
   return null;
 };

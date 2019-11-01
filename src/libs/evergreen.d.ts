@@ -767,6 +767,9 @@ declare module "evergreen-ui" {
     max?: string;
   }
 
+  export class Badge extends React.PureComponent<any> {}
+  export class Combobox extends React.PureComponent<any> {}
+  export class Select extends React.PureComponent<any> {}
   export class TextInput extends React.PureComponent<TextInputProps> {}
 
   export interface TextInputFieldProps extends TextInputProps, FormFieldProps {

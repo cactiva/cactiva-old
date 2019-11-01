@@ -8,7 +8,7 @@ import { kindNames } from "./libs/morph/kindNames";
 import { replaceReturn } from "./libs/morph/replaceReturn";
 import { getImport } from "./libs/morph/getImport";
 import { removeImports } from "./libs/morph/removeImports";
-import { getHooks } from './libs/morph/getHooks';
+import { getHooks } from "./libs/morph/getHooks";
 
 export class Morph {
   project: TProject = new TProject();
@@ -110,6 +110,24 @@ export class Morph {
 
     return result;
   }
+
+  createTempSource(source: string, callback: any) {
+    const sf = this.project.createSourceFile(
+      "__tempfile" + this.randomDigits() + "__.tsx",
+      source
+    );
+    let result = null as any;
+    try {
+      callback(sf);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      sf.forget();
+    }
+
+    return result;
+  }
+
   parseSource(source: string, showKindName = false) {
     const sf = this.project.createSourceFile(
       "__tempfile" + this.randomDigits() + "__.tsx",

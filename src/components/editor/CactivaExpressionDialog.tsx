@@ -116,6 +116,25 @@ export default observer(() => {
     </Dialog>
 })
 
+export const evalExpression = async (expr: string, opt = {
+    useCache: false,
+    local: true
+}) => {
+    if (!opt.useCache || Object.keys(meta.definitions).length === 0) {
+        let path = editor.current && opt.local ? `?path=${editor.current.path}` : '';
+        meta.definitions = await api.get(`store/definition${path}`);
+    }
+    const str = [];
+
+    let result = null;
+    Object.keys(meta.definitions).map((r: string) => {
+        str.push(`const ${r} = ${JSON.stringify(parseValue(meta.definitions[r]))}`);
+    })
+    str.push(`result = ${expr}`);
+    eval(str.join("\n"));
+    return result;
+}
+
 export const promptExpression = (options?: {
     title?: string,
     pre?: string,
@@ -123,12 +142,15 @@ export const promptExpression = (options?: {
     footer?: string,
     value?: string,
     returnExp?: boolean,
+    local?: boolean,
     wrapExp?: string
 }): Promise<any> => {
-
+    meta.text = [];
+    const opt = options || {};
     setTimeout(async () => {
         if (editor.current) {
-            const res = await api.get(`store/definition?path=${editor.current.path}`);
+            const path = opt.local === false ? '' : `?path=${editor.current.path}`;
+            const res = await api.get(`store/definition${path}`);
             meta.definitions = {};
             Object.keys(res).map((r: string) => {
                 meta.definitions[r] = parseValue(res[r]);
@@ -138,8 +160,6 @@ export const promptExpression = (options?: {
     });
 
     return new Promise((resolve) => {
-        const opt = options || {};
-
         if (editor.modals.expression) {
             onCloseDialog();
             setTimeout(async () => {
@@ -155,7 +175,27 @@ export const promptExpression = (options?: {
         meta.post = opt.post || "";
         meta.footer = opt.footer || "";
 
-        meta.text = splitExp(opt.value || "");
+        meta.text = [];
+        const sqval = splitStringByQuote(opt.value || "");
+        sqval.map(
+            (e: string) => {
+                if (isQuote(e[0])) {
+                    meta.text.push(e)
+                } else {
+                    e.split(" ").map((d: string) => {
+                        const se = splitExp(d);
+                        if (se.length === 0 && !!d) {
+                            meta.text.push(d);
+                        } else {
+                            se.map(
+                                (f: string) => meta.text.push(f)
+                            )
+                        }
+                    })
+                }
+            }
+        );
+
         if (meta.text.length === 0) { meta.text = [""] }
 
         const finish = async () => {
@@ -307,14 +347,58 @@ const ExpInput = observer(({ onSelect, idx, openMenuRefs, item, inputRef, isLast
                             }
                         },
                     })}
-
                 />
             )
         }}
     />
 })
 
+
+const isQuote = (v: string) => {
+    return (v === '"' || v === '`' || v === "'")
+}
+
+const splitStringByQuote = (val: string): string[] => {
+    let quote = null;
+    const result = [] as string[];
+    let idx = 0;
+    let qidx = 0;
+    for (let i in val as any) {
+        const v = val[i as any];
+
+        if (quote === null && isQuote(v)) { quote = v; }
+        if (v === quote) {
+            idx++;
+            qidx++;
+            if (qidx === 2) {
+                qidx = 0;
+                idx--;
+                quote == null;
+            }
+        }
+        result[idx] = (result[idx] || "") + v;
+
+    }
+    return result;
+}
 const splitExp = (val: string): string[] => {
+    if (isQuote(val[0])) {
+        const c = val[0];
+        const result = [] as string[];
+        let idx = 0;
+        let qidx = 0;
+        for (let i in val as any) {
+            const v = val[i as any];
+            result[idx] = (result[idx] || "") + v;
+            if (v === c) {
+                qidx++;
+            }
+
+            if (qidx === 2) { idx++; qidx = 0 }
+
+        }
+        return result;
+    }
     const split = val.split(regex);
     const match = val.match(regex);
 

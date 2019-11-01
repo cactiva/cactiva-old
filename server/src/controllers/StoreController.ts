@@ -71,18 +71,36 @@ export default observable({
         ).arguments[0];
       });
 
-    const sf = morph.project.getSourceFile(
-      morph.getAppPath() + req.query.path
-    ) as SourceFile;
-    const hooks = getHooks(sf);
-    hooks.map((h: any) => {
-      if (h && h.name && h.value.expression === "useObservable") {
-        result[h.name] = _.get(h, "value.arguments.0", {
-          kind: 189,
-          value: {}
+    if (req.query.path) {
+      const sf = morph.project.getSourceFile(
+        morph.getAppPath() + req.query.path
+      ) as SourceFile;
+      const hooks = getHooks(sf);
+      hooks.map((h: any) => {
+        if (h && h.name && h.value.expression === "useObservable") {
+          result[h.name] = _.get(h, "value.arguments.0", {
+            kind: 189,
+            value: {}
+          });
+        }
+      });
+    }
+
+    if (req.query.isasync) {
+      files
+        .filter((e: any) => {
+          return (
+            e.getFilePath().indexOf(morph.getAppPath() + "/src/api/") === 0
+          );
+        })
+        .map((e: any) => {
+          const name = e.getBaseName().substr(0, e.getBaseName().length - 3);
+          result["await api." + name + ".call"] = {
+            kind: SyntaxKind.StringLiteral,
+            value: '""'
+          };
         });
-      }
-    });
+    }
 
     res.send(result);
   }

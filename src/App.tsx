@@ -46,32 +46,39 @@ const generateFonts = () => {
 };
 
 hotkeys("ctrl+x,command+x", (event, handler) => {
+  if (editor.isModalOpened) return;
   editor.cut();
   event.preventDefault();
 });
 hotkeys("ctrl+c,command+c", (event, handler) => {
+  if (editor.isModalOpened) return;
   editor.copy();
   event.preventDefault();
 });
 hotkeys("ctrl+v,command+v", (event, handler) => {
+  if (editor.isModalOpened) return;
   editor.paste();
   event.preventDefault();
 });
 hotkeys("ctrl+s,command+s", (event, handler) => {
+  if (editor.isModalOpened) return;
   if (editor.current) {
     editor.current.save();
   }
   event.preventDefault();
 });
 hotkeys("ctrl+z,command+z", (event, handler) => {
+  if (editor.isModalOpened) return;
   if (editor.current) editor.current.history.undo();
   event.preventDefault();
 });
 hotkeys("ctrl+shift+z,command+shift+z, ctrl+y,command+y", (event, handler) => {
+  if (editor.isModalOpened) return;
   if (editor.current) editor.current.history.redo();
   event.preventDefault();
 });
 hotkeys("backspace, delete", (event, handler) => {
+  if (editor.isModalOpened) return;
   const current = editor.current;
   if (current) {
     prepareChanges(current);
@@ -81,6 +88,7 @@ hotkeys("backspace, delete", (event, handler) => {
   event.preventDefault();
 });
 hotkeys("ctrl+d,command+d", (event, handler) => {
+  if (editor.isModalOpened) return;
   const current = editor.current;
   if (current) {
     const duplicateSource = _.cloneDeep(current.selected.source);
@@ -131,7 +139,7 @@ export default observer(() => {
   useEffect(() => {
     meta.sizeScreen = traitPane ? [15, 70, 15] : [15, 85];
   }, [traitPane]);
-  
+
   if (!editor.name || !editor.current) return null;
   return (
     <DndProvider backend={HTML5Backend}>

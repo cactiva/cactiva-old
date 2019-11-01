@@ -1,32 +1,20 @@
 import api from "@src/libs/api";
-import { Icon, Text, Dialog } from "evergreen-ui";
+import { Dialog, Icon, Text } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import MonacoEditor from "react-monaco-editor";
 import Split from "react-split";
 import CactivaBreadcrumb from "./CactivaBreadcrumb";
+import CactivaComponentChooser, { toolbar } from "./CactivaComponentChooser";
+import CactivaExpressionDialog from "./CactivaExpressionDialog";
 import "./editor.scss";
 import "./tags/kinds/kinds.scss";
 import "./tags/react-native/react-native.scss";
 import "./tags/ui-kitten/ui-kitten.scss";
+import { addChildInId, commitChanges, createNewElement, getParentId, insertAfterElementId, prepareChanges, wrapInElementId } from "./utility/elements/tools";
 import { renderChildren } from "./utility/renderchild";
-import {
-  getParentId,
-  insertAfterElementId,
-  addChildInId,
-  createNewElement,
-  wrapInElementId,
-  prepareChanges,
-  commitChanges,
-  getSelectableParent
-} from "./utility/elements/tools";
-import CactivaComponentChooser, { toolbar } from "./CactivaComponentChooser";
-import kinds from "./utility/kinds";
 import tags from "./utility/tags";
-import CactivaExpressionDialog, { promptExpression } from "./CactivaExpressionDialog";
-import { SyntaxKind } from "./utility/syntaxkinds";
-import { toJS } from "mobx";
 
 const uploadImage = async (file: any) => {
   var formDataToUpload = new FormData();

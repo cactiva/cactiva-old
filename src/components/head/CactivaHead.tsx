@@ -144,6 +144,7 @@ export default observer(({ editor }: any) => {
             </div>
           )}
           {status.charAt(0).toUpperCase() + status.slice(1)}
+          {status === "unsaved" && <span style={{ marginLeft: '3px', fontSize: '8px' }}>(Ctrl/⌘+S)</span>}
           {loadingText.indexOf(status) >= 0 && "…"}
         </Text>
         <Text style={{ fontSize: "9px", color: "#aaa" }}>

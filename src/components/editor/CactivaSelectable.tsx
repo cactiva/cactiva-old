@@ -179,17 +179,17 @@ export default observer(
                   ceditor.cut();
                 }}
               >
-                Cut (Ctrl+X)
+                Cut <span className="shortcut">Ctrl/⌘ + X</span>
               </Menu.Item>
               <Menu.Item
-                icon="duplicate"
+                icon="document-open"
                 onSelect={() => {
                   toggleRef.current();
                   editor.selectedId = source.id;
                   ceditor.copy();
                 }}
               >
-                Copy (Ctrl+C)
+                Copy <span className="shortcut">Ctrl/⌘ + C</span>
               </Menu.Item>
               <Menu.Item
                 icon="clipboard"
@@ -199,7 +199,18 @@ export default observer(
                   ceditor.paste();
                 }}
               >
-                Paste (Ctrl+V)
+                Paste <span className="shortcut">Ctrl/⌘ + V</span>
+              </Menu.Item>
+              <Menu.Divider />
+              <Menu.Item
+                icon="duplicate"
+                onSelect={() => {
+                  toggleRef.current();
+                  editor.selectedId = source.id;
+                  ceditor.copy();
+                }}
+              >
+                Duplicate <span className="shortcut">Ctrl/⌘ + D</span>
               </Menu.Item>
               <Menu.Item
                 icon="trash"
@@ -212,7 +223,7 @@ export default observer(
                   }
                 }}
               >
-                Delete (Del / Backspace)
+                Delete <span className="shortcut">Del / Backspace</span>
               </Menu.Item>
             </Menu>
           </div>

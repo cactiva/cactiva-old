@@ -1,10 +1,8 @@
 import { Controller, Get, Post } from "@overnightjs/core";
 import { Request, Response } from "express";
 import * as jetpack from "fs-jetpack";
-import * as _ from "lodash";
 import * as path from "path";
 import { SourceFile, SyntaxKind } from "ts-morph";
-import { getHooks } from "../libs/morph/getHooks";
 import { parseJsx } from "../libs/morph/parseJsx";
 import { Morph } from "../morph";
 
@@ -31,9 +29,11 @@ export class ApiController {
       `import { createApi } from "@src/utility/api";
 
 export default createApi({
-    path: '',
+    url: '',
     method: 'get',
+    headers: {},
     body: '',
+    queryString: {},
     pre: (params:any, api:any) => {
       return api;
     },
@@ -57,29 +57,31 @@ export default createApi({
       req.query.path.replace("./", morph.getAppPath() + "/src/api/")
     ) as SourceFile;
 
-    res.send(sf.getText());
+    if (sf !== undefined) {
+      const e = sf.getFirstChildByKind(SyntaxKind.ExportAssignment);
+      res.send({
+        text: sf.getText(),
+        source:
+          e !== undefined
+            ? parseJsx(e.getFirstChildByKindOrThrow(SyntaxKind.CallExpression))
+                .arguments[0]
+            : {}
+      });
+    }
   }
 
-  @Get("definition")
-  private definition(req: Request, res: Response) {
-    const files = morph.project.getSourceFiles();
-    const result: any = {};
-    files
-      .filter((e: any) => {
-        return (
-          e.getFilePath().indexOf(morph.getAppPath() + "/src/api/") === 0
-        );
-      })
-      .map((e: any) => {
-        const name = e.getBaseName().substr(0, e.getBaseName().length - 3);
-        result[name] = parseJsx(
-          e
-            .getFirstChildByKind(SyntaxKind.ExportAssignment)
-            .getFirstChildByKindOrThrow(SyntaxKind.CallExpression)
-        ).arguments[0];
+  @Post("parse")
+  private parse(req: Request, res: Response) {
+    morph.createTempSource(req.body.value, (sf: SourceFile) => {
+      const e = sf.getFirstChildByKind(SyntaxKind.ExportAssignment);
+      res.send({
+        source:
+          e !== undefined
+            ? parseJsx(e.getFirstChildByKindOrThrow(SyntaxKind.CallExpression))
+                .arguments[0]
+            : {}
       });
-
-    res.send(result);
+    });
   }
 
   @Post("writefile")

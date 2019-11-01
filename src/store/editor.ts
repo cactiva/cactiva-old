@@ -18,7 +18,7 @@ class EditorStore {
 
   @observable modals = {
     store: false,
-    api: false,
+    api: true,
     expression: false
   };
 
@@ -26,6 +26,14 @@ class EditorStore {
     status: "stopped",
     logs: ""
   };
+
+  @computed get isModalOpened() {
+    const v = this.modals as any
+    for (let i in v) {
+      if (!!v[i]) return true;
+    }
+    return false;
+  }
 
   async paste() {
     if (this.copied && this.current) {

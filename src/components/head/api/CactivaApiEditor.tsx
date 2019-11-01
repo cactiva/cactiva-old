@@ -1,22 +1,38 @@
-import React, { useRef, useEffect } from "react";
-import { SearchInput, Button, Icon, Text, Popover, Menu, Tablist, Tab } from "evergreen-ui";
-import { observer, useObservable } from "mobx-react-lite";
-import editor from "@src/store/editor";
-import _ from "lodash";
-import api from "@src/libs/api";
-import useAsyncEffect from "use-async-effect";
-import { observable, toJS } from "mobx";
-import { uuid } from "@src/components/editor/utility/elements/tools";
 import { fuzzyMatch } from "@src/components/ctree/CactivaTree";
+import { uuid } from "@src/components/editor/utility/elements/tools";
+import api from "@src/libs/api";
+import editor from "@src/store/editor";
+import { Button, Icon, Menu, Popover, SearchInput, Tab, Tablist, Text } from "evergreen-ui";
+import _ from "lodash";
+import { observable } from "mobx";
+import { observer } from "mobx-react-lite";
+import React, { useEffect, useRef } from "react";
 import MonacoEditor from "react-monaco-editor";
+import useAsyncEffect from "use-async-effect";
+import CactivaApiConfig from "./CactivaApiConfig";
+import { generateSource } from "@src/components/editor/utility/parser/generateSource";
+import CactivaApiRun, { runApi } from "./CactivaApiRun";
+import typescript from "prettier/parser-typescript";
+import prettier from "prettier/standalone";
+import hotkeys from "hotkeys-js";
 
 const meta = observable({
     list: [] as any,
     current: {
         path: "",
         content: "",
+        source: {},
         loaded: false,
         unsaved: false,
+        lastOtherGet: 'post',
+        bodyLanguage: "json",
+        result: {
+            url: "",
+            loading: true,
+            statusCode: 0,
+            headers: "",
+            body: ""
+        }
     },
     w: 0,
     h: 0,
@@ -26,10 +42,31 @@ const meta = observable({
         left: 0,
     },
     listenEditorChanges: true,
-    tabs: ["Config", "Code"],
-    selectedTab: 0,
+    tabs: ["Config", "Test", "Source Code",],
+    selectedTab: 1,
     filter: ""
 });
+
+hotkeys("ctrl+s,command+s", (event, handler) => {
+    (async () => {
+        if (editor.modals.api) {
+            await api.post(`api/writefile?path=${meta.current.path}`, { value: meta.current.content });
+            meta.current.unsaved = false;
+        }
+    })()
+    event.preventDefault();
+});
+
+export const genApiSourceFromConfig = () => {
+    meta.current.content = prettier.format(`
+    import { createApi } from "@src/utility/api";
+    
+    export default createApi(${generateSource(meta.current.source)});`,
+        {
+            parser: "typescript",
+            plugins: [typescript]
+        }).trim();
+}
 export default observer(() => {
     const monacoRef = useRef(null as any);
     const monacoEdRef = useRef(null as any);
@@ -39,7 +76,11 @@ export default observer(() => {
         meta.list = res.children;
 
         if (meta.list.length > 0) {
-            load(monacoEdRef, meta.list[0].relativePath);
+            await load(monacoEdRef, meta.list[0].relativePath);
+
+            if (meta.selectedTab === 1) {
+                runApi(meta);
+            }
         }
     };
     const load = async (monacoEdRef: any, path: any) => {
@@ -51,9 +92,13 @@ export default observer(() => {
         meta.current.loaded = false;
         meta.current.unsaved = false;
         meta.current.path = path;
-        meta.current.content = await api.get(`api/readfile?path=${path}`);
-        if (monacoEdRef.current)
-            monacoEdRef.current.setValue(meta.current.content);
+        const res = await api.get(`api/readfile?path=${path}`);
+        if (res) {
+            meta.current.content = res.text;
+            meta.current.source = res.source;
+            if (monacoEdRef.current)
+                monacoEdRef.current.setValue(meta.current.content);
+        }
         meta.current.loaded = true;
         meta.shown = -1;
     }
@@ -89,7 +134,7 @@ export default observer(() => {
                 />
                 <Button className={`search-opt`} onClick={() => {
                     (async () => {
-                        const newname = prompt("New component name:");
+                        const newname = prompt("New API name:");
                         if (newname) {
                             const relPath = _.lowerCase(newname).replace(/[^0-9a-zA-Z]/g, "") + ".ts";
                             const path =
@@ -225,7 +270,26 @@ export default observer(() => {
             <Tablist>
                 {meta.tabs.map((tab, index) => (
                     <Tab
-                        key={tab} onSelect={() => { meta.selectedTab = index }}
+                        key={tab}
+                        onSelect={async () => {
+                            if (meta.selectedTab === 2 && index !== 2) {
+                                if (meta.current.unsaved) {
+                                    const res = await api.post('api/parse', {
+                                        value: meta.current.content
+                                    })
+                                    meta.current.source = res.source;
+                                }
+                            } else if (index !== 0) {
+                                genApiSourceFromConfig();
+                            }
+
+                            if (index === 1) {
+                                runApi(meta);
+                            }
+
+                            meta.selectedTab = index
+
+                        }}
                         isSelected={index === meta.selectedTab}
                         aria-controls={`panel-${tab}`}
                     >
@@ -234,7 +298,9 @@ export default observer(() => {
                 ))}
             </Tablist>
             <div className="content" ref={cref}>
-                {meta.selectedTab === 1 &&
+                {meta.selectedTab === 0 && (<CactivaApiConfig meta={meta} />)}
+                {meta.selectedTab === 1 && (<CactivaApiRun meta={meta} />)}
+                {meta.selectedTab === 2 &&
                     <MonacoEditor
                         theme="vs-dark"
                         width={meta.w}
