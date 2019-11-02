@@ -43,17 +43,20 @@ const meta = observable({
     },
     listenEditorChanges: true,
     tabs: ["Config", "Test", "Source Code",],
-    selectedTab: 1,
+    selectedTab: 0,
     filter: ""
 });
 
-hotkeys("ctrl+s,command+s", (event, handler) => {
+export const CurrentApiSave = () => {
     (async () => {
         if (editor.modals.api) {
             await api.post(`api/writefile?path=${meta.current.path}`, { value: meta.current.content });
             meta.current.unsaved = false;
         }
     })()
+}
+hotkeys("ctrl+s,command+s", (event, handler) => {
+    CurrentApiSave();
     event.preventDefault();
 });
 
@@ -77,10 +80,6 @@ export default observer(() => {
 
         if (meta.list.length > 0) {
             await load(monacoEdRef, meta.list[0].relativePath);
-
-            if (meta.selectedTab === 1) {
-                runApi(meta);
-            }
         }
     };
     const load = async (monacoEdRef: any, path: any) => {
@@ -117,6 +116,14 @@ export default observer(() => {
             window.addEventListener('resize', resize);
         }
     }, [])
+
+    useEffect(() => {
+        if (meta.current.unsaved) {
+            editor.modals.apiLock = true;
+        } else {
+            editor.modals.apiLock = false;
+        }
+    }, [meta.current.unsaved])
 
     useAsyncEffect(reloadList, []);
     return <div className="cactiva-dialog-editor">
@@ -268,23 +275,52 @@ export default observer(() => {
         </div>
         <div className="content-container">
             <Tablist>
+                {meta.current.unsaved && (
+                    <div style={{
+                        position: "absolute",
+                        right: -2,
+                        top: -1,
+                    }}>
+                        <Button
+                            style={{ fontSize: 10 }}
+                            marginRight={5}
+                            height={20}
+                            intent="success"
+                            appearance="primary"
+                            onClick={(e: any) => {
+                                CurrentApiSave();
+                            }}>Save - Ctrl/⌘+S</Button>
+                        <Button
+                            style={{ fontSize: 10 }}
+                            marginRight={5}
+                            height={20}
+                            intent="danger"
+                            appearance="primary"
+                            onClick={(e: any) => {
+                                if (confirm("Are you sure ?")) {
+                                    editor.modals.apiLock = false;
+                                    editor.modals.api = false;
+                                    meta.current.unsaved = false;
+                                }
+                            }}>Discard</Button>
+                    </div>)}
                 {meta.tabs.map((tab, index) => (
                     <Tab
                         key={tab}
                         onSelect={async () => {
                             if (meta.selectedTab === 2 && index !== 2) {
-                                if (meta.current.unsaved) {
-                                    const res = await api.post('api/parse', {
-                                        value: meta.current.content
-                                    })
-                                    meta.current.source = res.source;
-                                }
+                                const res = await api.post('api/parse', {
+                                    value: meta.current.content
+                                })
+                                meta.current.source = res.source;
                             } else if (index !== 0) {
                                 genApiSourceFromConfig();
                             }
 
                             if (index === 1) {
-                                runApi(meta);
+                                setTimeout(() => {
+                                    runApi(meta);
+                                }, 200)
                             }
 
                             meta.selectedTab = index

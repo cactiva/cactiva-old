@@ -105,6 +105,8 @@ export default observer(({ editor }: any) => {
         </Tooltip>
         <Dialog
           isShown={editor.modals.api}
+          shouldCloseOnOverlayClick={!editor.modals.apiLock}
+          shouldCloseOnEscape={!editor.modals.apiLock}
           hasFooter={false}
           width={800}
           minHeightContent={600}

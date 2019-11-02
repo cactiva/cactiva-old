@@ -54,7 +54,9 @@ export const parseValue = (node: any): any => {
       })();
   }
 
-  if (typeof node === "object" && node.value) return node.value;
+  if (typeof node === "object" && node.value) {
+    return node.value;
+  }
   return node;
 };
 

@@ -18,7 +18,9 @@ class EditorStore {
 
   @observable modals = {
     store: false,
+    storeLock: false,
     api: true,
+    apiLock: false,
     expression: false
   };
 

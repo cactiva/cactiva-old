@@ -116,6 +116,20 @@ export default observer(() => {
     </Dialog>
 })
 
+export const evalExpressionInObj = async (obj: any, opt = {
+    useCache: false,
+    local: true
+}) => {
+    const res = {} as any;
+    Object.keys(obj).map(async (o, idx) => {
+        res[o] = await evalExpression(obj[o], idx === 0 ? opt : {
+            ...opt,
+            useCache: true
+        });
+    })
+    return res;
+}
+
 export const evalExpression = async (expr: string, opt = {
     useCache: false,
     local: true
@@ -130,8 +144,22 @@ export const evalExpression = async (expr: string, opt = {
     Object.keys(meta.definitions).map((r: string) => {
         str.push(`const ${r} = ${JSON.stringify(parseValue(meta.definitions[r]))}`);
     })
-    str.push(`result = ${expr}`);
-    eval(str.join("\n"));
+
+
+    let v = expr;
+    if (isQuote(v[0]) && isQuote(v[v.length - 1])) {
+        const vp = v.replace(new RegExp(`\\\\${v[0]}`, "g"), v[0]).split(v[0])
+        vp.pop();
+        vp.shift();
+        v = `${v[0]}${vp.join("\\" + v[0])}${v[0]}`
+    }
+
+    str.push(`result = ${v}`);
+    try {
+        eval(str.join("\n"));
+    } catch {
+        console.log(str.join("\n"))
+    }
     return result;
 }
 
@@ -354,7 +382,7 @@ const ExpInput = observer(({ onSelect, idx, openMenuRefs, item, inputRef, isLast
 })
 
 
-const isQuote = (v: string) => {
+export const isQuote = (v: string) => {
     return (v === '"' || v === '`' || v === "'")
 }
 

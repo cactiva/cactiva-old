@@ -21,6 +21,8 @@ import api from "./libs/api";
 import editor from "./store/editor";
 import { toJS } from "mobx";
 
+export const fontFamily = '"SF UI Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"';
+
 const generateFonts = () => {
   api.get("assets/font-list").then(res => {
     const fonts = res.children;

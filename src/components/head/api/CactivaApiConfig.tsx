@@ -1,17 +1,49 @@
-import { promptExpression } from "@src/components/editor/CactivaExpressionDialog";
-import { uuid } from "@src/components/editor/utility/elements/tools";
-import { parseValue } from "@src/components/editor/utility/parser/parser";
-import { Button, Select, IconButton, SelectMenu, Text } from "evergreen-ui";
-import _ from "lodash";
-import { observer } from "mobx-react-lite";
-import React from "react";
-import MonacoEditor from "react-monaco-editor";
-import { genApiSourceFromConfig } from "./CactivaApiEditor";
+import { fontFamily } from "@src/App";
+import { isQuote, promptExpression } from "@src/components/editor/CactivaExpressionDialog";
 import { generateSource } from "@src/components/editor/utility/parser/generateSource";
+import { parseValue } from "@src/components/editor/utility/parser/parser";
+import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
+import { Button, IconButton, Select, SelectMenu, Text } from "evergreen-ui";
+import _ from "lodash";
+import { observer, useObservable } from "mobx-react-lite";
+import React, { useEffect } from "react";
+import MonacoEditor from "react-monaco-editor";
+import TextareaAutosize from 'react-textarea-autosize';
+import { genApiSourceFromConfig, CurrentApiSave } from "./CactivaApiEditor";
 
 export default observer(({ meta }: any) => {
     const value = parseValue(meta.current.source);
+    const temp = useObservable({
+        new: {
+            header: {
+                key: '',
+                value: ''
+            },
+            qstring: {
+                key: '',
+                value: ''
+            }
+        }
+    })
     value.url = generateSource(_.get(meta, 'current.source.value.url'));
+    const setObjectLiteral = (key: string, value: any) => {
+        const result = {} as any;
+        Object.keys(value).map(v => {
+            if (typeof value[v] === 'string')
+                result[v] = {
+                    kind: SyntaxKind.StringLiteral,
+                    value: JSON.stringify(value[v])
+                };
+            else {
+                result[v] = value[v];
+            }
+        })
+
+        _.set(meta, `current.source.value.${key}`, {
+            kind: SyntaxKind.ObjectLiteralExpression,
+            value: result
+        })
+    }
     return <div style={{ width: '100%', padding: '10px 0px', overflowY: 'auto' }}>
         <div className="field">
             <Button flex={1} marginLeft={10} marginRight={10} onClick={() => {
@@ -58,7 +90,7 @@ export default observer(({ meta }: any) => {
                 closeOnSelect={true}
                 hasTitle={false}
                 options={
-                    ['Post', 'Put', 'Delete', 'Patch', 'Option']
+                    ['Post', 'Put', 'Head', 'Delete', 'Patch', 'Options']
                         .map(label => ({ label, value: label.toLowerCase() }))
                 }
                 selected={value.method}
@@ -77,20 +109,68 @@ export default observer(({ meta }: any) => {
         <div className="field-cols">
             <div className="col">
                 <Text style={{ fontSize: '12px', marginBottom: '3px' }}>Headers</Text>
-                {[0, 1, 2, 3, 4, 5].map(() => (<div key={uuid("headers")} className="col-field">
-                    <input type="text" spellCheck={false} />
-                    <div className="col-divider" > = </div>
-                    <input type="text" spellCheck={false} />
-                </div>))}
+                {Object.keys(value.headers || {}).map((e: any, k: number) => <SingleRowInput
+                    key={k}
+                    k={e}
+                    v={value.headers[e]}
+                    onChange={(m: any) => {
+                        if (!!m.key && !!m.value) {
+                            if (m.key !== e) {
+                                delete value.headers[e];
+                            }
+                            value.headers[m.key] = m.value;
+                            setObjectLiteral('headers', value.headers)
+                        } else {
+                            delete value.headers[e];
+                            setObjectLiteral('headers', value.headers)
+                        }
+                        meta.current.unsaved = true;
+                    }}
+                />)}
+                <SingleRowInput
+                    onChange={(m: any) => {
+                        if (!!m.key && !!m.value) {
+                            value.headers[m.key] = m.value;
+                            m.value = '';
+                            m.key = '';
+                            setObjectLiteral('headers', value.headers)
+                            meta.current.unsaved = true;
+                        }
+                    }}
+                />
             </div>
             <div className="col-divider">&nbsp;</div>
             <div className="col">
                 <Text style={{ fontSize: '12px', marginBottom: '3px' }}>Query String</Text>
-                {[0, 1, 2, 3, 4, 5].map(() => (<div key={uuid("qstring")} className="col-field">
-                    <input type="text" spellCheck={false} />
-                    <div className="col-divider" > = </div>
-                    <input type="text" spellCheck={false} />
-                </div>))}
+                {Object.keys(value.queryString || {}).map((e: any, k: number) => <SingleRowInput
+                    key={k}
+                    k={e}
+                    v={value.queryString[e]}
+                    onChange={(m: any) => {
+                        if (!!m.key && !!m.value) {
+                            if (m.key !== e) {
+                                delete value.headers[e];
+                            }
+                            value.queryString[m.key] = m.value;
+                            setObjectLiteral('queryString', value.queryString)
+                        } else {
+                            delete value.headers[e];
+                            setObjectLiteral('queryString', value.queryString)
+                        }
+                        meta.current.unsaved = true;
+                    }}
+                />)}
+                <SingleRowInput
+                    onChange={(m: any) => {
+                        if (!!m.key && !!m.value) {
+                            value.queryString[m.key] = m.value;
+                            setObjectLiteral('queryString', value.queryString)
+                            m.value = '';
+                            m.key = '';
+                            meta.current.unsaved = true;
+                        }
+                    }}
+                />
             </div>
         </div>
 
@@ -130,5 +210,110 @@ export default observer(({ meta }: any) => {
                 </div>
             </div>
         }
+    </div>;
+})
+
+const SingleRowInput = observer(({ onChange, k, v }: any) => {
+    let orgV = (v || '');
+    const meta = useObservable({
+        key: k || '',
+        value: orgV
+    })
+    return <div className="col-field">
+        <TextareaAutosize spellCheck={false}
+            value={meta.key}
+            className="input"
+            async={true}
+            onKeyDown={(event: any) => {
+                if ((event.ctrlKey || event.metaKey) && event.which == 83) {
+                    event.preventDefault();
+                    CurrentApiSave()
+                }
+            }}
+            style={{
+                fontSize: 10,
+                fontFamily: fontFamily,
+                resize: 'none'
+            }}
+            onChange={(e: any) => {
+                const val = e.target.value;
+                meta.key = (val.replace(/\r?\n|\r/g, ''))
+            }} onBlur={(e) => {
+                if (onChange) onChange(meta)
+            }} />
+        <div className="col-divider"> = </div>
+        <TextareaAutosize type="text" spellCheck={false}
+            value={meta.value}
+            className="input"
+            style={{
+                paddingRight: 25,
+                resize: 'none',
+                fontSize: 10,
+                fontFamily: fontFamily,
+                cursor: meta.value.length === 0 || (meta.value.length > 0 && isQuote(meta.value[0])) ? undefined : 'pointer'
+            }}
+            onKeyDown={(event: any) => {
+                if ((event.ctrlKey || event.metaKey) && event.which == 83) {
+                    event.preventDefault();
+                    CurrentApiSave()
+                }
+            }}
+            onClick={async (e) => {
+                const val = meta.value;
+                if (val.length > 0 && !isQuote(val[0])) {
+                    meta.value = (await promptExpression({ value: meta.value }))
+                }
+            }} onBlur={(e) => {
+                if (e.target.value.length === 1) {
+                    meta.value = '';
+                }
+                if (onChange) onChange(meta)
+            }} onFocus={(e) => {
+                const val = e.target.value;
+                if (val.length === 0) {
+                    meta.value = ("''");
+                    const target = e.target;
+                    setTimeout(() => {
+                        target.setSelectionRange(1, 1);
+                    }, 50);
+                }
+            }} onChange={(e) => {
+                const val = e.target.value;
+                if (val.length > 0 && (isQuote(val[0]) || isQuote(val[val.length - 1]))) {
+                    if (isQuote(val[0])) {
+                        const q = val[0];
+                        if (val[val.length - 1] !== q) {
+                            meta.value = (val + q);
+                            const target = e.target;
+                            setTimeout(() => {
+                                target.setSelectionRange(val.length, val.length);
+                            }, 0);
+                        } else {
+                            meta.value = (val)
+                        }
+                    } else if (isQuote(val[val.length - 1])) {
+                        const q = val[val.length - 1];
+                        if (val[0] !== q) {
+                            meta.value = (q + val);
+                            const target = e.target;
+                            setTimeout(() => {
+                                target.setSelectionRange(1, 1);
+                            }, 0);
+                        } else {
+                            meta.value = (val)
+                        }
+                    }
+                } else if (val.length === 0) {
+                    meta.value = (val)
+                }
+            }} />
+        <IconButton icon={'function'} onClick={() => {
+            (async () => {
+                meta.value = (await promptExpression({ value: meta.value }))
+            })()
+        }}
+            iconSize={13}
+            height={19}
+            style={{ position: "absolute", right: 2, top: 2 }} />
     </div>;
 })

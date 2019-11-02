@@ -113,7 +113,7 @@ export class Morph {
 
   createTempSource(source: string, callback: any) {
     const sf = this.project.createSourceFile(
-      "__tempfile" + this.randomDigits() + "__.tsx",
+      "__tempfile__.tsx",
       source
     );
     let result = null as any;
@@ -123,6 +123,7 @@ export class Morph {
       console.log(e);
     } finally {
       sf.forget();
+      sf.deleteImmediately();
     }
 
     return result;

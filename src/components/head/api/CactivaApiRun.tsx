@@ -1,8 +1,9 @@
-import { evalExpression } from "@src/components/editor/CactivaExpressionDialog";
+import { fontFamily } from "@src/App";
+import { evalExpression, evalExpressionInObj } from "@src/components/editor/CactivaExpressionDialog";
 import { generateSource } from "@src/components/editor/utility/parser/generateSource";
 import { parseValue } from "@src/components/editor/utility/parser/parser";
 import Axios from "axios";
-import { Badge, Spinner, Button } from 'evergreen-ui';
+import { Badge, Button, Spinner } from 'evergreen-ui';
 import _ from "lodash";
 import { observer } from "mobx-react-lite";
 import React from "react";
@@ -18,10 +19,10 @@ export default observer(({ meta }: any) => {
                 flex: 1,
                 border: 0,
                 padding: '0px 5px',
-                fontFamily: '"SF UI Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+                fontFamily: fontFamily,
                 fontSize: 10,
                 outline: 0,
-            }} />
+            }} onKeyDown={(e) => { if (e.which === 13) runApi(meta, r.url) }} />
             {r.loading ? <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', fontSize: 8 }}><Spinner size={12} marginRight={3} />Loading</div> :
                 <span>
                     <Button style={{ fontSize: 8 }} marginRight={5} height={17} onClick={(e: any) => { runApi(meta, r.url) }}>Send</Button>
@@ -31,41 +32,81 @@ export default observer(({ meta }: any) => {
                 </span>
             }
         </div>
-        <Split
-            sizes={[35, 65]}
-            gutterSize={5}
-            gutterAlign="center"
-            snapOffset={0}
-            direction="vertical"
-            style={{ flex: 1 }}
-        >
-            <div style={{ overflowY: 'auto', borderBottom: "1px solid #ccc", position: 'relative', padding: '0px 10px'  }}>
-                <Badge style={{ fontSize: 8, position: 'absolute', top: 10, right: 10 }}>Headers</Badge>
-                <code style={{ whiteSpace: 'pre-wrap', fontSize: 9}}>
-                    {r.headers}
-                </code>
-            </div>
-            <div style={{ position: 'relative', padding: '0px 10px'  }}>
-                <Badge style={{ fontSize: 8, position: 'absolute', top: 10, right: 10 }}>Result</Badge>
-                <code style={{ whiteSpace: 'pre-wrap', fontSize: 9 }}>
-                    {r.body}
-                </code>
-            </div>
-        </Split>
+        <div style={{ position: "absolute", top: 30, left: 0, right: 0, bottom: 0 }}>
+            <Split
+                sizes={[15, 85]}
+                gutterSize={5}
+                minSize={50}
+                gutterAlign="center"
+                snapOffset={0}
+                expandToMin={false}
+                direction="vertical"
+                style={{ height: '100%' }}
+            >
+                <div style={{ borderBottom: "1px solid #ccc", position: 'relative', padding: '0px 10px' }}>
+                    <Badge style={{ fontSize: 8, position: 'absolute', top: 10, right: 10 }}>Received Headers</Badge>
+                    <code style={{
+                        whiteSpace: 'pre-wrap', fontSize: 9, overflowY: 'auto',
+                        position: "absolute", top: 0, left: 10, right: 0, bottom: 0
+                    }}>
+                        {r.headers}
+                    </code>
+                </div>
+                <div style={{ position: 'relative', padding: '0px 10px' }}>
+                    <Badge style={{ fontSize: 8, position: 'absolute', top: 10, right: 10 }}>Result</Badge>
+                    <code style={{
+                        whiteSpace: 'pre-wrap', fontSize: 9, overflowY: 'auto',
+                        position: "absolute", top: 0, left: 10, right: 0, bottom: 0
+                    }}>
+                        {r.body}
+                    </code>
+                </div>
+            </Split>
+        </div>
     </div>
 })
-
+const serialize = function (obj: any) {
+    var str = [];
+    for (var p in obj)
+        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+    console.log(str, obj)
+    return str.join("&");
+}
 export const runApi = async (meta: any, forceUrl?: string) => {
     const value = parseValue(meta.current.source);
     value.url = generateSource(_.get(meta, 'current.source.value.url'));
     const call = (Axios as any)[value.method];
-    const url = forceUrl ? forceUrl : await evalExpression(value.url);
+
+    let url = forceUrl ? forceUrl : await evalExpression(value.url, { local: false, useCache: false }) || "";
+    const qstring = await evalExpressionInObj(value.queryString, { local: false, useCache: true });
+    const params = serialize(qstring);
+    
+    if (params) {
+        if (url.indexOf("?") >= 0) {
+            url = url + params;
+        } else {
+            url = url + "?" + params;
+        }
+    }
+    console.log(params);
+
     meta.current.result.url = url;
     meta.current.result.loading = true;
     meta.current.result.body = "Sending...";
     meta.current.result.headers = "Sending...";
     try {
-        const res = await call(url);
+        let res = null as any;
+        const headers = await evalExpressionInObj(value.headers, { local: false, useCache: true });
+
+        if (['get', 'delete', 'head', 'options'].indexOf(value.method) >= 0)
+            res = await call(url, {
+                headers
+            });
+        else
+            res = await call(url, meta.current.body, {
+                headers
+            });
+
         meta.current.result.loading = false;
         meta.current.result.statusCode = res.status;
         meta.current.result.body = JSON.stringify(res.data, null, 2);
