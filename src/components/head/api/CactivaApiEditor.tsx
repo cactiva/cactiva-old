@@ -60,11 +60,18 @@ hotkeys("ctrl+s,command+s", (event, handler) => {
     event.preventDefault();
 });
 
-export const genApiSourceFromConfig = () => {
+export const generateApiSourceFromConfig = () => {
+    const src = meta.current.content.split('export default ');
+    const cimports = (src.shift() || "").split('\n').filter((e: string) => !!e).map(e => e.trim());
+
+    if (cimports.indexOf(`import { createApi } from "@src/utility/api";`) < 0) {
+        cimports.push(`import { createApi } from "@src/utility/api";`);
+    }
+
     meta.current.content = prettier.format(`
-    import { createApi } from "@src/utility/api";
-    
-    export default createApi(${generateSource(meta.current.source)});`,
+${cimports.join("\n")}
+
+export default createApi(${generateSource(meta.current.source)});`,
         {
             parser: "typescript",
             plugins: [typescript]
@@ -314,7 +321,7 @@ export default observer(() => {
                                 })
                                 meta.current.source = res.source;
                             } else if (index !== 0) {
-                                genApiSourceFromConfig();
+                                generateApiSourceFromConfig();
                             }
 
                             if (index === 1) {

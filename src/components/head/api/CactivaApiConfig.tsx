@@ -9,7 +9,7 @@ import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect } from "react";
 import MonacoEditor from "react-monaco-editor";
 import TextareaAutosize from 'react-textarea-autosize';
-import { genApiSourceFromConfig, CurrentApiSave } from "./CactivaApiEditor";
+import { generateApiSourceFromConfig, CurrentApiSave } from "./CactivaApiEditor";
 
 export default observer(({ meta }: any) => {
     const value = parseValue(meta.current.source);
@@ -53,8 +53,9 @@ export default observer(({ meta }: any) => {
                         value: value.url
                     });
                     meta.current.unsaved = true;
-                    _.set(meta, 'current.source.value.url', res);
-                    genApiSourceFromConfig();
+                    setImport(res.imports, meta);
+                    _.set(meta, 'current.source.value.url', res.expression);
+                    generateApiSourceFromConfig();
                 })()
             }}>
                 {value.url}
@@ -63,7 +64,7 @@ export default observer(({ meta }: any) => {
                 onClick={() => {
                     meta.current.unsaved = true;
                     _.set(meta, 'current.source.value.method.value', "'get'")
-                    genApiSourceFromConfig();
+                    generateApiSourceFromConfig();
                 }}
                 appearance="minimal"
                 style={{ boxShadow: 'none', padding: '0px  5px', marginRight: '10px', background: 'none' }}
@@ -74,7 +75,7 @@ export default observer(({ meta }: any) => {
                     if (value.method === 'get') {
                         meta.current.unsaved = true;
                         _.set(meta, 'current.source.value.method.value', "'post'")
-                        genApiSourceFromConfig();
+                        generateApiSourceFromConfig();
                     }
                 }}
                 marginRight={10}
@@ -98,7 +99,7 @@ export default observer(({ meta }: any) => {
                     meta.current.unsaved = true;
                     meta.current.lastOtherGet = item.value;
                     _.set(meta, 'current.source.value.method.value', `'${item.value}'`)
-                    genApiSourceFromConfig();
+                    generateApiSourceFromConfig();
                 }}
             >
                 <IconButton appearance="minimal" icon="caret-down" intent={"success"}
@@ -261,7 +262,7 @@ const SingleRowInput = observer(({ onChange, k, v }: any) => {
             onClick={async (e) => {
                 const val = meta.value;
                 if (val.length > 0 && !isQuote(val[0])) {
-                    meta.value = (await promptExpression({ value: meta.value }))
+                    meta.value = (await promptExpression({ value: meta.value })).expression
                 }
             }} onBlur={(e) => {
                 if (e.target.value.length === 1) {
@@ -309,7 +310,7 @@ const SingleRowInput = observer(({ onChange, k, v }: any) => {
             }} />
         <IconButton icon={'function'} onClick={() => {
             (async () => {
-                meta.value = (await promptExpression({ value: meta.value }))
+                meta.value = (await promptExpression({ value: meta.value })).expression
             })()
         }}
             iconSize={13}
@@ -317,3 +318,22 @@ const SingleRowInput = observer(({ onChange, k, v }: any) => {
             style={{ position: "absolute", right: 2, top: 2 }} />
     </div>;
 })
+
+const setImport = (imports: any, meta: any) => {
+    const src = meta.current.content.split('export default ');
+    const cimports = src.shift().split('\n').filter((e: string) => !!e);
+
+    Object.keys(imports).map((i) => {
+        const im = imports[i];
+        const imtext = `import ${im.type === 'default' ? i : `{ ${i} }`} from "${im.from}"`
+        if (cimports.indexOf(imtext) < 0) {
+            cimports.push(imtext);
+        }
+    })
+
+    meta.current.content = `
+${cimports.join("\n")}
+
+export default ${src[0]}`;
+
+}

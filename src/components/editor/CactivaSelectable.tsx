@@ -203,16 +203,6 @@ export default observer(
               </Menu.Item>
               <Menu.Divider />
               <Menu.Item
-                icon="duplicate"
-                onSelect={() => {
-                  toggleRef.current();
-                  editor.selectedId = source.id;
-                  ceditor.copy();
-                }}
-              >
-                Duplicate <span className="shortcut">Ctrl/⌘ + D</span>
-              </Menu.Item>
-              <Menu.Item
                 icon="trash"
                 onSelect={() => {
                   toggleRef.current();

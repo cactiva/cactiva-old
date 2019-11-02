@@ -397,16 +397,27 @@ const isUndoStackSimilar = (compare: any, diff: any) => {
   return false;
 };
 
+const applyImport = (imports: any) => {
+  if (editor.current) {
+    const cimports = editor.current.imports as any;
+    Object.keys(imports).map((im: string) => {
+      cimports[im] = imports[im];
+    });
+    console.log(toJS(editor.current.imports));
+  }
+};
+
 export async function createNewElement(name: string) {
   if (name === "expr") {
     const res = await promptExpression({
       title: "Please type the expression:",
-      returnExp: false
+      returnExp: true
     });
-    if (!res) return;
+    if (!res.expression) return;
+    applyImport(res.imports);
     return {
       kind: SyntaxKind.JsxExpression,
-      value: { kind: SyntaxKind.StringLiteral, value: JSON.stringify(res) }
+      value: res.expression
     };
   } else if (name === "if") {
     const res = await promptExpression({
@@ -417,7 +428,8 @@ export async function createNewElement(name: string) {
       wrapExp: "([[value]] && <View><Text>When True</Text></View>)",
       returnExp: true
     });
-    if (!res) return;
+    if (!res.expression) return;
+    applyImport(res.imports);
     return { kind: SyntaxKind.JsxExpression, value: res.expression };
   } else if (name === "if-else") {
     const res = await promptExpression({
@@ -429,7 +441,8 @@ export async function createNewElement(name: string) {
         "([[value]] ? <View><Text>When True</Text></View> : <View><Text>When False</Text></View>)",
       returnExp: true
     });
-    if (!res) return;
+    if (!res.expression) return;
+    applyImport(res.imports);
     return { kind: SyntaxKind.JsxExpression, value: res.expression };
   } else if (name === "map") {
     const res = await promptExpression({
@@ -444,7 +457,8 @@ export async function createNewElement(name: string) {
     `,
       returnExp: true
     });
-    if (!res) return;
+    if (!res.expression) return;
+    applyImport(res.imports);
     return { kind: SyntaxKind.JsxExpression, value: res.expression };
   }
 

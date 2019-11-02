@@ -1,7 +1,7 @@
 import api from '@src/libs/api';
 import editor from '@src/store/editor';
 import { Autocomplete, Dialog, Text } from 'evergreen-ui';
-import { observable } from 'mobx';
+import { observable, toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect, useRef } from 'react';
 import AutosizeInput from 'react-input-autosize';
@@ -170,11 +170,28 @@ export const promptExpression = (options?: {
     footer?: string,
     value?: string,
     returnExp?: boolean,
+    returnImport?: boolean
     local?: boolean,
     wrapExp?: string
-}): Promise<any> => {
+}): Promise<{
+    expression: any,
+    imports: any
+}> => {
     meta.text = [];
-    const opt = options || {};
+    const opt = {
+        ...{
+            title: "",
+            pre: "",
+            post: "",
+            footer: "",
+            value: "",
+            wrapExp: "",
+            returnImport: true,
+            returnExp: false,
+            local: false
+        }, ...options
+    };
+
     setTimeout(async () => {
         if (editor.current) {
             const path = opt.local === false ? '' : `?path=${editor.current.path}`;
@@ -227,6 +244,19 @@ export const promptExpression = (options?: {
         if (meta.text.length === 0) { meta.text = [""] }
 
         const finish = async () => {
+            const defs = Object.keys(meta.definitions);
+            const imports = {} as any;
+            meta.text.map((t: string) => {
+                const ts = t.split(".");
+                if (ts.length > 0 && defs.indexOf(ts[0]) >= 0) {
+                    imports[ts[0]] = {
+                        from: `@src/stores/${ts[0]}`,
+                        type: 'default'
+                    }
+                }
+            });
+
+
             let text = meta.text.join("");
             if (text.trim().length > 0) {
                 if (opt.wrapExp) {
@@ -234,13 +264,13 @@ export const promptExpression = (options?: {
                 }
 
                 if (!opt.returnExp) {
-                    resolve(text);
+                    resolve({ expression: text, imports });
                 } else {
                     const res = await api.post("morph/parse-exp", { value: text });
-                    resolve({ expression: res, imports: [] })
+                    resolve({ expression: res, imports })
                 }
             } else {
-                resolve("");
+                resolve({ expression: "", imports });
             }
             meta.text = [""];
         }

@@ -44,7 +44,7 @@ export default observer(({ meta }: any) => {
                 style={{ height: '100%' }}
             >
                 <div style={{ borderBottom: "1px solid #ccc", position: 'relative', padding: '0px 10px' }}>
-                    <Badge style={{ fontSize: 8, position: 'absolute', top: 10, right: 10 }}>Received Headers</Badge>
+                    <Badge style={{ fontSize: 8, position: 'absolute', top: 0, right: 10 }}>Received Headers</Badge>
                     <code style={{
                         whiteSpace: 'pre-wrap', fontSize: 9, overflowY: 'auto',
                         position: "absolute", top: 0, left: 10, right: 0, bottom: 0
@@ -53,7 +53,7 @@ export default observer(({ meta }: any) => {
                     </code>
                 </div>
                 <div style={{ position: 'relative', padding: '0px 10px' }}>
-                    <Badge style={{ fontSize: 8, position: 'absolute', top: 10, right: 10 }}>Result</Badge>
+                    <Badge style={{ fontSize: 8, position: 'absolute', top: 0, right: 10 }}>Result</Badge>
                     <code style={{
                         whiteSpace: 'pre-wrap', fontSize: 9, overflowY: 'auto',
                         position: "absolute", top: 0, left: 10, right: 0, bottom: 0
@@ -69,7 +69,6 @@ const serialize = function (obj: any) {
     var str = [];
     for (var p in obj)
         str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-    console.log(str, obj)
     return str.join("&");
 }
 export const runApi = async (meta: any, forceUrl?: string) => {
@@ -88,8 +87,6 @@ export const runApi = async (meta: any, forceUrl?: string) => {
             url = url + "?" + params;
         }
     }
-    console.log(params);
-
     meta.current.result.url = url;
     meta.current.result.loading = true;
     meta.current.result.body = "Sending...";

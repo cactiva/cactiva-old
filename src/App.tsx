@@ -89,21 +89,6 @@ hotkeys("backspace, delete", (event, handler) => {
   }
   event.preventDefault();
 });
-hotkeys("ctrl+d,command+d", (event, handler) => {
-  if (editor.isModalOpened) return;
-  const current = editor.current;
-  if (current) {
-    const duplicateSource = _.cloneDeep(current.selected.source);
-    const parent = findParentElementById(current.source, current.selectedId);
-    const children = _.cloneDeep(parent.children);
-    const idx = children.findIndex((x: any) => x.id === current.selectedId);
-    children.splice(idx, 0, duplicateSource);
-    prepareChanges(current);
-    parent.children = children;
-    commitChanges(current);
-  }
-  event.preventDefault();
-});
 
 export default observer(() => {
   const { current } = editor;
