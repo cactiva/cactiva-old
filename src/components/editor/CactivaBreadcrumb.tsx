@@ -140,7 +140,7 @@ const generatePath = (editor: any, source: any) => {
         });
       currentId.pop();
     } else {
-      console.log(toJS(el), toJS(source), currentId)
+      // console.log(toJS(el), toJS(source), currentId)
     }
   });
   return nav.reverse();

@@ -15,16 +15,8 @@ import "./tags/ui-kitten/ui-kitten.scss";
 import { addChildInId, commitChanges, createNewElement, getParentId, insertAfterElementId, prepareChanges, wrapInElementId } from "./utility/elements/tools";
 import { renderChildren } from "./utility/renderchild";
 import tags from "./utility/tags";
-
-const uploadImage = async (file: any) => {
-  var formDataToUpload = new FormData();
-  formDataToUpload.append("file", file);
-  return await api.post("/assets/upload", formDataToUpload, {
-    headers: {
-      "Content-Type": "multipart/form-data"
-    }
-  });
-};
+import CactivaCustomComponent from "./CactivaCustomComponent";
+import ed from "@src/store/editor";
 
 export default observer(({ editor }: any) => {
   const meta = useObservable({
@@ -88,7 +80,8 @@ export default observer(({ editor }: any) => {
       </div>
       <CactivaEditorFooter editor={editor} />
       <CactivaEditorAddComponent editor={editor} />
-      <CactivaExpressionDialog />
+      {ed.modals.expression && <CactivaExpressionDialog />}
+      {ed.modals.customComponents && <CactivaCustomComponent />}
     </div>
   );
 });

@@ -1,15 +1,7 @@
 import api from "@src/libs/api";
-import {
-  Button,
-  Icon,
-  Menu,
-  Popover,
-  SearchInput,
-  Text,
-  Spinner
-} from "evergreen-ui";
+import { Button, Icon, Menu, Popover, SearchInput, Spinner, Text } from "evergreen-ui";
 import _ from "lodash";
-import { observable, toJS } from "mobx";
+import { observable } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import { useDrop } from "react-dnd-cjs";
@@ -19,7 +11,7 @@ import "./CactivaTree.scss";
 
 export let tree = observable({ list: {} as any });
 
-const meta = observable({
+export const treeListMeta = observable({
   list: [] as any[],
   source: [],
   expandedDir: [] as any[],
@@ -28,10 +20,10 @@ const meta = observable({
   keyword: ""
 });
 
-const reloadList = async () => {
+export const reloadTreeList = async () => {
   const res = await api.get("ctree/list");
-  meta.source = res.children;
-  meta.list = res.children;
+  treeListMeta.source = res.children;
+  treeListMeta.list = res.children;
 };
 
 export default observer(({ editor }: any) => {
@@ -40,12 +32,12 @@ export default observer(({ editor }: any) => {
     ["moving", "duplicating", "renaming", "deleting", "creating"].indexOf(
       editor.status
     ) >= 0;
-  useAsyncEffect(reloadList, []);
+  useAsyncEffect(reloadTreeList, []);
 
   useEffect(() => {
     tree.list = {};
-    expandSelected(selected, meta.list, null);
-  }, [meta.list, editor.path]);
+    expandSelected(selected, treeListMeta.list, null);
+  }, [treeListMeta.list, editor.path]);
 
   const [{ dragItem, childrenOver }, dropChildrenRef] = useDrop({
     accept: ["element", "directory"],
@@ -60,7 +52,7 @@ export default observer(({ editor }: any) => {
         } catch (e) {
           console.log(e);
         }
-        await reloadList();
+        await reloadTreeList();
         editor.status = "ready";
       }
     },
@@ -73,20 +65,20 @@ export default observer(({ editor }: any) => {
   });
   let hover = canDrop(dragItem, { relativePath: "/src" }, childrenOver);
   const onSearch = (e: any) => {
-    meta.keyword = e.nativeEvent.target.value;
-    if (meta.keyword.length === 0) {
-      meta.list = meta.source;
+    treeListMeta.keyword = e.nativeEvent.target.value;
+    if (treeListMeta.keyword.length === 0) {
+      treeListMeta.list = treeListMeta.source;
     } else {
-      meta.list = [];
+      treeListMeta.list = [];
 
       const recurse = (list: any[]) => {
         for (let i in list) {
           const item: any = list[i];
           if (item.type === "file") {
             if (
-              fuzzyMatch(item.name.toLowerCase(), meta.keyword.toLowerCase())
+              fuzzyMatch(item.name.toLowerCase(), treeListMeta.keyword.toLowerCase())
             ) {
-              meta.list.push(item);
+              treeListMeta.list.push(item);
             }
           } else {
             item.type === "dir";
@@ -96,7 +88,7 @@ export default observer(({ editor }: any) => {
           }
         }
       };
-      recurse(meta.source);
+      recurse(treeListMeta.source);
     }
   };
 
@@ -117,10 +109,10 @@ export default observer(({ editor }: any) => {
           onChange={onSearch}
         />
 
-        {meta.newShown && (
+        {treeListMeta.newShown && (
           <div
             onClick={() => {
-              meta.newShown = false;
+              treeListMeta.newShown = false;
             }}
             style={{
               position: "fixed",
@@ -133,13 +125,13 @@ export default observer(({ editor }: any) => {
           ></div>
         )}
         <Popover
-          isShown={meta.newShown}
+          isShown={treeListMeta.newShown}
           content={<ContentEl editor={editor} />}
         >
           <Button
             className={`search-opt`}
             onMouseDown={() => {
-              meta.newShown = true;
+              treeListMeta.newShown = true;
             }}
           >
             {isLoading ? (
@@ -155,10 +147,10 @@ export default observer(({ editor }: any) => {
         ref={dropChildrenRef}
       >
         <div className="list-body">
-          {meta.list.length > 0 ? (
+          {treeListMeta.list.length > 0 ? (
             <Tree
               editor={editor}
-              tree={meta.list}
+              tree={treeListMeta.list}
               selected={selected}
               level={0}
             />
@@ -177,7 +169,7 @@ export default observer(({ editor }: any) => {
 const ContentEl = observer((props: any) => {
   const { editor } = props;
   const onSelectFolder = () => {
-    meta.newShown = false;
+    treeListMeta.newShown = false;
     setTimeout(async () => {
       const newname = prompt("New folder name:");
       if (newname) {
@@ -189,13 +181,13 @@ const ContentEl = observer((props: any) => {
         } catch (e) {
           console.log(e);
         }
-        await reloadList();
+        await reloadTreeList();
         editor.status = "ready";
       }
     });
   };
   const onSelectComponent = () => {
-    meta.newShown = false;
+    treeListMeta.newShown = false;
     setTimeout(async () => {
       const newname = prompt("New component name:");
       if (newname) {
@@ -209,7 +201,7 @@ const ContentEl = observer((props: any) => {
         } catch (e) {
           console.log(e);
         }
-        await reloadList();
+        await reloadTreeList();
         editor.status = "ready";
       }
     });
@@ -241,7 +233,7 @@ const expandSelected = (path: string, list: any, parent: any) => {
     }
 
     if (e.type === "dir") {
-      if (meta.expandedDir.indexOf(e.relativePath) >= 0) {
+      if (treeListMeta.expandedDir.indexOf(e.relativePath) >= 0) {
         e.expanded = true;
       }
       expandSelected(path, e.children, e);
@@ -278,7 +270,7 @@ const File = ({
       cactiva={{
         source: { id: null },
         tag: {
-          tagName: name,
+          tagName: e.relativePath,
           mode: "component"
         }
       }}
@@ -286,8 +278,8 @@ const File = ({
       <div
         ref={ref}
         onContextMenu={(e: any) => {
-          meta.coord.top = e.pageY;
-          meta.coord.left = e.pageX;
+          treeListMeta.coord.top = e.pageY;
+          treeListMeta.coord.left = e.pageX;
           toggle();
         }}
         onClick={onClick}
@@ -342,7 +334,7 @@ const Directory = ({
       } catch (e) {
         console.log(e);
       }
-      await reloadList();
+      await reloadTreeList();
       editor.status = "ready";
     }
   };
@@ -379,11 +371,11 @@ const Directory = ({
   const onClick = () => {
     e.expanded = !e.expanded;
     if (e.expanded) {
-      meta.expandedDir.push(e.relativePath);
+      treeListMeta.expandedDir.push(e.relativePath);
     } else {
-      const idx = meta.expandedDir.indexOf(e.relativePath);
+      const idx = treeListMeta.expandedDir.indexOf(e.relativePath);
       if (idx >= 0) {
-        meta.expandedDir.splice(idx, 1);
+        treeListMeta.expandedDir.splice(idx, 1);
       }
     }
   };
@@ -408,8 +400,8 @@ const Directory = ({
         style={{ paddingLeft: level * 10 }}
         onClick={onClick}
         onContextMenu={(e: any) => {
-          meta.coord.top = e.pageY;
-          meta.coord.left = e.pageX;
+          treeListMeta.coord.top = e.pageY;
+          treeListMeta.coord.left = e.pageX;
           toggle();
         }}
       >
@@ -506,7 +498,7 @@ const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
         } catch (e) {
           console.log(e);
         }
-        await reloadList();
+        await reloadTreeList();
         editor.status = "ready";
       }
     });
@@ -528,7 +520,7 @@ const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
         } catch (e) {
           console.log(e);
         }
-        await reloadList();
+        await reloadTreeList();
         editor.status = "ready";
       }
     });
@@ -550,7 +542,7 @@ const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
         } catch (e) {
           console.log(e);
         }
-        await reloadList();
+        await reloadTreeList();
         editor.status = "ready";
       }
     });
@@ -577,7 +569,7 @@ const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
         } catch (e) {
           console.log(e);
         }
-        await reloadList();
+        await reloadTreeList();
         editor.status = "ready";
       }
     });
@@ -592,7 +584,7 @@ const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
       } catch (e) {
         console.log(e);
       }
-      await reloadList();
+      await reloadTreeList();
       editor.status = "ready";
     }
   };
@@ -600,8 +592,8 @@ const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
     <Popover
       statelessProps={{
         style: {
-          top: meta.coord.top,
-          left: meta.coord.left
+          top: treeListMeta.coord.top,
+          left: treeListMeta.coord.left
         }
       }}
       content={

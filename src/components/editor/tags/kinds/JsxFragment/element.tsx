@@ -20,10 +20,9 @@ export default observer((props: any) => {
         <CactivaSelectable cactiva={cactiva}>
           <div
             style={{
-              padding: 5,
-              margin: 5,
+              padding: '0px 5px',
+              margin: 0,
               borderRadius: 5,
-              border: "1px solid #ccc",
               fontSize: 10,
               color: "#000",
               backgroundColor: "rgba(255,255,255,1)"

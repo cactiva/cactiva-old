@@ -7,6 +7,7 @@ import { SyntaxKind } from "../syntaxkinds";
 import { isTag } from "../tagmatcher";
 import tags from "../tags";
 import editor from "@src/store/editor";
+import { promptCustomComponent } from "../../CactivaCustomComponent";
 
 export const getIds = (id: string | string[]) => {
   if (Array.isArray(id)) return _.clone(id);
@@ -322,17 +323,15 @@ export const wrapInElementId = (
       replaceElementById(root, id, wrapEl);
     } else {
       const elementTag = tags[wrapEl.name];
-      if (elementTag) {
-        const insertTo = (elementTag as any).insertTo || "children";
-        let children = _.get(wrapEl, insertTo);
-        if (!children) {
-          _.set(wrapEl, insertTo, []);
-          children = [];
-        }
-        children.unshift(currentEl);
-        _.set(wrapEl, insertTo, children);
-        replaceElementById(root, id, wrapEl);
+      const insertTo = (elementTag as any || {}).insertTo || "children";
+      let children = _.get(wrapEl, insertTo);
+      if (!children) {
+        _.set(wrapEl, insertTo, []);
+        children = [];
       }
+      children.unshift(currentEl);
+      _.set(wrapEl, insertTo, children);
+      replaceElementById(root, id, wrapEl);
     }
   }
 };
@@ -400,15 +399,44 @@ const isUndoStackSimilar = (compare: any, diff: any) => {
 const applyImport = (imports: any) => {
   if (editor.current) {
     const cimports = editor.current.imports as any;
-    Object.keys(imports).map((im: string) => {
-      cimports[im] = imports[im];
+    const src = editor.current.rootSource.split("export default ");
+    const eimports = [] as any[];
+
+    Object.keys(cimports).map(i => {
+      const im = cimports[i];
+      const imfrom = ` from "${im.from}"`;
+      const imtext = `import ${
+        im.type === "default" ? i : `{ ${i} }`
+      } ${imfrom};`;
+      if (eimports.indexOf(imtext.trim()) < 0) {
+        eimports.push(imtext);
+      }
     });
-    console.log(toJS(editor.current.imports));
+
+    Object.keys(imports).map(i => {
+      const im = imports[i];
+      const imfrom = ` from "${im.from}"`;
+      const imtext = `import ${
+        im.type === "default" ? i : `{ ${i} }`
+      } ${imfrom};`;
+      if (eimports.indexOf(imtext.trim()) < 0) {
+        eimports.push(imtext);
+      }
+    });
+
+    editor.current.rootSource = `
+${eimports.join("\n")}
+
+export default ${src[1]}`;
   }
 };
 
-export async function createNewElement(name: string) {
-  if (name === "expr") {
+export async function createNewElement(componentName: string) {
+  let name = componentName;
+
+  if (name === "custom-component") {
+    name = await promptCustomComponent();
+  } else if (name === "expr") {
     const res = await promptExpression({
       title: "Please type the expression:",
       returnExp: true
@@ -460,6 +488,27 @@ export async function createNewElement(name: string) {
     if (!res.expression) return;
     applyImport(res.imports);
     return { kind: SyntaxKind.JsxExpression, value: res.expression };
+  }
+
+  if (!name) return null;
+  if (name.indexOf("/src/") === 0) {
+    const baseName = name.split("/").pop() || "";
+    const componentName = baseName.substr(0, baseName.length - 4);
+    const importPath = name.replace("/src", "@src");
+
+    applyImport({
+      [componentName]: {
+        from: importPath,
+        type: "default"
+      }
+    });
+
+    return {
+      kind: SyntaxKind.JsxElement,
+      name: componentName,
+      props: {},
+      children: []
+    };
   }
 
   const tag = tags[name];

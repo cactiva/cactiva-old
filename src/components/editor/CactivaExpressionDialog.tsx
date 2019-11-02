@@ -64,8 +64,8 @@ export default observer(() => {
             const iv = setInterval(() => {
                 if (firstRef && firstRef.current) {
                     finish();
+                    clearInterval(iv);
                 }
-                clearInterval(iv);
             }, 100);
         }
     }, [meta.shouldFocusFirst])

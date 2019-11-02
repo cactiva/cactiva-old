@@ -1,4 +1,4 @@
-import { Controller, Get } from "@overnightjs/core";
+import { Controller, Get, Post } from "@overnightjs/core";
 import { Request, Response } from "express";
 import { Morph } from "../morph";
 import * as jetpack from "fs-jetpack";
@@ -73,6 +73,38 @@ export default observer(() => {
         overwrite: true
       }
     );
+    sf.saveSync();
+    morph.project.saveSync();
+    res.send({ status: "ok" });
+  }
+
+  @Post("newfile")
+  private newfilebody(req: Request, res: Response) {
+    const source = ` import React from "react";
+    import { observer, useObservable } from "mobx-react-lite";
+    import { View } from "react-native";
+    import { useDimensions } from "react-native-hooks";
+    import { useNavigation } from "react-navigation-hooks";
+    
+    export default observer(() => {
+      const dim = useDimensions().window;
+      const nav = useNavigation();
+      const meta = useObservable({});
+    
+      return ${req.body.value};
+    });`;
+    const preparedSource = morph.prepareSourceForWrite(
+      source,
+      req.body.imports
+    );
+    const sf = morph.project.createSourceFile(
+      morph.getAppPath() + req.query.path,
+      preparedSource,
+      {
+        overwrite: true
+      }
+    );
+    sf.organizeImports();
     sf.saveSync();
     morph.project.saveSync();
     res.send({ status: "ok" });

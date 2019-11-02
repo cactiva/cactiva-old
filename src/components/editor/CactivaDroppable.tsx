@@ -47,13 +47,13 @@ export default observer(
     }
 
     const { id } = source;
-    const dropAfter = () => {
+    const dropAfter = async () => { 
       let el = null;
       const child = findElementById(root, id);
       if (child) {
         prepareChanges(editor);
         if (afterItem.id === null) {
-          el = createNewElement(afterItem.name);
+          el = await createNewElement(afterItem.name);
         } else {
           el = removeElementById(root, afterItem.id);
         }
@@ -63,13 +63,13 @@ export default observer(
         commitChanges(editor);
       }
     };
-    const dropChild = () => {
+    const dropChild = async () => {
       let el = null;
       const child = findElementById(root, id);
       if (child) {
         prepareChanges(editor);
         if (childItem.id === null) {
-          el = createNewElement(childItem.name);
+          el = await createNewElement(childItem.name);
         } else {
           el = removeElementById(root, childItem.id);
         }

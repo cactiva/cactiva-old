@@ -1,4 +1,11 @@
-import { addChildInId, commitChanges, findElementById, insertAfterElementId, prepareChanges, removeElementById } from "@src/components/editor/utility/elements/tools";
+import {
+  addChildInId,
+  commitChanges,
+  findElementById,
+  insertAfterElementId,
+  prepareChanges,
+  removeElementById
+} from "@src/components/editor/utility/elements/tools";
 import Axios from "axios";
 import { computed, observable, toJS } from "mobx";
 import { SourceStore } from "./source";
@@ -21,6 +28,7 @@ class EditorStore {
     storeLock: false,
     api: false,
     apiLock: false,
+    customComponents: false,
     expression: false
   };
 
@@ -30,7 +38,7 @@ class EditorStore {
   };
 
   @computed get isModalOpened() {
-    const v = this.modals as any
+    const v = this.modals as any;
     for (let i in v) {
       if (!!v[i]) return true;
     }
@@ -91,22 +99,21 @@ class EditorStore {
       return;
     }
     const apiPath = "/project/read-source?path=";
-    await Axios.get(`${baseUrl}${apiPath}${path}`)
-      .then(res => {
-        this.sources[path] = new SourceStore();
-        this.sources[path].path = path;
-        this.sources[path].source = res.data.component;
-        this.sources[path].rootSource = res.data.file;
-        this.sources[path].project = this;
-        this.sources[path].imports = res.data.imports;
-        this.sources[path].hooks = res.data.hooks;
-        this.path = path;
-        this.status = "ready";
-        localStorage.setItem("cactiva-current-path", path);
-      })
-      .catch(e => {
-        this.status = "failed";
-      });
+    try {
+      const res = await Axios.get(`${baseUrl}${apiPath}${path}`);
+      this.sources[path] = new SourceStore();
+      this.sources[path].path = path;
+      this.sources[path].source = res.data.component;
+      this.sources[path].rootSource = res.data.file;
+      this.sources[path].project = this;
+      this.sources[path].imports = res.data.imports;
+      this.sources[path].hooks = res.data.hooks;
+      this.path = path;
+      this.status = "ready";
+      localStorage.setItem("cactiva-current-path", path);
+    } catch {
+      this.status = "failed";
+    }
   }
 
   @computed

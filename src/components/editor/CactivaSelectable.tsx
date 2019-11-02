@@ -12,10 +12,14 @@ import {
   replaceElementById,
   findElementById,
   findParentElementById,
-  getSelectableParent
+  getSelectableParent,
+  createNewElement
 } from "./utility/elements/tools";
 import { SyntaxKind } from "./utility/syntaxkinds";
 import { toJS } from "mobx";
+import { generateSource } from "./utility/parser/generateSource";
+import api from "@src/libs/api";
+import { reloadTreeList } from "../ctree/CactivaTree";
 export default observer(
   ({
     cactiva,
@@ -115,6 +119,52 @@ export default observer(
                 }}
               >
                 Wrap In...
+              </Menu.Item>
+              <Menu.Item
+                icon="new-object"
+                onSelect={async () => {
+                  toggleRef.current();
+                  if (ceditor.current) {
+                    const name = prompt("New Component Name:");
+                    if (name) {
+                      const spath = ceditor.current.path.split("/");
+                      spath.pop();
+
+                      let el = findElementById(
+                        ceditor.current.source,
+                        source.id
+                      );
+                      if (el.kind === SyntaxKind.JsxExpression) {
+                        el = {
+                          kind: SyntaxKind.JsxFragment,
+                          children: [el]
+                        }
+                      }
+                      const body = generateSource(el);
+                      console.log(body);
+
+                      const path = spath.join("/") + "/" + _.startCase(name || "").replace(/[^0-9a-zA-Z]/g, "") + ".tsx";
+
+                      editor.status = "creating";
+                      try {
+                        await api.post(`ctree/newfile?path=${path}`, { value: body, imports: ceditor.current.imports });
+                      } catch (e) {
+                        console.log(e);
+                      }
+                      await reloadTreeList();
+                      const nel = await createNewElement(path);
+
+                      prepareChanges(ceditor.current);
+                      replaceElementById(
+                        ceditor.current.source,
+                        source.id, nel);
+                      editor.status = "ready";
+                      commitChanges(ceditor.current);
+                    }
+                  }
+                }}
+              >
+                Wrap In New Component
               </Menu.Item>
               {source.id.indexOf("_") > 0 && (
                 <>

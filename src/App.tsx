@@ -8,7 +8,7 @@ import React, { useEffect } from "react";
 import { DndProvider } from "react-dnd-cjs";
 import HTML5Backend from "react-dnd-html5-backend-cjs";
 import Split from "react-split";
-import CactivaTree, { tree } from "./components/ctree/CactivaTree";
+import CactivaTree, { tree, treeListMeta, reloadTreeList } from "./components/ctree/CactivaTree";
 import {
   commitChanges,
   findParentElementById,
@@ -20,6 +20,7 @@ import CactivaTraits from "./components/traits/CactivaTraits";
 import api from "./libs/api";
 import editor from "./store/editor";
 import { toJS } from "mobx";
+import useAsyncEffect from "use-async-effect";
 
 export const fontFamily = '"SF UI Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"';
 
@@ -99,14 +100,25 @@ export default observer(() => {
   const renderFont = current ? current.renderfont : false;
   const traitPane = current ? current.traitPane : false;
 
-  useEffect(() => {
+  useAsyncEffect(async () => {
     api.get("project/info").then(res => {
       editor.name = res.app;
       editor.cli.status = res.status;
     });
-    editor.load(
+
+    await editor.load(
       localStorage.getItem("cactiva-current-path") || "/src/Home.tsx"
     );
+    if (editor.status === "failed") {
+      if (treeListMeta.list.length === 0) {
+        await reloadTreeList();
+      }
+      let file = "";
+      treeListMeta.list.map((e) => {
+        if (e.type === 'file' && !file) file = e.relativePath.replace('./', '/src/');
+      });
+      await editor.load(file);
+    }
   }, []);
 
   useEffect(() => {

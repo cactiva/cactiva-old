@@ -73,7 +73,7 @@ export default observer(({ title, icon, onSelect, items = [] }: any) => {
           <div
             className="item"
             onClick={() => {
-              if (onSelect) onSelect("component");
+              if (onSelect) onSelect("custom-component");
             }}
           >
             <Icon icon={"code"} size={14} color={"#999"} /> Component
