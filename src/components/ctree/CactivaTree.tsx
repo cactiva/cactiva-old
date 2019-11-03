@@ -620,6 +620,17 @@ const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
             <Menu.Item icon="trash" intent="danger" onSelect={deleteFile}>
               Delete
             </Menu.Item>
+            {editor.previewUrl && <>
+              <Menu.Divider />
+              <Menu.Item icon="link" onSelect={() => {
+                const toggle = _.get(toggleRef, "current");
+                toggle();
+                const win = window.open(editor.previewUrl + e.relativePath.substr(4, e.relativePath.length - 8), '_blank');
+                if (win) win.focus();
+              }}>
+                Open Web Preview
+            </Menu.Item>
+            </>}
           </Menu>
         </div>
       }

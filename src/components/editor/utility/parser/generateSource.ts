@@ -58,8 +58,10 @@ export const generateSource = (node: any): string => {
         body = `return ${body}`;
       }
 
+      const async = _.indexOf(node.modifiers, SyntaxKind.AsyncKeyword) >= 0;
+     
       return (() => {
-        return `(${(node.params || []).join(",")}) => { 
+        return `${async ? 'async ' : ''}(${(node.params || []).join(",")}) => { 
 ${body}
 }`;
       })();

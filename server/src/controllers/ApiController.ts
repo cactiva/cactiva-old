@@ -26,7 +26,7 @@ export class ApiController {
   private newfile(req: Request, res: Response) {
     const sf = morph.project.createSourceFile(
       morph.getAppPath() + req.query.path,
-      `import { createApi } from "@src/utility/api";
+      `import { createApi } from "@src/libs/utils/api";
 
 export default createApi({
     url: '',

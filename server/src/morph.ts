@@ -1,14 +1,12 @@
 import * as path from "path";
-import { Project as TProject, SyntaxKind } from "ts-morph";
+import { Project as TProject } from "ts-morph";
 import config, { execPath } from "./config";
 import { defaultExport } from "./libs/morph/defaultExport";
-import { parseJsx, getEntryPoint } from "./libs/morph/parseJsx";
-import * as _ from "lodash";
-import { kindNames } from "./libs/morph/kindNames";
-import { replaceReturn } from "./libs/morph/replaceReturn";
-import { getImport } from "./libs/morph/getImport";
-import { removeImports } from "./libs/morph/removeImports";
 import { getHooks } from "./libs/morph/getHooks";
+import { getImport } from "./libs/morph/getImport";
+import { getEntryPoint, parseJsx } from "./libs/morph/parseJsx";
+import { removeImports } from "./libs/morph/removeImports";
+import { replaceReturn } from "./libs/morph/replaceReturn";
 
 export class Morph {
   project: TProject = new TProject();

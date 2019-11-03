@@ -64,8 +64,8 @@ export const generateApiSourceFromConfig = () => {
     const src = meta.current.content.split('export default ');
     const cimports = (src.shift() || "").split('\n').filter((e: string) => !!e).map(e => e.trim());
 
-    if (cimports.indexOf(`import { createApi } from "@src/utility/api";`) < 0) {
-        cimports.push(`import { createApi } from "@src/utility/api";`);
+    if (cimports.indexOf(`import { createApi } from "@src/libs/utils/api";`) < 0) {
+        cimports.push(`import { createApi } from "@src/libs/utils/api";`);
     }
 
     meta.current.content = prettier.format(`
@@ -83,8 +83,7 @@ export default observer(() => {
     const cref = useRef(null as any);
     const reloadList = async () => {
         const res = await api.get("api/list");
-        meta.list = res.children;
-
+        meta.list = res.children.filter((e: any) => e.name !== "index.ts");
         if (meta.list.length > 0) {
             await load(monacoEdRef, meta.list[0].relativePath);
         }
@@ -151,6 +150,11 @@ export default observer(() => {
                         const newname = prompt("New API name:");
                         if (newname) {
                             const relPath = _.lowerCase(newname).replace(/[^0-9a-zA-Z]/g, "") + ".ts";
+                            if (meta.list.filter((e: any) => e.name == relPath).length > 0) {
+                                alert("File already exists!");
+                                return
+                            }
+
                             const path =
                                 "/src/api/" + relPath;
                             editor.status = "creating";

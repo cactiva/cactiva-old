@@ -22,6 +22,7 @@ class EditorStore {
   @observable path = "";
   @observable status = "loading";
   @observable copied: any = null;
+  @observable previewUrl = "";
 
   @observable modals = {
     store: false,

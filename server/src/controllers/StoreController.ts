@@ -86,7 +86,7 @@ export default observable({
       });
     }
 
-    if (req.query.isasync) {
+    if (req.query.async) {
       files
         .filter((e: any) => {
           return (
@@ -95,7 +95,8 @@ export default observable({
         })
         .map((e: any) => {
           const name = e.getBaseName().substr(0, e.getBaseName().length - 3);
-          result["await api." + name + ".call"] = {
+          if (name === "index") return;
+          result["await api." + name + ".call()"] = {
             kind: SyntaxKind.StringLiteral,
             value: '""'
           };

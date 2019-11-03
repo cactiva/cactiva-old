@@ -1,12 +1,13 @@
+import { fontFamily } from '@src/App';
 import api from '@src/libs/api';
 import editor from '@src/store/editor';
 import { Autocomplete, Dialog, Text } from 'evergreen-ui';
-import { observable, toJS } from 'mobx';
+import _ from "lodash";
+import { observable } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect, useRef } from 'react';
 import AutosizeInput from 'react-input-autosize';
 import { parseValue } from './utility/parser/parser';
-import _ from "lodash";
 
 const onCloseDialog = () => {
     if (document.activeElement) {
@@ -112,6 +113,14 @@ export default observer(() => {
                 {meta.footer}
             </Text>
             }
+            <div style={{ fontFamily: fontFamily, fontSize: 10, color: '#999', marginTop: 10, display: 'flex', flexDirection: 'row', alignItems: 'center', lineHeight: '15px' }}>
+                Press
+                <span style={{ borderRadius: 3, fontSize: 8, fontWeight: 'bold', border: '1px solid #ccc', padding: '0px 2px', margin: '0px 3px' }}>TAB</span>
+                to add next,
+                and
+                <span style={{ borderRadius: 3, fontSize: 8, fontWeight: 'bold', border: '1px solid #ccc', padding: '0px 2px', margin: '0px 3px' }}>Shift + TAB</span>
+                to add previous
+                </div>
         </div>
     </Dialog>
 })
@@ -172,6 +181,7 @@ export const promptExpression = (options?: {
     returnExp?: boolean,
     returnImport?: boolean
     local?: boolean,
+    async?: boolean,
     wrapExp?: string
 }): Promise<{
     expression: any,
@@ -186,6 +196,7 @@ export const promptExpression = (options?: {
             footer: "",
             value: "",
             wrapExp: "",
+            async: false,
             returnImport: true,
             returnExp: false,
             local: false
@@ -194,8 +205,11 @@ export const promptExpression = (options?: {
 
     setTimeout(async () => {
         if (editor.current) {
-            const path = opt.local === false ? '' : `?path=${editor.current.path}`;
-            const res = await api.get(`store/definition${path}`);
+            const params = [];
+            if (opt.local === true) params.push(`path=${editor.current.path}`);
+            if (opt.async === true) params.push(`async=true`);
+
+            const res = await api.get(`store/definition${params.length > 0 ? '?' : ''}${params.join("&")}`);
             meta.definitions = {};
             Object.keys(res).map((r: string) => {
                 meta.definitions[r] = parseValue(res[r]);
@@ -220,38 +234,50 @@ export const promptExpression = (options?: {
         meta.post = opt.post || "";
         meta.footer = opt.footer || "";
 
-        meta.text = [];
-        const sqval = splitStringByQuote(opt.value || "");
-        sqval.map(
-            (e: string) => {
-                if (isQuote(e[0])) {
-                    meta.text.push(e)
-                } else {
-                    e.split(" ").map((d: string) => {
-                        const se = splitExp(d);
-                        if (se.length === 0 && !!d) {
-                            meta.text.push(d);
-                        } else {
-                            se.map(
-                                (f: string) => meta.text.push(f)
-                            )
-                        }
-                    })
-                }
-            }
-        );
-
-        if (meta.text.length === 0) { meta.text = [""] }
+        meta.text = splitExp(opt.value || "");
+        // splitStringByAwaitApi(opt.value || "").map(ea => {
+        //     if (ea.indexOf("await api") === 0) {
+        //         meta.text.push(ea)
+        //     } else {
+        //         splitStringByQuote(ea).map(
+        //             (e: string) => {
+        //                 if (isQuote(e[0])) {
+        //                     meta.text.push(e)
+        //                 } else {
+        //                     e.split(" ").map((d: string) => {
+        //                         const se = splitExp(d);
+        //                         if (se.length === 0 && !!d) {
+        //                             meta.text.push(d);
+        //                         } else {
+        //                             se.map(
+        //                                 (f: string) => {
+        //                                     if (!!f) meta.text.push(f)
+        //                                 }
+        //                             )
+        //                         }
+        //                     })
+        //                 }
+        //             }
+        //         )
+        //     }
+        // });
 
         const finish = async () => {
             const defs = Object.keys(meta.definitions);
             const imports = {} as any;
             meta.text.map((t: string) => {
-                const ts = t.split(".");
-                if (ts.length > 0 && defs.indexOf(ts[0]) >= 0) {
-                    imports[ts[0]] = {
-                        from: `@src/stores/${ts[0]}`,
+                if (t.indexOf("await api") >= 0) {
+                    imports["api"] = {
+                        from: `@src/api`,
                         type: 'default'
+                    }
+                } else {
+                    const ts = t.split(".");
+                    if (ts.length > 0 && defs.indexOf(ts[0]) >= 0) {
+                        imports[ts[0]] = {
+                            from: `@src/stores/${ts[0]}`,
+                            type: 'default'
+                        }
                     }
                 }
             });
@@ -335,16 +361,27 @@ const ExpInput = observer(({ onSelect, idx, openMenuRefs, item, inputRef, isLast
                             if (e.which === 9) {
                                 e.preventDefault();
                                 if (e.target.value !== "") {
-                                    meta.text.push("");
-
-                                    const target = e.target;
-                                    setTimeout(() => {
-                                        const sibling = target.parentNode.parentNode.nextSibling;
-                                        if (sibling) {
-                                            const node = _.get(sibling, `childNodes.0.childNodes.0`);
-                                            if (node) node.focus()
-                                        }
-                                    })
+                                    if (e.shiftKey) {
+                                        meta.text.splice(idx - 1, 0, "");
+                                        const target = e.target;
+                                        setTimeout(() => {
+                                            const sibling = target.parentNode.parentNode.previousSibling;
+                                            if (sibling) {
+                                                const node = _.get(sibling, `childNodes.0.childNodes.0`);
+                                                if (node) node.focus()
+                                            }
+                                        })
+                                    } else {
+                                        meta.text.push("");
+                                        const target = e.target;
+                                        setTimeout(() => {
+                                            const sibling = target.parentNode.parentNode.nextSibling;
+                                            if (sibling) {
+                                                const node = _.get(sibling, `childNodes.0.childNodes.0`);
+                                                if (node) node.focus()
+                                            }
+                                        })
+                                    }
                                 }
                             }
 
@@ -415,6 +452,15 @@ const ExpInput = observer(({ onSelect, idx, openMenuRefs, item, inputRef, isLast
 export const isQuote = (v: string) => {
     return (v === '"' || v === '`' || v === "'")
 }
+const splitStringByAwaitApi = (val: string): string[] => {
+    const api = val.split("await api");
+
+    return api.map((e, index) => {
+        if (index > 0)
+            return "await api" + e
+        return e;
+    });
+}
 
 const splitStringByQuote = (val: string): string[] => {
     let quote = null;
@@ -439,48 +485,13 @@ const splitStringByQuote = (val: string): string[] => {
     }
     return result;
 }
+
+
 const splitExp = (val: string): string[] => {
-    if (isQuote(val[0])) {
-        const c = val[0];
-        const result = [] as string[];
-        let idx = 0;
-        let qidx = 0;
-        for (let i in val as any) {
-            const v = val[i as any];
-            result[idx] = (result[idx] || "") + v;
-            if (v === c) {
-                qidx++;
-            }
+    let res = val;
 
-            if (qidx === 2) { idx++; qidx = 0 }
-
-        }
-        return result;
+    if (res[res.length - 1] === ";") {
+        res = res.substr(0, res.length - 1)
     }
-    const split = val.split(regex);
-    const match = val.match(regex);
-
-    if (match && match.length > 0) {
-        const result = [] as string[];
-        split.map((s: string, idx: number) => {
-            if (match && match.length > 0) {
-                const p = match.pop();
-                if (s === "" && idx === 0) {
-                    if (p)
-                        result.push(p);
-                } else {
-                    result.push(s);
-                    if (p)
-                        result.push(p);
-                }
-            } else {
-                result.push(s)
-            }
-        })
-        if (result.length > 0) {
-            const res = result.filter(e => !!e);
-            return res;
-        }
-    }
-    return [];
+    return [res];
 }

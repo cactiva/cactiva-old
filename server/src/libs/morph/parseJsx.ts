@@ -105,7 +105,12 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
             body.push(parseJsx(node.body, showKindName));
           }
         }
-        return { kind: kindName, params, body };
+        return {
+          kind: kindName,
+          params,
+          body,
+          modifiers: (node.modifiers || []).map((e: any) => e.kind)
+        };
       })();
     case SyntaxKind.ObjectLiteralExpression:
       return (() => {

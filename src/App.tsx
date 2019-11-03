@@ -21,6 +21,7 @@ import api from "./libs/api";
 import editor from "./store/editor";
 import { toJS } from "mobx";
 import useAsyncEffect from "use-async-effect";
+import { fetchCliStream } from "./components/head/cli/CactivaExpoCli";
 
 export const fontFamily = '"SF UI Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"';
 
@@ -104,6 +105,9 @@ export default observer(() => {
     api.get("project/info").then(res => {
       editor.name = res.app;
       editor.cli.status = res.status;
+      if (editor.cli.status === "running") {
+        fetchCliStream();
+      }
     });
 
     await editor.load(

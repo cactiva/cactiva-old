@@ -80,7 +80,7 @@ export const runApi = async (meta: any, forceUrl?: string) => {
     const qstring = await evalExpressionInObj(value.queryString, { local: false, useCache: true });
     const params = serialize(qstring);
     
-    if (params) {
+    if (params && !forceUrl) {
         if (url.indexOf("?") >= 0) {
             url = url + params;
         } else {

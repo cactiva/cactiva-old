@@ -200,7 +200,8 @@ export const generateExpressionArray = (node: any): any[] => {
     case SyntaxKind.ArrowFunction:
       return (() => {
         const result = [];
-        result.push(`(${node.params.join(",")}) => {`);
+        const async = _.indexOf(node.modifiers, SyntaxKind.AsyncKeyword) >= 0;
+        result.push(`${async ? 'async ' : ''}(${node.params.join(",")}) => {`);
         node.body.map((e: any) => {
           const childs = generateExpressionArray(e);
           childs.map(c => {

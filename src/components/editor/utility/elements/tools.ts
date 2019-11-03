@@ -396,7 +396,7 @@ const isUndoStackSimilar = (compare: any, diff: any) => {
   return false;
 };
 
-const applyImport = (imports: any) => {
+export const applyImport = (imports: any) => {
   if (editor.current) {
     const cimports = editor.current.imports as any;
     const src = editor.current.rootSource.split("export default ");
@@ -422,6 +422,7 @@ const applyImport = (imports: any) => {
       if (eimports.indexOf(imtext.trim()) < 0) {
         eimports.push(imtext);
       }
+      cimports[i] = im;
     });
 
     editor.current.rootSource = `

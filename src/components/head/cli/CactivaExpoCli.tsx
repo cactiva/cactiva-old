@@ -4,27 +4,37 @@ import { observable } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useRef } from 'react';
 import CactivaCli from './CactivaCli';
+import editor from "@src/store/editor";
 
 const meta = observable({
     logText: "",
     url: ""
 });
+export const fetchCliStream = async () => {
+    const res = await api.get("project/log-server");
+    meta.logText += res;
+    if (meta.logText.indexOf("Webpack on port") >= 0) {
+        meta.url = `http://localhost:${meta.logText
+            .split("Webpack on port")[1]
+            .split("in")[0]
+            .trim()}`;
+        editor.previewUrl = meta.url
+    }
+
+    if (meta.logText.indexOf("running at exp://") >= 0) {
+        const host = meta.logText.split("running at exp://")[1].split(":")[0]
+        meta.url = meta.url.replace('localhost', host);
+        editor.previewUrl = meta.url
+    }
+    return res;
+}
 export default observer(({ editor, cliref }: any) => {
     const timercli = useRef(null as any);
     const streamCLILog = () => {
         const exec = async () => {
             if (editor.cli.status === "running") {
-                const res = await api.get("project/log-server");
-                meta.logText += res;
-                if (!meta.url) {
-                    if (meta.logText.indexOf("Webpack on port") >= 0) {
-                        meta.url = `http://localhost:${meta.logText
-                            .split("Webpack on port")[1]
-                            .split("in")[0]
-                            .trim()}`;
-                    }
-                }
-                terminal.current.write(res);
+                if (terminal.current)
+                    terminal.current.write(await fetchCliStream());
             }
         };
         exec();
