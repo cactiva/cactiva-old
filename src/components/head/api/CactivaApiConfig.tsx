@@ -239,7 +239,7 @@ const SingleRowInput = observer(({ onChange, k, v }: any) => {
             onChange={(e: any) => {
                 const val = e.target.value;
                 meta.key = (val.replace(/\r?\n|\r/g, ''))
-            }} onBlur={(e) => {
+            }} onBlur={(e: any) => {
                 if (onChange) onChange(meta)
             }} />
         <div className="col-divider"> = </div>
@@ -259,17 +259,17 @@ const SingleRowInput = observer(({ onChange, k, v }: any) => {
                     CurrentApiSave()
                 }
             }}
-            onClick={async (e) => {
+            onClick={async (e: any) => {
                 const val = meta.value;
                 if (val.length > 0 && !isQuote(val[0])) {
                     meta.value = (await promptExpression({ value: meta.value })).expression
                 }
-            }} onBlur={(e) => {
+            }} onBlur={(e: any) => {
                 if (e.target.value.length === 1) {
                     meta.value = '';
                 }
                 if (onChange) onChange(meta)
-            }} onFocus={(e) => {
+            }} onFocus={(e: any) => {
                 const val = e.target.value;
                 if (val.length === 0) {
                     meta.value = ("''");
@@ -278,7 +278,7 @@ const SingleRowInput = observer(({ onChange, k, v }: any) => {
                         target.setSelectionRange(1, 1);
                     }, 50);
                 }
-            }} onChange={(e) => {
+            }} onChange={(e: any) => {
                 const val = e.target.value;
                 if (val.length > 0 && (isQuote(val[0]) || isQuote(val[val.length - 1]))) {
                     if (isQuote(val[0])) {

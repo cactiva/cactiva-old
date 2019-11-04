@@ -22,7 +22,7 @@ export default observer(({ meta }: any) => {
                 fontFamily: fontFamily,
                 fontSize: 10,
                 outline: 0,
-            }} onKeyDown={(e) => { if (e.which === 13) runApi(meta, r.url) }} />
+            }} onKeyDown={(e: any) => { if (e.which === 13) runApi(meta, r.url) }} />
             {r.loading ? <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', fontSize: 8 }}><Spinner size={12} marginRight={3} />Loading</div> :
                 <span>
                     <Button style={{ fontSize: 8 }} marginRight={5} height={17} onClick={(e: any) => { runApi(meta, r.url) }}>Send</Button>

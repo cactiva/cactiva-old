@@ -1,15 +1,15 @@
-import axios from 'axios';
-const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+import axios from "axios";
+const isDev = require("../env").mode === "development";
 
 class Api {
-  url = (isDev ? 'http://localhost:8080' : '') + `/api/`;
+  url = (isDev ? "http://localhost:8080" : "") + `/api/`;
   async get(url: string, opt?: any) {
-    const res = await axios.get(this.url + url.replace(/^\/+/g, ''), opt);
+    const res = await axios.get(this.url + url.replace(/^\/+/g, ""), opt);
     return res.data;
   }
   async post(url: string, body?: any, config?: any) {
     const res = await axios.post(
-      this.url + url.replace(/^\/+/g, ''),
+      this.url + url.replace(/^\/+/g, ""),
       body,
       config
     );

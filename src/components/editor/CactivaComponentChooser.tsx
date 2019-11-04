@@ -16,11 +16,11 @@ export default observer(({ title, icon, onSelect, items = [] }: any) => {
     <div
       className="choose-component"
       style={{ flex: 1 }}
-      onContextMenuCapture={e => {
+      onContextMenuCapture={(e:any) => {
         e.stopPropagation();
         e.preventDefault();
       }}
-      onClick={e => {
+      onClick={(e:any) => {
         e.stopPropagation();
         e.preventDefault();
       }}
@@ -36,7 +36,7 @@ export default observer(({ title, icon, onSelect, items = [] }: any) => {
         placeholder="Search"
         width="100%"
         height={25}
-        onChange={e => {
+        onChange={(e: any) => {
           meta.filter = e.target.value;
         }}
         spellCheck={false}

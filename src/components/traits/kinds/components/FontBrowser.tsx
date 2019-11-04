@@ -79,7 +79,7 @@ export default observer(
               <div className={`item upload`}>
                 <label
                   className="label"
-                  onClickCapture={e => {
+                  onClickCapture={(e:any) => {
                     e.stopPropagation();
                   }}
                 >

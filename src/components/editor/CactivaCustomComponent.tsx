@@ -1,13 +1,13 @@
+import api from '@src/libs/api';
 import editor from '@src/store/editor';
 import { Autocomplete, Dialog, TextInput } from 'evergreen-ui';
 import _ from "lodash";
 import { observable } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect, useRef } from 'react';
-import { treeListMeta, reloadTreeList } from '../ctree/CactivaTree';
-import api from '@src/libs/api';
-import { createNewElement } from './utility/elements/tools';
+import { reloadTreeList, treeListMeta } from '../ctree/CactivaTree';
 
+const MDialog = Dialog as any;
 const meta = observable({
     source: null,
     shouldFocusFirst: true,
@@ -61,65 +61,73 @@ export default observer(({ }: any) => {
         }
         walk(treeListMeta.list);
     }, [treeListMeta.list])
-    return <Dialog
+    return <MDialog
         isShown={editor.modals.customComponents}
         hasHeader={false}
         hasFooter={false}
-        onCloseComplete={onCloseDialog}
+        overlayProps={{
+            onClick: () => {
+                onCloseDialog();
+            }
+        }}
+        shouldCloseOnOverlayClick={false}
         preventBodyScrolling
         minHeightContent={60}
         width={400}
     >
-        <Autocomplete
-            onChange={async (value) => {
-                const item = _.find(meta.list, { label: value });
-                onCloseDialog();
-                let path = item.path;
-                if (item.path === 'new-component' && editor.current) {
-                    const name = prompt("New Component Name:");
-                    if (name) {
-                        const spath = editor.current.path.split("/");
-                        spath.pop();
-                        path = spath.join("/") + "/" + _.startCase(name || "").replace(/[^0-9a-zA-Z]/g, "") + ".tsx";
+        <div onClickCapture={(e: any) => {
+            e.stopPropagation();
+        }}>
+            <Autocomplete
+                onChange={async (value) => {
+                    const item = _.find(meta.list, { label: value });
+                    onCloseDialog();
+                    let path = item.path;
+                    if (item.path === 'new-component' && editor.current) {
+                        const name = prompt("New Component Name:");
+                        if (name) {
+                            const spath = editor.current.path.split("/");
+                            spath.pop();
+                            path = spath.join("/") + "/" + _.startCase(name || "").replace(/[^0-9a-zA-Z]/g, "") + ".tsx";
 
-                        editor.status = "creating";
-                        try {
-                            await api.get(`ctree/newfile?path=${path}`);
-                        } catch (e) {
-                            console.log(e);
-                        }
-                        await reloadTreeList();
-                        editor.status = "ready";
-                    } else return;
-                }
-
-                meta.source = path;
-            }}
-            items={meta.list.map(e => e.label)}
-        >
-            {(props) => {
-                const { getInputProps, getRef, inputValue, openMenu } = props
-                return (
-                    <TextInput
-                        placeholder="Choose Component"
-                        width={'100%'}
-                        value={inputValue}
-                        innerRef={(e) => {
-                            firstRef.current = e
-                            getRef(e);
-                        }}
-                        {...getInputProps({
-                            onFocus: () => {
-                                if (!meta.closing) {
-                                    openMenu()
-                                }
+                            editor.status = "creating";
+                            try {
+                                await api.get(`ctree/newfile?path=${path}`);
+                            } catch (e) {
+                                console.log(e);
                             }
-                        })}
-                    />
-                )
-            }}
-        </Autocomplete>
-    </Dialog>
+                            await reloadTreeList();
+                            editor.status = "ready";
+                        } else return;
+                    }
+
+                    meta.source = path;
+                }}
+                items={meta.list.map(e => e.label)}
+            >
+                {(props) => {
+                    const { getInputProps, getRef, inputValue, openMenu } = props
+                    return (
+                        <TextInput
+                            placeholder="Choose Component"
+                            width={'100%'}
+                            value={inputValue}
+                            innerRef={(e: any) => {
+                                firstRef.current = e
+                                getRef(e);
+                            }}
+                            {...getInputProps({
+                                onFocus: () => {
+                                    if (!meta.closing) {
+                                        openMenu()
+                                    }
+                                }
+                            })}
+                        />
+                    )
+                }}
+            </Autocomplete></div>
+    </MDialog>
 });
 
 export const promptCustomComponent = (options?: { value: string }): Promise<any> => {

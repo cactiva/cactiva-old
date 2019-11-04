@@ -71,7 +71,7 @@ export default observer(() => {
 
     useAsyncEffect(reloadList, []);
     return <div className="cactiva-dialog-editor">
-        <div className="list" onContextMenu={(e) => { e.preventDefault(); }}>
+        <div className="list" onContextMenu={(e: any) => { e.preventDefault(); }}>
             <div className="search-box">
                 <SearchInput
                     className="search"

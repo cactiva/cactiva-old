@@ -72,7 +72,7 @@ export default observer((props: any) => {
             type="text"
             value={metaIcon.search}
             onChange={onChange}
-            onFocus={e => {
+            onFocus={(e:any) => {
               e.target.select();
             }}
           />

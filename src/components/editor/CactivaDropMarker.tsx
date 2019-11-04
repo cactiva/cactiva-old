@@ -1,8 +1,6 @@
-/** @jsx jsx */
-import { css, jsx } from "@emotion/core";
 import editor from "@src/store/editor";
 import { Icon } from "evergreen-ui";
-import { forwardRef, useRef } from "react";
+import React, { forwardRef } from "react";
 
 export default forwardRef(
   (
@@ -27,42 +25,39 @@ export default forwardRef(
         className="cactiva-drop-marker"
         ref={ref}
         onMouseOver={onMouseOver}
-        css={css`
-          display: flex;
-          flex-direction: ${direction};
-          flex-basis: 5px;
-          ${"min-" + mode}: 5px;
-          ${mode}: 5px;
-          align-self: stretch;
-          ${stretch
-            ? `flex:1;
-            ${mode}:100%;`
-            : ``}
-        `}
-        style={style}
+        style={{
+          display: 'flex',
+          flexDirection: direction,
+          flexBasis: '5px',
+          [`min` + mode]: '5px',
+          [mode]: stretch ? '100%' : '5px',
+          alignSelf: 'stretch',
+          flex: stretch ? 1 : undefined,
+          ...style
+        }}
       >
         <div
-          css={css`
-            align-self: stretch;
-            flex: 1;
-            border-radius: 3px;
-            margin: ${placement === "child" && stretch
+          style={{
+            alignSelf: 'stretch',
+            flex: 1,
+            borderRadius: '3px',
+            margin: placement === "child" && stretch
               ? "5px 0px"
               : stretch && direction === "row"
                 ? "0px 5px"
-                : "0px"};
-            min-width: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 5px;
-            background: ${bg};
-          `}
+                : "0px",
+            minWidth: '5px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '5px',
+            background: bg
+          }}
         >
           {!hover && showAdd && (
             <div
               className="add-btn"
-              onClickCapture={e => {
+              onClickCapture={(e: any) => {
                 e.stopPropagation();
                 e.preventDefault();
                 if (editor && editor.current) {

@@ -305,12 +305,12 @@ export default observer(
                 {isShown && <div className="cactiva-el-cmenu"></div>}
                 {isShown && (
                   <div
-                    onContextMenu={e => {
+                    onContextMenu={(e:any) => {
                       e.stopPropagation();
                       e.preventDefault();
                       toggleRef.current();
                     }}
-                    onClick={e => {
+                    onClick={(e:any) => {
                       e.stopPropagation();
                       e.preventDefault();
                       toggleRef.current();

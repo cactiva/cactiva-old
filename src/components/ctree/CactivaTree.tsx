@@ -95,7 +95,7 @@ export default observer(({ editor }: any) => {
   return (
     <div
       className="cactiva-tree"
-      onContextMenu={e => {
+      onContextMenu={(e:any) => {
         e.preventDefault();
       }}
     >

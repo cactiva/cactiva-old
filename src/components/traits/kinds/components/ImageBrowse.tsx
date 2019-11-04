@@ -67,7 +67,7 @@ export default observer(({ value, onChange, isShown, onDismiss }: any) => {
           <div className="content">
             <label
               className="image image-upload"
-              onClickCapture={e => {
+              onClickCapture={(e:any)=> {
                 e.stopPropagation();
               }}
             >

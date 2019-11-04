@@ -9,6 +9,7 @@ import React, { useEffect, useRef } from 'react';
 import AutosizeInput from 'react-input-autosize';
 import { parseValue } from './utility/parser/parser';
 
+const MDialog = Dialog as any;
 const onCloseDialog = () => {
     if (document.activeElement) {
         (document.activeElement as any).blur();
@@ -71,7 +72,7 @@ export default observer(() => {
         }
     }, [meta.shouldFocusFirst])
 
-    return <Dialog isShown={editor.modals.expression}
+    return <MDialog isShown={editor.modals.expression}
         hasHeader={false}
         hasFooter={false}
         preventBodyScrolling
@@ -122,7 +123,7 @@ export default observer(() => {
                 to add previous
                 </div>
         </div>
-    </Dialog>
+    </MDialog>
 })
 
 export const evalExpressionInObj = async (obj: any, opt = {
@@ -138,7 +139,6 @@ export const evalExpressionInObj = async (obj: any, opt = {
     })
     return res;
 }
-
 export const evalExpression = async (expr: string, opt = {
     useCache: false,
     local: true

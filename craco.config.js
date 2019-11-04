@@ -11,10 +11,6 @@ module.exports = {
   eslint: {
     enable: false
   },
-  babel: {
-    plugins: ['emotion']
-  },
-
   webpack: {
     alias: {},
     plugins: [new MonacoWebpackPlugin()],

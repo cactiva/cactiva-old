@@ -38,15 +38,15 @@ export default observer((trait: ICactivaTraitFieldProps) => {
           <input
             className={`cactiva-trait-input`}
             type="text"
-            onKeyDown={e => {
+            onKeyDown={(e:any) => {
               if (e.which === 13) (e.target as any).blur();
             }}
             placeholder={_.get(trait, "options.fields.name")}
             value={meta.value || ""}
-            onChange={e => {
+            onChange={(e:any) => {
               meta.value = e.target.value;
             }}
-            onFocus={e => {
+            onFocus={(e:any) => {
               e.target.select();
             }}
             onBlur={() => {
@@ -141,7 +141,7 @@ const ColorEl = observer((props: any) => {
         <input
           className={`cactiva-trait-input`}
           type="text"
-          onKeyDown={e => {
+          onKeyDown={(e:any) => {
             if (e.which === 13) (e.target as any).blur();
           }}
           value={metaColor.value || ""}
@@ -149,10 +149,10 @@ const ColorEl = observer((props: any) => {
             backgroundColor: metaColor.value,
             color: textColor(metaColor.value || "#000", "#fff", "#000")
           }}
-          onChange={e => {
+          onChange={(e:any) => {
             metaColor.value = e.target.value;
           }}
-          onFocus={e => {
+          onFocus={(e:any) => {
             e.target.select();
           }}
           onBlur={update}
@@ -261,7 +261,7 @@ const FontsEl = observer((props: any) => {
       <IconButton
         icon="folder-new"
         height={20}
-        onClick={e => {
+        onClick={(e:any) => {
           e.stopPropagation();
           metaFont.isShown = true;
         }}

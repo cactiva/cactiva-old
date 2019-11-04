@@ -136,11 +136,11 @@ export default observer((trait: ICactivaTraitFieldProps) => {
           type="text"
           value={meta.value || ""}
           placeholder={_.get(trait, "options.fields.name")}
-          onKeyDown={e => {
+          onKeyDown={(e:any) => {
             if (e.which === 13) (e.target as any).blur();
           }}
           onChange={onChange}
-          onFocus={e => {
+          onFocus={(e:any) => {
             e.target.select();
           }}
           onBlur={onBlur}

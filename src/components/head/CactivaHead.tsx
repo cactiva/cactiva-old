@@ -106,9 +106,9 @@ export default observer(({ editor }: any) => {
         <Dialog
           isShown={editor.modals.api}
           shouldCloseOnOverlayClick={!editor.modals.apiLock}
-          shouldCloseOnEscape={!editor.modals.apiLock}
+          shouldCloseOnEscapePress={!editor.modals.apiLock}
           hasFooter={false}
-          width={800}
+          width={800} 
           minHeightContent={600}
           hasHeader={false}
           contentContainerProps={{
