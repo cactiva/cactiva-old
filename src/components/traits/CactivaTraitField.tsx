@@ -1,4 +1,4 @@
-import { Alert, Menu, Pane, Popover, Text, Tooltip, Icon } from "evergreen-ui";
+import { Alert, Menu, Pane, Popover, Text, Tooltip, Icon, IconButton } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useRef } from "react";
@@ -9,6 +9,8 @@ import kinds from "./tags";
 import { generateSource } from "../editor/utility/parser/generateSource";
 import editor from "@src/store/editor";
 import { toJS } from "mobx";
+import { promptExpression } from "../editor/CactivaExpressionDialog";
+import { applyImport } from "../editor/utility/elements/tools";
 
 export interface ICactivaTraitFieldProps extends ICactivaTraitField {
   editor: any;
@@ -30,8 +32,6 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   const labelStyle = _.get(trait, `options.styles.label`, {});
   const rootStyle = _.get(trait, `options.styles.root`, {});
   const fieldName = _.get(trait, `options.fields.name`, null);
-
-
 
   return (
     <>
@@ -103,7 +103,6 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                       height: "18px",
                       padding: "0px",
                       display: "flex",
-
                       alignItems: "center",
                       justifyContent: "center",
                       ...fieldStyle,
@@ -122,7 +121,23 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                         position: "relative"
                       }}
                     >
-                      <Icon icon="function" size={13} color={"#666"} />
+                      <IconButton
+                        icon="function"
+                        height={20}
+                        flex={1}
+                        onClick={async () => {
+                          const exp = await promptExpression({
+                            returnExp: true,
+                            local: true,
+                            async: true,
+                            value: generateSource(_.get(trait, 'rawValue'))
+                          });
+                          if (exp.expression) {
+                            applyImport(exp.imports);
+                            trait.update(exp.expression);
+                          }
+                        }}
+                      />
                     </div>
                   </Pane>
                 </Tooltip>

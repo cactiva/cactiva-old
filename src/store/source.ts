@@ -158,6 +158,7 @@ export class SourceStore {
 
     try {
       const res = await api.post(`project/write-source?path=${this.path}`, {
+        raw: this.rootSelected ? 'y' : 'n',
         value: JSON.stringify(source),
         imports: this.imports
       });

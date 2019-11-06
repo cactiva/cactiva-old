@@ -1,27 +1,22 @@
 import "@src/App.scss";
 import CactivaEditor from "@src/components/editor/CactivaEditor";
-import { Pane, Text } from "evergreen-ui";
+import { Pane, Text, Spinner } from "evergreen-ui";
 import hotkeys from "hotkeys-js";
-import _ from "lodash";
+import { toJS } from "mobx";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect } from "react";
 import { DndProvider } from "react-dnd-cjs";
 import HTML5Backend from "react-dnd-html5-backend-cjs";
 import Split from "react-split";
-import CactivaTree, { tree, treeListMeta, reloadTreeList } from "./components/ctree/CactivaTree";
-import {
-  commitChanges,
-  findParentElementById,
-  prepareChanges,
-  removeElementById
-} from "./components/editor/utility/elements/tools";
+import useAsyncEffect from "use-async-effect";
+import CactivaTree, { reloadTreeList, tree, treeListMeta } from "./components/ctree/CactivaTree";
+import { commitChanges, prepareChanges, removeElementById } from "./components/editor/utility/elements/tools";
 import CactivaHead from "./components/head/CactivaHead";
+import { fetchCliStream } from "./components/head/cli/CactivaExpoCli";
 import CactivaTraits from "./components/traits/CactivaTraits";
 import api from "./libs/api";
 import editor from "./store/editor";
-import { toJS } from "mobx";
-import useAsyncEffect from "use-async-effect";
-import { fetchCliStream } from "./components/head/cli/CactivaExpoCli";
+import Start from "./components/projects/Start";
 
 export const fontFamily = '"SF UI Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"';
 
@@ -95,6 +90,7 @@ hotkeys("backspace, delete", (event, handler) => {
 export default observer(() => {
   const { current } = editor;
   const meta = useObservable({
+    init: false,
     currentPane: "props",
     sizeScreen: [15, 85]
   });
@@ -102,13 +98,16 @@ export default observer(() => {
   const traitPane = current ? current.traitPane : false;
 
   useAsyncEffect(async () => {
-    api.get("project/info").then(res => {
-      editor.name = res.app;
-      editor.cli.status = res.status;
-      if (editor.cli.status === "running") {
-        fetchCliStream();
-      }
-    });
+    const res = await api.get("project/info")
+    editor.name = res.app;
+    editor.cli.status = res.status;
+    if (!editor.name) {
+      meta.init = true;
+      return;
+    }
+    if (editor.cli.status === "running") {
+      fetchCliStream();
+    }
 
     await editor.load(
       localStorage.getItem("cactiva-current-path") || "/src/Home.tsx"
@@ -123,6 +122,7 @@ export default observer(() => {
       });
       await editor.load(file);
     }
+    meta.init = true;
   }, []);
 
   useEffect(() => {
@@ -130,7 +130,6 @@ export default observer(() => {
       editor.load("/src/Home.tsx");
     }
   }, [status]);
-
 
   useEffect(() => {
     if (renderFont) {
@@ -143,7 +142,10 @@ export default observer(() => {
     meta.sizeScreen = traitPane ? [15, 70, 15] : [15, 85];
   }, [traitPane]);
 
-  if (!editor.name || !editor.current) return null;
+  if (!meta.init) return <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center', display: 'flex' }}>
+    <Spinner size={45} />
+  </div>;
+  if (!editor.name || !editor.current) return <Start />;
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="cactiva-container">

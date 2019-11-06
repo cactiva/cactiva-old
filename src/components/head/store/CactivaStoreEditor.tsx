@@ -34,7 +34,7 @@ export default observer(() => {
     const cref = useRef(null as any);
     const reloadList = async () => {
         const res = await api.get("store/list");
-        meta.list = res.children;
+        meta.list = res.children || [];
 
         if (meta.list.length > 0) {
             load(monacoEdRef, meta.list[0].relativePath);
@@ -56,7 +56,7 @@ export default observer(() => {
     }
     useEffect(() => {
         const resize = () => {
-            if (cref.current) {
+            if (cref.current && monacoEdRef.current) {
                 meta.w = cref.current.offsetWidth;
                 meta.h = cref.current.offsetHeight;
                 monacoEdRef.current.layout();
@@ -218,40 +218,42 @@ export default observer(() => {
             </div>
         </div>
         <div className="content" ref={cref}>
-            <MonacoEditor
-                theme="vs-dark"
-                width={meta.w}
-                height={meta.h}
-                options={{ fontSize: 11 }}
-                value={meta.current.content}
-                editorWillMount={(monaco) => {
-                    if (editor.current) {
-                        editor.current.setupMonaco(monaco);
-                    }
-                    monacoRef.current = monaco;
-                }}
-                onChange={(value) => {
-                    if (meta.current.loaded) {
-                        meta.current.unsaved = true;
-                        meta.current.content = value;
-                    }
-                }}
-                editorDidMount={(ed: any, monaco: any) => {
-                    monacoEdRef.current = ed;
-                    ed.addAction({
-                        id: "cactiva-save",
-                        label: "Save",
-                        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S],
-                        run: async function (ed: any) {
-                            const res = await api.post(`store/writefile?path=${meta.current.path}`, { value: meta.current.content });
-                            meta.current.unsaved = false;
-                            return null;
+            {meta.list.length > 0 &&
+                <MonacoEditor
+                    theme="vs-dark"
+                    width={meta.w}
+                    height={meta.h}
+                    options={{ fontSize: 11 }}
+                    value={meta.current.content}
+                    editorWillMount={(monaco) => {
+                        if (editor.current) {
+                            editor.current.setupMonaco(monaco);
                         }
-                    });
-                    monacoEdRef.current.layout();
-                }}
-                language={"typescript"}
-            />
+                        monacoRef.current = monaco;
+                    }}
+                    onChange={(value) => {
+                        if (meta.current.loaded) {
+                            meta.current.unsaved = true;
+                            meta.current.content = value;
+                        }
+                    }}
+                    editorDidMount={(ed: any, monaco: any) => {
+                        monacoEdRef.current = ed;
+                        ed.addAction({
+                            id: "cactiva-save",
+                            label: "Save",
+                            keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S],
+                            run: async function (ed: any) {
+                                const res = await api.post(`store/writefile?path=${meta.current.path}`, { value: meta.current.content });
+                                meta.current.unsaved = false;
+                                return null;
+                            }
+                        });
+                        monacoEdRef.current.layout();
+                    }}
+                    language={"typescript"}
+                />
+            }
         </div>
 
         {meta.shown >= 0 && (

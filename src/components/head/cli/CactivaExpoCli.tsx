@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite";
 import React, { useRef } from 'react';
 import CactivaCli from './CactivaCli';
 import editor from "@src/store/editor";
+import CactivaProjectInfo from "./CactivaProjectInfo";
 
 const meta = observable({
     logText: "",
@@ -38,7 +39,7 @@ export default observer(({ editor, cliref }: any) => {
             }
         };
         exec();
-        timercli.current = setInterval(exec, 500);
+        // timercli.current = setInterval(exec, 500);
     };
     const terminal = useRef(null as any);
     if (cliref && cliref.current) {
@@ -49,60 +50,63 @@ export default observer(({ editor, cliref }: any) => {
     }
     return (
         <div className="project-popover">
-            <div className="console">
-                {meta.logText === "" && editor.cli.status === "stopped" ? (
-                    <div className="empty">
-                        <Icon icon="cell-tower" color="white" size={30} />
-                        <Text color="white" marginTop={10} size={300}>
-                            Please start the server
+            <div className={"project-console"}>
+                <div className="console">
+                    {meta.logText === "" && editor.cli.status === "stopped" ? (
+                        <div className="empty">
+                            <Icon icon="cell-tower" color="white" size={30} />
+                            <Text color="white" marginTop={10} size={300}>
+                                Please start the server
             </Text>
-                    </div>
-                ) : (
-                        <CactivaCli cliref={terminal} initialText={meta.logText} />
-                    )}
-            </div>
-            <div className="commands">
-                <Button
-                    size={300}
-                    userSelect="none"
-                    onClick={() => {
-                        (async () => {
-                            if (editor.cli.status === "stopped") {
-                                await api.get("project/start-server");
-                                editor.cli.status = "running";
-                                streamCLILog();
-                            } else {
-                                await api.get("project/stop-server");
-                                editor.cli.status = "stopped";
-                                clearInterval(timercli.current);
-                            }
-                            meta.logText = "";
-                            meta.url = "";
-                            if (terminal.current) {
-                                terminal.current.clear();
-                            }
-                        })();
-                    }}
-                >
-                    {editor.cli.status === "running" ? "Stop Server" : "Start Server"}
-                </Button>
-
-                {meta.url ? (
-                    <a href={meta.url} target="_blank">
-                        <Text size={300}>Open Web Preview</Text>
-                        <Icon icon="share" size={11} color="#999" />
-                    </a>
-                ) : editor.cli.status === "running" ? (
-                    <a>
-                        <Spinner size={18} color="#999" />
-                        <Text size={300}>Loading...</Text>
-                    </a>
-                ) : (
-                            <a>
-                                <Text size={300}>Preview not available</Text>
-                            </a>
+                        </div>
+                    ) : (
+                            <CactivaCli cliref={terminal} initialText={meta.logText} />
                         )}
+                </div>
+                <div className="commands">
+                    <Button
+                        size={300}
+                        userSelect="none"
+                        onClick={() => {
+                            (async () => {
+                                if (editor.cli.status === "stopped") {
+                                    await api.get("project/start-server");
+                                    editor.cli.status = "running";
+                                    streamCLILog();
+                                } else {
+                                    await api.get("project/stop-server");
+                                    editor.cli.status = "stopped";
+                                    clearInterval(timercli.current);
+                                }
+                                meta.logText = "";
+                                meta.url = "";
+                                if (terminal.current) {
+                                    terminal.current.clear();
+                                }
+                            })();
+                        }}
+                    >
+                        {editor.cli.status === "running" ? "Stop Server" : "Start Server"}
+                    </Button>
+
+                    {meta.url ? (
+                        <a href={meta.url} target="_blank">
+                            <Text size={300}>Open Web Preview</Text>
+                            <Icon icon="share" size={11} color="#999" />
+                        </a>
+                    ) : editor.cli.status === "running" ? (
+                        <a>
+                            <Spinner size={18} color="#999" />
+                            <Text size={300}>Loading...</Text>
+                        </a>
+                    ) : (
+                                <a>
+                                    <Text size={300}>Preview not available</Text>
+                                </a>
+                            )}
+                </div>
             </div>
+            <CactivaProjectInfo />
         </div>
     );
 });

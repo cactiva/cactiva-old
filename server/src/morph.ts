@@ -7,6 +7,7 @@ import { getImport } from "./libs/morph/getImport";
 import { getEntryPoint, parseJsx } from "./libs/morph/parseJsx";
 import { removeImports } from "./libs/morph/removeImports";
 import { replaceReturn } from "./libs/morph/replaceReturn";
+import jetpack = require("fs-jetpack");
 
 export class Morph {
   project: TProject = new TProject();
@@ -50,10 +51,18 @@ export class Morph {
   }
 
   getSourceFile(name: string, isAbsolutePath = false) {
-    return this.project.getSourceFileOrThrow(item => {
-      const itemName = (!isAbsolutePath ? this.getAppPath() : "") + name;
-      return item.getFilePath() === itemName;
-    });
+    try {
+      return this.project.getSourceFileOrThrow(item => {
+        const itemName = (!isAbsolutePath ? this.getAppPath() : "") + name;
+        return item.getFilePath() === itemName;
+      });
+    } catch (e) {
+      this.reload();
+      return this.project.getSourceFileOrThrow(item => {
+        const itemName = (!isAbsolutePath ? this.getAppPath() : "") + name;
+        return item.getFilePath() === itemName;
+      });
+    }
   }
 
   randomDigits() {
@@ -110,10 +119,7 @@ export class Morph {
   }
 
   createTempSource(source: string, callback: any) {
-    const sf = this.project.createSourceFile(
-      "__tempfile__.tsx",
-      source
-    );
+    const sf = this.project.createSourceFile("__tempfile__.tsx", source);
     let result = null as any;
     try {
       callback(sf);
@@ -167,24 +173,29 @@ export class Morph {
   }
 
   /************************ Singleton  **************************/
-  private static instance: Morph;
+  public static instances: { [key: string]: Morph } = {};
 
-  constructor() {
-    if (Morph.instance) {
+  constructor(name: string) {
+    if (Morph.instances[name]) {
       throw new Error("Use Singleton.getInstance() instead of new");
     }
   }
 
-  public static getInstance(): Morph {
-    if (!Morph.instance) {
-      Morph.instance = new Morph();
-      process.chdir(Morph.instance.getAppPath());
-      console.log(`Project loaded: ${Morph.instance.getAppPath()}`);
-      Morph.instance.project = new TProject({
-        tsConfigFilePath: path.join(".", "tsconfig.json")
-      });
+  public static getInstance(name: string): Morph {
+    if (!Morph.instances[name]) {
+      Morph.instances[name] = new Morph(name);
+      if (jetpack.exists(Morph.instances[name].getAppPath())) {
+        process.chdir(Morph.instances[name].getAppPath());
+        console.log(`Project loaded: ${Morph.instances[name].getAppPath()}`);
+        Morph.instances[name].project = new TProject({
+          tsConfigFilePath: path.join(".", "tsconfig.json")
+        });
+      } else {
+        delete Morph.instances[name];
+        throw new Error(`Project with name ${name} not found`);
+      }
     }
 
-    return Morph.instance;
+    return Morph.instances[name];
   }
 }

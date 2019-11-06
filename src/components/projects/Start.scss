@@ -1,0 +1,130 @@
+.start {
+  border: 1px solid #ccc;
+  width: 50%;
+  height: 60%;
+  min-height: 400px;
+  min-width: 600px;
+  border-radius: 9px;
+  box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.2);
+  position: relative;
+
+  .start-inner {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    border-radius: 5px;
+  }
+  &::before {
+    content: "";
+    opacity: 0.7;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    border-radius: 5px;
+    right: 0;
+    position: absolute;
+    background-image: url("/images/logo.png");
+    background-size: 500px 500px;
+    background-position: -130% -150%;
+    background-repeat: no-repeat;
+  }
+
+  .start-title {
+    display: flex;
+    flex-basis: 40%;
+    flex-direction: column;
+    user-select: none;
+
+    border-radius: 5px;
+    h1 {
+      margin: 10px 10px 0px 20px;
+      color: #179197;
+      background: linear-gradient(to right, #30cfd0 0%, #330867 100%);
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    span {
+      font-size: 13px;
+      color: #324587;
+      margin: 0px 0px 0px 20px;
+    }
+  }
+
+  .text {
+    flex: 1;
+  }
+  .projects {
+    flex: 1;
+    padding: 10px;
+    display: flex;
+
+    border-radius: 10px;
+    border-bottom-left-radius: 0px;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.6);
+    .list {
+      flex: 1;
+      overflow-y: auto;
+    }
+    .item {
+      padding: 5px 10px;
+      font-size: 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+
+      .more {
+        opacity: 0;
+      }
+
+      &:hover {
+        background: #eff9ff;
+
+        .more {
+          opacity: 1;
+        }
+      }
+
+      .title {
+        font-size: 15px;
+      }
+      .subtitle {
+        font-size: 10px;
+        color: #999;
+      }
+    }
+  }
+
+  .📦mb_24px {
+    margin-bottom: 10px !important;
+  }
+
+  input {
+    background: white;
+  }
+
+  label {
+    user-select: none;
+  }
+}
+
+.start-container {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  justify-content: center;
+  align-items: center;
+}

@@ -1,17 +1,12 @@
-/**
- * Server file for ExpressJS
- *
- * created by Sean Maxwell April 14, 2019
- */
+import * as bodyParser from "body-parser";
+import * as cors from "cors";
+import * as controllers from "./controllers";
 
-import * as bodyParser from 'body-parser';
-import * as cors from 'cors';
-import * as controllers from './controllers';
-
-import { Server } from '@overnightjs/core'; 
-import { Logger } from '@overnightjs/logger';
-import * as express from 'express';
-import { execPath } from './config';
+import { Server } from "@overnightjs/core";
+import { Logger } from "@overnightjs/logger";
+import * as express from "express";
+import { execPath } from "./config";
+import { initWs } from "./controllers/WsRoute";
 
 class MainServer extends Server {
   private readonly SERVER_STARTED = `Cactiva: `;
@@ -36,11 +31,12 @@ class MainServer extends Server {
   }
 
   public start(port: number): void {
-    this.app.use(express.static(execPath + '/res/public'));
-    this.app.listen(port, () => {
+    this.app.use(express.static(execPath + "/res/public"));
+    initWs(this.app).listen(port, () => {
       Logger.Imp(this.SERVER_STARTED + `http://localhost:${port}`);
     });
+
   }
-} 
+}
 
 export default MainServer;

@@ -29,7 +29,7 @@ export default class extends CactivaTag {
         {
           name: "Date",
           path: "date",
-          kind: SyntaxKind.CactivaCode,
+          kind: SyntaxKind.JsxExpression,
           options: {
             styles: styles
           }
@@ -37,7 +37,7 @@ export default class extends CactivaTag {
         {
           name: "Min",
           path: "min",
-          kind: SyntaxKind.CactivaCode,
+          kind: SyntaxKind.JsxExpression,
           options: {
             styles: styles
           }
@@ -45,7 +45,7 @@ export default class extends CactivaTag {
         {
           name: "Max",
           path: "max",
-          kind: SyntaxKind.CactivaCode,
+          kind: SyntaxKind.JsxExpression,
           options: {
             styles: styles
           }

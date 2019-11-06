@@ -228,11 +228,11 @@ const CactivaEditorSource = observer((props: any) => {
           className="action-btn"
           style={{ padding: 0, opacity: 0.7, border: 0 }}
         >
-          <Text>Apply Changes: Ctrl / ⌘ + Enter</Text>
+          {!editor.rootSelected ? <Text>Apply Changes: Ctrl / ⌘ + Enter</Text> : <Text>Raw Source (Save Ctrl / ⌘ + S)</Text>}
         </div>
       </div>
     );
-    if (editor.selectedSource.length > 0 && meta.showAction) {
+    if (!editor.rootSelected && editor.selectedSource.length > 0 && meta.showAction) {
       const actionClick = () => {
         reloadEditorSource(false);
         monacoEdRef.current.setValue(meta.selectedSource);

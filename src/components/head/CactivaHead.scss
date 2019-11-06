@@ -2,11 +2,18 @@
   background: #000;
   color: white;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex: 1;
   width: 700px;
   height: 450px;
   padding: 2px;
+
+  .project-console {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
   .console {
     flex: 1;
     padding: 5px;
@@ -25,6 +32,8 @@
     border-radius: 4px;
     align-items: "center";
     display: flex;
+    margin-right: -10px;
+    padding-right: 10px;
     flex-direction: row;
 
     > a {

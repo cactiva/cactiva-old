@@ -44,8 +44,8 @@ export default observer(({ value, onChange, isShown, onDismiss }: any) => {
         .replace("require('", "")
         .replace("@src/assets/images/", "")
         .replace("')", "");
-      meta.isShown = isShown;
     }
+    meta.isShown = isShown;
   }, [value, isShown]);
 
   useEffect(() => {

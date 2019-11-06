@@ -75,11 +75,6 @@ export const parseProps = (node: any): any => {
 
 export const generateValueByKind = (kind: number, value: any): any => {
   switch (kind) {
-    case SyntaxKind.CactivaCode:
-      if (typeof value !== "string") {
-        value = JSON.stringify(value) || "";
-      }
-      break;
     case SyntaxKind.NumericLiteral:
       if (typeof value !== "number") {
         try {

@@ -3,15 +3,13 @@ import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import { ICactivaTrait, ICactivaTraitField } from "../editor/utility/classes";
-import { commitChanges, prepareChanges, uuid, setProp } from "../editor/utility/elements/tools";
+import { commitChanges, prepareChanges, setProp, uuid } from "../editor/utility/elements/tools";
 import { kindNames } from "../editor/utility/kinds";
 import { generateValueByKind, parseValue } from "../editor/utility/parser/parser";
 import { isTag } from "../editor/utility/tagmatcher";
 import tags from "../editor/utility/tags";
 import CactivaTraitField from "./CactivaTraitField";
 import "./traits.scss";
-import { SyntaxKind } from "../editor/utility/syntaxkinds";
-import { toJS } from "mobx";
 
 export default observer(({ editor }: any) => {
   const traits = _.get(editor, "selected.tag.traits", []) as ICactivaTrait[];
@@ -162,7 +160,8 @@ const TraitFieldEl = observer((props: any) => {
         const currentValue = _.get(selected.source.props, trait.path);
 
         let valueByKind = null;
-        if (typeof value === "function") {
+        if (value.kind) valueByKind = value;
+        else if (typeof value === "function") {
           valueByKind = generateValueByKind(kind, value(currentValue));
         } else {
           valueByKind = generateValueByKind(kind, value);

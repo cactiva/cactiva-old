@@ -47,7 +47,7 @@ export default class extends CactivaTag {
         {
           name: "Value",
           path: "value",
-          kind: SyntaxKind.CactivaCode,
+          kind: SyntaxKind.JsxExpression,
           options: {
             styles: styles
           }

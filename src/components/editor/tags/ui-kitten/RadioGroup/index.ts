@@ -34,7 +34,7 @@ export default class extends CactivaTag {
         {
           name: "Add Radio",
           path: "children",
-          kind: SyntaxKind.CactivaCode,
+          kind: SyntaxKind.JsxExpression,
           options: {
             styles: styles
           }

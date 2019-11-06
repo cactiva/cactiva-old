@@ -28,7 +28,7 @@ export default class extends CactivaTag {
         {
           name: "Source",
           path: "source",
-          kind: SyntaxKind.CactivaCode,
+          kind: SyntaxKind.JsxExpression,
           mode: "image",
           options: {
             styles: styles

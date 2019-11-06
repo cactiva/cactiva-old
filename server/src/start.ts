@@ -12,7 +12,6 @@ if (config.get('app') === "") {
   console.error('*** Error: app folder is empty');
 } else {
   const MainServer = require('./MainServer').default;
-  const { Morph } = require('./morph');
 
   fs.access(__dirname, fs.constants.W_OK, function (err: any) {
     if (err) {
@@ -26,8 +25,6 @@ if (config.get('app') === "") {
       open('http://127.0.0.1:8080');
     }, 1500);
   }
-
-  Morph.getInstance();
 
   const server = new MainServer();
   server.start(config.get('port'));

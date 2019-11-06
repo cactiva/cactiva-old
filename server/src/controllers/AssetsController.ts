@@ -6,17 +6,17 @@ import * as fs from "fs";
 import * as multer from "multer";
 import jetpack = require("fs-jetpack");
 
-const morph = Morph.getInstance();
-const images = multer.diskStorage({
-  destination: path.join(morph.getAppPath(), "src/assets/images"),
-  filename: (req, file, callback) => {
-    callback(null, file.originalname);
-  }
-});
 @Controller("api/assets")
 export class AssetsController {
   @Post("upload")
   private _upload(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
+    const images = multer.diskStorage({
+      destination: path.join(morph.getAppPath(), "src/assets/images"),
+      filename: (req, file, callback) => {
+        callback(null, file.originalname);
+      }
+    });
     const uploadMul = multer({ storage: images });
     const reqHandler = uploadMul.single("file");
     reqHandler(req, res, e => {
@@ -32,6 +32,13 @@ export class AssetsController {
 
   @Post("upload-font")
   private _uploadFont(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
+    const images = multer.diskStorage({
+      destination: path.join(morph.getAppPath(), "src/assets/images"),
+      filename: (req, file, callback) => {
+        callback(null, file.originalname);
+      }
+    });
     const uploadMul = multer({
       storage: multer.diskStorage({
         destination: path.join(morph.getAppPath(), "src/assets/fonts"),
@@ -59,6 +66,7 @@ export class AssetsController {
 
   @Get("list")
   private _list(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     const tree = jetpack.inspectTree(
       path.join(morph.getAppPath(), "src/assets/images"),
       {
@@ -71,6 +79,7 @@ export class AssetsController {
 
   @Get("font-list")
   private _fontList(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     const tree: any = jetpack.inspectTree(
       path.join(morph.getAppPath(), "src/assets/fonts"),
       {
@@ -82,6 +91,7 @@ export class AssetsController {
 
   @Post("delete")
   private _delete(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     res.setHeader("Content-Type", "application/json");
     res.statusCode = 200;
     const filename = req.body.filename;
@@ -106,6 +116,7 @@ export class AssetsController {
 
   @Post("delete-font")
   private _deleteFont(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     res.setHeader("Content-Type", "application/json");
     res.statusCode = 200;
     const filename = req.body.filename;
@@ -130,6 +141,7 @@ export class AssetsController {
 
   @Get(":fileName")
   private readFile(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     const filepath = path.join(
       morph.getAppPath(),
       "src/assets/images",
@@ -144,6 +156,7 @@ export class AssetsController {
 
   @Get("font/:fileName")
   private readFontFile(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     const filepath = path.join(
       morph.getAppPath(),
       "src/assets/fonts",

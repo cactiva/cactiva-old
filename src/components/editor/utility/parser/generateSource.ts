@@ -3,7 +3,10 @@ import { SyntaxKind } from "../syntaxkinds";
 import { toJS } from "mobx";
 import { getToken } from "./generateExpression";
 
-export const generateSource = (node: any): string => {
+export const generateSource = (
+  node: any,
+  options?: { isProps: boolean }
+): string => {
   if (!node) return "";
 
   const kind = node.kind;
@@ -35,6 +38,9 @@ export const generateSource = (node: any): string => {
     case SyntaxKind.AsExpression:
       return `${generateSource(node.value)} as any`;
     case SyntaxKind.JsxExpression:
+      if (_.get(options, "isProps") === true) {
+        return generateSource(node.value);
+      }
       return `{${generateSource(node.value)}}`;
     case SyntaxKind.ElementAccessExpression:
       return `${generateSource(node.exp)}[${generateSource(node.argExp)}]`;
@@ -59,9 +65,9 @@ export const generateSource = (node: any): string => {
       }
 
       const async = _.indexOf(node.modifiers, SyntaxKind.AsyncKeyword) >= 0;
-     
+
       return (() => {
-        return `${async ? 'async ' : ''}(${(node.params || []).join(",")}) => { 
+        return `${async ? "async " : ""}(${(node.params || []).join(",")}) => { 
 ${body}
 }`;
       })();
@@ -76,7 +82,7 @@ ${body}
     case SyntaxKind.JsxElement:
       return (() => {
         return `<${node.name} ${_.map(node.props, (e, name) => {
-          return `${name}={${generateSource(e)}}`;
+          return `${name}={${generateSource(e, { isProps: true })}}`;
         }).join(" ")}>${(node.children || [])
           .map((e: any) => {
             const res = generateSource(e);
@@ -87,7 +93,7 @@ ${body}
     case SyntaxKind.JsxSelfClosingElement:
       return (() => {
         return `<${node.name} ${_.map(node.props, (e, name) => {
-          return `${name}={${generateSource(e)}}`;
+          return `${name}={${generateSource(e, { isProps: true })}}`;
         }).join("")}/>`;
       })();
   }

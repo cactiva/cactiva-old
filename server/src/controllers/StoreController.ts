@@ -8,11 +8,11 @@ import { getHooks } from "../libs/morph/getHooks";
 import { parseJsx } from "../libs/morph/parseJsx";
 import { Morph } from "../morph";
 
-let morph = Morph.getInstance();
 @Controller("api/store")
 export class StoreController {
   @Get("list")
   private list(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     morph.reload();
     const tree: any = jetpack.inspectTree(
       path.join(morph.getAppPath(), "src/stores"),
@@ -26,6 +26,7 @@ export class StoreController {
 
   @Get("newfile")
   private newfile(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     const sf = morph.project.createSourceFile(
       morph.getAppPath() + req.query.path,
       `import { observable } from "mobx";
@@ -45,6 +46,7 @@ export default observable({
 
   @Get("readfile")
   private readfile(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     const sf = morph.project.getSourceFile(
       req.query.path.replace("./", morph.getAppPath() + "/src/stores/")
     ) as SourceFile;
@@ -54,6 +56,7 @@ export default observable({
 
   @Get("definition")
   private definition(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     const files = morph.project.getSourceFiles();
     const result: any = {};
     files
@@ -108,6 +111,7 @@ export default observable({
 
   @Post("writefile")
   private writefile(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     const sf = morph.project.createSourceFile(
       req.query.path.replace("./", morph.getAppPath() + "/src/stores/"),
       req.body.value,

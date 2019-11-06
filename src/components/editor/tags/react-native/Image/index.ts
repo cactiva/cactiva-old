@@ -11,11 +11,11 @@ const styles = {
 export default class extends CactivaTag {
   static tagName = "Image";
   static from = "react-native";
-  static insertTo ="";
+  static insertTo = "";
   static structure = {
     kind: SyntaxKind.JsxElement,
     name: "Image",
-    props: {},
+    props: { fieldType: { kind: SyntaxKind.StringLiteral, value: "'image'" } },
     children: []
   };
   static traits = [
@@ -25,7 +25,7 @@ export default class extends CactivaTag {
         {
           name: "Source",
           path: "source",
-          kind: SyntaxKind.StringLiteral,
+          kind: SyntaxKind.CallExpression,
           mode: "image",
           options: {
             styles
@@ -45,22 +45,6 @@ export default class extends CactivaTag {
               { value: "repeat", label: "Repeat" },
               { value: "center", label: "Center" }
             ]
-          }
-        },
-        {
-          name: "Height",
-          path: "height",
-          kind: SyntaxKind.NumericLiteral,
-          options: {
-            styles
-          }
-        },
-        {
-          name: "Width",
-          path: "width",
-          kind: SyntaxKind.NumericLiteral,
-          options: {
-            styles
           }
         },
         {

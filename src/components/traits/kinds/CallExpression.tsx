@@ -22,10 +22,8 @@ export default observer((trait: ICactivaTraitFieldProps) => {
     e.target.select();
   };
   const onChangeImage = (v: any) => {
-    if (Array.isArray(meta.value)) {
-      meta.value[0] = v;
-      trait.update({ expression: 'require', arguments: meta.value });
-    }
+    meta.value = [v];
+    trait.update({ expression: 'require', arguments: meta.value });
   };
   const onDismissImage = (v: any) => (meta.isShown = v);
 

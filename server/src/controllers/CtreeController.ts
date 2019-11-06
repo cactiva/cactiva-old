@@ -5,11 +5,11 @@ import * as jetpack from "fs-jetpack";
 import * as path from "path";
 import * as fs from "fs";
 
-let morph = Morph.getInstance();
 @Controller("api/ctree")
 export class CtreeController {
   @Get("list")
   private list(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     morph.reload();
     const tree: any = jetpack.inspectTree(
       path.join(morph.getAppPath(), "src"),
@@ -31,6 +31,7 @@ export class CtreeController {
 
   @Get("duplicate")
   private duplicate(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     morph.project.resolveSourceFileDependencies();
     const from = path.join(morph.getAppPath(), req.query.path);
     const to = path.join(morph.getAppPath(), req.query.to);
@@ -46,6 +47,7 @@ export class CtreeController {
 
   @Get("newdir")
   private newdir(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     const to = path.join(morph.getAppPath(), req.query.path);
     morph.project.createDirectory(to);
     morph.project.saveSync();
@@ -54,6 +56,7 @@ export class CtreeController {
 
   @Get("newfile")
   private newfile(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     const sf = morph.project.createSourceFile(
       morph.getAppPath() + req.query.path,
       ` import React from "react";
@@ -80,6 +83,7 @@ export default observer(() => {
 
   @Post("newfile")
   private newfilebody(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     const source = ` import React from "react";
     import { observer, useObservable } from "mobx-react-lite";
     import { View } from "react-native";
@@ -112,6 +116,7 @@ export default observer(() => {
 
   @Get("move")
   private move(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     morph.project.resolveSourceFileDependencies();
     const from = path.join(morph.getAppPath(), req.query.old);
     const to = path.join(morph.getAppPath(), req.query.new);
@@ -134,6 +139,7 @@ export default observer(() => {
 
   @Get("delete")
   private delete(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     morph.project.resolveSourceFileDependencies();
     let p = path.join(morph.getAppPath(), req.query.path);
     if (fs.lstatSync(p).isDirectory()) {

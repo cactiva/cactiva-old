@@ -6,11 +6,11 @@ import { SourceFile, SyntaxKind } from "ts-morph";
 import { parseJsx } from "../libs/morph/parseJsx";
 import { Morph } from "../morph";
 
-let morph = Morph.getInstance();
 @Controller("api/api")
 export class ApiController {
   @Get("list")
   private list(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     morph.reload();
     const tree: any = jetpack.inspectTree(
       path.join(morph.getAppPath(), "src/api"),
@@ -24,6 +24,7 @@ export class ApiController {
 
   @Get("newfile")
   private newfile(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     const sf = morph.project.createSourceFile(
       morph.getAppPath() + req.query.path,
       `import { createApi } from "@src/libs/utils/api";
@@ -53,6 +54,7 @@ export default createApi({
 
   @Get("readfile")
   private readfile(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     const sf = morph.project.getSourceFile(
       req.query.path.replace("./", morph.getAppPath() + "/src/api/")
     ) as SourceFile;
@@ -72,6 +74,7 @@ export default createApi({
 
   @Post("parse")
   private parse(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     morph.createTempSource(req.body.value, (sf: SourceFile) => {
       const e = sf.getFirstChildByKind(SyntaxKind.ExportAssignment);
       res.send({
@@ -86,6 +89,7 @@ export default createApi({
 
   @Post("writefile")
   private writefile(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
     const sf = morph.project.createSourceFile(
       req.query.path.replace("./", morph.getAppPath() + "/src/api/"),
       req.body.value,

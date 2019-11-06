@@ -83,7 +83,8 @@ export default observer(() => {
     const cref = useRef(null as any);
     const reloadList = async () => {
         const res = await api.get("api/list");
-        meta.list = res.children.filter((e: any) => e.name !== "index.ts");
+
+        meta.list = (res.children || []).filter((e: any) => e.name !== "index.ts");
         if (meta.list.length > 0) {
             await load(monacoEdRef, meta.list[0].relativePath);
         }
@@ -173,6 +174,7 @@ export default observer(() => {
                 > <Icon icon={"plus"} size={11} color={"#aaa"} />
                 </Button>
             </div>
+
             <div className="list-items">
                 {meta.list.filter((item: any) => {
                     if (meta.filter.length > 0)
@@ -284,7 +286,7 @@ export default observer(() => {
                 })}
             </div>
         </div>
-        <div className="content-container">
+        {meta.list.length > 0 && <div className="content-container">
             <Tablist>
                 {meta.current.unsaved && (
                     <div style={{
@@ -385,6 +387,7 @@ export default observer(() => {
                 }
             </div>
         </div>
+        }
 
         {meta.shown >= 0 && (
             <div

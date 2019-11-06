@@ -32,7 +32,7 @@ export default class extends CactivaTag {
         {
           name: "On Scroll",
           path: "onScroll",
-          kind: SyntaxKind.CactivaCode,
+          kind: SyntaxKind.JsxExpression,
           options: {
             styles: styles
           }
