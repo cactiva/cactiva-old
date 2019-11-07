@@ -8,7 +8,6 @@ import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import CactivaCli from "../CactivaCli";
 import "./CactivaProject.scss";
-import { toJS } from "mobx";
 
 const start = async (name: string, ref: any) => {
     const ed = (editor as any)[name];

@@ -132,7 +132,7 @@ export default observer(() => {
                                         </Menu.Item>
                                     </Menu></div>}>
                                     {({ toggle, getRef, isShown }: any) => {
-                                        return <IconButton className="more" innerRef={getRef}
+                                        return <IconButton className="more" style={{ opacity: meta.showMenu === key ? 1 : undefined }} innerRef={getRef}
                                             onClick={() => {
                                                 toggle();
                                                 meta.showMenu = key;
