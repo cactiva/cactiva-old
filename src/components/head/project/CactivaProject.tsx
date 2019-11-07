@@ -15,10 +15,42 @@ const start = async (name: string, ref: any) => {
     ed.status = "starting"
     const res = await api.get(`project/start-${name}`);
     if (res.status === "ok") {
+        ed.logs = "";
         api.stream(`${name}-${editor.name}`, (msg: any) => {
             ed.logs += msg.data;
-            ref.current.write(msg.data);
+            if (ref.current)
+                ref.current.write(msg.data);
+
+            if (name === 'expo') {
+                parseExpoMessage(ed.logs);
+            }
         })
+    }
+}
+
+
+const stop = async (name: string, ref: any) => {
+    const ed = (editor as any)[name];
+    const res = await api.get(`project/stop-${name}`);
+    if (res.status === "ok") {
+        ed.status = "stopped";
+        ed.logs = "";
+    }
+}
+
+const parseExpoMessage = async (msg: string) => {
+    editor.expo.url = "";
+    if (msg.indexOf("Webpack on port") >= 0) {
+        editor.expo.url = `http://localhost:${msg
+            .split("Webpack on port")[1]
+            .split("in")[0]
+            .trim()}`;
+    }
+
+    if (msg.indexOf("running at exp://") >= 0) {
+        const host = msg.split("running at exp://")[1].split(":")[0];
+        if (host)
+            editor.expo.url = editor.expo.url.replace('localhost', host);
     }
 }
 
@@ -47,8 +79,9 @@ export default observer(() => {
                 })
             }
         })
-        console.log(toJS(editor.settings));
     }, [])
+
+
 
     return <div className="cactiva-dialog-editor">
         <div className="cactiva-project" style={{ fontFamily: fontFamily }}>
@@ -84,12 +117,14 @@ export default observer(() => {
                     <Button className="small-btn" onClick={() => {
                         if (ed.status === "stopped") {
                             start(service, refs[service]);
+                        } else {
+                            stop(service, refs[service]);
                         }
                     }}>{ed.status === "stopped" ? "Start" : "Stop"} </Button>
                 </div>
                 <div className="cli">
                     <div className="cli-content">
-                        {service === 'expo' &&
+                        {service === 'expo' && ed.status !== "stopped" &&
                             <CactivaCli cliref={refs.expo} initialText={editor.expo.logs} />}
 
                         {service === 'hasura' &&

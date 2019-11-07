@@ -33,6 +33,14 @@
     background-position: -350px 110px;
     background-repeat: no-repeat;
   }
+  .small-btn {
+    padding: 0px 5px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 10px;
+    margin: 10px 20px;
+    align-self: flex-start;
+  }
 
   .start-title {
     display: flex;

@@ -1,8 +1,8 @@
 import api from "@src/libs/api";
-import { Button, TextInputField } from "evergreen-ui";
+import { Button, TextInputField, Icon } from "evergreen-ui";
 import React from "react";
 import "./Start.scss";
-import { observer } from "mobx-react-lite";
+import { observer, useObservable } from "mobx-react-lite";
 
 export default observer(({ form, onCancel, onSubmit, disable = [] }: any) => {
     return <div className="projects">
@@ -19,15 +19,24 @@ export default observer(({ form, onCancel, onSubmit, disable = [] }: any) => {
             }} flexBasis={80} marginLeft={10} />
         </div>
         <div style={{ display: "flex", flexDirection: "row" }}>
-            <TextInputField label={"Username"} value={form.db.username} onChange={(e: any) => {
-                form.db.username = (e.target.value);
+            <TextInputField label={"Username"} value={form.db.user} onChange={(e: any) => {
+                form.db.user = (e.target.value);
             }} flexBasis={80} />
             <TextInputField label={"Password"} value={form.db.password} onChange={(e: any) => {
                 form.db.password = (e.target.value);
             }} flexBasis={80} marginLeft={10} />
-            <TextInputField label={"Database Name"} value={form.db.name} onChange={(e: any) => {
-                form.db.name = (e.target.value);
+            <TextInputField label={"Database Name"} value={form.db.database} onChange={(e: any) => {
+                form.db.database = (e.target.value);
             }} flex={1} marginLeft={10} />
+
+            <Button marginLeft={10} marginTop={24} onClick={async () => {
+                const res = await api.post("project/test-db", form.db);
+                if (res.status !== 'ok') {
+                    alert(res.status + '\n' + (res.reason || ""));
+                } else {
+                    alert("Database Connected!");
+                }
+            }}>Test Db <Icon icon={"swap-horizontal"} size={14} marginLeft={5} /></Button>
         </div>
         <div style={{ display: "flex", flexDirection: "row" }}>
             <TextInputField label={"API Host"} value={form.apiUrl} onChange={(e: any) => {

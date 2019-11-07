@@ -22,7 +22,6 @@ class EditorStore {
   @observable path = "";
   @observable status = "loading";
   @observable copied: any = null;
-  @observable previewUrl = "";
 
   @observable modals = {
     store: false,
@@ -54,9 +53,9 @@ class EditorStore {
     db: {
       port: "5432",
       host: "localhost",
-      username: "postgres",
+      user: "postgres",
       password: "postgres",
-      name: "postgres"
+      database: "postgres"
     }
   };
 
@@ -124,6 +123,19 @@ class EditorStore {
     const apiPath = "/project/read-source?path=";
     try {
       const res = await Axios.get(`${baseUrl}${apiPath}${path}`);
+      this.expo = {
+        status: "stopped",
+        url: "",
+        logs: ""
+      };
+      this.backend = {
+        status: "stopped",
+        logs: ""
+      };
+      this.hasura = {
+        status: "stopped",
+        logs: ""
+      };
       this.sources[path] = new SourceStore();
       this.sources[path].path = path;
       this.sources[path].source = res.data.component;

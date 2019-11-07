@@ -3,13 +3,12 @@ import { Request, Response } from "express";
 import { Morph } from "../morph";
 import config, { execPath } from "../config";
 import * as execa from "execa";
-import * as cp from "child_process";
-import * as pstree from "ps-tree";
 import * as path from "path";
 import * as fs from "fs";
 import * as download from "download";
 import jetpack = require("fs-jetpack");
 import stream, { streams } from "../stream";
+const { Client } = require("pg");
 
 @Controller("api/project")
 export class ProjectController {
@@ -131,29 +130,12 @@ export class ProjectController {
   @Get("stop-expo")
   private async stopExpo(req: Request, res: Response) {
     const st = streams[`expo-${req.query.project}`];
-    if (st && st.cli) {
-      const pid = st.cli.pid;
-      pstree(pid, (err: any, children: readonly any[]) => {
-        if (process.platform !== "win32") {
-          cp.spawn(
-            "kill",
-            ["-9"].concat(
-              children.map(function(p) {
-                return p.PID;
-              })
-            )
-          );
-        }
-
-        st.cli.cancel();
-        st.cli = null;
-        st.close();
-
-        res.status(200).json({
-          status: "ok"
-        });
-      });
+    if (st) {
+      st.close();
     }
+    res.status(200).json({
+      status: "ok"
+    });
   }
 
   @Get("load")
@@ -221,17 +203,10 @@ export class ProjectController {
 
         await git;
 
-        await jetpack.removeAsync(
-          path.join(execPath, "app", req.body.name, "src", "libs")
-        );
-        git = execa(
-          "git",
-          ["clone", "https://github.com/cactiva/cactiva-libs", "libs"],
-          {
-            all: true,
-            cwd: path.join(execPath, "app", req.body.name, "src")
-          } as any
-        );
+        git = execa("git", ["submodule", "update", "--init", "--recursive"], {
+          all: true,
+          cwd: path.join(execPath, "app", req.body.name)
+        } as any);
 
         if (git.all) {
           git.all.on("data", e => {
@@ -259,12 +234,14 @@ export class ProjectController {
           path.join(execPath, "app", req.body.name, "settings.json"),
           JSON.stringify(req.body)
         );
-        s.send("--- Downloading Hasura ---");
+        s.send("--- Downloading Hasura ---\n\n");
 
         const hasura = await download(
           "https://github.com/cactiva/hasura-static/raw/master/linux-amd64"
         ).on("downloadProgress", progress => {
-          s.send(progress.percent);
+          s.send(
+            `Download Progress: ${Math.round(progress.percent * 100)}%` + "\r"
+          );
         });
         fs.writeFileSync(
           path.join(execPath, "app", req.body.name, "hasura"),
@@ -272,13 +249,29 @@ export class ProjectController {
         );
 
         config.set("app", req.body.name);
-        this.creating.splice(this.creating.indexOf(name), 1);
+        this.creating.splice(this.creating.indexOf(req.body.name), 1);
 
-        s.send("--- DONE ---");
+        s.send("\n\n--- DONE ---");
         s.close();
       })();
     }
 
     res.status(200).send({ status: "ok" });
+  }
+
+  @Post("test-db")
+  private async testDb(req: Request, res: Response) {
+    const client = new Client(req.body);
+    try {
+      await client.connect();
+      res.status(200).send({
+        status: "ok"
+      });
+    } catch (e) {
+      res.status(200).send({
+        status: "failed",
+        reason: e.message
+      });
+    }
   }
 }

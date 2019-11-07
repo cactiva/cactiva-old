@@ -18,7 +18,13 @@ export default observer(() => {
             name: "",
             apiUrl: window.location.toString(),
             hasuraSecret: "hasura123",
-            db: { port: "5432", host: "localhost", username: "postgres", password: "postgres", name: "postgres" },
+            db: {
+                port: "5432",
+                host: "localhost",
+                user: "postgres",
+                password: "postgres",
+                database: "postgres"
+            },
         }
     })
     useAsyncEffect(async () => {
@@ -34,14 +40,22 @@ export default observer(() => {
             <div className="start-inner">
                 <div className="start-title">
                     <h1>Cactiva</h1>
-                    <span>Start or load a project</span>
+                    <span>{meta.mode === 'creating' ? 'Creating new project...' : 'Start or load a project'}</span>
+
+                    {meta.mode === 'creating' && <>
+                        <div className="small-btn">
+                            Or
+                        <Button className="small-btn" style={{ marginLeft: 5 }} onClick={() => { meta.mode = 'choose' }}>
+                                Load  a  Project
+                            </Button>
+                        </div></>}
                 </div>
                 {({
                     loading: <div className="center-loading"><div>
                         <Spinner size={18} margin={5} />
                         Loading
                     </div></div>,
-                    creating: <div style={{ padding: '10px' }}>
+                    creating: <div style={{ padding: '10px', borderRadius: 5, background: '#000', margin: '25px 0px' }}>
                         <CactivaCli cliref={terminal} initialText={meta.consoleText} />
                     </div>,
                     new: <CactivaProjectForm form={meta.new}
@@ -53,12 +67,18 @@ export default observer(() => {
                                 alert("Please fill the name");
                                 return;
                             }
+
+                            const res = await api.post("project/test-db", meta.new.db);
+                            if (res.status !== 'ok') {
+                                alert(res.status + '\n' + (res.reason || ""));
+                                return;
+                            }
                             meta.mode = "creating"
                             await api.post('project/new-project', meta.new);
                             api.stream('new-project-' + meta.new.name, (ev: any) => {
                                 terminal.current.write(ev.data);
                             }, () => {
-                                window.location.reload();
+                                loadProject();
                             })
                         }}
                     />,
@@ -74,6 +94,16 @@ export default observer(() => {
                                             await api.get(`project/load?name=${item.name}`)
                                             await loadProject();
                                             meta.mode = "choose";
+                                        }
+
+                                        if (item.status === "Creating") {
+                                            meta.mode = "creating";
+                                            api.stream('new-project-' + item.name, (ev: any) => {
+                                                terminal.current.write(ev.data);
+                                            }, () => {
+                                                item.status = "Loaded";
+                                                loadProject();
+                                            })
                                         }
                                     }}>
                                     <div className="title">{item.name}</div>
@@ -106,7 +136,6 @@ export default observer(() => {
                                             onClick={() => {
                                                 toggle();
                                                 meta.showMenu = key;
-                                                console.log("ASDAS")
                                             }}
                                             appearance="minimal"
                                             icon={"more"} />
