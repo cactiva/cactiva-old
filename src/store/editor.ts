@@ -49,7 +49,13 @@ class EditorStore {
 
   @observable settings: any = {
     name: "",
-    apiUrl: window.location,
+    backend: {
+      port: "11000"
+    },
+    hasura: {
+      port: "10000",
+      secret: "hasura123"
+    },
     db: {
       port: "5432",
       host: "localhost",
@@ -123,19 +129,6 @@ class EditorStore {
     const apiPath = "/project/read-source?path=";
     try {
       const res = await Axios.get(`${baseUrl}${apiPath}${path}`);
-      this.expo = {
-        status: "stopped",
-        url: "",
-        logs: ""
-      };
-      this.backend = {
-        status: "stopped",
-        logs: ""
-      };
-      this.hasura = {
-        status: "stopped",
-        logs: ""
-      };
       this.sources[path] = new SourceStore();
       this.sources[path].path = path;
       this.sources[path].source = res.data.component;

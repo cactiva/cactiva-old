@@ -153,6 +153,23 @@ export const generateExpressionArray = (node: any): any[] => {
       return [node.expression, `(`, ...args, `)`];
     case SyntaxKind.PropertyAccessExpression:
       return [node.value];
+    case SyntaxKind.ArrayLiteralExpression:
+      return (() => {
+        const result = [] as any;
+        const keys = _.keys(node.value);
+        keys.map((key, idx) => {
+          if (key.indexOf("_spread_") === 0) {
+            result.push(`...`);
+            result.push(generateExpressionArray(node.value[key]));
+          } else {
+            const isFirstKey = idx === 0;
+            const child = generateExpressionArray(node.value[key]);
+            result.push(`${!isFirstKey ? "," : ""}`);
+            child.map(v => result.push(child));
+          }
+        });
+        return [`[`, ...result, `]`];
+      })();
     case SyntaxKind.ObjectLiteralExpression:
       return (() => {
         const result = [] as any;
@@ -201,7 +218,7 @@ export const generateExpressionArray = (node: any): any[] => {
       return (() => {
         const result = [];
         const async = _.indexOf(node.modifiers, SyntaxKind.AsyncKeyword) >= 0;
-        result.push(`${async ? 'async ' : ''}(${node.params.join(",")}) => {`);
+        result.push(`${async ? "async " : ""}(${node.params.join(",")}) => {`);
         node.body.map((e: any) => {
           const childs = generateExpressionArray(e);
           childs.map(c => {

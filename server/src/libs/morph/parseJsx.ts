@@ -141,7 +141,7 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
         const je = jsxElement as any;
         name = je.tagName.escapedText;
         je.attributes.properties.forEach((p: any) => {
-          if (p.name) {
+          if (p.name && p.initializer) {
             if (!p.initializer.expression && p.initializer.text) {
               props[p.name.escapedText] = {
                 kind: SyntaxKind.StringLiteral,
@@ -154,7 +154,9 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
               );
             }
           } else {
-            console.log(Object.keys(p));
+            if (p.escapedText) {
+              props[p.name.escapedText] = { kind: SyntaxKind.TrueKeyword };
+            }
           }
         });
 
@@ -202,10 +204,16 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
           []
         );
         properties.forEach((p: any) => {
-          props[p.name.escapedText] = parseJsx(
-            p.initializer.expression,
-            showKindName
-          );
+          if (p.name && p.initializer) {
+            props[p.name.escapedText] = parseJsx(
+              p.initializer.expression,
+              showKindName
+            );
+          } else {
+            if (p.escapedText) {
+              props[p.name.escapedText] = { kind: SyntaxKind.TrueKeyword };
+            }
+          }
         });
 
         const children: any = [];

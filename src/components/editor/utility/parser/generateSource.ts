@@ -24,6 +24,13 @@ export const generateSource = (
   )`;
     case SyntaxKind.PropertyAccessExpression:
       return node.value;
+    case SyntaxKind.ArrayLiteralExpression:
+      return `[
+        ${_.map(node.value, (e, key) => {
+          return `${generateSource(e)}`;
+        }).join(`,\n\t`)}
+      ]`;
+
     case SyntaxKind.ObjectLiteralExpression:
       return `{
   ${_.map(node.value, (e, key) => {

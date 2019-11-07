@@ -1,4 +1,4 @@
-import api from "@src/libs/api";
+import ed from "@src/store/editor";
 import { Dialog, Icon, Text } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
@@ -7,16 +7,13 @@ import MonacoEditor from "react-monaco-editor";
 import Split from "react-split";
 import CactivaBreadcrumb from "./CactivaBreadcrumb";
 import CactivaComponentChooser, { toolbar } from "./CactivaComponentChooser";
+import CactivaCustomComponent from "./CactivaCustomComponent";
 import CactivaExpressionDialog from "./CactivaExpressionDialog";
 import "./editor.scss";
 import "./tags/kinds/kinds.scss";
-import "./tags/react-native/react-native.scss";
-import "./tags/ui-kitten/ui-kitten.scss";
 import { addChildInId, commitChanges, createNewElement, getParentId, insertAfterElementId, prepareChanges, wrapInElementId } from "./utility/elements/tools";
 import { renderChildren } from "./utility/renderchild";
 import tags from "./utility/tags";
-import CactivaCustomComponent from "./CactivaCustomComponent";
-import ed from "@src/store/editor";
 
 export default observer(({ editor }: any) => {
   const meta = useObservable({

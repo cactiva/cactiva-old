@@ -1,6 +1,6 @@
 import { tree } from "@src/components/ctree/CactivaTree";
 import React from "react";
-import Component from "../tags/react-native/Component";
+import Component from "../tags/elements/Component";
 import kinds, { kindNames } from "./kinds";
 import { SyntaxKind } from "./syntaxkinds";
 import { isTag } from "./tagmatcher";

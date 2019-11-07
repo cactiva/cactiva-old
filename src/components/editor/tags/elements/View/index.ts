@@ -1,6 +1,6 @@
 import { CactivaTag } from "@src/components/editor/utility/classes";
 import traitStyle from "@src/components/traits/templates/traitStyle";
-import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
+import { SyntaxKind } from "../../../utility/syntaxkinds";
 
 const styles = {
   root: {
@@ -9,11 +9,11 @@ const styles = {
 };
 
 export default class extends CactivaTag {
-  static tagName = "ScrollView";
+  static tagName = "View";
   static from = "react-native";
   static structure = {
     kind: SyntaxKind.JsxElement,
-    name: "ScrollView",
+    name: "View",
     props: {},
     children: []
   };
@@ -22,19 +22,18 @@ export default class extends CactivaTag {
       name: "attributes",
       fields: [
         {
-          name: "Horizontal",
-          path: "horizontal",
-          kind: SyntaxKind.FalseKeyword,
+          name: "Type",
+          path: "viewType",
+          kind: SyntaxKind.StringLiteral,
+          mode: "select",
+          default: "View",
           options: {
-            styles: styles
-          }
-        },
-        {
-          name: "On Scroll",
-          path: "onScroll",
-          kind: SyntaxKind.JsxExpression,
-          options: {
-            styles: styles
+            styles: styles,
+            items: [
+              { value: "View", label: "View" },
+              { value: "SafeAreaView", label: "Safe Area View" },
+              { value: "AnimatedView", label: "Animated View" }
+            ]
           }
         }
       ]

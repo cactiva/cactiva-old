@@ -108,6 +108,70 @@ export class ProjectController {
     });
   }
 
+  @Get("start-hasura")
+  private async startHasura(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
+    process.chdir(morph.getAppPath());
+
+    const json = await jetpack.readAsync(
+      path.join(morph.getAppPath(), "settings.json")
+    );
+    if (json) {
+      const conf = JSON.parse(json);
+      if (conf && conf.db) {
+        const db = conf.db;
+        const st = stream(`hasura-${req.query.project}`);
+        st.cli = execa(
+          "./hasura",
+          [
+            "--host",
+            db.host,
+            "--port",
+            db.port,
+            "--user",
+            db.user,
+            "--password",
+            db.password,
+            "--dbname",
+            db.database,
+            "serve",
+            "--enable-console",
+            "--disable-cors",
+            "--admin-secret=" + conf.hasura.secret,
+            "--server-port",
+            conf.hasura.port
+          ],
+          {
+            all: true,
+            cwd: morph.getAppPath()
+          } as any
+        );
+        st.cli.all.on("data", (chunk: any) => {
+          st.send(chunk.toString());
+        });
+        st.cli.all.pipe(process.stdout);
+        res.status(200).json({
+          status: "ok"
+        });
+      }
+    } else {
+      res.status(500).json({
+        status: "failed"
+      });
+    }
+  }
+
+  @Get("stop-hasura")
+  private async stopHasura(req: Request, res: Response) {
+    const st = streams[`hasura-${req.query.project}`];
+    if (st) {
+      st.close();
+    }
+    res.status(200).json({
+      status: "ok"
+    });
+  }
+
   @Get("start-expo")
   private async startExpo(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
@@ -243,9 +307,16 @@ export class ProjectController {
             `Download Progress: ${Math.round(progress.percent * 100)}%` + "\r"
           );
         });
-        fs.writeFileSync(
+        await jetpack.writeAsync(
           path.join(execPath, "app", req.body.name, "hasura"),
-          hasura
+          hasura,
+          { atomic: true }
+        );
+
+        fs.chmod(
+          path.join(execPath, "app", req.body.name, "hasura"),
+          "755",
+          () => {}
         );
 
         config.set("app", req.body.name);

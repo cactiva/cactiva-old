@@ -16,8 +16,13 @@ export default observer(() => {
         consoleText: '',
         new: {
             name: "",
-            apiUrl: window.location.toString(),
-            hasuraSecret: "hasura123",
+            backend: {
+                port: "11000",
+            },
+            hasura: {
+                port: "10000",
+                secret: "hasura123"
+            },
             db: {
                 port: "5432",
                 host: "localhost",
@@ -25,13 +30,18 @@ export default observer(() => {
                 password: "postgres",
                 database: "postgres"
             },
-        }
+        },
+        int: -1 as any
     })
     useAsyncEffect(async () => {
         meta.list = (await api.get("project/list")).list;
-        setInterval(async () => {
+        meta.int = setInterval(async () => {
             meta.list = (await api.get("project/list")).list;
         }, 3000)
+
+        return () => {
+            clearInterval(meta.int);
+        }
     }, [])
 
     const terminal = useRef(null as any);
@@ -70,7 +80,7 @@ export default observer(() => {
 
                             const res = await api.post("project/test-db", meta.new.db);
                             if (res.status !== 'ok') {
-                                alert(res.status + '\n' + (res.reason || ""));
+                                alert('Database Connection Failed. \n' + (res.reason || ""));
                                 return;
                             }
                             meta.mode = "creating"
@@ -103,6 +113,7 @@ export default observer(() => {
                                             }, () => {
                                                 item.status = "Loaded";
                                                 loadProject();
+                                                clearInterval(meta.int)
                                             })
                                         }
                                     }}>

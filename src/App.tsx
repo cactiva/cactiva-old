@@ -100,8 +100,13 @@ export const loadProject = async () => {
   }
   editor.settings = res.settings;
   editor.expo.status = res.expo;
+  editor.expo.url = "";
+  editor.expo.logs = "";
   editor.hasura.status = res.hasura;
+  editor.hasura.logs = "";
   editor.backend.status = res.backend;
+  editor.backend.logs = "";
+
 
   await editor.load(
     localStorage.getItem("cactiva-current-path") || "/src/Home.tsx"

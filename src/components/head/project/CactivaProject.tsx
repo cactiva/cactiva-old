@@ -11,22 +11,43 @@ import "./CactivaProject.scss";
 
 const start = async (name: string, ref: any) => {
     const ed = (editor as any)[name];
-    ed.status = "starting"
+    ed.status = "started"
     const res = await api.get(`project/start-${name}`);
     if (res.status === "ok") {
         ed.logs = "";
-        api.stream(`${name}-${editor.name}`, (msg: any) => {
-            ed.logs += msg.data;
-            if (ref.current)
-                ref.current.write(msg.data);
-
-            if (name === 'expo') {
-                parseExpoMessage(ed.logs);
-            }
-        })
+        api.stream(`${name}-${editor.name}`, processMsg(ed, ref.current, name))
     }
 }
 
+function padCenter(s: any, max: any) {
+    return s
+        .padStart(s.length + Math.floor((max - s.length) / 2), ' ')
+        .padEnd(max, ' ')
+}
+
+const processMsg = (ed: any, r: any, name: string) => {
+    return (msg: any) => {
+        let m = msg.data;
+        if (name === 'hasura') {
+            m = (msg.data.split("\n").filter((e: string) => !!e).map((e: string) => {
+                try {
+                    const info = JSON.parse(e);
+                    return `[${info.timestamp}]-[${padCenter(info.level, 10)}]-[${padCenter(info.type, 10)}]-[${padCenter(info.detail.kind, 20)}] 
+${JSON.stringify(info.detail.info, null, 1)}\n\n`;
+                } catch (er) {
+                    console.log(er);
+                }
+            })).join("\n");
+        }
+        ed.logs += m;
+        if (r)
+            r.write(m);
+
+        if (name === 'expo') {
+            parseExpoMessage(ed.logs);
+        }
+    }
+}
 
 const stop = async (name: string, ref: any) => {
     const ed = (editor as any)[name];
@@ -71,11 +92,7 @@ export default observer(() => {
         meta.services.forEach(s => {
             const e = (editor as any)[s];
             if (e.status !== 'stopped') {
-                api.stream(`${s}-${editor.name}`, (msg: any) => {
-                    ed.logs += msg.data;
-                    if (refs[s].current)
-                        refs[s].current.write(msg.data);
-                })
+                api.stream(`${s}-${editor.name}`, processMsg(e, refs[s].current, s))
             }
         })
     }, [])
@@ -101,7 +118,19 @@ export default observer(() => {
                     {editor.expo.url !== "" && <Button className="small-btn">Preview App</Button>}
                 </div>
                 <Tablist>
-                    <Button className="small-btn">{editor.expo.status === 'stopped' ? 'Start' : 'Stop'} All</Button>
+                    <Button className="small-btn" onClick={() => {
+                        if (editor.expo.status === 'stopped') {
+                            meta.services.map((name) => {
+                                if ((editor as any)[name].status === 'stopped')
+                                    start(name, refs[name]);
+                            });
+                        } else {
+                            meta.services.map((name) => {
+                                if ((editor as any)[name].status !== 'stopped')
+                                    stop(name, refs[name]);
+                            });
+                        }
+                    }}>{editor.expo.status === 'stopped' ? 'Start' : 'Stop'} All</Button>
                     {meta.services.map((name, key) => {
                         return <Tab key={key} isSelected={meta.index === key} onSelect={() => meta.index = key}>
                             {_.startCase(name)}
@@ -126,10 +155,10 @@ export default observer(() => {
                         {service === 'expo' && ed.status !== "stopped" &&
                             <CactivaCli cliref={refs.expo} initialText={editor.expo.logs} />}
 
-                        {service === 'hasura' &&
+                        {service === 'hasura' && ed.status !== "stopped" &&
                             <CactivaCli cliref={refs.hasura} initialText={editor.hasura.logs} />}
 
-                        {service === 'backend' &&
+                        {service === 'backend' && ed.status !== "stopped" &&
                             <CactivaCli cliref={refs.backend} initialText={editor.backend.logs} />}
                     </div>
                 </div>
