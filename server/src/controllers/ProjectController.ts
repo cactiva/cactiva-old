@@ -6,18 +6,27 @@ import * as execa from "execa";
 import * as cp from "child_process";
 import * as pstree from "ps-tree";
 import * as path from "path";
+import * as fs from "fs";
+import * as download from "download";
 import jetpack = require("fs-jetpack");
 import stream, { streams } from "../stream";
 
 @Controller("api/project")
 export class ProjectController {
+  deleting: string[] = [];
+  creating: string[] = [];
+
   @Get("list")
   private list(req: Request, res: Response) {
     res.status(200).json({
       list: (jetpack.list(path.join(execPath, "app")) || []).map(e => {
+        let status = !!Morph.instances[e] ? "Loaded" : "Closed";
+        if (this.deleting.indexOf(e) >= 0) status = "Deleting";
+        if (this.creating.indexOf(e) >= 0) status = "Creating";
+
         return {
           name: e,
-          status: !!Morph.instances[e] ? "Loaded" : "Closed"
+          status
         };
       })
     });
@@ -32,9 +41,8 @@ export class ProjectController {
         app: config.get("app"),
         env: config.get("env"),
         settings: JSON.parse(
-          jetpack.read(
-            path.join(execPath, "app", name, "settings.json")
-          ) || "{}"
+          jetpack.read(path.join(execPath, "app", name, "settings.json")) ||
+            "{}"
         ),
         expo: !!streams[`expo-${name}`] ? "running" : "stopped",
         hasura: !!streams[`hasura-${name}`] ? "running" : "stopped",
@@ -155,15 +163,38 @@ export class ProjectController {
   }
 
   @Get("del")
-  private async del(req: Request, res: Response) {
+  private del(req: Request, res: Response) {
     config.set("app", "");
 
     const p = path.join(execPath, "app", req.query.name);
     if (jetpack.exists(p)) {
-      jetpack.remove(p);
+      (async () => {
+        const name = req.query.name;
+        this.deleting.push(name);
+        if (streams[`expo-${name}`]) {
+          streams[`expo-${name}`].close();
+        }
+        if (streams[`hasura-${name}`]) {
+          streams[`hasura-${name}`].close();
+        }
+        if (streams[`backend-${name}`]) {
+          streams[`backend-${name}`].close();
+        }
+        await jetpack.removeAsync(p);
+        this.deleting.splice(this.deleting.indexOf(name), 1);
+      })();
     }
     delete Morph.instances[req.query.name];
     res.status(200).send({ status: "ok" });
+  }
+
+  @Post("edit-project")
+  private editProject(req: Request, res: Response) {
+    jetpack.write(
+      path.join(execPath, "app", req.body.name, "settings.json"),
+      JSON.stringify(req.body)
+    );
+    res.status(200).send(req.body);
   }
 
   @Post("new-project")
@@ -171,6 +202,7 @@ export class ProjectController {
     const s = stream("new-project-" + req.body.name);
     if (!!s) {
       (async () => {
+        this.creating.push(req.body.name);
         let git = execa(
           "git",
           ["clone", "https://github.com/cactiva/cactiva-base", req.body.name],
@@ -189,7 +221,7 @@ export class ProjectController {
 
         await git;
 
-        jetpack.remove(
+        await jetpack.removeAsync(
           path.join(execPath, "app", req.body.name, "src", "libs")
         );
         git = execa(
@@ -222,15 +254,28 @@ export class ProjectController {
           yarn.all.pipe(process.stdout);
         }
         await yarn;
-        s.send("--- DONE ---");
-        s.close();
 
         jetpack.write(
           path.join(execPath, "app", req.body.name, "settings.json"),
-          JSON.stringify(req.query)
+          JSON.stringify(req.body)
+        );
+        s.send("--- Downloading Hasura ---");
+
+        const hasura = await download(
+          "https://github.com/cactiva/hasura-static/raw/master/linux-amd64"
+        ).on("downloadProgress", progress => {
+          s.send(progress.percent);
+        });
+        fs.writeFileSync(
+          path.join(execPath, "app", req.body.name, "hasura"),
+          hasura
         );
 
         config.set("app", req.body.name);
+        this.creating.splice(this.creating.indexOf(name), 1);
+
+        s.send("--- DONE ---");
+        s.close();
       })();
     }
 

@@ -40,7 +40,7 @@ export default observer(({ editor }: any) => {
     <div className="cactiva-head">
       <div className="left">
 
-        <Pane onClick={() => { editor.modals.project = false; }}>
+        <Pane onClick={() => { editor.modals.project = true; }}>
           <div className="project">
             <Text size={300}>{_.startCase(editor.name)}</Text>
             <div className="status">
@@ -52,8 +52,8 @@ export default observer(({ editor }: any) => {
         <Dialog
           isShown={editor.modals.project}
           hasFooter={false}
-          width={800}
-          minHeightContent={600}
+          width={810}
+          minHeightContent={540}
           hasHeader={false}
           contentContainerProps={{
             style: { display: 'flex' }

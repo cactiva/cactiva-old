@@ -16,12 +16,16 @@ export default observer(() => {
         consoleText: '',
         new: {
             name: "",
-            apiUrl: window.location,
+            apiUrl: window.location.toString(),
+            hasuraSecret: "hasura123",
             db: { port: "5432", host: "localhost", username: "postgres", password: "postgres", name: "postgres" },
         }
     })
     useAsyncEffect(async () => {
         meta.list = (await api.get("project/list")).list;
+        setInterval(async () => {
+            meta.list = (await api.get("project/list")).list;
+        }, 3000)
     }, [])
 
     const terminal = useRef(null as any);
@@ -37,12 +41,18 @@ export default observer(() => {
                         <Spinner size={18} margin={5} />
                         Loading
                     </div></div>,
-                    creating: <CactivaCli cliref={terminal} initialText={meta.consoleText} />,
+                    creating: <div style={{ padding: '10px' }}>
+                        <CactivaCli cliref={terminal} initialText={meta.consoleText} />
+                    </div>,
                     new: <CactivaProjectForm form={meta.new}
                         onCancel={async () => {
                             meta.mode = "choose"
                         }}
                         onSubmit={async () => {
+                            if (!meta.new.name) {
+                                alert("Please fill the name");
+                                return;
+                            }
                             meta.mode = "creating"
                             await api.post('project/new-project', meta.new);
                             api.stream('new-project-' + meta.new.name, (ev: any) => {
@@ -59,10 +69,12 @@ export default observer(() => {
                                 className="item">
                                 <div className="text"
                                     onClick={async () => {
-                                        meta.mode = "loading";
-                                        await api.get(`project/load?name=${item.name}`)
-                                        await loadProject();
-                                        meta.mode = "choose";
+                                        if (item.status === 'Closed' || item.status === 'Loaded') {
+                                            meta.mode = "loading";
+                                            await api.get(`project/load?name=${item.name}`)
+                                            await loadProject();
+                                            meta.mode = "choose";
+                                        }
                                     }}>
                                     <div className="title">{item.name}</div>
                                     <div className="subtitle">{item.status}</div>
@@ -72,6 +84,7 @@ export default observer(() => {
                                         <Menu.Item
                                             icon="duplicate"
                                             onSelect={() => {
+                                                alert("Sabar ya, sekarang masih belum bisa duplikat projek >_<")
                                             }}>
                                             Duplicate
                                         </Menu.Item>
@@ -79,9 +92,11 @@ export default observer(() => {
                                             icon="trash"
                                             onSelect={async () => {
                                                 meta.showMenu = -1;
-                                                item.status = "Deleting... (Do not close this window)";
-                                                await api.get(`project/del?name=${item.name}`)
-                                                meta.list = (await api.get("project/list")).list;
+                                                if (prompt("Type 'delete' to confirm project deletion:") === "delete") {
+                                                    item.status = "Deleting";
+                                                    await api.get(`project/del?name=${item.name}`)
+                                                    meta.list = (await api.get("project/list")).list;
+                                                }
                                             }}>
                                             Delete
                                         </Menu.Item>

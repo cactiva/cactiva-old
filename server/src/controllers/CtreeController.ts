@@ -138,7 +138,7 @@ export default observer(() => {
   }
 
   @Get("delete")
-  private delete(req: Request, res: Response) {
+  private async delete(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
     morph.project.resolveSourceFileDependencies();
     let p = path.join(morph.getAppPath(), req.query.path);
@@ -147,7 +147,7 @@ export default observer(() => {
       if (sf) {
         sf.forget();
         morph.project.save();
-        jetpack.remove(p);
+        await jetpack.removeAsync(p);
         res.send("ok");
       }
     } else {

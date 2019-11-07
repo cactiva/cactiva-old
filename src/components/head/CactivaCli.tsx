@@ -7,17 +7,22 @@ import "xterm/css/xterm.css";
 
 export default observer(({ cliref, initialText = "" }: any) => {
   useEffect(() => {
-    const terminal = new Terminal({ fontSize: 9, convertEol: true });
+    const terminal = new Terminal({ fontSize: 10, convertEol: true });
     const fitAddon = new FitAddon();
     terminal.loadAddon(fitAddon);
     terminal.loadAddon(new WebLinksAddon());
     terminal.open(ref.current);
 
     setTimeout(() => {
-      fitAddon.fit();
-    });
+      try {
+        fitAddon.fit();
+      } catch (e) {
+        console.log(e);
+      }
+    }, 500);
     cliref.current = terminal;
     terminal.writeUtf8(initialText);
+    fitAddon.fit();
   }, []);
   const ref = useRef(null as any);
   return <div ref={ref} style={{ flex: 1, display: "flex" }}></div>;

@@ -90,7 +90,7 @@ export class AssetsController {
   }
 
   @Post("delete")
-  private _delete(req: Request, res: Response) {
+  private async _delete(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
     res.setHeader("Content-Type", "application/json");
     res.statusCode = 200;
@@ -101,7 +101,7 @@ export class AssetsController {
       filename
     );
     if (fs.existsSync(filepath)) {
-      jetpack.remove(
+      await jetpack.removeAsync(
         path.join(morph.getAppPath(), "src/assets/images/", filename)
       );
     }
@@ -115,7 +115,7 @@ export class AssetsController {
   }
 
   @Post("delete-font")
-  private _deleteFont(req: Request, res: Response) {
+  private async _deleteFont(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
     res.setHeader("Content-Type", "application/json");
     res.statusCode = 200;
@@ -126,7 +126,7 @@ export class AssetsController {
       filename
     );
     if (fs.existsSync(filepath)) {
-      jetpack.remove(
+      await jetpack.remove(
         path.join(morph.getAppPath(), "src/assets/fonts/", filename)
       );
     }

@@ -13,7 +13,7 @@ export default (name: string) => {
       const sws = stream.ws as any;
       if (sws !== null) {
         try {
-          sws.send(str);
+          if (sws.readyState === sws.OPEN) sws.send(str);
         } catch (e) {
           console.log(e);
         }
@@ -21,6 +21,7 @@ export default (name: string) => {
     },
     ws: null,
     status: "waiting",
+    cli: null,
     close: () => {
       const sws = stream.ws as any;
       if (sws !== null) {

@@ -8,6 +8,7 @@ import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import CactivaCli from "../CactivaCli";
 import "./CactivaProject.scss";
+import { toJS } from "mobx";
 
 const start = async (name: string, ref: any) => {
     const ed = (editor as any)[name];
@@ -46,57 +47,68 @@ export default observer(() => {
                 })
             }
         })
+        console.log(toJS(editor.settings));
     }, [])
 
-    return <div className="cactiva-project" style={{ fontFamily: fontFamily }}>
-        <div className="header">
-            <div className="project">
-                {_.startCase(editor.name)}
-                <IconButton
-                    icon={"edit"}
-                    className="small-btn"
-                    style={{ marginRight: 0, padding: '0px 5px' }}
-                    onClick={async () => {
-                        meta.edit = true;
-                    }} />
-                <Button className="small-btn" onClick={async () => {
-                    editor.path = '';
-                    editor.name = '';
-                }}>Switch</Button>
-                {editor.expo.url !== "" && <Button className="small-btn">Preview App</Button>}
+    return <div className="cactiva-dialog-editor">
+        <div className="cactiva-project" style={{ fontFamily: fontFamily }}>
+            <div className="header">
+                <div className="project">
+                    {_.startCase(editor.name)}
+                    <IconButton
+                        icon={"edit"}
+                        className="small-btn"
+                        style={{ marginRight: 0, padding: '0px 5px' }}
+                        onClick={async () => {
+                            meta.edit = true;
+                        }} />
+                    <Button className="small-btn" onClick={async () => {
+                        editor.path = '';
+                        editor.name = '';
+                    }}>Switch</Button>
+                    {editor.expo.url !== "" && <Button className="small-btn">Preview App</Button>}
+                </div>
+                <Tablist>
+                    <Button className="small-btn">{editor.expo.status === 'stopped' ? 'Start' : 'Stop'} All</Button>
+                    {meta.services.map((name, key) => {
+                        return <Tab key={key} isSelected={meta.index === key} onSelect={() => meta.index = key}>
+                            {_.startCase(name)}
+                            <small>{(editor as any)[name].status}</small>
+                        </Tab>
+                    })}
+                </Tablist>
             </div>
-            <Tablist>
-                <Button className="small-btn">{editor.expo.status === 'stopped' ? 'Start' : 'Stop'} All</Button>
-                {meta.services.map((name, key) => {
-                    return <Tab key={key} isSelected={meta.index === key} onSelect={() => meta.index = key}>
-                        {_.startCase(name)}
-                        <small>{(editor as any)[name].status}</small>
-                    </Tab>
-                })}
-            </Tablist>
-        </div>
-        <div className="content">
-            <div className="toolbar">
-                <span>{_.startCase(service)} <small>({ed.status})</small></span>
-                <Button className="small-btn" onClick={() => {
-                    if (ed.status === "stopped") {
-                        start(service, refs[service]);
-                    }
-                }}>{ed.status === "stopped" ? "Start" : "Stop"} </Button>
+            <div className="content">
+                <div className="toolbar">
+                    <span>{_.startCase(service)} <small>({ed.status})</small></span>
+                    <Button className="small-btn" onClick={() => {
+                        if (ed.status === "stopped") {
+                            start(service, refs[service]);
+                        }
+                    }}>{ed.status === "stopped" ? "Start" : "Stop"} </Button>
+                </div>
+                <div className="cli">
+                    <div className="cli-content">
+                        {service === 'expo' &&
+                            <CactivaCli cliref={refs.expo} initialText={editor.expo.logs} />}
+
+                        {service === 'hasura' &&
+                            <CactivaCli cliref={refs.hasura} initialText={editor.hasura.logs} />}
+
+                        {service === 'backend' &&
+                            <CactivaCli cliref={refs.backend} initialText={editor.backend.logs} />}
+                    </div>
+                </div>
             </div>
-            {service === 'expo' &&
-                <CactivaCli cliref={refs.expo} initialText={editor.expo.logs} />}
-
-            {service === 'hasura' &&
-                <CactivaCli cliref={refs.hasura} initialText={editor.hasura.logs} />}
-
-            {service === 'backend' &&
-                <CactivaCli cliref={refs.backend} initialText={editor.backend.logs} />}
-
-
-            <Dialog isShown={meta.edit}>
-                <CactivaProjectForm form={editor.settings} />
-            </Dialog>
         </div>
+
+        <Dialog isShown={meta.edit}
+            onConfirm={async () => {
+                await api.post("project/edit-project", editor.settings);
+                meta.edit = false;
+            }}
+            onCloseComplete={() => { meta.edit = false; }} title="Edit Project">
+            <CactivaProjectForm form={editor.settings} disable={['name']} />
+        </Dialog>
     </div>;
 });

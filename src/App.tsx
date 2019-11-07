@@ -96,10 +96,9 @@ export const loadProject = async () => {
   editor.name = res.app;
   if (!editor.name) {
     meta.init = true;
-    editor.settings = res.settings;
     return;
   }
-
+  editor.settings = res.settings;
   editor.expo.status = res.expo;
   editor.hasura.status = res.hasura;
   editor.backend.status = res.backend;
