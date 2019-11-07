@@ -154,9 +154,7 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
               );
             }
           } else {
-            if (p.escapedText) {
-              props[p.name.escapedText] = { kind: SyntaxKind.TrueKeyword };
-            }
+            props[p.name.escapedText] = { kind: SyntaxKind.TrueKeyword };
           }
         });
 
@@ -205,14 +203,19 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
         );
         properties.forEach((p: any) => {
           if (p.name && p.initializer) {
-            props[p.name.escapedText] = parseJsx(
-              p.initializer.expression,
-              showKindName
-            );
-          } else {
-            if (p.escapedText) {
-              props[p.name.escapedText] = { kind: SyntaxKind.TrueKeyword };
+            if (!p.initializer.expression && p.initializer.text) {
+              props[p.name.escapedText] = {
+                kind: SyntaxKind.StringLiteral,
+                value: `"${p.initializer.text}"`
+              };
+            } else {
+              props[p.name.escapedText] = parseJsx(
+                p.initializer.expression,
+                showKindName
+              );
             }
+          } else {
+            props[p.name.escapedText] = { kind: SyntaxKind.TrueKeyword };
           }
         });
 

@@ -260,7 +260,7 @@ export const insertAfterElementId = (
   const parent = findParentElementById(root, id);
   const index = parseInt(ids[ids.length - 1] || "-1");
   const parentTag = tags[parent.name];
-  const insertTo = (parentTag as any).insertTo || "children";
+  const insertTo = _.get(parentTag, "insertTo", "children");
   const children = _.get(parent, insertTo, []);
   if (children && children.length) {
     if (children.length > index && children[index]) {
@@ -274,7 +274,7 @@ export const addChildInId = (root: any, id: string | string[], child: any) => {
   const parent = findElementById(root, id);
   if (parent) {
     const parentTag = tags[parent.name];
-    const insertTo = (parentTag as any).insertTo || "children";
+    const insertTo = _.get(parentTag, "insertTo", "children");
     let children = _.get(parent, insertTo);
     if (!children) {
       _.set(parent, insertTo, []);
@@ -323,7 +323,7 @@ export const wrapInElementId = (
       replaceElementById(root, id, wrapEl);
     } else {
       const elementTag = tags[wrapEl.name];
-      const insertTo = (elementTag as any || {}).insertTo || "children";
+      const insertTo = ((elementTag as any) || {}).insertTo || "children";
       let children = _.get(wrapEl, insertTo);
       if (!children) {
         _.set(wrapEl, insertTo, []);

@@ -79,7 +79,7 @@ export const runApi = async (meta: any, forceUrl?: string) => {
     let url = forceUrl ? forceUrl : await evalExpression(value.url, { local: false, useCache: false }) || "";
     const qstring = await evalExpressionInObj(value.queryString, { local: false, useCache: true });
     const params = serialize(qstring);
-    
+
     if (params && !forceUrl) {
         if (url.indexOf("?") >= 0) {
             url = url + params;
@@ -111,8 +111,10 @@ export const runApi = async (meta: any, forceUrl?: string) => {
     } catch (e) {
         const res = e.response;
         meta.current.result.loading = false;
-        meta.current.result.statusCode = res.status;
-        meta.current.result.body = JSON.stringify(res.data, null, 2);
-        meta.current.result.headers = JSON.stringify(res.headers, null, 2);
+        if (res) {
+            meta.current.result.statusCode = res.status;
+            meta.current.result.body = JSON.stringify(res.data, null, 2);
+            meta.current.result.headers = JSON.stringify(res.headers, null, 2);
+        }
     }
 }

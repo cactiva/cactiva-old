@@ -12,6 +12,10 @@ export const generateSource = (
   const kind = node.kind;
 
   switch (kind) {
+    case SyntaxKind.TrueKeyword:
+      return `true`;
+    case SyntaxKind.FalseKeyword:
+      return `false`;
     case SyntaxKind.StringLiteral:
     case SyntaxKind.NumericLiteral:
       return `${node.value}`;
@@ -89,6 +93,7 @@ ${body}
     case SyntaxKind.JsxElement:
       return (() => {
         return `<${node.name} ${_.map(node.props, (e, name) => {
+          console.log(toJS(e));
           return `${name}={${generateSource(e, { isProps: true })}}`;
         }).join(" ")}>${(node.children || [])
           .map((e: any) => {
