@@ -29,8 +29,8 @@
     right: 0;
     position: absolute;
     background-image: url("/images/logo.png");
-    background-size: 500px 500px;
-    background-position: -130% -150%;
+    background-size: 700px 700px;
+    background-position: -350px 110px;
     background-repeat: no-repeat;
   }
 
@@ -115,6 +115,20 @@
 
   label {
     user-select: none;
+  }
+
+  .center-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    > div {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      justify-content: flex-start;
+      font-size: 12px;
+    }
   }
 }
 

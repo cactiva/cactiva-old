@@ -5,9 +5,9 @@ import { FitAddon } from "xterm-addon-fit";
 import { WebLinksAddon } from 'xterm-addon-web-links';
 import "xterm/css/xterm.css";
 
-export default observer(({ cliref, initialText }: any) => {
+export default observer(({ cliref, initialText = "" }: any) => {
   useEffect(() => {
-    const terminal = new Terminal({ fontSize: 10, convertEol: true });
+    const terminal = new Terminal({ fontSize: 9, convertEol: true });
     const fitAddon = new FitAddon();
     terminal.loadAddon(fitAddon);
     terminal.loadAddon(new WebLinksAddon());

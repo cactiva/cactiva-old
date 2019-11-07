@@ -2,7 +2,7 @@ export const streams = {} as any;
 export default (name: string) => {
   if (!!streams[name]) {
     console.log(`stream with ${name} already exists`);
-    return false;
+    return streams[name];
   }
 
   const stream = {
@@ -12,7 +12,11 @@ export default (name: string) => {
       stream.log += str;
       const sws = stream.ws as any;
       if (sws !== null) {
-        sws.send(str);
+        try {
+          sws.send(str);
+        } catch (e) {
+          console.log(e);
+        }
       }
     },
     ws: null,

@@ -1,11 +1,12 @@
-import { fontFamily } from "@src/App";
-import { Button, Icon, TextInputField, IconButton, Popover, Menu } from "evergreen-ui";
+import { fontFamily, loadProject } from "@src/App";
+import { Button, Icon, TextInputField, IconButton, Popover, Menu, Spinner } from "evergreen-ui";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useRef } from "react";
 import "./Start.scss";
 import useAsyncEffect from "use-async-effect";
 import api from "@src/libs/api";
-import CactivaCli from "@src/components/head/cli/CactivaCli";
+import CactivaCli from "../head/CactivaCli";
+import CactivaProjectForm from "./CactivaProjectForm";
 
 export default observer(() => {
     const meta = useObservable({
@@ -32,48 +33,25 @@ export default observer(() => {
                     <span>Start or load a project</span>
                 </div>
                 {({
+                    loading: <div className="center-loading"><div>
+                        <Spinner size={18} margin={5} />
+                        Loading
+                    </div></div>,
                     creating: <CactivaCli cliref={terminal} initialText={meta.consoleText} />,
-                    new: <div className="projects">
-                        <TextInputField label={"Name"} value={meta.new.name} onChange={(e: any) => {
-                            meta.new.name = (e.target.value).toLowerCase().replace(/[^0-9a-zA-Z-_]/g, '');
-                        }} />
-                        <div style={{ display: "flex", flexDirection: "row" }}>
-                            <TextInputField label={"Database Host"} value={meta.new.db.host} onChange={(e: any) => {
-                                meta.new.db.host = (e.target.value);
-                            }} flex={1} />
-                            <TextInputField label={"Port"} value={meta.new.db.port} onChange={(e: any) => {
-                                meta.new.db.port = (e.target.value);
-                            }} flexBasis={80} marginLeft={10} />
-                        </div>
-                        <div style={{ display: "flex", flexDirection: "row" }}>
-                            <TextInputField label={"Username"} value={meta.new.db.username} onChange={(e: any) => {
-                                meta.new.db.username = (e.target.value);
-                            }} flexBasis={80} />
-                            <TextInputField label={"Password"} value={meta.new.db.password} onChange={(e: any) => {
-                                meta.new.db.password = (e.target.value);
-                            }} flexBasis={80} marginLeft={10} />
-                            <TextInputField label={"Database Name"} value={meta.new.db.name} onChange={(e: any) => {
-                                meta.new.db.name = (e.target.value);
-                            }} flex={1} marginLeft={10} />
-                        </div>
-                        <TextInputField label={"API Host"} value={meta.new.apiUrl} onChange={(e: any) => {
-                            meta.new.apiUrl = (e.target.value);
-                        }} />
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 10 }}>
-                            <Button marginRight={10} onClick={async () => {
-                                meta.mode = "choose"
-                            }}>Cancel</Button>
-                            <Button intent="success" appearance={"primary"} onClick={async () => {
-                                meta.mode = "creating"
-                                await api.post('project/new-project', meta.new);
-                                api.stream('new-project-' + meta.new.name, (ev: any) => {
-                                    terminal.current.write(ev.data);
-                                }, () => {
-                                    window.location.reload();
-                                })
-                            }}>Create New</Button>
-                        </div>
-                    </div>,
+                    new: <CactivaProjectForm form={meta.new}
+                        onCancel={async () => {
+                            meta.mode = "choose"
+                        }}
+                        onSubmit={async () => {
+                            meta.mode = "creating"
+                            await api.post('project/new-project', meta.new);
+                            api.stream('new-project-' + meta.new.name, (ev: any) => {
+                                terminal.current.write(ev.data);
+                            }, () => {
+                                window.location.reload();
+                            })
+                        }}
+                    />,
                     choose: <div className="projects">
                         {meta.list.length > 0 && <div className="list">
                             {meta.list.map((item: any, key: number) => <div
@@ -81,8 +59,10 @@ export default observer(() => {
                                 className="item">
                                 <div className="text"
                                     onClick={async () => {
+                                        meta.mode = "loading";
                                         await api.get(`project/load?name=${item.name}`)
-                                        window.location.reload();
+                                        await loadProject();
+                                        meta.mode = "choose";
                                     }}>
                                     <div className="title">{item.name}</div>
                                     <div className="subtitle">{item.status}</div>

@@ -1,0 +1,80 @@
+.cactiva-project {
+  padding: 10px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  .small-btn {
+    padding: 0px 5px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 10px;
+    margin: 0px 5px;
+  }
+
+  .header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    .project {
+      font-size: 18px;
+      color: #666;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .status {
+        font-weight: normal;
+        font-size: 10px;
+        color: #999;
+      }
+    }
+
+    div[role="tablist"] {
+      display: flex;
+      flex-direction: row;
+      user-select: none;
+      align-items: center;
+
+      > span {
+        display: flex;
+        flex-direction: column;
+        line-height: 12px !important;
+        height: 35px;
+        small {
+          font-weight: normal;
+          font-size: 9px;
+          text-transform: capitalize;
+        }
+      }
+    }
+  }
+
+  .content {
+    flex: 1;
+    background: #000;
+    padding: 5px;
+    margin-top: 5px;
+    border-radius: 5px;
+    width: 780px;
+
+    .toolbar {
+      display: flex;
+      background: white;
+      margin-bottom: 10px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px;
+      padding: 5px 0px 5px 5px;
+      font-size: 13px;
+
+      > .small-btn {
+        position: absolute;
+        right: 15px;
+      }
+    }
+  }
+}

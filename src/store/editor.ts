@@ -30,12 +30,34 @@ class EditorStore {
     api: false,
     apiLock: false,
     customComponents: false,
+    project: false,
     expression: false
   };
 
-  @observable cli = {
+  @observable backend = {
     status: "stopped",
     logs: ""
+  };
+  @observable hasura = {
+    status: "stopped",
+    logs: ""
+  };
+  @observable expo = {
+    status: "stopped",
+    url: "",
+    logs: ""
+  };
+
+  @observable settings: any = {
+    name: "",
+    apiUrl: window.location,
+    db: {
+      port: "5432",
+      host: "localhost",
+      username: "postgres",
+      password: "postgres",
+      name: "postgres"
+    }
   };
 
   @computed get isModalOpened() {

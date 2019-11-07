@@ -7,14 +7,10 @@ import * as cp from "child_process";
 import * as pstree from "ps-tree";
 import * as path from "path";
 import jetpack = require("fs-jetpack");
-import stream from "../stream";
+import stream, { streams } from "../stream";
 
 @Controller("api/project")
 export class ProjectController {
-  cli: any;
-  buffer: string = "";
-  lastBufferIndex: number = 0;
-
   @Get("list")
   private list(req: Request, res: Response) {
     res.status(200).json({
@@ -29,15 +25,23 @@ export class ProjectController {
 
   @Get("info")
   private info(req: Request, res: Response) {
-    this.lastBufferIndex = 0;
     try {
-      Morph.getInstance(config.get("app"));
+      const name = config.get("app");
+      Morph.getInstance(name);
       res.status(200).json({
         app: config.get("app"),
         env: config.get("env"),
-        status: !!this.cli ? "running" : "stopped"
+        settings: JSON.parse(
+          jetpack.read(
+            path.join(execPath, "app", name, "settings.json")
+          ) || "{}"
+        ),
+        expo: !!streams[`expo-${name}`] ? "running" : "stopped",
+        hasura: !!streams[`hasura-${name}`] ? "running" : "stopped",
+        backend: !!streams[`backend-${name}`] ? "running" : "stopped"
       });
     } catch (e) {
+      console.log(e);
       res.status(200).json({
         app: "",
         env: "",
@@ -97,24 +101,18 @@ export class ProjectController {
     });
   }
 
-  @Get("start-server")
-  private async startServer(req: Request, res: Response) {
+  @Get("start-expo")
+  private async startExpo(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
     process.chdir(morph.getAppPath());
-    if (!!this.cli && !!this.cli.cancel) {
-      this.cli.cancel();
-      return;
-    }
-    this.buffer = "";
-    this.lastBufferIndex = 0;
 
-    this.cli = execa("yarn", ["web"], {
-      all: true
+    const st = stream(`expo-${req.query.project}`);
+    st.cli = execa("yarn", ["web"], {
+      all: true,
+      cwd: morph.getAppPath()
     } as any);
-
-    this.cli.all.on("data", (chunk: any) => {
-      const text = chunk.toString();
-      this.buffer += text;
+    st.cli.all.on("data", (chunk: any) => {
+      st.send(chunk.toString());
     });
 
     res.status(200).json({
@@ -122,11 +120,11 @@ export class ProjectController {
     });
   }
 
-  @Get("stop-server")
-  private async stopServer(req: Request, res: Response) {
-    if (this.cli && this.cli.cancel) {
-      this.buffer = "";
-      const pid = this.cli.pid;
+  @Get("stop-expo")
+  private async stopExpo(req: Request, res: Response) {
+    const st = streams[`expo-${req.query.project}`];
+    if (st && st.cli) {
+      const pid = st.cli.pid;
       pstree(pid, (err: any, children: readonly any[]) => {
         if (process.platform !== "win32") {
           cp.spawn(
@@ -139,22 +137,15 @@ export class ProjectController {
           );
         }
 
-        this.cli.cancel();
-        this.lastBufferIndex = 0;
-        this.cli = null;
+        st.cli.cancel();
+        st.cli = null;
+        st.close();
 
         res.status(200).json({
           status: "ok"
         });
       });
     }
-  }
-
-  @Get("log-server")
-  private logServer(req: Request, res: Response) {
-    const result = this.buffer.substr(this.lastBufferIndex);
-    this.lastBufferIndex = this.buffer.length;
-    res.status(200).send(result);
   }
 
   @Get("load")
@@ -180,12 +171,33 @@ export class ProjectController {
     const s = stream("new-project-" + req.body.name);
     if (!!s) {
       (async () => {
-        const git = execa(
+        let git = execa(
           "git",
           ["clone", "https://github.com/cactiva/cactiva-base", req.body.name],
           {
             all: true,
             cwd: path.join(execPath, "app")
+          } as any
+        );
+
+        if (git.all) {
+          git.all.on("data", e => {
+            s.send(e.toString());
+          });
+          git.all.pipe(process.stdout);
+        }
+
+        await git;
+
+        jetpack.remove(
+          path.join(execPath, "app", req.body.name, "src", "libs")
+        );
+        git = execa(
+          "git",
+          ["clone", "https://github.com/cactiva/cactiva-libs", "libs"],
+          {
+            all: true,
+            cwd: path.join(execPath, "app", req.body.name, "src")
           } as any
         );
 
@@ -212,6 +224,11 @@ export class ProjectController {
         await yarn;
         s.send("--- DONE ---");
         s.close();
+
+        jetpack.write(
+          path.join(execPath, "app", req.body.name, "settings.json"),
+          JSON.stringify(req.query)
+        );
 
         config.set("app", req.body.name);
       })();

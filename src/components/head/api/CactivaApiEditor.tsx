@@ -95,9 +95,11 @@ export default observer(() => {
                 return false;
             }
         }
+
         meta.current.loaded = false;
         meta.current.unsaved = false;
         meta.current.path = path;
+        
         const res = await api.get(`api/readfile?path=${path}`);
         if (res) {
             meta.current.content = res.text;

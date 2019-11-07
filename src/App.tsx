@@ -2,7 +2,7 @@ import "@src/App.scss";
 import CactivaEditor from "@src/components/editor/CactivaEditor";
 import { Pane, Text, Spinner } from "evergreen-ui";
 import hotkeys from "hotkeys-js";
-import { toJS } from "mobx";
+import { toJS, observable } from "mobx";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect } from "react";
 import { DndProvider } from "react-dnd-cjs";
@@ -12,7 +12,6 @@ import useAsyncEffect from "use-async-effect";
 import CactivaTree, { reloadTreeList, tree, treeListMeta } from "./components/ctree/CactivaTree";
 import { commitChanges, prepareChanges, removeElementById } from "./components/editor/utility/elements/tools";
 import CactivaHead from "./components/head/CactivaHead";
-import { fetchCliStream } from "./components/head/cli/CactivaExpoCli";
 import CactivaTraits from "./components/traits/CactivaTraits";
 import api from "./libs/api";
 import editor from "./store/editor";
@@ -87,43 +86,45 @@ hotkeys("backspace, delete", (event, handler) => {
   event.preventDefault();
 });
 
+const meta = observable({
+  init: false,
+  currentPane: "props",
+  sizeScreen: [15, 85]
+});
+export const loadProject = async () => {
+  const res = await api.get("project/info")
+  editor.name = res.app;
+  if (!editor.name) {
+    meta.init = true;
+    editor.settings = res.settings;
+    return;
+  }
+
+  editor.expo.status = res.expo;
+  editor.hasura.status = res.hasura;
+  editor.backend.status = res.backend;
+
+  await editor.load(
+    localStorage.getItem("cactiva-current-path") || "/src/Home.tsx"
+  );
+  if (editor.status === "failed") {
+    if (treeListMeta.list.length === 0) {
+      await reloadTreeList();
+    }
+    let file = "";
+    treeListMeta.list.map((e) => {
+      if (e.type === 'file' && !file) file = e.relativePath.replace('./', '/src/');
+    });
+    await editor.load(file);
+  }
+  meta.init = true;
+}
 export default observer(() => {
   const { current } = editor;
-  const meta = useObservable({
-    init: false,
-    currentPane: "props",
-    sizeScreen: [15, 85]
-  });
   const renderFont = current ? current.renderfont : false;
   const traitPane = current ? current.traitPane : false;
 
-  useAsyncEffect(async () => {
-    const res = await api.get("project/info")
-    editor.name = res.app;
-    editor.cli.status = res.status;
-    if (!editor.name) {
-      meta.init = true;
-      return;
-    }
-    if (editor.cli.status === "running") {
-      fetchCliStream();
-    }
-
-    await editor.load(
-      localStorage.getItem("cactiva-current-path") || "/src/Home.tsx"
-    );
-    if (editor.status === "failed") {
-      if (treeListMeta.list.length === 0) {
-        await reloadTreeList();
-      }
-      let file = "";
-      treeListMeta.list.map((e) => {
-        if (e.type === 'file' && !file) file = e.relativePath.replace('./', '/src/');
-      });
-      await editor.load(file);
-    }
-    meta.init = true;
-  }, []);
+  useAsyncEffect(loadProject, []);
 
   useEffect(() => {
     if (status === "failed") {

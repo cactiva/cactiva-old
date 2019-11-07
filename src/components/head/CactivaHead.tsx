@@ -3,10 +3,10 @@ import _ from "lodash";
 import { observer } from "mobx-react-lite";
 import React, { useRef } from "react";
 import "./CactivaDialogEditor.scss";
-import CactivaExpoCli from "./cli/CactivaExpoCli";
 import "./CactivaHead.scss";
 import CactivaStoreEditor from "./store/CactivaStoreEditor";
 import CactivaApiEditor from "./api/CactivaApiEditor";
+import CactivaProject from "./project/CactivaProject";
 
 
 export default observer(({ editor }: any) => {
@@ -36,36 +36,30 @@ export default observer(({ editor }: any) => {
       editor.current.traitPane ? "y" : "n"
     );
   };
-  const cliref = useRef({} as any);
   return (
     <div className="cactiva-head">
       <div className="left">
-        <Popover
-          onCloseComplete={() => {
-            if (cliref.current.timer) {
-              clearInterval(cliref.current.timer);
-            }
-          }}
-          onOpenComplete={() => {
-            if (editor.cli.status === "running") {
-              cliref.current.stream();
-            }
-          }}
-          content={() => {
-            return <CactivaExpoCli cliref={cliref} editor={editor} />
-          }}
-          minWidth={800}
-          position="right"
-        >
-          <Pane>
-            <div className="project">
-              <Text size={300}>{_.startCase(editor.name)}</Text>
-              <div className="status">
-                <Text size={300}>{_.startCase(editor.cli.status)}</Text>
-              </div>
+
+        <Pane onClick={() => { editor.modals.project = false; }}>
+          <div className="project">
+            <Text size={300}>{_.startCase(editor.name)}</Text>
+            <div className="status">
+              <Text size={300}>Loaded</Text>
             </div>
-          </Pane>
-        </Popover>
+          </div>
+        </Pane>
+        
+        <Dialog
+          isShown={editor.modals.project}
+          hasFooter={false}
+          width={800}
+          minHeightContent={600}
+          hasHeader={false}
+          contentContainerProps={{
+            style: { display: 'flex' }
+          }}
+          onCloseComplete={() => editor.modals.project = false}
+        ><CactivaProject /></Dialog>
 
         <div
           className="cactiva-head-divider"
@@ -108,7 +102,7 @@ export default observer(({ editor }: any) => {
           shouldCloseOnOverlayClick={!editor.modals.apiLock}
           shouldCloseOnEscapePress={!editor.modals.apiLock}
           hasFooter={false}
-          width={800} 
+          width={800}
           minHeightContent={600}
           hasHeader={false}
           contentContainerProps={{
