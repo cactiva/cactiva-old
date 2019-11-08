@@ -16,11 +16,11 @@ export default observer(({ title, icon, onSelect, items = [] }: any) => {
     <div
       className="choose-component"
       style={{ flex: 1 }}
-      onContextMenuCapture={(e:any) => {
+      onContextMenuCapture={(e: any) => {
         e.stopPropagation();
         e.preventDefault();
       }}
-      onClick={(e:any) => {
+      onClick={(e: any) => {
         e.stopPropagation();
         e.preventDefault();
       }}
@@ -118,48 +118,36 @@ export default observer(({ title, icon, onSelect, items = [] }: any) => {
 
 export const toolbar = [
   {
+    icon: "page-layout",
+    label: "View"
+  },
+  {
     icon: "font",
     label: "Text"
-  },
-  {
-    icon: "new-text-box",
-    label: "TextInput"
-  },
-  {
-    icon: "widget-button",
-    label: "TouchableOpacity"
-  },
-  {
-    icon: "merge-links",
-    label: "Dropdown"
-  },
-  {
-    icon: "list-detail-view",
-    label: "FlatList"
-  },
-  {
-    icon: "tick",
-    label: "CheckBox"
-  },
-  {
-    icon: "segmented-control",
-    label: "RadioGroup"
   },
   {
     icon: "text-highlight",
     label: "Input"
   },
   {
-    icon: "widget-header",
-    label: "Select"
-  },
-  {
     icon: "symbol-square",
     label: "Button"
   },
   {
-    icon: "th",
-    label: "Datepicker"
+    icon: "widget-header",
+    label: "Select"
+  },
+  {
+    icon: "calendar",
+    label: "DatePicker"
+  },
+  {
+    icon: "tick",
+    label: "Checkbox"
+  },
+  {
+    icon: "record",
+    label: "Radio"
   },
   {
     icon: "ring",
@@ -167,7 +155,27 @@ export const toolbar = [
   },
   {
     icon: "tick-circle",
-    label: "CheckBox"
+    label: "CheckboxGroup"
+  },
+  {
+    icon: "camera",
+    label: "Camera"
+  },
+  {
+    icon: "map-marker",
+    label: "Location"
+  },
+  {
+    icon: "new-text-box",
+    label: "Field"
+  },
+  {
+    icon: "form",
+    label: "Form"
+  },
+  {
+    icon: "list-detail-view",
+    label: "FlatList"
   },
   {
     icon: "star",
@@ -182,11 +190,11 @@ export const toolbar = [
     label: "ImageBackground"
   },
   {
-    icon: "page-layout",
-    label: "View"
+    icon: "segmented-control",
+    label: "Header"
   },
   {
-    icon: "control",
-    label: "ScrollView"
+    icon: "circle",
+    label: "Spinner"
   }
 ];

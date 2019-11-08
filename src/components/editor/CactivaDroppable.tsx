@@ -47,7 +47,7 @@ export default observer(
     }
 
     const { id } = source;
-    const dropAfter = async () => { 
+    const dropAfter = async () => {
       let el = null;
       const child = findElementById(root, id);
       if (child) {
@@ -131,15 +131,14 @@ export default observer(
         meta.canDropChild = false;
       }
 
-      if (onDropOver) {
+      if (onDropOver && canDropOver) {
         onDropOver(meta.canDropChild);
       }
     }, [childOver, afterOver, canDropAfter, canDropOver]);
 
     let shouldShowAdd = false;
     if (id === editor.selectedId) {
-      if (id !== "0")
-        shouldShowAdd = source.id;
+      if (id !== "0") shouldShowAdd = source.id;
     } else {
       const sid = editor.selectedId.split("_");
       if (sid[sid.length - 1] > 0) {
@@ -150,12 +149,14 @@ export default observer(
       }
 
       if (!shouldShowAdd) {
-        if (isLastChild && getParentId(source.id) === getParentId(editor.selectedId)) {
+        if (
+          isLastChild &&
+          getParentId(source.id) === getParentId(editor.selectedId)
+        ) {
           shouldShowAdd = source.id;
         }
       }
     }
-
 
     return (
       <>

@@ -11,7 +11,16 @@ import CactivaCustomComponent from "./CactivaCustomComponent";
 import CactivaExpressionDialog from "./CactivaExpressionDialog";
 import "./editor.scss";
 import "./tags/kinds/kinds.scss";
-import { addChildInId, commitChanges, createNewElement, getParentId, insertAfterElementId, prepareChanges, wrapInElementId } from "./utility/elements/tools";
+import "./tags/elements/elements.scss";
+import {
+  addChildInId,
+  commitChanges,
+  createNewElement,
+  getParentId,
+  insertAfterElementId,
+  prepareChanges,
+  wrapInElementId
+} from "./utility/elements/tools";
 import { renderChildren } from "./utility/renderchild";
 import tags from "./utility/tags";
 
@@ -57,7 +66,7 @@ export default observer(({ editor }: any) => {
                   ? "resplit"
                   : "split"
                 : "unsplit"
-              }`}
+            }`}
             onDrag={onDragScreen}
           >
             <CactivaEditorRender editor={editor} />
@@ -112,17 +121,17 @@ const CactivaEditorSource = observer((props: any) => {
   };
   const editorDidMount = (ed: any, monaco: any) => {
     monacoEdRef.current = ed;
-    ed.onDidBlurEditorText(function (e: any) {
+    ed.onDidBlurEditorText(function(e: any) {
       monacoEditorChange(ed.getValue());
     });
-    ed.onMouseLeave(function (e: any) {
+    ed.onMouseLeave(function(e: any) {
       monacoEditorChange(ed.getValue());
     });
     ed.addAction({
       id: "cactiva-apply-changes",
       label: "Apply Changes",
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
-      run: function (ed: any) {
+      run: function(ed: any) {
         meta.showAction = false;
         monacoEditorChange(ed.getValue());
         if (editor.selectedSource.length > 0) {
@@ -138,7 +147,7 @@ const CactivaEditorSource = observer((props: any) => {
       id: "cactiva-save",
       label: "Save",
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S],
-      run: function (ed: any) {
+      run: function(ed: any) {
         monacoEditorChange(ed.getValue());
         editor.save();
         return null;
@@ -225,11 +234,19 @@ const CactivaEditorSource = observer((props: any) => {
           className="action-btn"
           style={{ padding: 0, opacity: 0.7, border: 0 }}
         >
-          {!editor.rootSelected ? <Text>Apply Changes: Ctrl / ⌘ + Enter</Text> : <Text>Raw Source (Save Ctrl / ⌘ + S)</Text>}
+          {!editor.rootSelected ? (
+            <Text>Apply Changes: Ctrl / ⌘ + Enter</Text>
+          ) : (
+            <Text>Raw Source (Save Ctrl / ⌘ + S)</Text>
+          )}
         </div>
       </div>
     );
-    if (!editor.rootSelected && editor.selectedSource.length > 0 && meta.showAction) {
+    if (
+      !editor.rootSelected &&
+      editor.selectedSource.length > 0 &&
+      meta.showAction
+    ) {
       const actionClick = () => {
         reloadEditorSource(false);
         monacoEdRef.current.setValue(meta.selectedSource);

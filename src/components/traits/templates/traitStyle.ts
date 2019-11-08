@@ -178,8 +178,31 @@ const CactivaTraitStyle: any = {
       }
     },
     {
-      name: "Flex",
-      path: "style.value.flex",
+      name: "Flex Wrap",
+      path: "style.value.flexWrap",
+      kind: SyntaxKind.StringLiteral,
+      mode: "radio",
+      options: {
+        styles: {
+          root: {
+            flex: "0 0 50%",
+            paddingRight: 0
+          }
+        },
+        items: [
+          { value: "nowrap", label: "No Wrap", icon: "more", mode: "icon" },
+          {
+            value: "wrap",
+            label: "Wrap",
+            icon: "drag-handle-horizontal",
+            mode: "icon"
+          }
+        ]
+      }
+    },
+    {
+      name: "Flex Grow",
+      path: "style.value.flexGrow",
       kind: SyntaxKind.NumericLiteral,
       options: {
         styles: {
@@ -204,19 +227,6 @@ const CactivaTraitStyle: any = {
       }
     },
     {
-      name: "Flex Grow",
-      path: "style.value.flexGrow",
-      kind: SyntaxKind.NumericLiteral,
-      options: {
-        styles: {
-          root: {
-            flex: "0 0 50%",
-            paddingRight: 0
-          }
-        }
-      }
-    },
-    {
       name: "Flex Shrink",
       path: "style.value.flexShrink",
       kind: SyntaxKind.NumericLiteral,
@@ -227,29 +237,6 @@ const CactivaTraitStyle: any = {
             paddingRight: 0
           }
         }
-      }
-    },
-    {
-      name: "Flex Wrap",
-      path: "style.value.flexWrap",
-      kind: SyntaxKind.StringLiteral,
-      mode: "radio",
-      options: {
-        styles: {
-          root: {
-            flex: "0 0 50%",
-            paddingRight: 0
-          }
-        },
-        items: [
-          { value: "nowrap", label: "No Wrap", icon: "more", mode: "icon" },
-          {
-            value: "wrap",
-            label: "Wrap",
-            icon: "drag-handle-horizontal",
-            mode: "icon"
-          }
-        ]
       }
     },
     {
