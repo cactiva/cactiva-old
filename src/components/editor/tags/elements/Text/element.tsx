@@ -12,6 +12,8 @@ import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDroppable from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
 import { parseStyle } from "../../../utility/parser/parser";
+import { renderChildren } from "@src/components/editor/utility/renderchild";
+import { toJS } from "mobx";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -63,14 +65,20 @@ export default observer((props: any) => {
               style={{ margin: "0px 5px" }}
             />
           )}
-
-          <div className="text">
-            <CactivaChildren
-              cactiva={cactiva}
-              parentInfo={(c: any) => ({
-                canDropAfter: false
-              })}
-            />
+          <div className="text-element">
+            {(cactiva.source.children || []).map((e: any) => {
+              if (e.kind === SyntaxKind.JsxText) {
+                return e.value;
+              }
+              return renderChildren(
+                e,
+                cactiva.editor,
+                cactiva.root,
+                (c: any) => ({
+                  canDropAfter: false
+                })
+              )
+            })}
           </div>
         </CactivaSelectable>
       </CactivaDraggable>
