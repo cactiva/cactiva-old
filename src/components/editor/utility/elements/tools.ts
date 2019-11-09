@@ -291,9 +291,9 @@ export const wrapInElementId = (
   wrapEl: any
 ) => {
   const currentEl = findElementById(root, id);
-  const parentEl = findParentElementById(root, id);
   if (currentEl && wrapEl) {
     if (wrapEl.kind === SyntaxKind.JsxExpression) {
+      const parentEl = findParentElementById(root, id);
       switch (wrapEl.value.kind) {
         case SyntaxKind.CallExpression:
           if (wrapEl.value.expression.indexOf(".map") >= 0) {
@@ -330,12 +330,7 @@ export const wrapInElementId = (
       const elementTag = tags[wrapEl.name];
       const insertTo = ((elementTag as any) || {}).insertTo || "children";
       let children = _.get(wrapEl, insertTo);
-      if (!children) {
-        _.set(wrapEl, insertTo, []);
-        children = [];
-      }
-      children.unshift(currentEl);
-      _.set(wrapEl, insertTo, children);
+      _.set(wrapEl, insertTo, [currentEl]);
       replaceElementById(root, id, wrapEl);
     }
   }
