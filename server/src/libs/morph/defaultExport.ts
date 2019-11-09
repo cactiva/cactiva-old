@@ -1,31 +1,32 @@
-import { SourceFile, SyntaxKind } from 'ts-morph';
+import { SourceFile, SyntaxKind } from "ts-morph";
 export const defaultExport = (sf: SourceFile) => {
   if (!sf) return null;
   const expt = sf.getFirstChildByKind(SyntaxKind.ExportAssignment);
-  if (expt) {
-    let array: any = null;
+  try {
+    if (expt) {
+      let array: any = null;
 
-    try {
-      array = expt
-        .getFirstChildByKindOrThrow(SyntaxKind.ArrowFunction)
-        .getFirstChildByKindOrThrow(SyntaxKind.Block)
-        .getFirstChildByKindOrThrow(SyntaxKind.ReturnStatement);
-    } catch (e) {
-      array = expt
-        .getFirstChildByKindOrThrow(SyntaxKind.CallExpression)
-        .getFirstChildByKindOrThrow(SyntaxKind.ArrowFunction)
-        .getFirstChildByKindOrThrow(SyntaxKind.Block)
-        .getFirstChildByKindOrThrow(SyntaxKind.ReturnStatement);
+      try {
+        array = expt
+          .getFirstChildByKindOrThrow(SyntaxKind.ArrowFunction)
+          .getFirstChildByKindOrThrow(SyntaxKind.Block)
+          .getFirstChildByKindOrThrow(SyntaxKind.ReturnStatement);
+      } catch (e) {
+        array = expt
+          .getFirstChildByKindOrThrow(SyntaxKind.CallExpression)
+          .getFirstChildByKindOrThrow(SyntaxKind.ArrowFunction)
+          .getFirstChildByKindOrThrow(SyntaxKind.Block)
+          .getFirstChildByKindOrThrow(SyntaxKind.ReturnStatement);
+      }
+
+      if (array === null) return null;
+
+      return array.getExpression();
     }
-
-    if (array === null) return null;
-
-    return array.getExpression();
-  }
+  } catch (e) {}
 
   return null;
 };
-
 
 export const defaultExportShallow = (sf: SourceFile) => {
   if (!sf) return null;
@@ -36,12 +37,12 @@ export const defaultExportShallow = (sf: SourceFile) => {
     try {
       array = expt
         .getFirstChildByKindOrThrow(SyntaxKind.ArrowFunction)
-        .getFirstChildByKindOrThrow(SyntaxKind.Block)
+        .getFirstChildByKindOrThrow(SyntaxKind.Block);
     } catch (e) {
       array = expt
         .getFirstChildByKindOrThrow(SyntaxKind.CallExpression)
         .getFirstChildByKindOrThrow(SyntaxKind.ArrowFunction)
-        .getFirstChildByKindOrThrow(SyntaxKind.Block)
+        .getFirstChildByKindOrThrow(SyntaxKind.Block);
     }
 
     if (array === null) return null;
@@ -51,4 +52,3 @@ export const defaultExportShallow = (sf: SourceFile) => {
 
   return null;
 };
-
