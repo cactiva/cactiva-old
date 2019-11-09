@@ -52,6 +52,14 @@ export default class extends CactivaTag {
           options: {
             styles: styles
           }
+        },
+        {
+          name: "Required",
+          path: "isRequired",
+          kind: SyntaxKind.FalseKeyword,
+          options: {
+            styles: styles
+          }
         }
       ]
     },

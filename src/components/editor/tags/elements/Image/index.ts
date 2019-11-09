@@ -10,7 +10,7 @@ const styles = {
 
 export default class extends CactivaTag {
   static tagName = "Image";
-  static from = "react-native";
+  static from = "@src/libs";
   static insertTo = "";
   static structure = {
     kind: SyntaxKind.JsxElement,

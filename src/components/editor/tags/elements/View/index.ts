@@ -23,7 +23,7 @@ export default class extends CactivaTag {
       fields: [
         {
           name: "Type",
-          path: "viewType",
+          path: "type",
           kind: SyntaxKind.StringLiteral,
           mode: "select",
           default: "View",
@@ -31,6 +31,7 @@ export default class extends CactivaTag {
             styles: styles,
             items: [
               { value: "View", label: "View" },
+              { value: "ScrollView", label: "Scroll View" },
               { value: "SafeAreaView", label: "Safe Area View" },
               { value: "AnimatedView", label: "Animated View" }
             ]

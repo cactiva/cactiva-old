@@ -9,7 +9,7 @@ const styles = {
 };
 export default class extends CactivaTag {
   static tagName = "FlatList";
-  static from = "react-native";
+  static from = "@src/libs";
   static insertTo = "props.renderItem.body";
   static structure = {
     kind: SyntaxKind.JsxElement,
@@ -44,6 +44,14 @@ export default class extends CactivaTag {
         {
           name: "Data",
           path: "data",
+          kind: SyntaxKind.ArrayLiteralExpression,
+          options: {
+            styles: styles
+          }
+        },
+        {
+          name: "Sticky Idx",
+          path: "stickyHeaderIndices",
           kind: SyntaxKind.ArrayLiteralExpression,
           options: {
             styles: styles

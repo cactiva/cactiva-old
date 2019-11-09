@@ -38,6 +38,14 @@ export default class extends CactivaTag {
           }
         },
         {
+          name: "Shadow",
+          path: "shadow",
+          kind: SyntaxKind.FalseKeyword,
+          options: {
+            styles: styles
+          }
+        },
+        {
           name: "On Press",
           path: "onPress",
           kind: SyntaxKind.ArrowFunction,

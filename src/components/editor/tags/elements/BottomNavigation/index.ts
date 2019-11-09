@@ -9,11 +9,11 @@ const styles = {
 };
 
 export default class extends CactivaTag {
-  static tagName = "View";
+  static tagName = "BottomNavigation";
   static from = "@src/libs";
   static structure = {
     kind: SyntaxKind.JsxElement,
-    name: "View",
+    name: "BottomNavigation",
     props: {},
     children: []
   };
