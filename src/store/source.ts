@@ -1,4 +1,8 @@
-import { commitChanges, prepareChanges, replaceElementById } from "@src/components/editor/utility/elements/tools";
+import {
+  commitChanges,
+  prepareChanges,
+  replaceElementById
+} from "@src/components/editor/utility/elements/tools";
 import { generateSource } from "@src/components/editor/utility/parser/generateSource";
 import api from "@src/libs/api";
 import _ from "lodash";
@@ -14,6 +18,7 @@ export class SourceStore {
   @observable path = "";
   @observable source: any = {};
   @observable rootSource: string = "";
+  @observable rootSourceTemp: string = "";
   @observable imports = {};
   @observable hooks = {};
 
@@ -147,8 +152,9 @@ export class SourceStore {
     this.project.status = "saving";
 
     let source = "";
-    if (this.rootSelected && this.selectedSource) {
-      source = this.selectedSource;
+    if (this.rootSelected) {
+      if (this.rootSourceTemp) source = this.rootSourceTemp;
+      else source = this.getSourceCode();
     } else {
       if (!(await this.applySelectedSource())) {
         return;
@@ -158,11 +164,12 @@ export class SourceStore {
 
     try {
       const res = await api.post(`project/write-source?path=${this.path}`, {
-        raw: this.rootSelected ? 'y' : 'n',
+        raw: this.rootSelected ? "y" : "n",
         value: JSON.stringify(source),
         imports: this.imports
       });
       this.rootSource = res.file;
+      this.rootSourceTemp = "";
       this.source = res.component;
       this.project.status = "ready";
       this.savedMarker.undoIndex = this.undoStack.length - 1;

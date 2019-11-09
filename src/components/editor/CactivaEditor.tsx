@@ -66,7 +66,7 @@ export default observer(({ editor }: any) => {
                   ? "resplit"
                   : "split"
                 : "unsplit"
-            }`}
+              }`}
             onDrag={onDragScreen}
           >
             <CactivaEditorRender editor={editor} />
@@ -121,17 +121,17 @@ const CactivaEditorSource = observer((props: any) => {
   };
   const editorDidMount = (ed: any, monaco: any) => {
     monacoEdRef.current = ed;
-    ed.onDidBlurEditorText(function(e: any) {
+    ed.onDidBlurEditorText(function (e: any) {
       monacoEditorChange(ed.getValue());
     });
-    ed.onMouseLeave(function(e: any) {
+    ed.onMouseLeave(function (e: any) {
       monacoEditorChange(ed.getValue());
     });
     ed.addAction({
       id: "cactiva-apply-changes",
       label: "Apply Changes",
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
-      run: function(ed: any) {
+      run: function (ed: any) {
         meta.showAction = false;
         monacoEditorChange(ed.getValue());
         if (editor.selectedSource.length > 0) {
@@ -147,7 +147,7 @@ const CactivaEditorSource = observer((props: any) => {
       id: "cactiva-save",
       label: "Save",
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S],
-      run: function(ed: any) {
+      run: function (ed: any) {
         monacoEditorChange(ed.getValue());
         editor.save();
         return null;
@@ -156,13 +156,17 @@ const CactivaEditorSource = observer((props: any) => {
   };
   const monacoEditorChange = _.debounce(
     value => {
-      if (meta.listenEditorChanges && !editor.rootSelected) {
-        if (value !== editor.selectedSource) {
-          editor.selectedSource = value;
+      if (meta.listenEditorChanges) {
+        if (editor.rootSelected) {
+          editor.rootSourceTemp = value;
+        } else {
+          if (value !== editor.selectedSource) {
+            editor.selectedSource = value;
 
-          const ed = monacoEdRef.current;
-          if (!ed.getModel().canUndo()) {
-            editor.selectedSource = "";
+            const ed = monacoEdRef.current;
+            if (!ed.getModel().canUndo()) {
+              editor.selectedSource = "";
+            }
           }
         }
       }
@@ -237,8 +241,8 @@ const CactivaEditorSource = observer((props: any) => {
           {!editor.rootSelected ? (
             <Text>Apply Changes: Ctrl / ⌘ + Enter</Text>
           ) : (
-            <Text>Raw Source (Save Ctrl / ⌘ + S)</Text>
-          )}
+              <Text>Raw Source (Save Ctrl / ⌘ + S)</Text>
+            )}
         </div>
       </div>
     );
