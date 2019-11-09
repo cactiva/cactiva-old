@@ -5,6 +5,7 @@ import { ICactivaTraitFieldProps } from "../CactivaTraitField";
 import _ from "lodash";
 import "./NumericLiteral.scss";
 import { toJS } from "mobx";
+import editor from "@src/store/editor";
 
 export default observer((trait: ICactivaTraitFieldProps) => {
   const meta = useObservable({
@@ -136,8 +137,14 @@ export default observer((trait: ICactivaTraitFieldProps) => {
           type="text"
           value={meta.value || ""}
           placeholder={_.get(trait, "options.fields.name")}
-          onKeyDown={(e:any) => {
-            if (e.which === 13) (e.target as any).blur();
+          onKeyDown={(event: any) => {
+            if (event.which === 13) (event.target as any).blur();
+            if ((event.ctrlKey || event.metaKey) && event.which == 83) {
+              event.preventDefault();
+              if (editor.current)
+                editor.current.save();
+              return false;
+            };
           }}
           onChange={onChange}
           onFocus={(e:any) => {

@@ -6,6 +6,7 @@ import _ from "lodash";
 import "./FontBrowser.scss";
 import api from "@src/libs/api";
 import { uuid } from "@src/components/editor/utility/elements/tools";
+import editor from "@src/store/editor";
 
 const deleteFile = (filename: any) => {
   return new Promise(resolve => {
@@ -90,6 +91,15 @@ export default observer(
                     type="file"
                     accept=".ttf"
                     onChange={onChangeUpload}
+                    onKeyDown={(event: any) => {
+                      if (event.which === 13) (event.target as any).blur();
+                      if ((event.ctrlKey || event.metaKey) && event.which == 83) {
+                        event.preventDefault();
+                        if (editor.current)
+                          editor.current.save();
+                        return false;
+                      };
+                    }}
                     style={{ display: "none" }}
                   />
                 </label>

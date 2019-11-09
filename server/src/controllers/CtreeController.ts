@@ -18,7 +18,7 @@ export class CtreeController {
       }
     );
 
-    const exclude = ["./assets", "./libs", "./config", "./stores", "./api", "./DS_STORE", "./theme.json"];
+    const exclude = ["./assets", "./libs", "./config", "./stores", "./api", "./DS_Store", "./theme.json"];
     tree.children = tree.children.filter((e: any) => {
       for (let ex of exclude) {
         if (e.relativePath.indexOf(ex) === 0) return false;

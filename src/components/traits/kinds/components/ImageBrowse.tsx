@@ -4,6 +4,7 @@ import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect } from "react";
 import "./ImageBrowser.scss";
 import { uuid } from "@src/components/editor/utility/elements/tools";
+import editor from "@src/store/editor";
 
 const deleteFile = (filename: any) => {
   return new Promise(resolve => {
@@ -77,6 +78,15 @@ export default observer(({ value, onChange, isShown, onDismiss }: any) => {
               </Text>
               <input
                 multiple={false}
+                onKeyDown={(event: any) => {
+                  if (event.which === 13) (event.target as any).blur();
+                  if ((event.ctrlKey || event.metaKey) && event.which == 83) {
+                    event.preventDefault();
+                    if (editor.current)
+                      editor.current.save();
+                    return false;
+                  };
+                }}
                 type="file"
                 accept="image/*"
                 onChange={onChangeUpload}

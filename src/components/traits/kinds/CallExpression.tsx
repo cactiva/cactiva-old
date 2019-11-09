@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { ICactivaTraitFieldProps } from "../CactivaTraitField";
 import "./CallExpression.scss";
 import ImageBrowse from "./components/ImageBrowse";
+import editor from "@src/store/editor";
 export default observer((trait: ICactivaTraitFieldProps) => {
   const meta = useObservable({
     value: trait.value,
@@ -41,6 +42,14 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             className={`cactiva-trait-input`}
             type="text"
             value={meta.value || ""}
+            onKeyDown={(event: any) => {
+              if ((event.ctrlKey || event.metaKey) && event.which == 83) {
+                event.preventDefault();
+                if (editor.current)
+                  editor.current.save();
+                return false;
+              };
+            }}
             onChange={onChange}
             onFocus={onFocus}
             onBlur={update}
@@ -58,6 +67,15 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             type="text"
             value={meta.value || ""}
             onChange={onChange}
+            onKeyDown={(event: any) => {
+              if (event.which === 13) (event.target as any).blur();
+              if ((event.ctrlKey || event.metaKey) && event.which == 83) {
+                event.preventDefault();
+                if (editor.current)
+                  editor.current.save();
+                return false;
+              };
+            }}
             onFocus={onFocus}
             onBlur={update}
           />

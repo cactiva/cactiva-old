@@ -5,6 +5,7 @@ import * as IconSource from "react-web-vector-icons";
 import VirtualList from 'react-tiny-virtual-list';
 import { uuid } from "@src/components/editor/utility/elements/tools";
 import _ from "lodash";
+import editor from "@src/store/editor";
 
 const dataIcons: any = {
   AntDesign: require("./AntDesign.json"),
@@ -72,6 +73,15 @@ export default observer((props: any) => {
             type="text"
             value={metaIcon.search}
             onChange={onChange}
+            onKeyDown={(event: any) => {
+              if (event.which === 13) (event.target as any).blur();
+              if ((event.ctrlKey || event.metaKey) && event.which == 83) {
+                event.preventDefault();
+                if (editor.current)
+                  editor.current.save();
+                return false;
+              };
+            }}
             onFocus={(e:any) => {
               e.target.select();
             }}

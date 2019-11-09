@@ -9,6 +9,7 @@ import { ICactivaTraitFieldProps } from "../CactivaTraitField";
 import FontBrowser from "./components/FontBrowser";
 import IconsEl from "./components/IconMaps";
 import "./StringLiteral.scss";
+import editor from "@src/store/editor";
 
 export default observer((trait: ICactivaTraitFieldProps) => {
   const meta = useObservable({
@@ -38,8 +39,14 @@ export default observer((trait: ICactivaTraitFieldProps) => {
           <input
             className={`cactiva-trait-input`}
             type="text"
-            onKeyDown={(e: any) => {
-              if (e.which === 13) (e.target as any).blur();
+            onKeyDown={(event: any) => {
+              if (event.which === 13) (event.target as any).blur();
+              if ((event.ctrlKey || event.metaKey) && event.which == 83) {
+                event.preventDefault();
+                if (editor.current)
+                  editor.current.save();
+                return false;
+              };
             }}
             placeholder={_.get(trait, "options.fields.name")}
             value={meta.value || ""}
@@ -141,8 +148,14 @@ const ColorEl = observer((props: any) => {
         <input
           className={`cactiva-trait-input`}
           type="text"
-          onKeyDown={(e: any) => {
-            if (e.which === 13) (e.target as any).blur();
+          onKeyDown={(event: any) => {
+            if (event.which === 13) (event.target as any).blur();
+            if ((event.ctrlKey || event.metaKey) && event.which == 83) {
+              event.preventDefault();
+              if (editor.current)
+                editor.current.save();
+              return false;
+            };
           }}
           value={metaColor.value || ""}
           style={{
