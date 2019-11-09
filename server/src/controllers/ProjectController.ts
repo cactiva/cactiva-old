@@ -18,16 +18,20 @@ export class ProjectController {
   @Get("list")
   private list(req: Request, res: Response) {
     res.status(200).json({
-      list: (jetpack.list(path.join(execPath, "app")) || []).map(e => {
-        let status = !!Morph.instances[e] ? "Loaded" : "Closed";
-        if (this.deleting.indexOf(e) >= 0) status = "Deleting";
-        if (this.creating.indexOf(e) >= 0) status = "Creating";
+      list: (jetpack.list(path.join(execPath, "app")) || [])
+        .map(e => {
+          let status = !!Morph.instances[e] ? "Loaded" : "Closed";
+          if (this.deleting.indexOf(e) >= 0) status = "Deleting";
+          if (this.creating.indexOf(e) >= 0) status = "Creating";
 
-        return {
-          name: e,
-          status
-        };
-      })
+          return {
+            name: e,
+            status
+          };
+        })
+        .filter(e => {
+          return e.name.indexOf(".DS_") < 0;
+        })
     });
   }
 
