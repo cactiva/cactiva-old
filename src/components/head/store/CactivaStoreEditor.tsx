@@ -32,6 +32,13 @@ export default observer(() => {
     const monacoRef = useRef(null as any);
     const monacoEdRef = useRef(null as any);
     const cref = useRef(null as any);
+    const resize = () => {
+        if (cref.current && monacoEdRef.current) {
+            meta.w = cref.current.offsetWidth;
+            meta.h = cref.current.offsetHeight;
+            monacoEdRef.current.layout();
+        }
+    };
     const reloadList = async () => {
         const res = await api.get("store/list");
         meta.list = res.children || [];
@@ -39,6 +46,7 @@ export default observer(() => {
         if (meta.list.length > 0) {
             load(monacoEdRef, meta.list[0].relativePath);
         }
+        resize();
     };
     const load = async (monacoEdRef: any, path: any) => {
         if (meta.current.unsaved) {
@@ -53,15 +61,9 @@ export default observer(() => {
         monacoEdRef.current.setValue(meta.current.content);
         meta.current.loaded = true;
         meta.shown = -1;
+        resize();
     }
     useEffect(() => {
-        const resize = () => {
-            if (cref.current && monacoEdRef.current) {
-                meta.w = cref.current.offsetWidth;
-                meta.h = cref.current.offsetHeight;
-                monacoEdRef.current.layout();
-            }
-        };
         resize();
         window.addEventListener('resize', resize)
         return () => {
