@@ -329,7 +329,6 @@ export const wrapInElementId = (
     } else {
       const elementTag = tags[wrapEl.name];
       const insertTo = ((elementTag as any) || {}).insertTo || "children";
-      let children = _.get(wrapEl, insertTo);
       _.set(wrapEl, insertTo, [currentEl]);
       replaceElementById(root, id, wrapEl);
     }
