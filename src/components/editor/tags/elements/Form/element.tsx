@@ -26,7 +26,6 @@ export default observer((props: any) => {
   if (sid.length > 1) {
     sid.pop();
   }
-  console.log(props);
   return (
     <CactivaDropChild
       cactiva={cactiva}

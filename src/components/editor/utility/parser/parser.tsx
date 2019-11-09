@@ -1,8 +1,7 @@
 import _ from "lodash";
 import { SyntaxKind } from "../syntaxkinds";
-import { toJS } from "mobx";
 
-export const parseStyle = (node: any, cactiva: any): any => {
+export const parseStyle = (node: any, cactiva?: any): any => {
   const result = parseValue(node);
   if (typeof result !== "object") {
     return null;

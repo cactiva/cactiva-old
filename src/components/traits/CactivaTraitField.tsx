@@ -10,7 +10,8 @@ import { generateSource } from "../editor/utility/parser/generateSource";
 import editor from "@src/store/editor";
 import { toJS } from "mobx";
 import { promptExpression } from "../editor/CactivaExpressionDialog";
-import { applyImport } from "../editor/utility/elements/tools";
+import { applyImport, getSelectableParent } from "../editor/utility/elements/tools";
+import { parseStyle } from "../editor/utility/parser/parser";
 
 export interface ICactivaTraitFieldProps extends ICactivaTraitField {
   editor: any;
@@ -151,6 +152,26 @@ export default observer((trait: ICactivaTraitFieldProps) => {
 
 
 const prepareTraitOptions = (trait: any) => {
+  if (["style.value.alignSelf"].indexOf(trait.path) >= 0 && editor.current) {
+    const parent = getSelectableParent(editor.current.source, editor.current.selected.source.id);
+    const parentStyle = parseStyle(_.get(parent, 'props.style'))
+    const flexDirection = _.get(parentStyle, 'flexDirection', 'column');
+
+    if (flexDirection === "column") {
+      return {
+        items: trait.options.items.map((item: any) => {
+          if (item.value === "flex-start" || item.value === "flex-end") {
+            item.className = "rotate-270";
+          }
+          return item
+        }),
+        ...trait.options,
+        className: "rotate-90"
+      }
+    }
+
+    return trait.options;
+  }
   if (["style.value.alignItems", "style.value.justifyContent"].indexOf(trait.path) >= 0 && editor.current) {
     const s = editor.current.selected;
     if (s) {
@@ -158,6 +179,12 @@ const prepareTraitOptions = (trait: any) => {
       const flexDirection = getPropValue(props, 'style.value.flexDirection.value');
       if (flexDirection === 'column') {
         return {
+          items: trait.options.items.map((item: any) => {
+            if (item.value === "flex-start" || item.value === "flex-end") {
+              item.className = "rotate-270";
+            }
+            return item
+          }),
           ...trait.options,
           className: "rotate-90"
         }

@@ -156,7 +156,7 @@ const CactivaEditorSource = observer((props: any) => {
   };
   const monacoEditorChange = _.debounce(
     value => {
-      if (meta.listenEditorChanges) {
+      if (meta.listenEditorChanges && !editor.rootSelected) {
         if (value !== editor.selectedSource) {
           editor.selectedSource = value;
 

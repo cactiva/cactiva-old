@@ -124,6 +124,29 @@
   }
 }
 
+.rotate-270 {
+  svg {
+    transform: rotate(270deg);
+  }
+
+  &.stretch {
+    svg {
+      transform: none;
+    }
+  }
+}
+.rotate-180 {
+  svg {
+    transform: rotate(180deg);
+  }
+
+  &.stretch {
+    svg {
+      transform: none;
+    }
+  }
+}
+
 .rotate-0 {
   svg {
     transform: rotate(0deg);
