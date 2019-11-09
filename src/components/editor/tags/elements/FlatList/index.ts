@@ -21,7 +21,7 @@ export default class extends CactivaTag {
       },
       renderItem: {
         kind: SyntaxKind.ArrowFunction,
-        params: ["{item}:any"],
+        params: ["{item, index}:any"],
         body: [
           {
             kind: SyntaxKind.ParenthesizedExpression,

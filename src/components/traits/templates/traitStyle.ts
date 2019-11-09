@@ -395,6 +395,52 @@ const CactivaTraitStyle: any = {
       }
     },
     {
+      name: "Self",
+      path: "style.value.alignSelf",
+      kind: SyntaxKind.StringLiteral,
+      mode: "radio",
+      options: {
+        styles: {
+          root: {
+            flex: "0 0 100%",
+            paddingRight: 0
+          }
+        },
+        items: [
+          {
+            value: "flex-start",
+            label: "Flex Start",
+            icon: "alignment-top",
+            mode: "icon"
+          },
+          {
+            value: "center",
+            label: "Center",
+            icon: "vertical-distribution",
+            mode: "icon"
+          },
+          {
+            value: "flex-end",
+            label: "Flex End",
+            icon: "alignment-bottom",
+            mode: "icon"
+          },
+          {
+            value: "stretch",
+            label: "Stretch",
+            icon: "flow-review",
+            mode: "icon"
+          },
+          {
+            value: "baseline",
+            label: "Baseline",
+            icon: "alignment-horizontal-center",
+            mode: "icon"
+          }
+        ]
+      }
+    },
+    {
       name: "",
       path: "style.value.top",
       kind: SyntaxKind.NumericLiteral,

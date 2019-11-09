@@ -105,6 +105,14 @@ export default observer(({ title, icon, onSelect, items = [] }: any) => {
           <div
             className="item"
             onClick={() => {
+              if (onSelect) onSelect("switch");
+            }}
+          >
+            <Icon icon={"code-block"} size={14} color={"#999"} /> Switch
+          </div>
+          <div
+            className="item"
+            onClick={() => {
               if (onSelect) onSelect("map");
             }}
           >

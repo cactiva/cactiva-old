@@ -33,6 +33,10 @@ class EditorStore {
     expression: false
   };
 
+  @observable theme = {
+    colors: {} as any
+  };
+
   @observable backend = {
     status: "stopped",
     logs: ""

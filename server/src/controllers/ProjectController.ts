@@ -45,7 +45,11 @@ export class ProjectController {
         ),
         expo: !!streams[`expo-${name}`] ? "running" : "stopped",
         hasura: !!streams[`hasura-${name}`] ? "running" : "stopped",
-        backend: !!streams[`backend-${name}`] ? "running" : "stopped"
+        backend: !!streams[`backend-${name}`] ? "running" : "stopped",
+        theme: JSON.parse(
+          jetpack.read(path.join(execPath, "app", name, "src", "theme.json")) ||
+            "{}"
+        )
       });
     } catch (e) {
       console.log(e);
@@ -264,13 +268,16 @@ export class ProjectController {
           });
           git.all.pipe(process.stdout);
         }
-
         await git;
 
-        git = execa("git", ["submodule", "update", "--init", "--recursive"], {
-          all: true,
-          cwd: path.join(execPath, "app", req.body.name)
-        } as any);
+        git = execa(
+          "git",
+          ["clone", "https://github.com/cactiva/cactiva-libs", "libs"],
+          {
+            all: true,
+            cwd: path.join(execPath, "app", "src")
+          } as any
+        );
 
         if (git.all) {
           git.all.on("data", e => {
@@ -278,7 +285,23 @@ export class ProjectController {
           });
           git.all.pipe(process.stdout);
         }
+        await git;
 
+        git = execa(
+          "git",
+          ["clone", "https://github.com/cactiva/cactiva-backend", "backend"],
+          {
+            all: true,
+            cwd: path.join(execPath, "app")
+          } as any
+        );
+
+        if (git.all) {
+          git.all.on("data", e => {
+            s.send(e.toString());
+          });
+          git.all.pipe(process.stdout);
+        }
         await git;
 
         const yarn = execa("yarn", {

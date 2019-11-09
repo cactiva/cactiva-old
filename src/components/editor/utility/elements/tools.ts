@@ -245,7 +245,7 @@ export const removeElementById = (root: any, id: string | string[]) => {
       return result;
     } else {
       const res = recurseElementById(id, parent);
-      replaceExpValue(res.parent, id, null);
+      if (res && res.parent) replaceExpValue(res.parent, id, null);
       return res.el;
     }
   }
@@ -291,6 +291,7 @@ export const wrapInElementId = (
   wrapEl: any
 ) => {
   const currentEl = findElementById(root, id);
+  const parentEl = findParentElementById(root, id);
   if (currentEl && wrapEl) {
     if (wrapEl.kind === SyntaxKind.JsxExpression) {
       switch (wrapEl.value.kind) {
@@ -313,12 +314,16 @@ export const wrapInElementId = (
           });
       }
 
-      const parent = getSelectableParent(root, id);
-      if (
-        parent.kind === wrapEl.kind &&
-        parent.kind === SyntaxKind.JsxExpression
-      ) {
+      if (parentEl.kind !== SyntaxKind.JsxElement) {
         wrapEl = wrapEl.value;
+      } else {
+        const parent = getSelectableParent(root, id);
+        if (
+          parent.kind === wrapEl.kind &&
+          parent.kind === SyntaxKind.JsxExpression
+        ) {
+          wrapEl = wrapEl.value;
+        }
       }
       replaceElementById(root, id, wrapEl);
     } else {
@@ -453,6 +458,7 @@ export async function createNewElement(componentName: string) {
       title: "Please type the condition:",
       pre: "If (",
       post: ")",
+      local: true,
       footer: "then <Component />",
       wrapExp: "([[value]] && <View><Text>When True</Text></View>)",
       returnExp: true
@@ -465,9 +471,24 @@ export async function createNewElement(componentName: string) {
       title: "Please type the condition:",
       pre: "If (",
       post: ")",
+      local: true,
       footer: "then <Component />\nelse <AnotherComponent />",
       wrapExp:
         "([[value]] ? <View><Text>When True</Text></View> : <View><Text>When False</Text></View>)",
+      returnExp: true
+    });
+    if (!res.expression) return;
+    applyImport(res.imports);
+    return { kind: SyntaxKind.JsxExpression, value: res.expression };
+  } else if (name === "switch") {
+    const res = await promptExpression({
+      title: "Please type the expression you want to switch:",
+      pre: "switch (",
+      post: ")",
+      local: true,
+      footer: "case  <Component />",
+      wrapExp:
+        '({"value": <View><Text>When Match</Text></View>} as any)[[[value]]]',
       returnExp: true
     });
     if (!res.expression) return;
@@ -477,6 +498,7 @@ export async function createNewElement(componentName: string) {
     const res = await promptExpression({
       title: "Please type the array you want to map:",
       pre: "(",
+      local: true,
       post: ")",
       footer: ".map((item:any, key:number) => <Component />)",
       wrapExp: `

@@ -56,6 +56,8 @@ export const getToken = (op: number) => {
       return ">=";
     case SyntaxKind.EqualsEqualsToken:
       return "==";
+    case SyntaxKind.EqualsEqualsEqualsToken:
+      return "===";
     case SyntaxKind.ExclamationEqualsToken:
       return "!=";
     case SyntaxKind.ExclamationEqualsEqualsToken:

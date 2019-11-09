@@ -106,6 +106,7 @@ export const loadProject = async () => {
   editor.hasura.logs = "";
   editor.backend.status = res.backend;
   editor.backend.logs = "";
+  editor.theme = res.theme;
 
 
   await editor.load(

@@ -8,132 +8,134 @@ $dark: #383a3e;
 $medium: #a2a4ab;
 $light: #f5f6f9;
 
-.form {
-  font-size: 12px;
-  font-weight: 300;
-}
-
-.input {
-  align-items: center;
-  display: flex;
-  flex: 1;
-  font-size: 10px;
-  font-weight: 300;
-  min-width: 147px;
-  min-height: 27px;
-
-  .placeholder {
-    color: #757575;
+.cactiva-canvas {
+  .form {
+    font-size: 12px;
+    font-weight: 300;
   }
-}
 
-.label {
-  color: $primary;
-  font-weight: 300;
-  font-size: 12px;
-}
-
-.datepicker,
-.location,
-.select {
-  justify-content: space-between;
-}
-
-.camera {
-  justify-content: center;
-  align-items: center;
-  background-color: #757575;
-}
-
-.checkbox {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-
-  .tick {
-    border-radius: 3px;
-    border: 1px solid $medium;
-    height: 18px;
-    width: 18px;
-    display: flex;
+  .input {
     align-items: center;
-    justify-content: center;
-    background: $light;
+    display: flex;
+    flex: 1;
+    font-size: 10px;
+    font-weight: 300;
+    min-width: 147px;
+    min-height: 27px;
 
-    svg {
-      visibility: hidden;
-    }
-    &.active {
-      background-color: $primary;
-      border-color: $primary;
-      svg {
-        visibility: visible;
-      }
+    .placeholder {
+      color: #757575;
     }
   }
 
   .label {
-    color: $dark;
-    font-size: 10px;
+    color: $primary;
     font-weight: 300;
-    line-height: 18px;
-    margin-right: 12px;
-    margin-left: 12px;
+    font-size: 12px;
   }
-}
 
-.radio {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
+  .datepicker,
+  .location,
+  .select {
+    justify-content: space-between;
+  }
 
-  .bullet {
-    border-radius: 12px;
-    border: 1px solid $medium;
-    height: 18px;
-    width: 18px;
-    display: flex;
-    align-items: center;
+  .camera {
     justify-content: center;
-    background: $light;
+    align-items: center;
+    background-color: #757575;
+  }
 
-    .dot {
-      visibility: hidden;
+  .checkbox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+
+    .tick {
+      border-radius: 3px;
+      border: 1px solid $medium;
       height: 18px;
       width: 18px;
-      border-radius: 12px;
-    }
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: $light;
 
-    &.active {
-      background-color: #fff;
-
-      .dot {
-        visibility: visible;
+      svg {
+        visibility: hidden;
+      }
+      &.active {
+        background-color: $primary;
+        border-color: $primary;
+        svg {
+          visibility: visible;
+        }
       }
     }
+
+    .label {
+      color: $dark;
+      font-size: 10px;
+      font-weight: 300;
+      line-height: 18px;
+      margin-right: 12px;
+      margin-left: 12px;
+    }
   }
 
-  .label {
-    color: $dark;
-    font-size: 10px;
-    font-weight: 300;
-    line-height: 18px;
-    margin-right: 12px;
-    margin-left: 12px;
-  }
-}
-
-.header {
-  display: flex;
-  flex-direction: row;
-
-  .title {
-    margin-left: 5px;
-    line-height: 20px;
+  .radio {
     display: flex;
-    justify-content: center;
+    flex-direction: row;
     align-items: center;
+    justify-content: flex-start;
+
+    .bullet {
+      border-radius: 12px;
+      border: 1px solid $medium;
+      height: 18px;
+      width: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: $light;
+
+      .dot {
+        visibility: hidden;
+        height: 18px;
+        width: 18px;
+        border-radius: 12px;
+      }
+
+      &.active {
+        background-color: #fff;
+
+        .dot {
+          visibility: visible;
+        }
+      }
+    }
+
+    .label {
+      color: $dark;
+      font-size: 10px;
+      font-weight: 300;
+      line-height: 18px;
+      margin-right: 12px;
+      margin-left: 12px;
+    }
+  }
+
+  .header {
+    display: flex;
+    flex-direction: row;
+
+    .title {
+      margin-left: 5px;
+      line-height: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
 }

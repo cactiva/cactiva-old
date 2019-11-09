@@ -93,7 +93,6 @@ ${body}
     case SyntaxKind.JsxElement:
       return (() => {
         return `<${node.name} ${_.map(node.props, (e, name) => {
-          console.log(toJS(e));
           return `${name}={${generateSource(e, { isProps: true })}}`;
         }).join(" ")}>${(node.children || [])
           .map((e: any) => {
