@@ -55,6 +55,7 @@ export default observer(({ editor }: any) => {
           width={810}
           minHeightContent={540}
           hasHeader={false}
+          shouldCloseOnEscapePress={false}
           contentContainerProps={{
             style: { display: 'flex' }
           }}
@@ -80,6 +81,7 @@ export default observer(({ editor }: any) => {
           hasFooter={false}
           width={800}
           minHeightContent={600}
+          shouldCloseOnEscapePress={false}
           hasHeader={false}
           contentContainerProps={{
             style: { display: 'flex' }

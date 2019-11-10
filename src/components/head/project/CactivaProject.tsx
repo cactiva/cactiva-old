@@ -115,7 +115,10 @@ export default observer(() => {
                         editor.path = '';
                         editor.name = '';
                     }}>Switch</Button>
-                    {editor.expo.url !== "" && <Button className="small-btn">Preview App</Button>}
+                    {editor.expo.url !== "" && <Button className="small-btn" onClick={() => {
+                        const win = window.open(editor.expo.url + editor.path.substr(4, editor.path.length - 8), '_blank');
+                        if (win) win.focus();
+                    }}>Preview App</Button>}
                 </div>
                 <Tablist>
                     <Button className="small-btn" onClick={() => {

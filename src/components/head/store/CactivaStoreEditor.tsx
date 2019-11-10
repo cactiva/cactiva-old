@@ -44,7 +44,8 @@ export default observer(() => {
         meta.list = res.children || [];
 
         if (meta.list.length > 0) {
-            load(monacoEdRef, meta.list[0].relativePath);
+            if (meta.current.unsaved === false)
+                load(monacoEdRef, meta.list[0].relativePath);
         }
         resize();
     };
