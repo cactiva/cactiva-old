@@ -11,9 +11,10 @@ import jetpack = require("fs-jetpack");
 
 export class Morph {
   project: TProject = new TProject();
+  name: string;
 
   getAppPath() {
-    return `${execPath}/app/${config.get("app")}`;
+    return `${execPath}/app/${this.name}`;
   }
   parseExpression(source: string) {
     const sf = this.project.createSourceFile(
@@ -174,22 +175,28 @@ export class Morph {
 
   /************************ Singleton  **************************/
   public static instances: { [key: string]: Morph } = {};
-
   constructor(name: string) {
     if (Morph.instances[name]) {
-      throw new Error("Use Singleton.getInstance() instead of new");
+      throw new Error("Use Morph.getInstance('" + name + "') instead of new");
     }
+    this.name = name;
   }
 
+  public static lastName = "";
   public static getInstance(name: string): Morph {
+    if (name === undefined) {
+      name = Morph.lastName;
+    }
+
     if (!Morph.instances[name]) {
       Morph.instances[name] = new Morph(name);
-      if (jetpack.exists(Morph.instances[name].getAppPath())) {
-        process.chdir(Morph.instances[name].getAppPath());
-        console.log(`Project loaded: ${Morph.instances[name].getAppPath()}`);
+      if (jetpack.exists(`${execPath}/app/${name}`)) {
+        process.chdir(`${execPath}/app/${name}`);
+        console.log(`Project loaded: ${execPath}/app/${name}`);
         Morph.instances[name].project = new TProject({
           tsConfigFilePath: path.join(".", "tsconfig.json")
         });
+        Morph.lastName = name;
       } else {
         delete Morph.instances[name];
         throw new Error(`Project with name ${name} not found`);

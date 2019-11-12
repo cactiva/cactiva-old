@@ -130,7 +130,7 @@ class EditorStore {
       this.status = "ready";
       return;
     }
-    const apiPath = "/project/read-source?path=";
+    const apiPath = `/project/read-source?project=${this.name}&path=`;
     try {
       const res = await Axios.get(`${baseUrl}${apiPath}${path}`);
       this.sources[path] = new SourceStore();

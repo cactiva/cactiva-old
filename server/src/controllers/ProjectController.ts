@@ -119,6 +119,7 @@ export class ProjectController {
   @Get("start-hasura")
   private async startHasura(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    console.log(req.query.project);
     process.chdir(morph.getAppPath());
 
     const json = await jetpack.readAsync(
@@ -145,9 +146,14 @@ export class ProjectController {
             "serve",
             "--enable-console",
             "--disable-cors",
-            "--admin-secret=" + conf.hasura.secret,
+            "--admin-secret",
+            conf.hasura.secret,
+            `--jwt-secret`,
+            `{"type":"HS256", "key": "12345678901234567890123456789012"}`,
             "--server-port",
-            conf.hasura.port
+            conf.hasura.port,
+            "--cors-domain",
+            "http://localhost:*"
           ],
           {
             all: true,
@@ -279,7 +285,7 @@ export class ProjectController {
           ["clone", "https://github.com/cactiva/cactiva-libs", "libs"],
           {
             all: true,
-            cwd: path.join(execPath, "app", "src")
+            cwd: path.join(execPath, "app", req.body.name, "src")
           } as any
         );
 
@@ -296,7 +302,7 @@ export class ProjectController {
           ["clone", "https://github.com/cactiva/cactiva-backend", "backend"],
           {
             all: true,
-            cwd: path.join(execPath, "app")
+            cwd: path.join(execPath, "app", req.body.name)
           } as any
         );
 
