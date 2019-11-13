@@ -33,7 +33,8 @@ export default class extends CactivaTag {
               { value: "View", label: "View" },
               { value: "ScrollView", label: "Scroll View" },
               { value: "SafeAreaView", label: "Safe Area View" },
-              { value: "AnimatedView", label: "Animated View" }
+              { value: "AnimatedView", label: "Animated View" },
+              { value: "KeyboardAvoidingView", label: "Keyboard Avoiding View" }
             ]
           }
         }
