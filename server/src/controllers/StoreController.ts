@@ -27,11 +27,15 @@ export class StoreController {
   @Get("newfile")
   private newfile(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    const name = req.query.path
+      .split("/")
+      .pop()
+      .split(".")[0];
     const sf = morph.project.createSourceFile(
       morph.getAppPath() + req.query.path,
-      `import { observable } from "mobx";
+      `import store from "@src/libs/store";
 
-export default observable({
+export default store("${name}", {
     
 });
       `,

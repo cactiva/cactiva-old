@@ -1,4 +1,14 @@
-import { Button, Dialog, Icon, IconButton, Pane, Popover, Spinner, Text, Tooltip } from "evergreen-ui";
+import {
+  Button,
+  Dialog,
+  Icon,
+  IconButton,
+  Pane,
+  Popover,
+  Spinner,
+  Text,
+  Tooltip
+} from "evergreen-ui";
 import _ from "lodash";
 import { observer } from "mobx-react-lite";
 import React, { useRef } from "react";
@@ -7,7 +17,6 @@ import "./CactivaHead.scss";
 import CactivaStoreEditor from "./store/CactivaStoreEditor";
 import CactivaApiEditor from "./api/CactivaApiEditor";
 import CactivaProject from "./project/CactivaProject";
-
 
 export default observer(({ editor }: any) => {
   const current = editor.current;
@@ -39,8 +48,11 @@ export default observer(({ editor }: any) => {
   return (
     <div className="cactiva-head">
       <div className="left">
-
-        <Pane onClick={() => { editor.modals.project = true; }}>
+        <Pane
+          onClick={() => {
+            editor.modals.project = true;
+          }}
+        >
           <div className="project">
             <Text size={300}>{_.startCase(editor.name)}</Text>
             <div className="status">
@@ -48,7 +60,7 @@ export default observer(({ editor }: any) => {
             </div>
           </div>
         </Pane>
-        
+
         <Dialog
           isShown={editor.modals.project}
           hasFooter={false}
@@ -57,10 +69,12 @@ export default observer(({ editor }: any) => {
           hasHeader={false}
           shouldCloseOnEscapePress={false}
           contentContainerProps={{
-            style: { display: 'flex' }
+            style: { display: "flex" }
           }}
-          onCloseComplete={() => editor.modals.project = false}
-        ><CactivaProject /></Dialog>
+          onCloseComplete={() => (editor.modals.project = false)}
+        >
+          <CactivaProject />
+        </Dialog>
 
         <div
           className="cactiva-head-divider"
@@ -82,12 +96,15 @@ export default observer(({ editor }: any) => {
           width={800}
           minHeightContent={600}
           shouldCloseOnEscapePress={false}
+          shouldCloseOnOverlayClick={false}
           hasHeader={false}
           contentContainerProps={{
-            style: { display: 'flex' }
+            style: { display: "flex" }
           }}
-          onCloseComplete={() => editor.modals.store = false}
-        ><CactivaStoreEditor /></Dialog>
+          onCloseComplete={() => (editor.modals.store = false)}
+        >
+          <CactivaStoreEditor />
+        </Dialog>
 
         <Tooltip content="API" position={"bottom"}>
           <IconButton
@@ -108,10 +125,12 @@ export default observer(({ editor }: any) => {
           minHeightContent={600}
           hasHeader={false}
           contentContainerProps={{
-            style: { display: 'flex' }
+            style: { display: "flex" }
           }}
-          onCloseComplete={() => editor.modals.api = false}
-        ><CactivaApiEditor /></Dialog>
+          onCloseComplete={() => (editor.modals.api = false)}
+        >
+          <CactivaApiEditor />
+        </Dialog>
       </div>
       <div className="center">
         <Text
@@ -142,7 +161,11 @@ export default observer(({ editor }: any) => {
             </div>
           )}
           {status.charAt(0).toUpperCase() + status.slice(1)}
-          {status === "unsaved" && <span style={{ marginLeft: '3px', fontSize: '8px' }}>(Ctrl/⌘+S)</span>}
+          {status === "unsaved" && (
+            <span style={{ marginLeft: "3px", fontSize: "8px" }}>
+              (Ctrl/⌘+S)
+            </span>
+          )}
           {loadingText.indexOf(status) >= 0 && "…"}
         </Text>
         <Text style={{ fontSize: "9px", color: "#aaa" }}>
@@ -183,6 +206,6 @@ export default observer(({ editor }: any) => {
           />
         </Tooltip>
       </div>
-    </div >
+    </div>
   );
 });
