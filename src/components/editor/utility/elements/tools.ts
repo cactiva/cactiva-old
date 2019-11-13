@@ -427,9 +427,34 @@ export const applyImport = (imports: any) => {
       cimports[i] = im;
     });
 
+    let prefix = "";
+    let temp1 = "";
+    let ignoring = false;
+    for (let i in src[0] as any) {
+      const c = (src[0] as any)[i];
+      prefix += c;
+
+      if (temp1 === "" && c === "i") temp1 += c;
+      if (temp1 === "i" && c === "m") temp1 += c;
+      if (temp1 === "im" && c === "p") temp1 += c;
+      if (temp1 === "imp" && c === "o") temp1 += c;
+      if (temp1 === "impo" && c === "r") temp1 += c;
+      if (temp1 === "impor" && c === "t") temp1 += c;
+      if (temp1 === "import" && c === " ") {
+        temp1 += c;
+        prefix = prefix.substr(0, prefix.length - "import ".length);
+      }
+      if (temp1 === "import ") {
+        prefix = prefix.substr(0, prefix.length - 1);
+        if (c === ";") {
+          temp1 = "";
+        }
+      }
+    }
+
     editor.current.rootSource = `
 ${eimports.join("\n")}
-
+${prefix}
 export default ${src[1]}`;
   }
 };

@@ -72,15 +72,12 @@ export class Morph {
       .toString()
       .slice(2, 11);
   }
-  prepareSourceForWrite(source: string, imports: any[], sf?: SourceFile) {
-    let isTemp = false;
-    if (sf === undefined) {
-      sf = this.project.createSourceFile(
-        "__tempfile" + this.randomDigits() + "__.tsx",
-        source
-      );
-      isTemp = true;
-    }
+  
+  prepareSourceForWrite(source: string, imports: any[]) {
+    const sf = this.project.createSourceFile(
+      "__tempfile" + this.randomDigits() + "__.tsx",
+      source
+    );
     let result = "";
     try {
       removeImports(sf);
@@ -118,7 +115,7 @@ export class Morph {
     } catch (e) {
       console.log(e);
     } finally {
-      if (isTemp) sf.forget();
+      sf.forget();
     }
 
     return result;

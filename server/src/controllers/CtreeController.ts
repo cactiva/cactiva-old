@@ -106,15 +106,23 @@ export class CtreeController {
     
       return ${req.body.value};
     });`;
-    const sf = morph.project.createSourceFile(
-      morph.getAppPath() + req.query.path
+    const preparedSource = morph.prepareSourceForWrite(
+      source,
+      req.body.imports
     );
-    morph.prepareSourceForWrite(source, req.body.imports, sf);
+    const sf = morph.project.createSourceFile(
+      morph.getAppPath() + req.query.path,
+      preparedSource,
+      {
+        overwrite: true
+      }
+    );
     sf.organizeImports();
     sf.saveSync();
+    morph.project.saveSync();
     res.send({ status: "ok" });
   }
-
+  
   @Get("move")
   private move(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
