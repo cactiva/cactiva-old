@@ -33,7 +33,6 @@ export default observer((props: any) => {
     >
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva} style={style || { minWidth: 100 }}>
-          <div className="form">Radio Group</div>
           <CactivaDropMarker
             hover={meta.dropOver}
             showAdd={showAddInParent(cactiva)}

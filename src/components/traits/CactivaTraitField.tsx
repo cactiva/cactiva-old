@@ -1,4 +1,13 @@
-import { Alert, Menu, Pane, Popover, Text, Tooltip, Icon, IconButton } from "evergreen-ui";
+import {
+  Alert,
+  Menu,
+  Pane,
+  Popover,
+  Text,
+  Tooltip,
+  Icon,
+  IconButton
+} from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useRef } from "react";
@@ -10,7 +19,10 @@ import { generateSource } from "../editor/utility/parser/generateSource";
 import editor from "@src/store/editor";
 import { toJS } from "mobx";
 import { promptExpression } from "../editor/CactivaExpressionDialog";
-import { applyImport, getSelectableParent } from "../editor/utility/elements/tools";
+import {
+  applyImport,
+  getSelectableParent
+} from "../editor/utility/elements/tools";
 import { parseStyle } from "../editor/utility/parser/parser";
 
 export interface ICactivaTraitFieldProps extends ICactivaTraitField {
@@ -91,14 +103,27 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                 }}
               />
             ) : (
-                <Tooltip
-                  content={
-                    <code
-                      style={{ color: "white", fontSize: 11 }}
-                    >{`{${generateSource(trait.rawValue)}}`}</code>
-                  }
+              <Tooltip
+                content={
+                  <code
+                    style={{ color: "white", fontSize: 11 }}
+                  >{`{${generateSource(trait.rawValue)}}`}</code>
+                }
+              >
+                <Pane
+                  style={{
+                    flex: 1,
+                    height: "18px",
+                    padding: "0px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    ...fieldStyle,
+                    position: "relative"
+                  }}
                 >
-                  <Pane
+                  <div
+                    className={`cactiva-trait-input`}
                     style={{
                       flex: 1,
                       height: "18px",
@@ -106,43 +131,32 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      ...fieldStyle,
                       position: "relative"
                     }}
                   >
-                    <div
-                      className={`cactiva-trait-input`}
-                      style={{
-                        flex: 1,
-                        height: "18px",
-                        padding: "0px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        position: "relative"
+                    <IconButton
+                      icon="function"
+                      height={20}
+                      flex={1}
+                      onClick={async () => {
+                        // const exp = await promptExpression({
+                        //   returnExp: true,
+                        //   local: true,
+                        //   async: true,
+                        //   value: generateSource(_.get(trait, 'rawValue'))
+                        // });
+                        // if (exp.expression) {
+                        //   applyImport(exp.imports);
+                        //   trait.update(exp.expression);
+                        // }
+
+                        trait.editor.jsx = true;
                       }}
-                    >
-                      <IconButton
-                        icon="function"
-                        height={20}
-                        flex={1}
-                        onClick={async () => {
-                          const exp = await promptExpression({
-                            returnExp: true,
-                            local: true,
-                            async: true,
-                            value: generateSource(_.get(trait, 'rawValue'))
-                          });
-                          if (exp.expression) {
-                            applyImport(exp.imports);
-                            trait.update(exp.expression);
-                          }
-                        }}
-                      />
-                    </div>
-                  </Pane>
-                </Tooltip>
-              )}
+                    />
+                  </div>
+                </Pane>
+              </Tooltip>
+            )}
           </Pane>
         </Tooltip>
       </div>
@@ -150,12 +164,14 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   );
 });
 
-
 const prepareTraitOptions = (trait: any) => {
   if (["style.value.alignSelf"].indexOf(trait.path) >= 0 && editor.current) {
-    const parent = getSelectableParent(editor.current.source, editor.current.selected.source.id);
-    const parentStyle = parseStyle(_.get(parent, 'props.style'))
-    const flexDirection = _.get(parentStyle, 'flexDirection', 'column');
+    const parent = getSelectableParent(
+      editor.current.source,
+      editor.current.selected.source.id
+    );
+    const parentStyle = parseStyle(_.get(parent, "props.style"));
+    const flexDirection = _.get(parentStyle, "flexDirection", "column");
 
     if (flexDirection === "column") {
       return {
@@ -163,58 +179,65 @@ const prepareTraitOptions = (trait: any) => {
           if (item.value === "flex-start" || item.value === "flex-end") {
             item.className = "rotate-270";
           }
-          return item
+          return item;
         }),
         ...trait.options,
         className: "rotate-90"
-      }
+      };
     }
 
     return trait.options;
   }
-  if (["style.value.alignItems", "style.value.justifyContent"].indexOf(trait.path) >= 0 && editor.current) {
+  if (
+    ["style.value.alignItems", "style.value.justifyContent"].indexOf(
+      trait.path
+    ) >= 0 &&
+    editor.current
+  ) {
     const s = editor.current.selected;
     if (s) {
       const props = s.source.props;
-      const flexDirection = getPropValue(props, 'style.value.flexDirection.value');
-      if (flexDirection === 'column') {
+      const flexDirection = getPropValue(
+        props,
+        "style.value.flexDirection.value"
+      );
+      if (flexDirection === "column") {
         return {
           items: trait.options.items.map((item: any) => {
             if (item.value === "flex-start" || item.value === "flex-end") {
               item.className = "rotate-270";
             }
-            return item
+            return item;
           }),
           ...trait.options,
           className: "rotate-90"
-        }
-      } else if (flexDirection === 'row') {
+        };
+      } else if (flexDirection === "row") {
         return {
           ...trait.options,
           className: "rotate-0"
-        }
-      } else if (flexDirection === 'rowreverse') {
+        };
+      } else if (flexDirection === "rowreverse") {
         return {
           ...trait.options,
           className: "rotate-0 flip-h"
-        }
-      } else if (flexDirection === 'columnreverse') {
+        };
+      } else if (flexDirection === "columnreverse") {
         return {
           ...trait.options,
           className: "rotate-90 flip-v"
-        }
+        };
       }
     }
-
   }
 
   return trait.options;
-}
+};
 
 const getPropValue = (props: any, path: string) => {
   const value = _.get(props, path, "");
   if (typeof value === "string") {
-    return value.replace(/\W/ig, '');
+    return value.replace(/\W/gi, "");
   }
   return value;
-}
+};

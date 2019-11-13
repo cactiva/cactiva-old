@@ -39,7 +39,10 @@ export class ProjectController {
   private info(req: Request, res: Response) {
     try {
       const name = config.get("app");
-      Morph.getInstance(name);
+      const morph = Morph.getInstance(name);
+      if (morph) {
+        morph.reload();
+      }
       res.status(200).json({
         app: config.get("app"),
         env: config.get("env"),

@@ -246,7 +246,10 @@ export const removeElementById = (root: any, id: string | string[]) => {
     } else {
       const res = recurseElementById(id, parent);
       if (res && res.parent) replaceExpValue(res.parent, id, null);
-      return res.el;
+      if (res && res.el) {
+        return res.el;
+      }
+      return null;
     }
   }
 };
