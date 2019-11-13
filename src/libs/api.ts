@@ -16,9 +16,9 @@ class Api {
   async post(url: string, body?: any, config?: any) {
     const res = await axios.post(this.getUrl(url), body, config);
     return res.data;
-  } 
+  }
 
-  stream(name: string, onmessage: any, onclose?:any) {
+  stream(name: string, onmessage: any, onclose?: any) {
     const ws = new WebSocket((this.url + "ws").replace("http", "ws"));
     ws.onopen = ev => {
       ws.send("start|" + name);

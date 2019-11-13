@@ -78,7 +78,7 @@ export default observer(() => {
     const meta = useObservable({
         index: 0,
         edit: false,
-        services: ['expo', 'hasura', 'backend']
+        services: ['expo', 'backend']
     });
     const refs = {
         expo: useRef(null as any),

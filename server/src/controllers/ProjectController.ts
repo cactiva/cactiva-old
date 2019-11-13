@@ -116,62 +116,28 @@ export class ProjectController {
     });
   }
 
-  @Get("start-hasura")
-  private async startHasura(req: Request, res: Response) {
+  @Get("start-backend")
+  private async startBackend(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
     process.chdir(morph.getAppPath());
 
-    const json = await jetpack.readAsync(
-      path.join(morph.getAppPath(), "settings.json")
-    );
-    if (json) {
-      const conf = JSON.parse(json);
-      if (conf && conf.db) {
-        const db = conf.db;
-        const st = stream(`hasura-${req.query.project}`);
-        st.cli = execa(
-          "./hasura",
-          [
-            "--host",
-            db.host,
-            "--port",
-            db.port,
-            "--user",
-            db.user,
-            "--password",
-            db.password,
-            "--dbname",
-            db.database,
-            "serve",
-            "--enable-console",
-            "--disable-cors",
-            "--admin-secret=" + conf.hasura.secret,
-            "--server-port",
-            conf.hasura.port
-          ],
-          {
-            all: true,
-            cwd: morph.getAppPath()
-          } as any
-        );
-        st.cli.all.on("data", (chunk: any) => {
-          st.send(chunk.toString());
-        });
-        st.cli.all.pipe(process.stdout);
-        res.status(200).json({
-          status: "ok"
-        });
-      }
-    } else {
-      res.status(500).json({
-        status: "failed"
-      });
-    }
+    const st = stream(`backend-${req.query.project}`);
+    st.cli = execa("yarn", ["dev"], {
+      all: true,
+      cwd: path.join(morph.getAppPath(), "backend")
+    } as any);
+    st.cli.all.on("data", (chunk: any) => {
+      st.send(chunk.toString());
+    });
+
+    res.status(200).json({
+      status: "ok"
+    });
   }
 
-  @Get("stop-hasura")
-  private async stopHasura(req: Request, res: Response) {
-    const st = streams[`hasura-${req.query.project}`];
+  @Get("stop-backend")
+  private async stopBackend(req: Request, res: Response) {
+    const st = streams[`backend-${req.query.project}`];
     if (st) {
       st.close();
     }
@@ -279,7 +245,7 @@ export class ProjectController {
           ["clone", "https://github.com/cactiva/cactiva-libs", "libs"],
           {
             all: true,
-            cwd: path.join(execPath, "app", "src")
+            cwd: path.join(execPath, "app", req.body.name, "src")
           } as any
         );
 
@@ -296,7 +262,7 @@ export class ProjectController {
           ["clone", "https://github.com/cactiva/cactiva-backend", "backend"],
           {
             all: true,
-            cwd: path.join(execPath, "app")
+            cwd: path.join(execPath, "app", req.body.name)
           } as any
         );
 
