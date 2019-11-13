@@ -97,6 +97,9 @@ const renderKind = (
     editor.selected = cactiva;
   }
   if (source.kind === 11) {
+    if (typeof source.value !== 'string') {
+      console.log(source);
+    }
     return source.value;
   }
   return <Component {...source.props} key={key} _cactiva={cactiva} />;

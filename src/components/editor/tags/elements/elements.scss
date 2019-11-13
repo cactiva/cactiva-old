@@ -141,6 +141,13 @@ $light: #f5f6f9;
 }
 
 .text-element {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+  display: flex;
+  flex-direction: row;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Ubuntu, "Helvetica Neue", sans-serif;
   font-size: 14px;
+  > * {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
 }

@@ -53,7 +53,7 @@ export default observer((props: any) => {
         <CactivaSelectable
           cactiva={cactiva}
           onDoubleClick={onDoubleClick}
-          style={{ flexDirection: "row", ...style, lineHeight: "auto" }}
+          style={{ ...style, flexDirection: "row", lineHeight: "auto" }}
           className="cactiva-element rn-text"
         >
           {meta.canDropOver && (
@@ -64,7 +64,7 @@ export default observer((props: any) => {
             />
           )}
 
-          <div className="text-element" >
+          <div className="text-element">
             <CactivaChildren
               cactiva={cactiva}
               parentInfo={(c: any) => ({

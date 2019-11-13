@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { SyntaxKind } from "../syntaxkinds";
 import { toJS } from "mobx";
+import React from "react";
 
 export const generateExpression = (node: any): any[] => {
   const rawResult = generateExpressionArray(node);
@@ -142,7 +143,11 @@ export const generateExpressionArray = (node: any): any[] => {
   switch (kind) {
     case SyntaxKind.BinaryExpression:
       if (getToken(node.operator) === "&&") {
-        return ["if (", node.left, ") then ", node.right];
+        if (node.right.kind === SyntaxKind.JsxElement) {
+          return ["if (", node.left, ") then ", node.right];
+        } else {
+          return [node.left, " && ", node.right];
+        }
       }
       return [node.left, " " + getToken(node.operator) + " ", node.right];
     case SyntaxKind.NumericLiteral:
