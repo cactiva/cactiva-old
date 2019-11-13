@@ -91,7 +91,6 @@ export default observer(({ editor }: any) => {
       recurse(treeListMeta.source);
     }
   };
-
   return (
     <div
       className="cactiva-tree"

@@ -36,6 +36,7 @@ export const renderChildren = (
   if (!children.map) {
     return null;
   }
+
   const result = children.map((refChild: any, key: number) => {
     if (typeof refChild === "object") {
       let child = refChild;
@@ -78,7 +79,6 @@ const renderKind = (
   root: any,
   parentInfo: any
 ): any => {
-
   let kind = kinds[kindNames[source.kind]] as any;
   if (!kind) {
     kind = kinds.SyntaxKind;
@@ -95,6 +95,9 @@ const renderKind = (
   const Component = kind.element;
   if (editor.selectedId === source.id) {
     editor.selected = cactiva;
+  }
+  if (source.kind === 11) {
+    return source.value;
   }
   return <Component {...source.props} key={key} _cactiva={cactiva} />;
 };

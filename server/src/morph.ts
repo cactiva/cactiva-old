@@ -61,6 +61,7 @@ export class Morph {
       this.reload();
       return this.project.getSourceFileOrThrow(item => {
         const itemName = (!isAbsolutePath ? this.getAppPath() : "") + name;
+        console.log(itemName, item.getFilePath());
         return item.getFilePath() === itemName;
       });
     }
