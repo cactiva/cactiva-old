@@ -21,7 +21,7 @@ export default observer((props: any) => {
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva} style={style}>
           <div style={{ fontSize: "10px", marginBottom: -5 }}>
-            FlatList (item)
+            FlatList (item, index)
           </div>
           <div style={{ marginLeft: -10 }}>
             <Expression expressions={body} cactiva={cactiva} />

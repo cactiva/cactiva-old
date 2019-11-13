@@ -49,6 +49,8 @@ export const getToken = (op: number) => {
       return ";";
     case SyntaxKind.CommaToken:
       return ",";
+    case SyntaxKind.GreaterThanToken:
+      return ">";
     case SyntaxKind.LessThanToken:
       return "<";
     case SyntaxKind.LessThanSlashToken:

@@ -1,5 +1,5 @@
 import * as path from "path";
-import { Project as TProject } from "ts-morph";
+import { Project as TProject, SourceFile } from "ts-morph";
 import config, { execPath } from "./config";
 import { defaultExport } from "./libs/morph/defaultExport";
 import { getHooks } from "./libs/morph/getHooks";
@@ -72,11 +72,15 @@ export class Morph {
       .toString()
       .slice(2, 11);
   }
-  prepareSourceForWrite(source: string, imports: any[]) {
-    const sf = this.project.createSourceFile(
-      "__tempfile" + this.randomDigits() + "__.tsx",
-      source
-    );
+  prepareSourceForWrite(source: string, imports: any[], sf?: SourceFile) {
+    let isTemp = false;
+    if (sf === undefined) {
+      sf = this.project.createSourceFile(
+        "__tempfile" + this.randomDigits() + "__.tsx",
+        source
+      );
+      isTemp = true;
+    }
     let result = "";
     try {
       removeImports(sf);
@@ -114,7 +118,7 @@ export class Morph {
     } catch (e) {
       console.log(e);
     } finally {
-      sf.forget();
+      if (isTemp) sf.forget();
     }
 
     return result;

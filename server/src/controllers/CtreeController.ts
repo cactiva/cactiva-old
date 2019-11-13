@@ -18,7 +18,16 @@ export class CtreeController {
       }
     );
 
-    const exclude = ["./assets", "./libs", "./config", "./stores", "./api", "./.DS_", "./components.ts", "./theme.json"];
+    const exclude = [
+      "./assets",
+      "./libs",
+      "./config",
+      "./stores",
+      "./api",
+      "./.DS_",
+      "./components.ts",
+      "./theme.json"
+    ];
     tree.children = tree.children.filter((e: any) => {
       for (let ex of exclude) {
         if (e.relativePath.indexOf(ex) === 0) return false;
@@ -60,18 +69,18 @@ export class CtreeController {
     const sf = morph.project.createSourceFile(
       morph.getAppPath() + req.query.path,
       ` import React from "react";
-import { observer, useObservable } from "mobx-react-lite";
-import { View } from "react-native";
-import { useDimensions } from "react-native-hooks";
-import { useNavigation } from "react-navigation-hooks";
+    import { observer, useObservable } from "mobx-react-lite";
+    import { View } from "react-native";
+    import { useDimensions } from "react-native-hooks";
+    import { useNavigation } from "react-navigation-hooks";
 
-export default observer(() => {
-  const dim = useDimensions().window;
-  const nav = useNavigation();
-  const meta = useObservable({});
+    export default observer(() => {
+      const dim = useDimensions().window;
+      const nav = useNavigation();
+      const meta = useObservable({});
 
-  return <View></View>;
-});`,
+      return <View></View>;
+    });`,
       {
         overwrite: true
       }
@@ -97,20 +106,12 @@ export default observer(() => {
     
       return ${req.body.value};
     });`;
-    const preparedSource = morph.prepareSourceForWrite(
-      source,
-      req.body.imports
-    );
     const sf = morph.project.createSourceFile(
-      morph.getAppPath() + req.query.path,
-      preparedSource,
-      {
-        overwrite: true
-      }
+      morph.getAppPath() + req.query.path
     );
+    morph.prepareSourceForWrite(source, req.body.imports, sf);
     sf.organizeImports();
     sf.saveSync();
-    morph.project.saveSync();
     res.send({ status: "ok" });
   }
 

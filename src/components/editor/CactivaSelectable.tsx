@@ -138,16 +138,22 @@ export default observer(
                         el = {
                           kind: SyntaxKind.JsxFragment,
                           children: [el]
-                        }
+                        };
                       }
                       const body = generateSource(el);
-                      console.log(body);
 
-                      const path = spath.join("/") + "/" + _.startCase(name || "").replace(/[^0-9a-zA-Z]/g, "") + ".tsx";
+                      const path =
+                        spath.join("/") +
+                        "/" +
+                        _.startCase(name || "").replace(/[^0-9a-zA-Z]/g, "") +
+                        ".tsx";
 
                       editor.status = "creating";
                       try {
-                        await api.post(`ctree/newfile?path=${path}`, { value: body, imports: ceditor.current.imports });
+                        await api.post(`ctree/newfile?path=${path}`, {
+                          value: body,
+                          imports: ceditor.current.imports
+                        });
                       } catch (e) {
                         console.log(e);
                       }
@@ -157,7 +163,9 @@ export default observer(
                       prepareChanges(ceditor.current);
                       replaceElementById(
                         ceditor.current.source,
-                        source.id, nel);
+                        source.id,
+                        nel
+                      );
                       editor.status = "ready";
                       commitChanges(ceditor.current);
                     }
@@ -192,8 +200,13 @@ export default observer(
                         );
                         let anchor = getSelectableParent(
                           ceditor.current.source,
-                          source.id);
-                        replaceElementById(ceditor.current.source, anchor.id, el);
+                          source.id
+                        );
+                        replaceElementById(
+                          ceditor.current.source,
+                          anchor.id,
+                          el
+                        );
                         commitChanges(ceditor.current);
                       }
                     }}
@@ -274,13 +287,13 @@ export default observer(
           getRef(ref.current);
           let width = 0;
           if (ref && ref.current) {
-            width = ref.current.offsetWidth
+            width = ref.current.offsetWidth;
           }
           return (
             <div
               className={`cactiva-selectable ${
                 classes.selected ? "selected" : ""
-                }`}
+              }`}
             >
               <div
                 ref={ref}
@@ -305,12 +318,12 @@ export default observer(
                 {isShown && <div className="cactiva-el-cmenu"></div>}
                 {isShown && (
                   <div
-                    onContextMenu={(e:any) => {
+                    onContextMenu={(e: any) => {
                       e.stopPropagation();
                       e.preventDefault();
                       toggleRef.current();
                     }}
-                    onClick={(e:any) => {
+                    onClick={(e: any) => {
                       e.stopPropagation();
                       e.preventDefault();
                       toggleRef.current();
