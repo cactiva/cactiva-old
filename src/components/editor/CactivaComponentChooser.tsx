@@ -186,6 +186,10 @@ export const toolbar = [
     label: "FlatList"
   },
   {
+    icon: "layers",
+    label: "Carousel"
+  },
+  {
     icon: "star",
     label: "Icon"
   },

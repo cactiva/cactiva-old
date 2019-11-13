@@ -82,10 +82,9 @@ export default observer(({ value, onChange, isShown, onDismiss }: any) => {
                   if (event.which === 13) (event.target as any).blur();
                   if ((event.ctrlKey || event.metaKey) && event.which == 83) {
                     event.preventDefault();
-                    if (editor.current)
-                      editor.current.save();
+                    if (editor.current) editor.current.save();
                     return false;
-                  };
+                  }
                 }}
                 type="file"
                 accept="image/*"
@@ -135,6 +134,11 @@ const FileEl = observer((props: any) => {
       <div
         className={`image ${meta.source === file.name && "active"}`}
         onClick={onClickFile}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
       >
         <img src={api.url + "assets/" + file.name} alt={file.name} />
       </div>
