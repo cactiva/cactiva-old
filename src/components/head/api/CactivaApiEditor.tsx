@@ -39,26 +39,26 @@ const meta = observable({
     shown: -1,
     coord: {
         top: 0,
-        left: 0,
+        left: 0, 
     },
     listenEditorChanges: true,
     tabs: ["Config", "Test", "Source Code",],
     selectedTab: 0,
-    filter: ""
+    filter: "" 
 });
 
-export const CurrentApiSave = () => {
-    (async () => {
-        if (editor.modals.api) {
-            await api.post(`api/writefile?path=${meta.current.path}`, { value: meta.current.content });
-            meta.current.unsaved = false;
-        }
-    })()
-}
-hotkeys("ctrl+s,command+s", (event, handler) => {
-    CurrentApiSave();
-    event.preventDefault();
-});
+// export const CurrentApiSave = () => {
+//     (async () => {
+//         if (editor.modals.api) {
+//             await api.post(`api/writefile?path=${meta.current.path}`, { value: meta.current.content });
+//             meta.current.unsaved = false;
+//         }
+//     })()
+// }
+// hotkeys("ctrl+s,command+s", (event, handler) => {
+//     CurrentApiSave();
+//     event.preventDefault();
+// });
 
 export const generateApiSourceFromConfig = () => {
     const src = meta.current.content.split('export default ');
@@ -127,11 +127,11 @@ export default observer(() => {
     }, [])
 
     useEffect(() => {
-        if (meta.current.unsaved) {
-            editor.modals.apiLock = true;
-        } else {
-            editor.modals.apiLock = false;
-        }
+        // if (meta.current.unsaved) {
+        //     editor.modals.apiLock = true;
+        // } else {
+        //     editor.modals.apiLock = false;
+        // }
     }, [meta.current.unsaved])
 
     useAsyncEffect(reloadList, []);
@@ -303,7 +303,7 @@ export default observer(() => {
                             intent="success"
                             appearance="primary"
                             onClick={(e: any) => {
-                                CurrentApiSave();
+                                // CurrentApiSave();
                             }}>Save - Ctrl/⌘+S</Button>
                         <Button
                             style={{ fontSize: 10 }}
@@ -313,8 +313,8 @@ export default observer(() => {
                             appearance="primary"
                             onClick={(e: any) => {
                                 if (confirm("Are you sure ?")) {
-                                    editor.modals.apiLock = false;
-                                    editor.modals.api = false;
+                                    // editor.modals.apiLock = false;
+                                    // editor.modals.api = false;
                                     meta.current.unsaved = false;
                                 }
                             }}>Discard</Button>

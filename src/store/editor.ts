@@ -26,9 +26,11 @@ class EditorStore {
   @observable modals = {
     store: false,
     storeLock: false,
-    api: false,
-    apiLock: false,
     customComponents: false,
+    customComponentsOpt: {
+      header: null,
+      footer: null
+    },
     project: false,
     expression: false
   };

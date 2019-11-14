@@ -105,32 +105,6 @@ export default observer(({ editor }: any) => {
         >
           <CactivaStoreEditor />
         </Dialog>
-
-        <Tooltip content="API" position={"bottom"}>
-          <IconButton
-            icon="changes"
-            iconSize={14}
-            className={`btn`}
-            onClick={() => {
-              editor.modals.api = true;
-            }}
-          />
-        </Tooltip>
-        <Dialog
-          isShown={editor.modals.api}
-          shouldCloseOnOverlayClick={!editor.modals.apiLock}
-          shouldCloseOnEscapePress={!editor.modals.apiLock}
-          hasFooter={false}
-          width={800}
-          minHeightContent={600}
-          hasHeader={false}
-          contentContainerProps={{
-            style: { display: "flex" }
-          }}
-          onCloseComplete={() => (editor.modals.api = false)}
-        >
-          <CactivaApiEditor />
-        </Dialog>
       </div>
       <div className="center">
         <Text

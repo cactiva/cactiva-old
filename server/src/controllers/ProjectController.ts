@@ -178,10 +178,11 @@ export class ProjectController {
       status: "ok"
     });
   }
-
+ 
   @Get("load")
   private load(req: Request, res: Response) {
     config.set("app", req.query.name);
+    (config as any).save();
     res.status(200).send({ status: "ok" });
   }
 

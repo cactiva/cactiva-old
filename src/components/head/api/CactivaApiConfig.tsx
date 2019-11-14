@@ -9,7 +9,7 @@ import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect } from "react";
 import MonacoEditor from "react-monaco-editor";
 import TextareaAutosize from 'react-textarea-autosize';
-import { generateApiSourceFromConfig, CurrentApiSave } from "./CactivaApiEditor";
+import { generateApiSourceFromConfig } from "./CactivaApiEditor";
 
 export default observer(({ meta }: any) => {
     const value = parseValue(meta.current.source);
@@ -228,7 +228,7 @@ const SingleRowInput = observer(({ onChange, k, v }: any) => {
             onKeyDown={(event: any) => {
                 if ((event.ctrlKey || event.metaKey) && event.which == 83) {
                     event.preventDefault();
-                    CurrentApiSave()
+                    // CurrentApiSave()
                 }
             }}
             style={{
@@ -256,7 +256,7 @@ const SingleRowInput = observer(({ onChange, k, v }: any) => {
             onKeyDown={(event: any) => {
                 if ((event.ctrlKey || event.metaKey) && event.which == 83) {
                     event.preventDefault();
-                    CurrentApiSave()
+                    // CurrentApiSave()
                 }
             }}
             onClick={async (e: any) => {
