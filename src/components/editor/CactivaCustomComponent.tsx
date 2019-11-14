@@ -86,7 +86,7 @@ export default observer(({  }: any) => {
           e.stopPropagation();
         }}
       >
-        {Header && <Header />}
+        {Header && <Header dismiss={onCloseDialog} />}
         <Autocomplete
           onChange={async value => {
             const item = _.find(meta.list, { label: value });
@@ -140,7 +140,7 @@ export default observer(({  }: any) => {
             );
           }}
         </Autocomplete>
-        {Footer && <Footer />}
+        {Footer && <Footer dismiss={onCloseDialog} />}
       </div>
     </MDialog>
   );

@@ -7,7 +7,8 @@ import {
   Menu,
   Pane,
   Popover,
-  Tooltip
+  Tooltip,
+  Button
 } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
@@ -19,7 +20,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   const toggleRef = useRef(null as any);
   const meta = useObservable({
     value: trait.value,
-    alsoReset: false
+    navigateType: "navigate"
   });
   useEffect(() => {
     meta.value = trait.value || trait.default;
@@ -36,27 +37,51 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               onSelect={async () => {
                 const toggle = _.get(toggleRef, "current");
                 toggle();
-                meta.alsoReset = false;
+                meta.navigateType = "navigate";
                 const name = await promptCustomComponent({
-                  header: observer(() => (
-                    <Checkbox
-                      marginTop={0}
-                      checked={meta.alsoReset}
-                      onChange={e => {
-                        meta.alsoReset = !meta.alsoReset;
+                  header: observer(({ dismiss }: any) => (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginTop: -10,
+                        justifyContent: "space-between"
                       }}
-                      label="Also reset navigation"
-                    />
+                    >
+                      <Checkbox
+                        checked={meta.navigateType === "reset"}
+                        onChange={e => {
+                          if (meta.navigateType === "reset")
+                            meta.navigateType = "navigate";
+                          else meta.navigateType = "reset";
+                        }}
+                        label="Reset History"
+                      />
+                      <Checkbox
+                        checked={meta.navigateType === "goBack"}
+                        onChange={e => {
+                          if (meta.navigateType === "goBack")
+                            meta.navigateType = "navigate";
+                          else {
+                            meta.navigateType = "goBack";
+                            dismiss();
+                          }
+                        }}
+                        label="Navigate goBack()"
+                      />
+                    </div>
                   ))
                 });
-                if (name) {
+                if (name || meta.navigateType === "goBack") {
                   meta.value = {
                     body: [
                       {
                         kind: SyntaxKind.ExpressionStatement,
-                        value: `nav.${
-                          meta.alsoReset ? "reset" : "navigate"
-                        }("${name.substr(5, name.length - 9)}");`
+                        value: `nav.${meta.navigateType}(${
+                          meta.navigateType === "goBack"
+                            ? ""
+                            : `"${name.substr(5, name.length - 9)}"`
+                        });`
                       }
                     ],
                     modifiers: [SyntaxKind.AsyncKeyword],
@@ -121,6 +146,8 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               <IconButton
                 icon="function"
                 height={20}
+                appearance={trait.rawValue ? "primary" : undefined}
+                intent={trait.rawValue ? "success" : undefined}
                 innerRef={getRef}
                 flex={1}
                 onClick={() => {

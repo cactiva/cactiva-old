@@ -138,6 +138,8 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                       icon="function"
                       height={20}
                       flex={1}
+                      appearance={trait.rawValue ? "primary" : undefined}
+                      intent={trait.rawValue ? "success" : undefined}
                       onClick={async () => {
                         // const exp = await promptExpression({
                         //   returnExp: true,
