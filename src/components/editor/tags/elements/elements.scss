@@ -40,6 +40,10 @@ $light: #f5f6f9;
     justify-content: space-between;
   }
 
+  .select {
+    min-width: 50px;
+  }
+
   .camera {
     justify-content: center;
     align-items: center;
@@ -134,7 +138,7 @@ $light: #f5f6f9;
       margin-left: 5px;
       line-height: 20px;
       display: flex;
-      justify-content: center; 
+      justify-content: center;
       align-items: center;
     }
   }

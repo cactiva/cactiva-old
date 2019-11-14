@@ -48,6 +48,14 @@ export default class extends CactivaTag {
           options: {
             styles: styles
           }
+        },
+        {
+          name: "Pagination",
+          path: "isPagination",
+          kind: SyntaxKind.FalseKeyword,
+          options: {
+            styles: styles
+          }
         }
       ]
     },
