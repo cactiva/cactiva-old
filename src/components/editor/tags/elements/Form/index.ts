@@ -36,6 +36,14 @@ export default class extends CactivaTag {
           options: {
             styles: styles
           }
+        },
+        {
+          name: "On Submit",
+          path: "onSubmit",
+          kind: SyntaxKind.ArrowFunction,
+          options: {
+            styles: styles
+          }
         }
       ]
     },

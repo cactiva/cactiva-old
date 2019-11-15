@@ -40,17 +40,11 @@ class EditorStore {
   };
 
   @observable backend = {
-    status: "stopped",
-    logs: ""
-  };
-  @observable hasura = {
-    status: "stopped",
-    logs: ""
+    status: "stopped"
   };
   @observable expo = {
     status: "stopped",
-    url: "",
-    logs: ""
+    url: ""
   };
 
   @observable settings: any = {
@@ -74,8 +68,11 @@ class EditorStore {
   @computed get isModalOpened() {
     const v = this.modals as any;
     for (let i in v) {
-      if (!!v[i]) return true;
+      if (v[i] === true) {
+        return true;
+      }
     }
+
     return false;
   }
 
@@ -142,6 +139,7 @@ class EditorStore {
       this.sources[path].project = this;
       this.sources[path].imports = res.data.imports;
       this.sources[path].hooks = res.data.hooks;
+
       this.path = path;
       this.status = "ready";
       localStorage.setItem("cactiva-current-path", path);

@@ -5,6 +5,7 @@ import { ICactivaTraitFieldProps } from "../CactivaTraitField";
 import "./CallExpression.scss";
 import ImageBrowse from "./components/ImageBrowse";
 import editor from "@src/store/editor";
+import SingleExpressionButton from "../expression/SingleExpressionButton";
 export default observer((trait: ICactivaTraitFieldProps) => {
   const meta = useObservable({
     value: trait.value,
@@ -24,7 +25,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   };
   const onChangeImage = (v: any) => {
     meta.value = [v];
-    trait.update({ expression: 'require', arguments: meta.value });
+    trait.update({ expression: "require", arguments: meta.value });
   };
   const onDismissImage = (v: any) => (meta.isShown = v);
 
@@ -33,29 +34,31 @@ export default observer((trait: ICactivaTraitFieldProps) => {
   }, [trait.value]);
   return (
     <>
-      {!trait.mode && (
-        <div
-          className={`trait-string-literal`}
-          style={{ ...trait.style, flexDirection: "row" }}
-        >
-          <input
-            className={`cactiva-trait-input`}
-            type="text"
-            value={meta.value || ""}
-            onKeyDown={(event: any) => {
-              if ((event.ctrlKey || event.metaKey) && event.which == 83) {
-                event.preventDefault();
-                if (editor.current)
-                  editor.current.save();
-                return false;
-              };
-            }}
-            onChange={onChange}
-            onFocus={onFocus}
-            onBlur={update}
-          />
-        </div>
-      )}
+      {!trait.mode &&
+        (typeof trait.value === "string" ? (
+          <div
+            className={`trait-string-literal`}
+            style={{ ...trait.style, flexDirection: "row" }}
+          >
+            <input
+              className={`cactiva-trait-input`}
+              type="text"
+              value={meta.value || ""}
+              onKeyDown={(event: any) => {
+                if ((event.ctrlKey || event.metaKey) && event.which == 83) {
+                  event.preventDefault();
+                  if (editor.current) editor.current.save();
+                  return false;
+                }
+              }}
+              onChange={onChange}
+              onFocus={onFocus}
+              onBlur={update}
+            />
+          </div>
+        ) : (
+          <SingleExpressionButton source={trait.rawValue} />
+        ))}
 
       {trait.mode && trait.mode === "image" && (
         <div
@@ -71,10 +74,9 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               if (event.which === 13) (event.target as any).blur();
               if ((event.ctrlKey || event.metaKey) && event.which == 83) {
                 event.preventDefault();
-                if (editor.current)
-                  editor.current.save();
+                if (editor.current) editor.current.save();
                 return false;
-              };
+              }
             }}
             onFocus={onFocus}
             onBlur={update}

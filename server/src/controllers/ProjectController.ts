@@ -9,6 +9,7 @@ import * as download from "download";
 import jetpack = require("fs-jetpack");
 import stream, { streams } from "../stream";
 const { Client } = require("pg");
+import * as _ from "lodash";
 
 @Controller("api/project")
 export class ProjectController {
@@ -51,7 +52,6 @@ export class ProjectController {
             "{}"
         ),
         expo: !!streams[`expo-${name}`] ? "running" : "stopped",
-        hasura: !!streams[`hasura-${name}`] ? "running" : "stopped",
         backend: !!streams[`backend-${name}`] ? "running" : "stopped",
         theme: JSON.parse(
           jetpack.read(path.join(execPath, "app", name, "src", "theme.json")) ||
@@ -129,9 +129,12 @@ export class ProjectController {
       all: true,
       cwd: path.join(morph.getAppPath(), "backend")
     } as any);
-    st.cli.all.on("data", (chunk: any) => {
-      st.send(chunk.toString());
-    });
+    st.cli.all.on(
+      "data",
+      _.throttle((chunk: any) => {
+        st.send(chunk.toString());
+      }, 1000)
+    );
 
     res.status(200).json({
       status: "ok"
@@ -159,9 +162,12 @@ export class ProjectController {
       all: true,
       cwd: morph.getAppPath()
     } as any);
-    st.cli.all.on("data", (chunk: any) => {
-      st.send(chunk.toString());
-    });
+    st.cli.all.on(
+      "data",
+      _.throttle((chunk: any) => {
+        st.send(chunk.toString());
+      }, 1000)
+    );
 
     res.status(200).json({
       status: "ok"
@@ -178,7 +184,7 @@ export class ProjectController {
       status: "ok"
     });
   }
- 
+
   @Get("load")
   private load(req: Request, res: Response) {
     config.set("app", req.query.name);

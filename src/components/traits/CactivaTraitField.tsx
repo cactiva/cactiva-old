@@ -24,6 +24,7 @@ import {
   getSelectableParent
 } from "../editor/utility/elements/tools";
 import { parseStyle } from "../editor/utility/parser/parser";
+import SingleExpressionButton from "./expression/SingleExpressionButton";
 
 export interface ICactivaTraitFieldProps extends ICactivaTraitField {
   editor: any;
@@ -103,61 +104,10 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                 }}
               />
             ) : (
-              <Tooltip
-                content={
-                  <code
-                    style={{ color: "white", fontSize: 11 }}
-                  >{`{${generateSource(trait.rawValue)}}`}</code>
-                }
-              >
-                <Pane
-                  style={{
-                    flex: 1,
-                    height: "18px",
-                    padding: "0px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    ...fieldStyle,
-                    position: "relative"
-                  }}
-                >
-                  <div
-                    className={`cactiva-trait-input`}
-                    style={{
-                      flex: 1,
-                      height: "18px",
-                      padding: "0px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      position: "relative"
-                    }}
-                  >
-                    <IconButton
-                      icon="function"
-                      height={20}
-                      flex={1}
-                      appearance={trait.rawValue ? "primary" : undefined}
-                      intent={trait.rawValue ? "success" : undefined}
-                      onClick={async () => {
-                        // const exp = await promptExpression({
-                        //   returnExp: true,
-                        //   local: true,
-                        //   async: true,
-                        //   value: generateSource(_.get(trait, 'rawValue'))
-                        // });
-                        // if (exp.expression) {
-                        //   applyImport(exp.imports);
-                        //   trait.update(exp.expression);
-                        // }
-
-                        trait.editor.jsx = true;
-                      }}
-                    />
-                  </div>
-                </Pane>
-              </Tooltip>
+              <SingleExpressionButton
+                source={trait.rawValue}
+                style={fieldStyle}
+              />
             )}
           </Pane>
         </Tooltip>

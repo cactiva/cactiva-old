@@ -1,22 +1,11 @@
-import {
-  Button,
-  Dialog,
-  Icon,
-  IconButton,
-  Pane,
-  Popover,
-  Spinner,
-  Text,
-  Tooltip
-} from "evergreen-ui";
+import { Button, Dialog, Icon, IconButton, Pane, Spinner, Text, Tooltip } from "evergreen-ui";
 import _ from "lodash";
 import { observer } from "mobx-react-lite";
-import React, { useRef } from "react";
+import React from "react";
 import "./CactivaDialogEditor.scss";
 import "./CactivaHead.scss";
-import CactivaStoreEditor from "./store/CactivaStoreEditor";
-import CactivaApiEditor from "./api/CactivaApiEditor";
 import CactivaProject from "./project/CactivaProject";
+import CactivaStoreEditor from "./store/CactivaStoreEditor";
 
 export default observer(({ editor }: any) => {
   const current = editor.current;
