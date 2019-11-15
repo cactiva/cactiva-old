@@ -27,9 +27,17 @@ export default class extends CactivaTag {
           kind: SyntaxKind.StringLiteral
         },
         {
-          name: "Left Action",
-          path: "leftAction",
+          name: "Back Button",
+          path: "backBtn",
           kind: SyntaxKind.FalseKeyword,
+          options: {
+            styles: styles
+          }
+        },
+        {
+          name: "onBackBtn",
+          path: "onPressBackBtn",
+          kind: SyntaxKind.ArrowFunction,
           options: {
             styles: styles
           }
