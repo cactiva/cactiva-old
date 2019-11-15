@@ -13,32 +13,25 @@ export default class extends CactivaTag {
   static from = "@src/libs";
   static structure = {
     kind: SyntaxKind.JsxElement,
-    name: "Text",
-    props: {},
-    children: [{ kind: SyntaxKind.StringLiteral, value: "Text" }]
+    name: "TimePicker",
+    props: {
+      fieldType: {
+        kind: SyntaxKind.StringLiteral,
+        value: `"time"`
+      }
+    },
+    children: []
   };
   static traits = [
     {
       name: "attributes",
       fields: [
         {
-          name: "Text",
-          path: "children.0.value",
-          kind: SyntaxKind.StringLiteral
-        },
-        {
-          name: "Ellipsize Mode",
-          path: "ellipsizeMode",
-          kind: SyntaxKind.StringLiteral,
-          mode: "select",
+          name: "Value",
+          path: "value",
+          kind: SyntaxKind.JsxExpression,
           options: {
-            styles: styles,
-            items: [
-              { value: "head", label: "Head" },
-              { value: "middle", label: "Middle" },
-              { value: "tail", label: "Tail" },
-              { value: "chip", label: "Chip" }
-            ]
+            styles: styles
           }
         }
       ]

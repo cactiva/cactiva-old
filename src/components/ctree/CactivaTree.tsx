@@ -1,5 +1,13 @@
 import api from "@src/libs/api";
-import { Button, Icon, Menu, Popover, SearchInput, Spinner, Text } from "evergreen-ui";
+import {
+  Button,
+  Icon,
+  Menu,
+  Popover,
+  SearchInput,
+  Spinner,
+  Text
+} from "evergreen-ui";
 import _ from "lodash";
 import { observable } from "mobx";
 import { observer } from "mobx-react-lite";
@@ -76,7 +84,10 @@ export default observer(({ editor }: any) => {
           const item: any = list[i];
           if (item.type === "file") {
             if (
-              fuzzyMatch(item.name.toLowerCase(), treeListMeta.keyword.toLowerCase())
+              fuzzyMatch(
+                item.name.toLowerCase(),
+                treeListMeta.keyword.toLowerCase()
+              )
             ) {
               treeListMeta.list.push(item);
             }
@@ -94,7 +105,7 @@ export default observer(({ editor }: any) => {
   return (
     <div
       className="cactiva-tree"
-      onContextMenu={(e:any) => {
+      onContextMenu={(e: any) => {
         e.preventDefault();
       }}
     >
@@ -136,8 +147,8 @@ export default observer(({ editor }: any) => {
             {isLoading ? (
               <Spinner size={12} />
             ) : (
-                <Icon icon={"plus"} size={11} color={"#aaa"} />
-              )}
+              <Icon icon={"plus"} size={11} color={"#aaa"} />
+            )}
           </Button>
         </Popover>
       </div>
@@ -154,10 +165,10 @@ export default observer(({ editor }: any) => {
               level={0}
             />
           ) : (
-              <Text fontSize={10} marginLeft={10}>
-                No item to display.
+            <Text fontSize={10} marginLeft={10}>
+              No item to display.
             </Text>
-            )}
+          )}
           <div style={{ height: 100 }} />
         </div>
       </div>
@@ -443,12 +454,12 @@ const Tree = observer(({ editor, tree, selected, level }: any) => {
                   color="#66788a"
                 />
               ) : (
-                  <Icon
-                    icon="code"
-                    size={10}
-                    color={unsaved ? "red" : "#66788a"}
-                  />
-                )}
+                <Icon
+                  icon="code"
+                  size={10}
+                  color={unsaved ? "red" : "#66788a"}
+                />
+              )}
             </div>
             <Text
               color={unsaved ? "red" : "#333"}
@@ -619,17 +630,26 @@ const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
             <Menu.Item icon="trash" intent="danger" onSelect={deleteFile}>
               Delete
             </Menu.Item>
-            {editor.expo.url && <>
-              <Menu.Divider />
-              <Menu.Item icon="link" onSelect={() => {
-                const toggle = _.get(toggleRef, "current");
-                toggle();
-                const win = window.open(editor.expo.url + e.relativePath.substr(4, e.relativePath.length - 8), '_blank');
-                if (win) win.focus();
-              }}>
-                Open Web Preview
-            </Menu.Item>
-            </>}
+            {editor.expo.url && (
+              <>
+                <Menu.Divider />
+                <Menu.Item
+                  icon="link"
+                  onSelect={() => {
+                    const toggle = _.get(toggleRef, "current");
+                    toggle();
+                    const win = window.open(
+                      editor.expo.url +
+                        e.relativePath.substr(4, e.relativePath.length - 8),
+                      "_blank"
+                    );
+                    if (win) win.focus();
+                  }}
+                >
+                  Open Web Preview
+                </Menu.Item>
+              </>
+            )}
           </Menu>
         </div>
       }
@@ -650,18 +670,18 @@ const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
                 {el}
               </Directory>
             ) : (
-                <File
-                  name={name}
-                  e={e}
-                  selected={selected}
-                  editor={editor}
-                  level={level}
-                  getRef={getRef}
-                  toggle={toggle}
-                >
-                  {el}
-                </File>
-              )}
+              <File
+                name={name}
+                e={e}
+                selected={selected}
+                editor={editor}
+                level={level}
+                getRef={getRef}
+                toggle={toggle}
+              >
+                {el}
+              </File>
+            )}
             {isShown && (
               <div
                 style={{
@@ -684,18 +704,20 @@ const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
 const findLargestSmallest = (a: string, b: string) =>
   a.length > b.length
     ? {
-      largest: a,
-      smallest: b
-    }
+        largest: a,
+        smallest: b
+      }
     : {
-      largest: b,
-      smallest: a
-    };
+        largest: b,
+        smallest: a
+      };
 
 export const fuzzyMatch = (strA: string, strB: string, fuzziness = 1) => {
   if (strA === "" || strB === "") {
     return false;
   }
+
+  if (strA === strB) return true;
 
   const { largest, smallest } = findLargestSmallest(strA, strB);
   const maxIters = largest.length - smallest.length;
