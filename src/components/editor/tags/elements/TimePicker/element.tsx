@@ -1,10 +1,10 @@
-import { Icon } from "evergreen-ui";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDropChild from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
-import { parseProps } from "../../../utility/parser/parser";
+import { parseProps, parseStyle } from "../../../utility/parser/parser";
+import { Icon } from "evergreen-ui";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -14,13 +14,13 @@ export default observer((props: any) => {
     <CactivaDropChild cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva} style={style}>
-          <div className="input select" style={style}>
+          <div className="input datepicker" style={style}>
             {tagProps.defaultValue ? (
               tagProps.defaultValue
             ) : (
-              <div className="placeholder">{tagProps.placeholder}</div>
+              <div className="placeholder">HH:mm</div>
             )}
-            <Icon icon="chevron-down" size={14} />
+            <Icon icon="time" size={14} />
           </div>
         </CactivaSelectable>
       </CactivaDraggable>

@@ -147,11 +147,11 @@ export const toolbar = [
   },
   {
     icon: "calendar",
-    label: "Date"
+    label: "DatePicker"
   },
   {
     icon: "time",
-    label: "Time"
+    label: "TimePicker"
   },
   {
     icon: "tick",

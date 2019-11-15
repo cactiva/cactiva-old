@@ -15,7 +15,7 @@ export default observer((props: any) => {
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable cactiva={cactiva} style={style}>
           <div className="input camera" style={style}>
-            <Icon icon="camera" size={14} />
+            <Icon icon="camera" size={14} color={"white"} />
           </div>
         </CactivaSelectable>
       </CactivaDraggable>

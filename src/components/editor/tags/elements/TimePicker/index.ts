@@ -9,7 +9,7 @@ const styles = {
 };
 
 export default class extends CactivaTag {
-  static tagName = "Text";
+  static tagName = "TimePicker";
   static from = "@src/libs";
   static structure = {
     kind: SyntaxKind.JsxElement,
