@@ -6,6 +6,7 @@ import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useRef } from "react";
 import editor from "@src/store/editor";
+import { toJS } from "mobx";
 
 export default observer(({ source, children, update }: any) => {
   const toggleRef = useRef(null as any);
@@ -13,6 +14,7 @@ export default observer(({ source, children, update }: any) => {
     value: source,
     navigateType: "navigate"
   });
+  console.log(toJS(source));
   return (
     <Popover
       position={"left"}
@@ -69,7 +71,7 @@ export default observer(({ source, children, update }: any) => {
                           meta.navigateType === "goBack"
                             ? ""
                             : `"${name.substr(5, name.length - 9)}"`
-                        });`
+                          });`
                       }
                     ],
                     modifiers: [SyntaxKind.AsyncKeyword],
