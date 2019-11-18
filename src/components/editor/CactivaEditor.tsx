@@ -23,6 +23,7 @@ import {
 } from "./utility/elements/tools";
 import { renderChildren } from "./utility/renderchild";
 import tags from "./utility/tags";
+import CodeEditor from "../traits/expression/CodeEditor";
 
 export default observer(({ editor }: any) => {
   const meta = useObservable({
@@ -85,9 +86,10 @@ export default observer(({ editor }: any) => {
         </div>
       </div>
       <CactivaEditorFooter editor={editor} />
-      <CactivaEditorAddComponent editor={editor} />
+      {editor.addComponentInfo && <CactivaEditorAddComponent editor={editor} />}
       {ed.modals.expression && <CactivaExpressionDialog />}
       {ed.modals.customComponents && <CactivaCustomComponent />}
+      {ed.modals.codeEditor && <CodeEditor />}
     </div>
   );
 });
@@ -401,7 +403,7 @@ const CactivaEditorAddComponent = observer((props: any) => {
 
   return (
     <Dialog
-      isShown={!!compInfo}
+      isShown={true}
       hasHeader={false}
       hasFooter={false}
       preventBodyScrolling

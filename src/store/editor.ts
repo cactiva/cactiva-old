@@ -32,7 +32,8 @@ class EditorStore {
       footer: null
     },
     project: false,
-    expression: false
+    expression: false,
+    codeEditor: false
   };
 
   @observable theme = {

@@ -1,4 +1,3 @@
-
 export enum SyntaxKind {
   Unknown = 0,
   EndOfFileToken = 1,
@@ -350,5 +349,13 @@ export enum SyntaxKind {
   FirstJSDocNode = 289,
   LastJSDocNode = 313,
   FirstJSDocTagNode = 301,
-  LastJSDocTagNode = 313,
+  LastJSDocTagNode = 313
 }
+
+export const getSyntaxKindName = (kind: number) => {
+  for (var i in SyntaxKind) {
+    if ((SyntaxKind as any)[i] === kind) {
+      return i;
+    }
+  }
+};

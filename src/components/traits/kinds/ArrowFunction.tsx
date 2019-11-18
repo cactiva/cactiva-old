@@ -28,7 +28,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
     meta.value = trait.value || trait.default;
   }, [trait.value]);
   return (
-    <ExpressionListPopup source={trait.rawValue} update={trait.update}>
+    <ExpressionListPopup path="body" source={trait.rawValue} update={trait.update}>
       {(toggle: any, getRef: any) => {
         return (
           <Pane
