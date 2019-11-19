@@ -1,22 +1,9 @@
-import { promptCustomComponent } from "@src/components/editor/CactivaCustomComponent";
-import { generateSource } from "@src/components/editor/utility/parser/generateSource";
-import { SyntaxKind } from "@src/components/editor/utility/syntaxkinds";
-import {
-  Checkbox,
-  IconButton,
-  Menu,
-  Pane,
-  Popover,
-  Tooltip,
-  Button
-} from "evergreen-ui";
-import _ from "lodash";
+import { IconButton, Pane } from "evergreen-ui";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import { ICactivaTraitFieldProps } from "../CactivaTraitField";
-import "./TrueKeyword.scss";
 import ExpressionListPopup from "../expression/ExpressionListPopup";
-import { toJS } from "mobx";
+import "./TrueKeyword.scss";
 
 export default observer((trait: ICactivaTraitFieldProps) => {
   const toggleRef = useRef(null as any);

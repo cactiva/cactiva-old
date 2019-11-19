@@ -5,7 +5,7 @@ import editor from '@src/store/editor';
 import MonacoEditor from 'react-monaco-editor';
 import { observable } from 'mobx';
 const meta = observable({
-    language: "typescript",
+    language: "javascript",
     value: "",
     changed: false,
     resolve: null as any
@@ -42,12 +42,22 @@ export default observer(() => {
                     meta.value = e;
                     meta.changed = true;
                 }}
+
+                editorDidMount={(ed: any, monaco: any) => {
+                    ed.addAction({
+                        id: "cactiva-save",
+                        label: "Save",
+                        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S],
+                        run: async function (ed: any) {
+                        }
+                    });
+                }}
             />
         </div>
     </Dialog>;
 });
 
-export const promptCode = (value?: string, type = "typescript") => {
+export const promptCode = (value?: string, type = "javascript") => {
     editor.modals.codeEditor = true;
     meta.language = type;
     meta.value = value || '';

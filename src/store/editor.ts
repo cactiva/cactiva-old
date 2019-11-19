@@ -33,7 +33,8 @@ class EditorStore {
     },
     project: false,
     expression: false,
-    codeEditor: false
+    codeEditor: false,
+    restApi: false
   };
 
   @observable theme = {

@@ -9,6 +9,7 @@ import React, { useRef } from "react";
 import { promptCode } from "./CodeEditor";
 import api from "@src/libs/api";
 import { prepareChanges, commitChanges } from "@src/components/editor/utility/elements/tools";
+import { promptRestApi } from "./RestApi";
 
 export default observer(({ source, children, update, path }: any) => {
   const toggleRef = useRef(null as any);
@@ -23,7 +24,7 @@ export default observer(({ source, children, update, path }: any) => {
       position={"left"}
       minWidth={100}
       content={
-        lineCount > 1 ?
+        lineCount > 0 ?
           <LineItem lines={lines} path={path} toggleRef={toggleRef} meta={meta} update={update} />
           :
           <AddNew toggleRef={toggleRef} meta={meta} update={update} />
@@ -31,9 +32,10 @@ export default observer(({ source, children, update, path }: any) => {
     >
       {({ toggle, getRef, isShown }: any) => {
         toggleRef.current = toggle;
-        if (lineCount > 1) {
+        if (lineCount > 0) {
           return (
             <Tooltip
+              position="left"
               content={
                 <code
                   style={{ color: "white", fontSize: 9, whiteSpace: "pre-wrap" }}
@@ -46,6 +48,7 @@ export default observer(({ source, children, update, path }: any) => {
         } else {
           return (
             <Tooltip
+              position="left"
               content={
                 <code
                   style={{ color: "white", fontSize: 9, whiteSpace: "pre-wrap" }}
@@ -226,6 +229,9 @@ const AddLine = observer(({ toggleRef, meta, update, path }: any) => {
       <Menu.Divider />
       <Menu.Item
         icon="globe"
+        onSelect={() => {
+          promptRestApi();
+        }}
       >Call REST API</Menu.Item>
       <Menu.Item
         icon="satellite"
@@ -302,6 +308,9 @@ const AddNew = observer(({ toggleRef, meta, update }: any) => {
       <Menu.Divider />
       <Menu.Item
         icon="globe"
+        onSelect={() => {
+          promptRestApi();
+        }}
       >Call REST API</Menu.Item>
       <Menu.Item
         icon="satellite"

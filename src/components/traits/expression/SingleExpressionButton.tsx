@@ -6,6 +6,7 @@ import editor from "@src/store/editor";
 export default ({ source, style }: any) => {
   return (
     <Tooltip
+      position="left"
       content={
         <code style={{ color: "white", fontSize: 11 }}>{`{${generateSource(
           source

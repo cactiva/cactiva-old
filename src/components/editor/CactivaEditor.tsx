@@ -24,6 +24,7 @@ import {
 import { renderChildren } from "./utility/renderchild";
 import tags from "./utility/tags";
 import CodeEditor from "../traits/expression/CodeEditor";
+import RestApi from "../traits/expression/RestApi";
 
 export default observer(({ editor }: any) => {
   const meta = useObservable({
@@ -90,6 +91,7 @@ export default observer(({ editor }: any) => {
       {ed.modals.expression && <CactivaExpressionDialog />}
       {ed.modals.customComponents && <CactivaCustomComponent />}
       {ed.modals.codeEditor && <CodeEditor />}
+      {ed.modals.restApi && <RestApi />}
     </div>
   );
 });
