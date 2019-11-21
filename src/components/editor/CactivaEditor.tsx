@@ -25,6 +25,7 @@ import { renderChildren } from "./utility/renderchild";
 import tags from "./utility/tags";
 import CodeEditor from "../traits/expression/CodeEditor";
 import RestApi from "../traits/expression/RestApi";
+import Hasura from "../traits/expression/Hasura";
 
 export default observer(({ editor }: any) => {
   const meta = useObservable({
@@ -92,6 +93,7 @@ export default observer(({ editor }: any) => {
       {ed.modals.customComponents && <CactivaCustomComponent />}
       {ed.modals.codeEditor && <CodeEditor />}
       {ed.modals.restApi && <RestApi />}
+      {ed.modals.hasura && <Hasura />}
     </div>
   );
 });

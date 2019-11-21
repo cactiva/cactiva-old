@@ -10,6 +10,7 @@ import { promptCode } from "./CodeEditor";
 import api from "@src/libs/api";
 import { prepareChanges, commitChanges } from "@src/components/editor/utility/elements/tools";
 import { promptRestApi } from "./RestApi";
+import { promptHasura } from "./Hasura";
 
 export default observer(({ source, children, update, path }: any) => {
   const toggleRef = useRef(null as any);
@@ -27,7 +28,7 @@ export default observer(({ source, children, update, path }: any) => {
         lineCount > 0 ?
           <LineItem lines={lines} path={path} toggleRef={toggleRef} meta={meta} update={update} />
           :
-          <AddNew toggleRef={toggleRef} meta={meta} update={update} />
+          <AddNew toggleRef={toggleRef} meta={meta} update={update} path={path} />
       }
     >
       {({ toggle, getRef, isShown }: any) => {
@@ -229,18 +230,26 @@ const AddLine = observer(({ toggleRef, meta, update, path }: any) => {
       <Menu.Divider />
       <Menu.Item
         icon="globe"
-        onSelect={() => {
-          promptRestApi();
+        onSelect={async () => {
+          const body = _.get(meta.value, path);
+          const restapi: any = await promptRestApi();
+          const res = await api.post("morph/parse-exp", { value: restapi.source });
+          console.log(res);
+          // body.push();
+          // update(meta.value);
         }}
       >Call REST API</Menu.Item>
       <Menu.Item
         icon="satellite"
+        onSelect={() => {
+          promptHasura();
+        }}
       >Call Hasura GraphQL</Menu.Item>
     </Menu>
   </div>
 })
 
-const AddNew = observer(({ toggleRef, meta, update }: any) => {
+const AddNew = observer(({ toggleRef, meta, update, path }: any) => {
   return <div className="ctree-menu">
     <Menu>
       <Menu.Item
@@ -308,12 +317,23 @@ const AddNew = observer(({ toggleRef, meta, update }: any) => {
       <Menu.Divider />
       <Menu.Item
         icon="globe"
-        onSelect={() => {
-          promptRestApi();
+        onSelect={async () => {
+          const restapi: any = await promptRestApi();
+          const res = await api.post("morph/parse-exp", { value: restapi.source });
+          meta.value = {
+            body: [res],
+            modifiers: [SyntaxKind.AsyncKeyword],
+            kind: SyntaxKind.ArrowFunction,
+            params: []
+          };
+          update(meta.value);
         }}
       >Call REST API</Menu.Item>
       <Menu.Item
         icon="satellite"
+        onSelect={() => {
+          promptHasura();
+        }}
       >Call Hasura GraphQL</Menu.Item>
       <Menu.Divider />
       <Menu.Item
