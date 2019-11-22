@@ -6,6 +6,7 @@ import * as execa from "execa";
 import * as path from "path";
 import * as fs from "fs";
 import * as download from "download";
+import axios from "axios";
 import jetpack = require("fs-jetpack");
 import stream, { streams } from "../stream";
 const { Client } = require("pg");
@@ -65,6 +66,51 @@ export class ProjectController {
         env: "",
         status: "stopped"
       });
+    }
+  }
+
+  @Post("gql-query")
+  private async gqlquery(req: Request, res: Response) {
+    const name = config.get("app");
+    const options = req.body.options;
+    const payload = req.body.payload;
+    const q = req.body.query;
+    const settings = JSON.parse(
+      jetpack.read(path.join(execPath, "app", name, "settings.json")) ||
+        "{backend: {}}"
+    );
+    const hasura = settings.hasura;
+    const backend = settings.backend;
+    const headers = {
+      "content-type": "application/json",
+      ...options.headers
+    };
+    const session = {
+      jwt: ""
+    };
+
+    headers["x-hasura-admin-secret"] = hasura.secret;
+
+    try {
+      const gqlres = await axios.post(
+        `http://${backend.host}:${backend.port}/hasura/v1/graphql`,
+        {
+          query: q,
+          payload
+        },
+        {
+          headers
+        }
+      );
+
+      res.status(200).json({
+        status: gqlres.status,
+        statusText: gqlres.statusText,
+        headers: gqlres.headers,
+        data: gqlres.data.data || ""
+      });
+    } catch (e) {
+      return res.status(200).json({ ...e, body: e.request.body });
     }
   }
 

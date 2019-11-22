@@ -8,7 +8,7 @@ import { Morph } from "../morph";
 
 @Controller("api/api")
 export class ApiController {
-  @Get("list")
+  @Get("list") 
   private list(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
     morph.reload();

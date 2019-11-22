@@ -234,15 +234,18 @@ const AddLine = observer(({ toggleRef, meta, update, path }: any) => {
           const body = _.get(meta.value, path);
           const restapi: any = await promptRestApi();
           const res = await api.post("morph/parse-exp", { value: restapi.source });
-          console.log(res);
-          // body.push();
-          // update(meta.value);
+          body.push(res);
+          update(meta.value);
         }}
       >Call REST API</Menu.Item>
       <Menu.Item
         icon="satellite"
-        onSelect={() => {
-          promptHasura();
+        onSelect={async () => {
+          const body = _.get(meta.value, path);
+          const restapi: any = await promptHasura();
+          const res = await api.post("morph/parse-exp", { value: restapi.source });
+          body.push(res);
+          update(meta.value);
         }}
       >Call Hasura GraphQL</Menu.Item>
     </Menu>
@@ -331,8 +334,16 @@ const AddNew = observer(({ toggleRef, meta, update, path }: any) => {
       >Call REST API</Menu.Item>
       <Menu.Item
         icon="satellite"
-        onSelect={() => {
-          promptHasura();
+        onSelect={async () => {
+          const restapi: any = await promptHasura();
+          const res = await api.post("morph/parse-exp", { value: restapi.source });
+          meta.value = {
+            body: [res],
+            modifiers: [SyntaxKind.AsyncKeyword],
+            kind: SyntaxKind.ArrowFunction,
+            params: []
+          };
+          update(meta.value);
         }}
       >Call Hasura GraphQL</Menu.Item>
       <Menu.Divider />

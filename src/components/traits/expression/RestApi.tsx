@@ -56,7 +56,6 @@ export default () => {
                     }
                 }
             };
-            console.log(toJS(meta.form.imports));
             if (meta.resolve) {
                 meta.resolve(result);
             }
