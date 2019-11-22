@@ -5,7 +5,7 @@ import { defaultExport } from "./libs/morph/defaultExport";
 import { getHooks } from "./libs/morph/getHooks";
 import { getImport } from "./libs/morph/getImport";
 import { getEntryPoint, parseJsx } from "./libs/morph/parseJsx";
-import { removeImports } from "./libs/morph/removeImports";
+import { cleanImports } from "./libs/morph/cleanImports";
 import { replaceReturn } from "./libs/morph/replaceReturn";
 import jetpack = require("fs-jetpack");
 
@@ -72,15 +72,15 @@ export class Morph {
       .toString()
       .slice(2, 11);
   }
-  
+
   prepareSourceForWrite(source: string, imports: any[]) {
     const sf = this.project.createSourceFile(
       "__tempfile" + this.randomDigits() + "__.tsx",
       source
     );
     let result = "";
-    try {
-      removeImports(sf);
+    try { 
+      cleanImports(sf, imports);
       result = sf.getText();
       const imresult: any = {};
       Object.keys(imports).map((i: any) => {

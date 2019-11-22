@@ -17,6 +17,7 @@ body {
   }
   div[role="dialog"] {
     z-index: 100 !important;
+    overflow: hidden;
   }
   div > p {
     user-select: none;

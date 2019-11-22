@@ -1,15 +1,24 @@
-import { Icon, Text } from "evergreen-ui";
+import { Icon, Text, Button } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import { ICactivaTrait, ICactivaTraitField } from "../editor/utility/classes";
-import { commitChanges, prepareChanges, setProp, uuid } from "../editor/utility/elements/tools";
+import {
+  commitChanges,
+  prepareChanges,
+  setProp,
+  uuid
+} from "../editor/utility/elements/tools";
 import { kindNames } from "../editor/utility/kinds";
-import { generateValueByKind, parseValue } from "../editor/utility/parser/parser";
+import {
+  generateValueByKind,
+  parseValue
+} from "../editor/utility/parser/parser";
 import { isTag } from "../editor/utility/tagmatcher";
 import tags from "../editor/utility/tags";
 import CactivaTraitField from "./CactivaTraitField";
 import "./traits.scss";
+import { default as ed } from "@src/store/editor";
 
 export default observer(({ editor }: any) => {
   const traits = _.get(editor, "selected.tag.traits", []) as ICactivaTrait[];
@@ -37,8 +46,7 @@ export default observer(({ editor }: any) => {
       meta.expanded.push(item.name);
       push = true;
     });
-  }, [editor.selectedId])
-
+  }, [editor.selectedId]);
 
   return (
     <>
@@ -48,12 +56,23 @@ export default observer(({ editor }: any) => {
         </Text>
       </div>
       {componentFrom && (
-        <div style={{ paddingLeft: 10 }}>
+        <div
+          style={{ paddingLeft: 10, position: "absolute", top: 20, zIndex: 20 }}
+        >
           <Text size={300}>
             Imported from:
             <br />
             {componentFrom}
           </Text>
+          <Button
+            style={{ margin: "20px" }}
+            onClick={() => {
+              const path = componentFrom.replace("@", "/") + ".tsx";
+              ed.load(path);
+            }}
+          >
+            Open Component
+          </Button>
         </div>
       )}
 
@@ -86,7 +105,6 @@ const TraitEl = observer((props: any) => {
       meta.wide = div.offsetWidth > 250;
     }
   }, [containerRef.current]);
-
 
   return (
     <React.Fragment>
@@ -183,7 +201,7 @@ const TraitFieldEl = observer((props: any) => {
     commitChanges(editor);
   });
 
-  let path = `props.${trait.path}`
+  let path = `props.${trait.path}`;
   if (trait.path.indexOf("children") === 0) {
     path = trait.path;
   }

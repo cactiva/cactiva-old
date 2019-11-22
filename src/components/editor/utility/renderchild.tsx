@@ -97,7 +97,7 @@ const renderKind = (
     editor.selected = cactiva;
   }
   if (source.kind === 11) {
-    if (typeof source.value !== 'string') {
+    if (typeof source.value !== "string") {
       console.log(source);
     }
     return source.value;
@@ -126,10 +126,12 @@ const renderTag = (
   }
 
   if (tag) {
-    editor.imports[tag.tagName] = {
-      from: tag.from,
-      type: tag.fromType
-    };
+    if (!editor.imports[tag.tagName]) {
+      editor.imports[tag.tagName] = {
+        from: tag.from,
+        type: tag.fromType
+      };
+    }
     const Component = tag.element;
     return <Component {...source.props} key={key} _cactiva={cactiva} />;
   } else {
@@ -137,10 +139,12 @@ const renderTag = (
     if (file) {
       const path =
         "@" + file.relativePath.substring(1, file.relativePath.length - 4);
-      editor.imports[source.name] = {
-        from: path,
-        type: "default"
-      };
+      if (!editor.imports[source.name]) {
+        editor.imports[source.name] = {
+          from: path,
+          type: "default"
+        };
+      }
     }
     cactiva.tag = tags["Component"];
     return <Component.element {...source.props} key={key} _cactiva={cactiva} />;

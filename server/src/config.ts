@@ -1,57 +1,42 @@
-import * as path from 'path';
-import * as convict from 'convict';
-const fs = require('fs');
-const jetpack = require('fs-jetpack');
-export const isDev = !!jetpack.exists('../dev.js');
+import * as path from "path";
+import * as convict from "convict";
+const fs = require("fs");
+const jetpack = require("fs-jetpack");
+export const isDev = !!jetpack.exists("../dev.js");
 export const execPath = isDev
-  ? path.resolve(path.dirname(__dirname) + '/../../')
+  ? path.resolve(path.dirname(__dirname) + "/../../")
   : path.dirname(process.execPath);
 const config = convict({
   app: {
-    doc: 'Current App Name',
-    format: String,  
-    default: ''
+    doc: "Current App Name",
+    format: String,
+    default: ""
   },
   env: {
-    doc: 'The application environment.',
-    format: ['production', 'development'],
-    default: 'development',
-    env: 'NODE_ENV'
+    doc: "The application environment.",
+    format: ["production", "development"],
+    default: "development",
+    env: "NODE_ENV"
   },
   host: {
-    doc: 'The Host IP address to bind.',
-    format: 'ipaddress',
-    default: '127.0.0.1',
-    env: 'IP_ADDRESS'
+    doc: "The Host IP address to bind.",
+    format: "ipaddress",
+    default: "127.0.0.1",
+    env: "IP_ADDRESS"
   },
   port: {
-    doc: 'The port to bind.',
-    format: 'port',
+    doc: "The port to bind.",
+    format: "port",
     default: 8080,
-    env: 'PORT',
-    arg: 'port'
-  },
-  db: {
-    doc: 'The DB connection.',
-    format: Object,
-    default: {
-      default: {
-        driver: 'mysql',
-        host: 'localhost',
-        port: 80,
-        database: 'rsys',
-        username: 'root',
-        password: 'okedeh'
-      }
-    },
-    env: 'DB_HOST'
+    env: "PORT",
+    arg: "port"
   }
 });
 
 export const configPath = `${execPath}/config.json`;
 (config as any).save = () => {
   fs.writeFile(configPath, config.toString(), {}, function(err: any) {
-    if (err && err.code === 'EEXIST') {
+    if (err && err.code === "EEXIST") {
       config.loadFile(configPath);
     }
   });
@@ -68,6 +53,6 @@ if (!jetpack.exists(configPath)) {
 }
 
 // Perform validation
-config.validate({ allowed: 'strict' });
+config.validate({ allowed: "strict" });
 
 export default config;

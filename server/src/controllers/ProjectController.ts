@@ -45,13 +45,20 @@ export class ProjectController {
       if (morph) {
         morph.reload();
       }
+
+      const settings = JSON.parse(
+        jetpack.read(path.join(execPath, "app", name, "settings.json")) || "{}"
+      );
+      settings.name = name;
+      jetpack.write(
+        path.join(execPath, "app", name, "settings.json"),
+        JSON.stringify(settings)
+      );
+
       res.status(200).json({
         app: config.get("app"),
         env: config.get("env"),
-        settings: JSON.parse(
-          jetpack.read(path.join(execPath, "app", name, "settings.json")) ||
-            "{}"
-        ),
+        settings,
         expo: !!streams[`expo-${name}`] ? "running" : "stopped",
         backend: !!streams[`backend-${name}`] ? "running" : "stopped",
         theme: JSON.parse(
@@ -72,32 +79,20 @@ export class ProjectController {
   @Post("gql-query")
   private async gqlquery(req: Request, res: Response) {
     const name = config.get("app");
-    const options = req.body.options;
-    const payload = req.body.payload;
-    const q = req.body.query;
+    const headers = req.body.headers || {};
+    const body = req.body.body;
     const settings = JSON.parse(
       jetpack.read(path.join(execPath, "app", name, "settings.json")) ||
         "{backend: {}}"
     );
     const hasura = settings.hasura;
     const backend = settings.backend;
-    const headers = {
-      "content-type": "application/json",
-      ...options.headers
-    };
-    const session = {
-      jwt: ""
-    };
 
     headers["x-hasura-admin-secret"] = hasura.secret;
-
     try {
       const gqlres = await axios.post(
         `http://${backend.host}:${backend.port}/hasura/v1/graphql`,
-        {
-          query: q,
-          payload
-        },
+        body,
         {
           headers
         }
@@ -107,7 +102,7 @@ export class ProjectController {
         status: gqlres.status,
         statusText: gqlres.statusText,
         headers: gqlres.headers,
-        data: gqlres.data.data || ""
+        data: gqlres.data.data || "No Response"
       });
     } catch (e) {
       return res.status(200).json({ ...e, body: e.request.body });
@@ -151,8 +146,8 @@ export class ProjectController {
             overwrite: true
           }
         );
+        sf.organizeImports();
       }
-      sf.organizeImports();
       sf.saveSync();
       morph.project.saveSync();
 
@@ -266,10 +261,11 @@ export class ProjectController {
 
   @Post("edit-project")
   private editProject(req: Request, res: Response) {
-    jetpack.write(
+    const r = jetpack.write(
       path.join(execPath, "app", req.body.name, "settings.json"),
       JSON.stringify(req.body)
     );
+    console.log(r, path.join(execPath, "app", req.body.name, "settings.json"));
     res.status(200).send(req.body);
   }
 

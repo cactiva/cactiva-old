@@ -6,72 +6,26 @@
   flex: 1;
   padding: 10px;
 
-  .set-result {
-    font-size: 14px;
-    padding: 0px 10px 10px 10px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  .topBar > .title {
+    display: none !important;
   }
 
-  .reqres {
-    margin: 0px -5px -10px -5px;
+  .execute-button-wrap {
+    margin-left: 0px;
+  }
+  .gql {
+    margin: -10px;
     flex: 1;
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    .tabs {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
 
-      > div[role="tablist"]:last-child {
-        display: flex;
-        justify-content: flex-end;
-        margin-right: 0;
-        > .title {
-          text-align: right;
-        }
-      }
+    .toolbar-button {
+      max-width: none;
+      text-align: center;
+      font-size: 12px;
     }
-    .pane {
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      flex: 1;
-      margin: 0px 4px 10px 4px;
-      > div {
-        padding: 10px;
-        font-size: 12px;
-      }
-    }
-    .small-btn {
-      height: 20px;
-      padding: 0px 10px;
-      line-height: 20px;
-      user-select: none;
-    }
-    .title {
-      font-size: 11px;
-      margin: 0px 5px;
-      width: 50px;
-      font-weight: bold;
-      color: #1070ca;
-      user-select: none;
-    }
-    div[role="tablist"] {
-      margin-bottom: 0;
-      display: flex;
-      align-items: center;
 
-      > span {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-        outline: 0;
-        box-shadow: none;
-        user-select: none;
-      }
+    * {
+      font-size: 98%;
     }
   }
 }
