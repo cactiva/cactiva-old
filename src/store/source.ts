@@ -184,15 +184,20 @@ export class SourceStore {
   }
 
   getSourceCode() {
-    const result = prettier.format(
-      this.rootSource.replace("<<<<cactiva>>>>", generateSource(this.source)),
-      {
-        parser: "typescript",
-        plugins: [typescript]
-      }
-    );
-
-    return result;
+    try {
+      return prettier.format(
+        this.rootSource.replace("<<<<cactiva>>>>", generateSource(this.source)),
+        {
+          parser: "typescript",
+          plugins: [typescript]
+        }
+      );
+    } catch (e) {
+      return this.rootSource.replace(
+        "<<<<cactiva>>>>",
+        generateSource(this.source)
+      );
+    }
   }
 
   getSelectedSourceCode() {

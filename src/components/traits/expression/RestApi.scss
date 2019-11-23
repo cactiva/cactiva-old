@@ -12,9 +12,16 @@
     margin-bottom: 10px;
   }
 
+  .last-row {
+    padding: 0px 10px 10px 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   .set-result {
     font-size: 14px;
-    padding: 0px 10px 10px 10px;
     display: flex;
     flex-direction: row;
     align-items: center;
