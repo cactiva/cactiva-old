@@ -11,6 +11,7 @@ import jetpack = require("fs-jetpack");
 import stream, { streams } from "../stream";
 const { Client } = require("pg");
 import * as _ from "lodash";
+import { getHooks } from "../libs/morph/getHooks";
 
 @Controller("api/project")
 export class ProjectController {
@@ -147,7 +148,9 @@ export class ProjectController {
           }
         );
         sf.organizeImports();
+        morph.processHooks(sf, req.body.hooks);
       }
+
       sf.saveSync();
       morph.project.saveSync();
 

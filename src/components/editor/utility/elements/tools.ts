@@ -601,6 +601,7 @@ export function setProp(source: any, path: string, value: any) {
 
 export const getSelectableParent = (root: any, id: string | string[]) => {
   let anchor = findParentElementById(root, id);
+  if(!anchor) return null;
   while (
     [
       SyntaxKind.JsxElement,

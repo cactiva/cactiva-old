@@ -1,13 +1,19 @@
 import * as path from "path";
-import { Project as TProject, SourceFile } from "ts-morph";
-import config, { execPath } from "./config";
-import { defaultExport } from "./libs/morph/defaultExport";
+import { Project as TProject, SourceFile, SyntaxKind } from "ts-morph";
+import { execPath } from "./config";
+import { cleanImports } from "./libs/morph/cleanImports";
+import {
+  defaultExport,
+  defaultExportShallow
+} from "./libs/morph/defaultExport";
 import { getHooks } from "./libs/morph/getHooks";
 import { getImport } from "./libs/morph/getImport";
 import { getEntryPoint, parseJsx } from "./libs/morph/parseJsx";
-import { cleanImports } from "./libs/morph/cleanImports";
 import { replaceReturn } from "./libs/morph/replaceReturn";
 import jetpack = require("fs-jetpack");
+import { generateSource } from "./libs/morph/generateSource";
+import { cleanHooks } from "./libs/morph/cleanHooks";
+import * as _ from "lodash";
 
 export class Morph {
   project: TProject = new TProject();
@@ -79,7 +85,7 @@ export class Morph {
       source
     );
     let result = "";
-    try { 
+    try {
       cleanImports(sf, imports);
       result = sf.getText();
       const imresult: any = {};
@@ -173,6 +179,50 @@ export class Morph {
   reload() {
     process.chdir(this.getAppPath());
     this.project.addSourceFilesFromTsConfig(path.join(".", "tsconfig.json"));
+  }
+
+  processHooks(sf: SourceFile, postedHooks: any) {
+    const hooks: any = [];
+    const sourceHooks = getHooks(sf);
+
+    const findExisting = (item: any) => {
+      for (let i in hooks) {
+        const hook = hooks[i];
+        if (item.kind === hook.kind && item.name === hook.name) {
+          return {
+            value: hook,
+            key: i
+          };
+        }
+      }
+      return false;
+    };
+
+    const process = (item: any, key: number) => {
+      if (!item) return;
+      const existing = findExisting(item);
+      if (!existing) {
+        hooks.push(item);
+      }
+    };
+
+    (sourceHooks || []).map(process);
+    (postedHooks || []).map(process);
+
+    cleanHooks(sf);
+    const de = defaultExportShallow(sf);
+    const dp = de.getParent();
+    const hookSource = hooks
+      .map((hook: any, index: number) => {
+        const body = generateSource(hook);
+        if (typeof body !== "string") {
+          console.log("generateSource: kind not found!!! - in processHooks()");
+          return "";
+        }
+        return body;
+      })
+      .join("\n");
+    dp.setBodyText(`\n${hookSource}\n\n` + _.trim(de.getText().trim(), "{}"));
   }
 
   /************************ Singleton  **************************/

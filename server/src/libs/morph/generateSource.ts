@@ -1,6 +1,5 @@
 import * as _ from "lodash";
-import { SyntaxKind } from "../syntaxkinds";
-import { toJS } from "mobx";
+import { SyntaxKind } from "ts-morph";
 import { getToken } from "./generateExpression";
 
 export const generateSource = (

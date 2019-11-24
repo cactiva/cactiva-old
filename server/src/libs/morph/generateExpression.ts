@@ -1,5 +1,5 @@
-import _ from "lodash";
-import { SyntaxKind } from "../syntaxkinds";
+import * as _ from "lodash";
+import { SyntaxKind } from "ts-morph";
 
 export const generateExpression = (node: any): any[] => {
   const rawResult = generateExpressionArray(node);

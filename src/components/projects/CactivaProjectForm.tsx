@@ -40,12 +40,15 @@ export default observer(({ form, onCancel, onSubmit, disable = [] }: any) => {
             }}>Test Db <Icon icon={"swap-horizontal"} size={14} marginLeft={5} /></Button>
         </div>
         <div style={{ display: "flex", flexDirection: "row" }}>
+            <TextInputField label={"Backend Host"} value={form.backend.host} onChange={(e: any) => {
+                form.backend.host = e.target.value;
+            }} flex={1} />
             <TextInputField label={"Backend Port"} value={form.backend.port} onChange={(e: any) => {
                 form.backend.port = e.target.value;
-            }} flex={1} />
+            }}  marginLeft={10} width={90} />
             <TextInputField label={"Hasura Port"} value={form.hasura.port} onChange={(e: any) => {
                 form.hasura.port = e.target.value;
-            }} flex={1} marginLeft={10}  />
+            }} marginLeft={10}  width={90} />
             <TextInputField label={"Hasura Secret"} value={form.hasura.secret} onChange={(e: any) => {
                 form.hasura.secret = (e.target.value);
             }} flex={1} marginLeft={10} />

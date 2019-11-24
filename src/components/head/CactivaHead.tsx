@@ -1,4 +1,13 @@
-import { Button, Dialog, Icon, IconButton, Pane, Spinner, Text, Tooltip } from "evergreen-ui";
+import {
+  Button,
+  Dialog,
+  Icon,
+  IconButton,
+  Pane,
+  Spinner,
+  Text,
+  Tooltip
+} from "evergreen-ui";
 import _ from "lodash";
 import { observer } from "mobx-react-lite";
 import React from "react";
@@ -6,6 +15,7 @@ import "./CactivaDialogEditor.scss";
 import "./CactivaHead.scss";
 import CactivaProject from "./project/CactivaProject";
 import CactivaStoreEditor from "./store/CactivaStoreEditor";
+import CactivaHooks from "./CactivaHooks";
 
 export default observer(({ editor }: any) => {
   const current = editor.current;
@@ -131,9 +141,23 @@ export default observer(({ editor }: any) => {
           )}
           {loadingText.indexOf(status) >= 0 && "…"}
         </Text>
-        <Text style={{ fontSize: "9px", color: "#aaa" }}>
-          {current ? path.split("/").pop() : ""}
-        </Text>
+        <div className="cright">
+          <Text style={{ fontSize: "9px", color: "#aaa" }}>
+            {current ? path.split("/").pop() : ""}
+          </Text>
+          <Tooltip content="Component Hooks">
+            <CactivaHooks>
+              {(ref: any, toggle: any) => (
+                <IconButton
+                  innerRef={ref}
+                  onClick={() => toggle()}
+                  className="hook-btn"
+                  icon={"group-objects"}
+                />
+              )}
+            </CactivaHooks>
+          </Tooltip>
+        </div>
       </div>
       <div className="right">
         <Tooltip content="Undo" position={"bottom"}>

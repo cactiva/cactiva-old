@@ -1,10 +1,10 @@
-import * as IconSource from 'react-web-vector-icons';
-import { observer } from 'mobx-react-lite';
-import React from 'react';
-import CactivaDraggable from '../../../CactivaDraggable';
-import CactivaDropChild from '../../../CactivaDroppable';
-import CactivaSelectable from '../../../CactivaSelectable';
-import { parseProps, parseStyle } from '../../../utility/parser/parser';
+import * as IconSource from "react-web-vector-icons";
+import { observer } from "mobx-react-lite";
+import React from "react";
+import CactivaDraggable from "../../../CactivaDraggable";
+import CactivaDropChild from "../../../CactivaDroppable";
+import CactivaSelectable from "../../../CactivaSelectable";
+import { parseProps, parseStyle } from "../../../utility/parser/parser";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -13,8 +13,16 @@ export default observer((props: any) => {
   return (
     <CactivaDropChild cactiva={cactiva} canDropOver={false}>
       <CactivaDraggable cactiva={cactiva}>
-        <CactivaSelectable cactiva={cactiva} style={style}>
-          <Icon {...tagProps} style={style} />
+        <CactivaSelectable
+          cactiva={cactiva}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            ...style
+          }}
+        >
+          <Icon {...tagProps} />
         </CactivaSelectable>
       </CactivaDraggable>
     </CactivaDropChild>
@@ -23,18 +31,18 @@ export default observer((props: any) => {
 
 interface IconProps {
   source:
-  | 'AntDesign'
-  | 'Entypo'
-  | 'EvilIcons'
-  | 'Feather'
-  | 'FontAwesome'
-  | 'Foundation'
-  | 'Ionicons'
-  | 'MaterialCommunityIcons'
-  | 'MaterialIcons'
-  | 'Octicons'
-  | 'SimpleLineIcons'
-  | 'Zocial';
+    | "AntDesign"
+    | "Entypo"
+    | "EvilIcons"
+    | "Feather"
+    | "FontAwesome"
+    | "Foundation"
+    | "Ionicons"
+    | "MaterialCommunityIcons"
+    | "MaterialIcons"
+    | "Octicons"
+    | "SimpleLineIcons"
+    | "Zocial";
   name: string;
   size?: number;
   color?: string;
