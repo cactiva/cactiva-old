@@ -9,9 +9,9 @@ export const parseStyle = (node: any, cactiva?: any): any => {
   for (let i in result) {
     const value = result[i];
     if (typeof value === "string") {
-      if (value.indexOf('color.') === 0) {
+      if (value.indexOf("color.") === 0) {
         const colorList: any = {
-          'color.primary': '#007ACC'
+          "color.primary": "#007ACC"
         };
         result[i] = colorList[value];
       }
@@ -19,7 +19,7 @@ export const parseStyle = (node: any, cactiva?: any): any => {
   }
 
   return result;
-}
+};
 
 export const parseValue = (node: any): any => {
   if (!node) return node;
@@ -73,6 +73,9 @@ export const parseProps = (node: any): any => {
 };
 
 export const generateValueByKind = (kind: number, value: any): any => {
+  if (!kind) {
+    return value;
+  }
   switch (kind) {
     case SyntaxKind.NumericLiteral:
       if (typeof value !== "number") {
@@ -96,7 +99,7 @@ export const generateValueByKind = (kind: number, value: any): any => {
         kind: kind,
         expression: value.expression,
         arguments: value.arguments
-      }
+      };
     case SyntaxKind.ArrowFunction:
       return value;
   }

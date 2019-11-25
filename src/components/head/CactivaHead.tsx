@@ -145,18 +145,7 @@ export default observer(({ editor }: any) => {
           <Text style={{ fontSize: "9px", color: "#aaa" }}>
             {current ? path.split("/").pop() : ""}
           </Text>
-          <Tooltip content="Component Hooks">
-            <CactivaHooks>
-              {(ref: any, toggle: any) => (
-                <IconButton
-                  innerRef={ref}
-                  onClick={() => toggle()}
-                  className="hook-btn"
-                  icon={"group-objects"}
-                />
-              )}
-            </CactivaHooks>
-          </Tooltip>
+          <CactivaHooks />
         </div>
       </div>
       <div className="right">

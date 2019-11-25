@@ -1,9 +1,15 @@
-import React from "react";
-import { Tooltip, Pane, IconButton } from "evergreen-ui";
 import { generateSource } from "@src/components/editor/utility/parser/generateSource";
+import api from "@src/libs/api";
 import editor from "@src/store/editor";
+import { IconButton, Menu, Pane, Popover, Tooltip } from "evergreen-ui";
+import { observer } from "mobx-react-lite";
+import React, { useRef } from "react";
+import { promptCode } from "./CodeEditor";
+import { update } from "lodash";
+import { promptExpression } from "@src/components/editor/CactivaExpressionDialog";
 
-export default ({ source, style }: any) => {
+export default ({ source, style, update }: any) => {
+  const toggleRef = useRef(null as any);
   return (
     <Tooltip
       position="left"
@@ -31,35 +37,90 @@ export default ({ source, style }: any) => {
             flex: 1,
             height: "18px",
             padding: "0px",
+            marginLeft: "-1px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             position: "relative"
           }}
         >
-          <IconButton
-            icon="function"
-            height={20}
-            flex={1}
-            appearance={source ? "primary" : undefined}
-            intent={source ? "success" : undefined}
-            onClick={async () => {
-              // const exp = await promptExpression({
-              //   returnExp: true,
-              //   local: true,
-              //   async: true,
-              //   value: generateSource(_.get(trait, 'rawValue'))
-              // });
-              // if (exp.expression) {
-              //   applyImport(exp.imports);
-              //   trait.update(exp.expression);
-              // }
-
-              if (editor && editor.current) editor.current.jsx = true;
+          <Popover
+            position={"left"}
+            minWidth={100}
+            content={
+              <ButtonMenu
+                toggleRef={toggleRef}
+                source={source}
+                update={update}
+              />
+            }
+          >
+            {({ toggle, getRef, isShown }: any) => {
+              toggleRef.current = toggle;
+              return (
+                <IconButton
+                  icon="function"
+                  innerRef={getRef}
+                  height={20}
+                  flex={1}
+                  appearance={source ? "primary" : undefined}
+                  intent={source ? "success" : undefined}
+                  onClick={async () => {
+                    toggle();
+                  }}
+                />
+              );
             }}
-          />
+          </Popover>
         </div>
       </Pane>
     </Tooltip>
   );
 };
+
+const ButtonMenu = observer(({ toggleRef, source, update }: any) => {
+  const toggle = toggleRef.current;
+  return (
+    <div className="ctree-menu">
+      <Menu>
+        <Menu.Item
+          icon="new-text-box"
+          onSelect={async () => {
+            toggle();
+            const src = await promptExpression({
+              value: generateSource(source),
+              local: true
+            });
+            console.log(src);
+          }}
+        >
+          Edit Value
+        </Menu.Item>
+        <Menu.Item
+          icon="code"
+          onSelect={async () => {
+            toggle();
+            const src = await promptCode(generateSource(source));
+            if (src) {
+              const res = await api.post("morph/parse-exp", {
+                value: src
+              });
+              update(res, false);
+            }
+          }}
+        >
+          Edit Code
+        </Menu.Item>
+        <Menu.Item
+          icon="edit"
+          onSelect={() => {
+            toggle();
+            if (editor && editor.current) editor.current.jsx = true;
+          }}
+        >
+          Edit Component
+        </Menu.Item>
+      </Menu>
+    </div>
+  );
+});

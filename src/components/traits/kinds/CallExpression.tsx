@@ -57,7 +57,10 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             />
           </div>
         ) : (
-          <SingleExpressionButton source={trait.rawValue} />
+          <SingleExpressionButton
+            source={trait.rawValue}
+            update={trait.update}
+          />
         ))}
 
       {trait.mode && trait.mode === "image" && (

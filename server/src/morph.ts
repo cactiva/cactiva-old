@@ -206,7 +206,7 @@ export class Morph {
       }
     };
 
-    (sourceHooks || []).map(process);
+    // (sourceHooks || []).map(process);
     (postedHooks || []).map(process);
 
     cleanHooks(sf);

@@ -19,6 +19,12 @@ import React, { useRef } from "react";
 import { promptCode } from "./CodeEditor";
 import { promptHasura } from "./Hasura";
 import { promptRestApi } from "./RestApi";
+import {
+  prepareChanges,
+  commitChanges,
+  applyImport
+} from "@src/components/editor/utility/elements/tools";
+import { toJS } from "mobx";
 
 export default observer(({ source, children, update, path }: any) => {
   const toggleRef = useRef(null as any);
@@ -109,7 +115,36 @@ const LineItem = observer(({ lines, toggleRef, meta, update, path }: any) => {
                 onSelect={async e => {
                   toggle();
 
-                  if (lt.name === "Rest API") {
+                  if (lt.name === "Hasura GraphQL") {
+                    const lts = lt.value.split("await query");
+                    const str = "query" + lts[lts.length - 1];
+                    const res = await api.post("morph/parse-exp", {
+                      value: str
+                    });
+                    const hasura = {
+                      query: _.trim(_.get(res, "arguments.0.value"), "'`\""),
+                      auth: _.trim(
+                        _.get(res, "arguments.1.value.auth.value"),
+                        "'`\""
+                      ),
+                      payload: generateSource(
+                        _.get(res, "arguments.1.value.payload")
+                      ),
+                      setVar:
+                        lts.length > 1
+                          ? lts[0].trim().replace("=", "")
+                          : undefined
+                    } as any;
+                    const body = _.get(meta.value, path);
+                    const restapi: any = await promptHasura(hasura);
+                    const parsed = await api.post("morph/parse-exp", {
+                      value: restapi.source
+                    });
+                    applyImport(restapi.imports);
+                    prepareChanges(editor.current);
+                    body[key] = parsed;
+                    commitChanges(editor.current);
+                  } else if (lt.name === "Rest API") {
                     const lts = lt.value.split("await api");
                     const str = "api" + lts[lts.length - 1];
                     const res = await api.post("morph/parse-exp", {
@@ -119,8 +154,9 @@ const LineItem = observer(({ lines, toggleRef, meta, update, path }: any) => {
                     const rargs = _.get(res, "arguments.0.value");
                     if (rargs) {
                       rest.url = generateSource(_.get(rargs, "url"));
-                      rest.method = JSON.parse(
-                        generateSource(_.get(rargs, "method"))
+                      rest.method = _.trim(
+                        generateSource(_.get(rargs, "method")),
+                        "'`\""
                       );
                       rest.request = {
                         body: generateSource(_.get(rargs, "data")),
@@ -131,17 +167,26 @@ const LineItem = observer(({ lines, toggleRef, meta, update, path }: any) => {
                         rest.setVar = lts[0].trim().replace("=", "");
                       }
                     }
+                    const body = _.get(meta.value, path);
                     const restapi: any = await promptRestApi(rest);
-                    console.log(restapi);
+                    const parsed = await api.post("morph/parse-exp", {
+                      value: restapi.source
+                    });
+                    applyImport(restapi.imports);
+                    prepareChanges(editor.current);
+                    body[key] = parsed;
+                    commitChanges(editor.current);
                   } else {
                     const code = await promptCode(generateSource(item));
+                    console.log(code);
                     if (code !== null) {
                       const res = await api.post("morph/parse-exp", {
                         value: code
                       });
                       const body = _.get(meta.value, path);
+                      prepareChanges(editor.current);
                       body[key] = res;
-                      update(meta.value);
+                      commitChanges(editor.current);
                     }
                   }
                 }}
@@ -178,9 +223,10 @@ const LineItem = observer(({ lines, toggleRef, meta, update, path }: any) => {
                       e.stopPropagation();
                       e.preventDefault();
                       if (confirm("Are you sure ?")) {
+                        prepareChanges(editor.current);
                         const body = _.get(meta.value, path);
                         body.splice(key, 1);
-                        update(meta.value);
+                        commitChanges(editor.current);
                       }
                     }}
                     iconSize={12}
@@ -299,6 +345,7 @@ const AddLine = observer(({ toggleRef, meta, update, path }: any) => {
             });
             if (name || meta.navigateType === "goBack") {
               const body = _.get(meta.value, path);
+              prepareChanges(editor.current);
               body.push({
                 kind: SyntaxKind.ExpressionStatement,
                 value: `nav.${meta.navigateType}(${
@@ -307,7 +354,7 @@ const AddLine = observer(({ toggleRef, meta, update, path }: any) => {
                     : `"${name.substr(5, name.length - 9)}"`
                 });`
               });
-              update(meta.value);
+              commitChanges(editor.current);
             }
           }}
         >
@@ -323,8 +370,9 @@ const AddLine = observer(({ toggleRef, meta, update, path }: any) => {
             const res = await api.post("morph/parse-exp", {
               value: restapi.source
             });
+            prepareChanges(editor.current);
             body.push(res);
-            update(meta.value);
+            commitChanges(editor.current);
           }}
         >
           Call REST API
@@ -334,12 +382,13 @@ const AddLine = observer(({ toggleRef, meta, update, path }: any) => {
           onSelect={async () => {
             toggle();
             const body = _.get(meta.value, path);
-            const restapi: any = await promptHasura();
+            const hapi: any = await promptHasura();
             const res = await api.post("morph/parse-exp", {
-              value: restapi.source
+              value: hapi.source
             });
+            prepareChanges(editor.current);
             body.push(res);
-            update(meta.value);
+            commitChanges(editor.current);
           }}
         >
           Call Hasura GraphQL
@@ -484,7 +533,15 @@ const AddNew = observer(({ toggleRef, meta, update, path }: any) => {
 const ParseLine = (item: any) => {
   let name = "Code...";
   let value = "";
-  if (item.kind === SyntaxKind.VariableStatement) {
+  if (item.left && item.right) {
+    if (item.right.value.indexOf("await api") >= 0) {
+      name = "Rest API";
+      value = generateSource(item);
+    } else if (item.right.value.indexOf("await query") >= 0) {
+      name = "Hasura GraphQL";
+      value = generateSource(item);
+    }
+  } else if (item.value) {
     if (item.value.indexOf("await api") >= 0) {
       name = "Rest API";
       value = item.value;

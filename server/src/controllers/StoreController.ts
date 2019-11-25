@@ -71,11 +71,15 @@ export default store("${name}", {
       })
       .map((e: any) => {
         const name = e.getBaseName().substr(0, e.getBaseName().length - 3);
-        result[name] = parseJsx(
+        const store = parseJsx(
           e
             .getFirstChildByKind(SyntaxKind.ExportAssignment)
             .getFirstChildByKindOrThrow(SyntaxKind.CallExpression)
-        ).arguments[0];
+        ).arguments;
+        result[name] = store[0];
+        if (store[0].kind === SyntaxKind.StringLiteral) {
+          result[name] = store[1];
+        }
       });
 
     if (req.query.path) {
@@ -93,22 +97,22 @@ export default store("${name}", {
       });
     }
 
-    if (req.query.async) {
-      files
-        .filter((e: any) => {
-          return (
-            e.getFilePath().indexOf(morph.getAppPath() + "/src/api/") === 0
-          );
-        })
-        .map((e: any) => {
-          const name = e.getBaseName().substr(0, e.getBaseName().length - 3);
-          if (name === "index") return;
-          result["await api." + name + ".call()"] = {
-            kind: SyntaxKind.StringLiteral,
-            value: '""'
-          };
-        });
-    }
+    // if (req.query.async) {
+    //   files
+    //     .filter((e: any) => {
+    //       return (
+    //         e.getFilePath().indexOf(morph.getAppPath() + "/src/api/") === 0
+    //       );
+    //     })
+    //     .map((e: any) => {
+    //       const name = e.getBaseName().substr(0, e.getBaseName().length - 3);
+    //       if (name === "index") return;
+    //       result["await api." + name + ".call()"] = {
+    //         kind: SyntaxKind.StringLiteral,
+    //         value: '""'
+    //       };
+    //     });
+    // }
 
     res.send(result);
   }

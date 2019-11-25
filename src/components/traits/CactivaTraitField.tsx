@@ -107,6 +107,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               <SingleExpressionButton
                 source={trait.rawValue}
                 style={fieldStyle}
+                update={trait.update}
               />
             )}
           </Pane>

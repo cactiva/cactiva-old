@@ -92,7 +92,7 @@ export class ProjectController {
     headers["x-hasura-admin-secret"] = hasura.secret;
     try {
       const gqlres = await axios.post(
-        `http://${backend.host}:${backend.port}/hasura/v1/graphql`,
+        `${backend.protocol}://${backend.host}:${backend.port}/hasura/v1/graphql`,
         body,
         {
           headers
