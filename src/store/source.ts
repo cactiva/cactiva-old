@@ -170,7 +170,7 @@ export class SourceStore {
         imports: this.imports
       });
       this.rootSource = res.file;
-      this.hooks = res.hooks;
+      this.hooks = (res.hooks || []).filter((e: any) => !!e);
       this.imports = res.imports;
       this.rootSourceTemp = "";
       this.source = res.component;

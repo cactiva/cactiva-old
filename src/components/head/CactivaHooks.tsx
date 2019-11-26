@@ -1,128 +1,54 @@
-import React, { useRef } from "react";
 import {
-  Popover,
-  Menu,
-  Icon,
+  EditHasuraLine,
+  EditRestApiLine,
+  ParseExpressionLine
+} from "@src/components/traits/expression/ExpressionListPopup";
+import api from "@src/libs/api";
+import editor from "@src/store/editor";
+import {
   Button,
+  Icon,
   IconButton,
+  Menu,
   Pane,
+  Popover,
   Tooltip
 } from "evergreen-ui";
-import { observer, useObservable } from "mobx-react-lite";
-import editor from "@src/store/editor";
-import { generateSource } from "../editor/utility/parser/generateSource";
 import _ from "lodash";
-import { promptRestApi } from "../traits/expression/RestApi";
-import api from "@src/libs/api";
-import { promptHasura } from "../traits/expression/Hasura";
+import { observer } from "mobx-react-lite";
+import typescript from "prettier/parser-typescript";
+import prettier from "prettier/standalone";
+import React, { useRef } from "react";
+import { applyImport } from "../editor/utility/elements/tools";
+import { generateSource } from "../editor/utility/parser/generateSource";
 import { promptCode } from "../traits/expression/CodeEditor";
+import { promptHasura } from "../traits/expression/Hasura";
+import { promptRestApi } from "../traits/expression/RestApi";
+
+const processHook = (item: any) => {
+  let name = generateSource(item).split("(")[0];
+  if (name.indexOf("useEffect") >= 0) {
+    const source = _.get(item, "arguments.0.body.0", {});
+    if (source) {
+      return ParseExpressionLine(source);
+    }
+  }
+
+  return { name };
+};
 
 export default observer(({ children }: any) => {
   const toggleRef = useRef(null as any);
-  const toggle = toggleRef.current;
-  const hooks = editor.current ? editor.current.hooks : [];
-  const ltRef = useRef(null as any);
+  const hooks: any = editor.current ? editor.current.hooks : [];
   return (
     <Popover
+      animationDuration={0}
       content={
-        <div
-          className="ctree-menu"
-          onSelect={() => {
-            toggle();
-          }}
-        >
-          <Menu>
-            {hooks.map((item: any, key: number) => {
-              if (item) {
-                return (
-                  <Menu.Item key={key}>
-                    <Pane
-                      style={{
-                        marginLeft: -20,
-                        paddingLeft: 20,
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "flex-start",
-                        alignItems: "center"
-                      }}
-                    >
-                      <div
-                        style={{
-                          flexBasis: "27px",
-                          minWidth: "27px"
-                        }}
-                      >{`#${key + 1}`}</div>
-                      <div style={{ flex: 1, fontSize: "11px" }}>
-                        {generateSource(item).split("(")[0]}
-                      </div>
-                      <IconButton
-                        icon={"trash"}
-                        style={{
-                          boxShadow: "none",
-                          margin: "0 -10px 0 10px",
-                          padding: 0,
-                          width: 24,
-                          height: 24,
-                          minWidth: 0,
-                          minHeight: 0
-                        }}
-                        onClick={(e: any) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                        }}
-                        iconSize={12}
-                        appearance="minimal"
-                        intent="danger"
-                      />
-                    </Pane>
-                  </Menu.Item>
-                );
-              }
-            })}
-
-            <Menu.Divider />
-            <Popover
-              position={"left"}
-              minWidth={100}
-              content={<AddNew toggleRef={ltRef} />}
-            >
-              {({ toggle, getRef, isShown }: any) => {
-                ltRef.current = toggle;
-                return (
-                  <Button
-                    innerRef={getRef}
-                    onClick={() => {
-                      toggle();
-                    }}
-                    style={{
-                      display: "flex",
-                      width: "100%",
-                      flexDirection: "row",
-                      boxShadow: "none",
-                      justifyContent: "flex-start"
-                    }}
-                    appearance="minimal"
-                  >
-                    <Icon
-                      icon="small-plus"
-                      style={{
-                        flexBasis: "30px",
-                        minWidth: "30px",
-                        marginLeft: "-10px",
-                        marginRight: "8px"
-                      }}
-                    />
-                    <div
-                      style={{ flex: 1, fontSize: "11px", textAlign: "left" }}
-                    >
-                      Add Hook
-                    </div>
-                  </Button>
-                );
-              }}
-            </Popover>
-          </Menu>
-        </div>
+        hooks.length === 0 ? (
+          <AddNew hooks={hooks} toggleRef={toggleRef} toggleFirst={true} />
+        ) : (
+          <HookMenu hooks={hooks} toggleRef={toggleRef} />
+        )
       }
     >
       {({ toggle, getRef, isShown }: any) => {
@@ -161,23 +87,31 @@ export default observer(({ children }: any) => {
   );
 });
 
-const AddNew = observer(({ toggleRef }: any) => {
+const AddNew = observer(({ toggleRef, hooks, toggleFirst }: any) => {
   const toggle = toggleRef.current;
-  const meta = useObservable({
-    value: ""
-  });
   return (
-    <div className="ctree-menu">
+    <div
+      className="ctree-menu"
+      style={{ margin: "-4px -8px", borderRadius: 5 }}
+    >
       <Menu>
+        <Menu.Item style={{ textAlign: "center", background: "white" }}>
+          Add New Hook
+        </Menu.Item>
+        <Menu.Divider />
         <Menu.Item
           icon="globe"
           onSelect={async () => {
-            toggle();
+            if (toggleFirst) toggle();
             const restapi: any = await promptRestApi();
-            const res = await api.post("morph/parse-exp", {
-              value: restapi.source
+            const res: any = await api.post("morph/parse-exp", {
+              value: `useEffect(() => { ${restapi.source} } ,[])`
             });
-            console.log(res);
+            if (res && editor.current) {
+              applyImport({ useEffect: { from: "React", type: "named" } });
+              hooks.push(res);
+            }
+            toggle();
           }}
         >
           Call REST API
@@ -185,30 +119,179 @@ const AddNew = observer(({ toggleRef }: any) => {
         <Menu.Item
           icon="satellite"
           onSelect={async () => {
-            toggle();
+            if (toggleFirst) toggle();
             const restapi: any = await promptHasura();
             const res = await api.post("morph/parse-exp", {
-              value: restapi.source
+              value: `useEffect(() => { ${restapi.source} } ,[])`
             });
-            console.log(res);
+            if (res && editor.current) {
+              applyImport({ useEffect: { from: "React", type: "named" } });
+              hooks.push(res);
+            }
+            toggle();
           }}
         >
           Call Hasura GraphQL
         </Menu.Item>
-        <Menu.Divider />
         <Menu.Item
           icon="new-text-box"
           onSelect={async () => {
+            if (toggleFirst) toggle();
             const source = await promptCode();
-            const res = await api.post("morph/parse-exp", {
-              value: source
-            });
-            console.log(res);
+            if (source) {
+              const res = await api.post("morph/parse-exp", {
+                value: source
+              });
+              if (editor.current) {
+                applyImport({ useEffect: { from: "React", type: "named" } });
+                hooks.push(res);
+              }
+            }
+            toggle();
           }}
         >
           Custom Code Hook
         </Menu.Item>
       </Menu>
     </div>
+  );
+});
+
+const HookMenu = observer(({ hooks, toggleRef }: any) => {
+  return (
+    <div className="ctree-menu">
+      <Menu>
+        {hooks.map((item: any, key: number) => {
+          const h = processHook(item);
+          if (item) {
+            return (
+              <Menu.Item key={key}>
+                <Pane
+                  style={{
+                    marginLeft: -20,
+                    paddingLeft: 20,
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "flex-start",
+                    alignItems: "center"
+                  }}
+                  onClick={async () => {
+                    const toggle = toggleRef.current;
+                    toggle();
+
+                    if (h.name === "Rest API") {
+                      const source = await generateSource(
+                        _.get(item, "arguments.0.body.0", {})
+                      );
+                      const parsed = await EditRestApiLine(source);
+                      applyImport(parsed.imports);
+                      _.set(item, "arguments.0.body.0", parsed.source);
+                    } else if (h.name === "Hasura GraphQL") {
+                      const source = await generateSource(
+                        _.get(item, "arguments.0.body.0", {})
+                      );
+                      const parsed = await EditHasuraLine(source);
+                      applyImport(parsed.imports);
+                      _.set(item, "arguments.0.body.0", parsed.source);
+                    } else {
+                      const source = await generateSource(item);
+                      const code = prettier.format(source, {
+                        parser: "typescript",
+                        plugins: [typescript]
+                      });
+                      const src = await promptCode(code);
+                      if (src) {
+                        const res = await api.post("morph/parse-exp", {
+                          value: src
+                        });
+                        hooks[key] = res;
+                      }
+                    }
+                    toggle();
+                  }}
+                >
+                  <Icon
+                    icon={
+                      h.name === "Hasura GraphQL"
+                        ? "satellite"
+                        : h.name === "Rest API"
+                        ? "globe"
+                        : "new-text-box"
+                    }
+                    color="#aaa"
+                    flexBasis={15}
+                    marginLeft={-2}
+                    marginRight={13}
+                  />
+                  <div style={{ flex: 1, fontSize: "11px" }}>{h.name}</div>
+                  <IconButton
+                    icon={"trash"}
+                    style={{
+                      boxShadow: "none",
+                      margin: "0 -10px 0 10px",
+                      padding: 0,
+                      width: 24,
+                      height: 24,
+                      minWidth: 0,
+                      minHeight: 0
+                    }}
+                    onClick={(e: any) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      if (confirm("Are you sure ?")) {
+                        hooks.splice(key, 1);
+                      }
+                    }}
+                    iconSize={12}
+                    appearance="minimal"
+                    intent="danger"
+                  />
+                </Pane>
+              </Menu.Item>
+            );
+          }
+        })}
+
+        <Menu.Divider />
+        <Tooltip
+          position="left"
+          appearance="card"
+          content={<AddNew hooks={hooks} toggleRef={toggleRef} />}
+        >
+          <Pane>
+            <AddBtn hooks={hooks} toggleRef={toggleRef} />
+          </Pane>
+        </Tooltip>
+      </Menu>
+    </div>
+  );
+});
+
+const AddBtn = observer(({  }: any) => {
+  return (
+    <Button
+      style={{
+        display: "flex",
+        width: "100%",
+        flexDirection: "row",
+        boxShadow: "none",
+        cursor: "default",
+        justifyContent: "flex-start"
+      }}
+      appearance="minimal"
+    >
+      <Icon
+        icon="chevron-left"
+        style={{
+          flexBasis: "30px",
+          minWidth: "30px",
+          marginLeft: "-10px",
+          marginRight: "8px"
+        }}
+      />
+      <div style={{ flex: 1, fontSize: "11px", textAlign: "left" }}>
+        Add Hook
+      </div>
+    </Button>
   );
 });

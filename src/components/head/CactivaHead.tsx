@@ -59,7 +59,6 @@ export default observer(({ editor }: any) => {
             </div>
           </div>
         </Pane>
-
         <Dialog
           isShown={editor.modals.project}
           hasFooter={false}
@@ -74,7 +73,6 @@ export default observer(({ editor }: any) => {
         >
           <CactivaProject />
         </Dialog>
-
         <div
           className="cactiva-head-divider"
           style={{ margin: "0px 4px 0px 10px" }}

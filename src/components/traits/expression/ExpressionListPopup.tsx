@@ -107,7 +107,7 @@ const LineItem = observer(({ lines, toggleRef, meta, update, path }: any) => {
     <div className="ctree-menu">
       <Menu>
         {lines.map((item: any, key: number) => {
-          const lt = ParseLine(item);
+          const lineExp = ParseExpressionLine(item);
           if (item && item.kind) {
             return (
               <Menu.Item
@@ -115,66 +115,19 @@ const LineItem = observer(({ lines, toggleRef, meta, update, path }: any) => {
                 onSelect={async e => {
                   toggle();
 
-                  if (lt.name === "Hasura GraphQL") {
-                    const lts = lt.value.split("await query");
-                    const str = "query" + lts[lts.length - 1];
-                    const res = await api.post("morph/parse-exp", {
-                      value: str
-                    });
-                    const hasura = {
-                      query: _.trim(_.get(res, "arguments.0.value"), "'`\""),
-                      auth: _.trim(
-                        _.get(res, "arguments.1.value.auth.value"),
-                        "'`\""
-                      ),
-                      payload: generateSource(
-                        _.get(res, "arguments.1.value.payload")
-                      ),
-                      setVar:
-                        lts.length > 1
-                          ? lts[0].trim().replace("=", "")
-                          : undefined
-                    } as any;
+                  if (lineExp.name === "Hasura GraphQL") {
                     const body = _.get(meta.value, path);
-                    const restapi: any = await promptHasura(hasura);
-                    const parsed = await api.post("morph/parse-exp", {
-                      value: restapi.source
-                    });
-                    applyImport(restapi.imports);
+                    const parsed = await EditHasuraLine(lineExp.value);
+                    applyImport(parsed.imports);
                     prepareChanges(editor.current);
-                    body[key] = parsed;
+                    body[key] = parsed.source;
                     commitChanges(editor.current);
-                  } else if (lt.name === "Rest API") {
-                    const lts = lt.value.split("await api");
-                    const str = "api" + lts[lts.length - 1];
-                    const res = await api.post("morph/parse-exp", {
-                      value: str
-                    });
-                    const rest = {} as any;
-                    const rargs = _.get(res, "arguments.0.value");
-                    if (rargs) {
-                      rest.url = generateSource(_.get(rargs, "url"));
-                      rest.method = _.trim(
-                        generateSource(_.get(rargs, "method")),
-                        "'`\""
-                      );
-                      rest.request = {
-                        body: generateSource(_.get(rargs, "data")),
-                        headers: generateSource(_.get(rargs, "headers"))
-                      };
-                      rest.onError = generateSource(_.get(rargs, "onError"));
-                      if (lts.length > 1) {
-                        rest.setVar = lts[0].trim().replace("=", "");
-                      }
-                    }
+                  } else if (lineExp.name === "Rest API") {
                     const body = _.get(meta.value, path);
-                    const restapi: any = await promptRestApi(rest);
-                    const parsed = await api.post("morph/parse-exp", {
-                      value: restapi.source
-                    });
-                    applyImport(restapi.imports);
+                    const parsed = await EditRestApiLine(lineExp.value);
+                    applyImport(parsed.imports);
                     prepareChanges(editor.current);
-                    body[key] = parsed;
+                    body[key] = parsed.source;
                     commitChanges(editor.current);
                   } else {
                     const code = await promptCode(generateSource(item));
@@ -207,7 +160,7 @@ const LineItem = observer(({ lines, toggleRef, meta, update, path }: any) => {
                       minWidth: "27px"
                     }}
                   >{`#${key + 1}`}</div>
-                  <div style={{ flex: 1, fontSize: "11px" }}>{lt.name}</div>
+                  <div style={{ flex: 1, fontSize: "11px" }}>{lineExp.name}</div>
                   <IconButton
                     icon={"trash"}
                     style={{
@@ -530,7 +483,7 @@ const AddNew = observer(({ toggleRef, meta, update, path }: any) => {
   );
 });
 
-const ParseLine = (item: any) => {
+export const ParseExpressionLine = (item: any) => {
   let name = "Code...";
   let value = "";
   if (item.left && item.right) {
@@ -554,5 +507,54 @@ const ParseLine = (item: any) => {
   return {
     name,
     value
+  };
+};
+
+export const EditHasuraLine = async (value: string) => {
+  const lts = value.split("await query");
+  const str = "query" + lts[lts.length - 1];
+  const res = await api.post("morph/parse-exp", {
+    value: str
+  });
+  const hasura = {
+    query: _.trim(_.get(res, "arguments.0.value"), "'`\""),
+    auth: _.trim(_.get(res, "arguments.1.value.auth.value"), "'`\""),
+    payload: generateSource(_.get(res, "arguments.1.value.payload")),
+    setVar: lts.length > 1 ? lts[0].trim().replace("=", "") : undefined
+  } as any;
+  const restapi: any = await promptHasura(hasura);
+  const parsed = await api.post("morph/parse-exp", {
+    value: restapi.source
+  });
+  return { source: parsed, imports: restapi.imports };
+};
+
+export const EditRestApiLine = async (value: string) => {
+  const lts = value.split("await api");
+  const str = "api" + lts[lts.length - 1];
+  const res = await api.post("morph/parse-exp", {
+    value: str
+  });
+  const rest = {} as any;
+  const rargs = _.get(res, "arguments.0.value");
+  if (rargs) {
+    rest.url = generateSource(_.get(rargs, "url"));
+    rest.method = _.trim(generateSource(_.get(rargs, "method")), "'`\"");
+    rest.request = {
+      body: generateSource(_.get(rargs, "data")),
+      headers: generateSource(_.get(rargs, "headers"))
+    };
+    rest.onError = generateSource(_.get(rargs, "onError"));
+    if (lts.length > 1) {
+      rest.setVar = lts[0].trim().replace("=", "");
+    }
+  }
+  const restapi: any = await promptRestApi(rest);
+  const parsed = await api.post("morph/parse-exp", {
+    value: restapi.source
+  });
+  return {
+    source: parsed,
+    imports: restapi.imports
   };
 };
