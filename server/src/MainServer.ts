@@ -7,6 +7,7 @@ import { Logger } from "@overnightjs/logger";
 import * as express from "express";
 import { execPath } from "./config";
 import { initWs } from "./controllers/WsRoute";
+import jetpack = require("fs-jetpack");
 
 class MainServer extends Server {
   private readonly SERVER_STARTED = `Cactiva: `;
@@ -31,11 +32,13 @@ class MainServer extends Server {
   }
 
   public start(port: number): void {
-    this.app.use(express.static(execPath + "/res/public"));
+    const path = jetpack.exists(execPath + "/res/public")
+      ? execPath + "/res/public"
+      : "./res/public";
+    this.app.use("/", express.static(path));
     initWs(this.app).listen(port, () => {
       Logger.Imp(this.SERVER_STARTED + `http://localhost:${port}`);
     });
-
   }
 }
 
