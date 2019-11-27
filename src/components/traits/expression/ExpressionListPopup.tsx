@@ -115,14 +115,14 @@ const LineItem = observer(({ lines, toggleRef, meta, update, path }: any) => {
                 onSelect={async e => {
                   toggle();
 
-                  if (lineExp.name === "Hasura GraphQL") {
+                  if (lineExp.name.indexOf("Hasura GraphQL") >= 0) {
                     const body = _.get(meta.value, path);
                     const parsed = await EditHasuraLine(lineExp.value);
                     applyImport(parsed.imports);
                     prepareChanges(editor.current);
                     body[key] = parsed.source;
                     commitChanges(editor.current);
-                  } else if (lineExp.name === "Rest API") {
+                  } else if (lineExp.name.indexOf("Rest API") >= 0) {
                     const body = _.get(meta.value, path);
                     const parsed = await EditRestApiLine(lineExp.value);
                     applyImport(parsed.imports);
@@ -160,7 +160,9 @@ const LineItem = observer(({ lines, toggleRef, meta, update, path }: any) => {
                       minWidth: "27px"
                     }}
                   >{`#${key + 1}`}</div>
-                  <div style={{ flex: 1, fontSize: "11px" }}>{lineExp.name}</div>
+                  <div style={{ flex: 1, fontSize: "11px" }}>
+                    {lineExp.name}
+                  </div>
                   <IconButton
                     icon={"trash"}
                     style={{
@@ -488,18 +490,24 @@ export const ParseExpressionLine = (item: any) => {
   let value = "";
   if (item.left && item.right) {
     if (item.right.value.indexOf("await api") >= 0) {
-      name = "Rest API";
+      name = `${item.left.value} = Rest API`;
       value = generateSource(item);
     } else if (item.right.value.indexOf("await query") >= 0) {
-      name = "Hasura GraphQL";
+      name = `${item.left.value} = Hasura GraphQL`;
       value = generateSource(item);
     }
   } else if (item.value) {
+    const vname =
+      item.value.indexOf("=") > 0
+        ? item.value.split("=")[0].trim() + " = "
+        : "";
+
     if (item.value.indexOf("await api") >= 0) {
-      name = "Rest API";
+      name = `${vname} Rest API`;
+
       value = item.value;
     } else if (item.value.indexOf("await query") >= 0) {
-      name = "Hasura GraphQL";
+      name = `${vname} Hasura GraphQL`;
       value = item.value;
     }
   }

@@ -18,12 +18,13 @@ import _ from "lodash";
 import { observer } from "mobx-react-lite";
 import typescript from "prettier/parser-typescript";
 import prettier from "prettier/standalone";
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { applyImport } from "../editor/utility/elements/tools";
 import { generateSource } from "../editor/utility/parser/generateSource";
 import { promptCode } from "../traits/expression/CodeEditor";
 import { promptHasura } from "../traits/expression/Hasura";
 import { promptRestApi } from "../traits/expression/RestApi";
+import { observable, toJS } from "mobx";
 
 const processHook = (item: any) => {
   let name = generateSource(item).split("(")[0];
@@ -37,9 +38,37 @@ const processHook = (item: any) => {
   return { name };
 };
 
+const meta = observable({
+  hooks: [] as any
+});
+
 export default observer(({ children }: any) => {
   const toggleRef = useRef(null as any);
   const hooks: any = editor.current ? editor.current.hooks : [];
+
+  useEffect(() => {
+    meta.hooks = hooks.map((item: any, key: number) => {
+      const hook = processHook(item);
+
+      if (hook.name === "Code..." && item.value.indexOf("useEffect") >= 0) {
+        (async () => {
+          const res: any = await api.post("morph/parse-exp", {
+            value: item.value
+          });
+          meta.hooks[key] = {
+            item: res,
+            hook: processHook(res)
+          } as any;
+          console.log(toJS(hooks[key]));
+        })();
+      }
+
+      return {
+        item: item,
+        hook
+      };
+    });
+  }, [hooks]);
   return (
     <Popover
       animationDuration={0}
@@ -161,8 +190,9 @@ const HookMenu = observer(({ hooks, toggleRef }: any) => {
   return (
     <div className="ctree-menu">
       <Menu>
-        {hooks.map((item: any, key: number) => {
-          const h = processHook(item);
+        {meta.hooks.map((rawItem: any, key: number) => {
+          const item = rawItem.item;
+          const h = rawItem.hook;
           if (item) {
             return (
               <Menu.Item key={key}>
@@ -179,14 +209,14 @@ const HookMenu = observer(({ hooks, toggleRef }: any) => {
                     const toggle = toggleRef.current;
                     toggle();
 
-                    if (h.name === "Rest API") {
+                    if (h.name.indexOf("Rest API") >= 0) {
                       const source = await generateSource(
                         _.get(item, "arguments.0.body.0", {})
                       );
                       const parsed = await EditRestApiLine(source);
                       applyImport(parsed.imports);
                       _.set(item, "arguments.0.body.0", parsed.source);
-                    } else if (h.name === "Hasura GraphQL") {
+                    } else if (h.name.indexOf("Hasura GraphQL") >= 0) {
                       const source = await generateSource(
                         _.get(item, "arguments.0.body.0", {})
                       );
@@ -212,9 +242,9 @@ const HookMenu = observer(({ hooks, toggleRef }: any) => {
                 >
                   <Icon
                     icon={
-                      h.name === "Hasura GraphQL"
+                      h.name.indexOf("Hasura GraphQL") >= 0
                         ? "satellite"
-                        : h.name === "Rest API"
+                        : h.name.indexOf("Rest API") >= 0
                         ? "globe"
                         : "new-text-box"
                     }

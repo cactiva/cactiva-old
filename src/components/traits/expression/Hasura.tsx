@@ -1,7 +1,7 @@
 import { promptExpression } from "@src/components/editor/CactivaExpressionDialog";
 import api from "@src/libs/api";
 import editor from "@src/store/editor";
-import { Dialog } from "evergreen-ui";
+import { Dialog, Spinner } from "evergreen-ui";
 import GraphiQL from "graphiql";
 import GraphiQLExplorer from "graphiql-explorer";
 import "graphiql/graphiql.css";
@@ -23,6 +23,7 @@ const meta = observable({
   form: _.cloneDeep(form),
   explorerIsOpen: true,
   schema: undefined as any,
+  schemaLoading: true,
   lastForm: null as any,
   resolve: null as any
 });
@@ -98,6 +99,7 @@ const graphQLFetcher = async (params: any) => {
   });
   if (res.data.__schema) {
     meta.schema = buildClientSchema(res.data);
+    meta.schemaLoading = false;
   }
 
   return res.data;
@@ -106,6 +108,12 @@ const graphQLFetcher = async (params: any) => {
 const HasuraForm = observer(({ form, gref }: any) => {
   return (
     <div className="rest-api-form">
+      {meta.schemaLoading && (
+        <div className="loading">
+          <Spinner />
+          Loading Schema
+        </div>
+      )}
       <div className="gql">
         <div className="graphiql-container">
           <GraphiQLExplorer
