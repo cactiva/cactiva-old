@@ -14,7 +14,8 @@ interface IEditorSources {
   [key: string]: SourceStore;
 }
 
-export const baseUrl = "http://localhost:8080/api";
+const isDev = require("@src/env").mode === "development";
+export const baseUrl = (isDev ? "http://localhost:8080" : "") + `/api`;
 
 class EditorStore {
   sources: IEditorSources = {};

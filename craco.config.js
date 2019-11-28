@@ -7,6 +7,8 @@ const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 const webpack = require("webpack");
+// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+//   .BundleAnalyzerPlugin;
 
 module.exports = {
   eslint: {
@@ -16,6 +18,7 @@ module.exports = {
     alias: {},
     plugins: [
       new MonacoWebpackPlugin(),
+      // new BundleAnalyzerPlugin(),
       new webpack.ContextReplacementPlugin(
         /graphql-language-service-interface[\\/]dist$/,
         new RegExp(`^\\./.*\\.js$`)

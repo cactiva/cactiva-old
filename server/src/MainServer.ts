@@ -35,6 +35,8 @@ class MainServer extends Server {
     const path = jetpack.exists(execPath + "/res/public")
       ? execPath + "/res/public"
       : "./res/public";
+
+    console.log(`Serving static files from: ${path}`);
     this.app.use("/", express.static(path));
     initWs(this.app).listen(port, () => {
       Logger.Imp(this.SERVER_STARTED + `http://localhost:${port}`);
