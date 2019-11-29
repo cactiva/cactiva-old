@@ -7162,7 +7162,7 @@ mobx-react-lite@^1.5.0:
   resolved "https://registry.yarnpkg.com/mobx-react-lite/-/mobx-react-lite-1.5.0.tgz#a5867fa1114b19056cf8159e8d64766596ae85a0"
   integrity sha512-Ss8RLKKGn+QhKbfCHvQ4+RPEVKR8AnPW1wNyWzZAS3wYw7UP4FX6GdRn64sdOhrP646o/JtXbLuDuc4RH3Bqyg==
 
-mobx-utils@^5.4.1:
+mobx-utils@^5.5.2:
   version "5.5.2"
   resolved "https://registry.yarnpkg.com/mobx-utils/-/mobx-utils-5.5.2.tgz#3d3230067f14e9315559d2bfd31d86ec2e8999f0"
   integrity sha512-cOlFJDWU/NHyGKvdhWqPdHmhPfeKewElAIZp5XticWIsSLGAA+4Uou3+8ookhQ/yG7qZXzvjAq90TZWXiR5+XA==

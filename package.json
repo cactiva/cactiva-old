@@ -22,7 +22,7 @@
     "lodash": "^4.17.15",
     "mobx": "^5.13.0",
     "mobx-react-lite": "^1.5.0",
-    "mobx-utils": "^5.4.1",
+    "mobx-utils": "^5.5.2",
     "monaco-editor": "^0.18.1",
     "monaco-editor-webpack-plugin": "^1.7.0",
     "multer": "^1.4.2",

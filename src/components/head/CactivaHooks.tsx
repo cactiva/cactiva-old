@@ -15,16 +15,17 @@ import {
   Tooltip
 } from "evergreen-ui";
 import _ from "lodash";
+import { observable } from "mobx";
 import { observer } from "mobx-react-lite";
 import typescript from "prettier/parser-typescript";
 import prettier from "prettier/standalone";
-import React, { useRef, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { applyImport } from "../editor/utility/elements/tools";
 import { generateSource } from "../editor/utility/parser/generateSource";
 import { promptCode } from "../traits/expression/CodeEditor";
 import { promptHasura } from "../traits/expression/Hasura";
 import { promptRestApi } from "../traits/expression/RestApi";
-import { observable, toJS } from "mobx";
+import { deepObserve } from "mobx-utils";
 
 const processHook = (item: any) => {
   let name = generateSource(item).split("(")[0];
@@ -47,28 +48,35 @@ export default observer(({ children }: any) => {
   const hooks: any = editor.current ? editor.current.hooks : [];
 
   useEffect(() => {
-    meta.hooks = hooks.map((item: any, key: number) => {
-      const hook = processHook(item);
+    const refreshHooks = () => {
+      meta.hooks = hooks.map((item: any, key: number) => {
+        const hook = processHook(item);
 
-      if (hook.name === "Code..." && item.value.indexOf("useEffect") >= 0) {
-        (async () => {
-          const res: any = await api.post("morph/parse-exp", {
-            value: item.value
-          });
-          meta.hooks[key] = {
-            item: res,
-            hook: processHook(res)
-          } as any;
-          console.log(toJS(hooks[key]));
-        })();
-      }
+        if (hook.name === "Code..." && item.value.indexOf("useEffect") >= 0) {
+          (async () => {
+            const res: any = await api.post("morph/parse-exp", {
+              value: item.value
+            });
+            meta.hooks[key] = {
+              item: res,
+              hook: processHook(res)
+            } as any;
+          })();
+        }
 
-      return {
-        item: item,
-        hook
-      };
+        return {
+          item: item,
+          hook
+        };
+      });
+    };
+    const disposer = deepObserve(hooks, (change, path) => {
+      refreshHooks();
     });
+    refreshHooks();
+    return disposer;
   }, [hooks]);
+
   return (
     <Popover
       animationDuration={0}
