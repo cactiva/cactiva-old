@@ -17,3 +17,4 @@ caprover deploy --default
 rm -rf .git
 cd ../
 echo "export const mode = 'development';" > "./src/env.js"    
+rm -rf res
