@@ -8,14 +8,32 @@ import * as express from "express";
 import { execPath } from "./config";
 import { initWs } from "./controllers/WsRoute";
 import jetpack = require("fs-jetpack");
+import * as proxy from "http-proxy-middleware";
 
 class MainServer extends Server {
   private readonly SERVER_STARTED = `Cactiva: `;
-
+  portProxies = {} as any;
   constructor() {
     super(true);
     this.app.use(bodyParser.json());
     this.app.use(cors());
+    this.app.use("/port/:port", (req, res, next) => {
+      const port = req.params.port;
+      if (parseInt(port)) {
+        if (!this.portProxies[port]) {
+          this.portProxies[port] = proxy({
+            target: "http://localhost:" + req.params.port,
+            changeOrigin: true,
+            pathRewrite: (path, req) => {
+              return path.substr(`/port:${port}`.length);
+            }
+          });
+        }
+        return this.portProxies[port](req, res, next);
+      } else {
+        res.send("Invalid Port");
+      }
+    });
     this.app.use(bodyParser.urlencoded({ extended: true }));
     this.setupControllers();
   }

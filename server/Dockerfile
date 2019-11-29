@@ -2,7 +2,9 @@ FROM node:stretch
    
 # Create Directory for the Container
 WORKDIR /usr/src/app
-
+RUN apt-get install software-properties-common
+RUN apt-add-repository ppa:fish-shell/release-3 -y
+RUN apt-get install fish
 ENV TZ=Asia/Jakarta
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN mkdir /usr/local/bin/app
@@ -12,6 +14,7 @@ RUN apt update
 RUN apt install -y yarn
 ADD . /usr/src/app
 
+RUN yarn global add expo-cli
 RUN yarn
 
 CMD [ "yarn", "start" ]

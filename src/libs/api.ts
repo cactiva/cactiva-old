@@ -19,8 +19,8 @@ class Api {
   }
 
   stream(name: string, onmessage: any, onclose?: any) {
-    const url = `${window.location.protocol}://${window.location.hostname}/api/`;
-    const ws = new WebSocket((url + "ws").replace("http", "ws"));
+    const url = `${window.location.protocol}//${window.location.hostname}/api/`;
+    const ws = new WebSocket((url + "ws").replace("http", "ws"));                
     ws.onopen = ev => {
       ws.send("start|" + name);
     };
