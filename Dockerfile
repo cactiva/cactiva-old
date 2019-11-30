@@ -20,6 +20,7 @@ RUN echo "export const mode = 'production';" > "./src/env.js"
 RUN yarn
 RUN yarn build
 WORKDIR /usr/src/app/raw/server
+RUN yarn
 RUN rm -rf res
 RUN mkdir res
 RUN mv ../build res/public
