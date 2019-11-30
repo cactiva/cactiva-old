@@ -75,7 +75,7 @@ const stop = async (name: string, ref: any) => {
 const parseExpoMessage = async (msg: string) => {
   editor.expo.url = "";
   if (msg.indexOf("Webpack on port") >= 0) {
-    editor.expo.url = `http://localhost:${msg
+    editor.expo.url = `http://${window.location.hostname}:${msg
       .split("Webpack on port")[1]
       .split("in")[0]
       .trim()}`;

@@ -44,7 +44,8 @@
     "prettier": "^1.18.2",
     "ps-tree": "^1.2.0",
     "react-native-ui-kitten": "cactiva/react-native-ui-kitten",
-    "ts-morph": "^4.0.1"
+    "ts-morph": "^4.0.1",
+    "zlib": "^1.0.5"
   },
   "devDependencies": {
     "@types/convict": "^4.2.1",

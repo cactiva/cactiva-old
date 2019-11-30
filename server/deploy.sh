@@ -1,12 +1,12 @@
 #!/bin/bash
 
-cd ../
-echo "export const mode = 'production';" > "./src/env.js"                         
-yarn build
-cd server
-rm -rf res
-mkdir res
-cp -r ../build res/public
+# cd ../
+# echo "export const mode = 'production';" > "./src/env.js"                         
+# yarn build
+# cd server
+# rm -rf res
+# mkdir res
+# cp -r ../build res/public
 
 rm -rf .git
 git init .

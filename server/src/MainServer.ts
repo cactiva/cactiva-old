@@ -1,39 +1,61 @@
-import * as bodyParser from "body-parser";
-import * as cors from "cors";
-import * as controllers from "./controllers";
-
 import { Server } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
+import * as bodyParser from "body-parser";
 import * as express from "express";
 import { execPath } from "./config";
+import * as controllers from "./controllers";
 import { initWs } from "./controllers/WsRoute";
+
 import jetpack = require("fs-jetpack");
-import * as proxy from "http-proxy-middleware";
 
 class MainServer extends Server {
   private readonly SERVER_STARTED = `Cactiva: `;
-  portProxies = {} as any;
+  // portProxies = {} as any;
   constructor() {
     super(true);
     this.app.use(bodyParser.json());
-    this.app.use(cors());
-    this.app.use("/port/:port", (req, res, next) => {
-      const port = req.params.port;
-      if (parseInt(port)) {
-        if (!this.portProxies[port]) {
-          this.portProxies[port] = proxy({
-            target: "http://localhost:" + req.params.port,
-            changeOrigin: true,
-            pathRewrite: (path, req) => {
-              return path.substr(`/port:${port}`.length);
-            }
-          });
-        }
-        return this.portProxies[port](req, res, next);
-      } else {
-        res.send("Invalid Port");
-      }
-    });
+    // this.app.use(cors());
+    // this.app.use("/port/:port", (req, res, next) => {
+    //   const port = req.params.port;
+    //   if (parseInt(port)) {
+    //     if (!this.portProxies[port]) {
+    //       this.portProxies[port] = proxy({
+    //         target: "http://localhost:" + req.params.port,
+    //         selfHandleResponse: true,
+    //         changeOrigin: true,
+    //         pathRewrite: (path, req) => {
+    //           return path.substr(`/port:${port}`.length);
+    //         },
+    //         onProxyRes: (proxyRes: any, req: any, res: any) => {
+    //           let originalBody = Buffer.from("");
+    //           proxyRes.on("data", function(data: any) {
+    //             originalBody = Buffer.concat([originalBody, data]);
+    //           });
+    //           proxyRes.on("end", function() {
+    //             if (proxyRes.headers["content-type"].indexOf("html") >= 0) {
+    //               let bodyString = originalBody.toString("utf8");
+    //               if (proxyRes.headers["content-encoding"] === "gzip") {
+    //                 bodyString = zlib.gunzipSync(originalBody).toString("utf8");
+    //               }
+
+    //               res.end(
+    //                 bodyString.replace(
+    //                   `</body>`,
+    //                   `<script type="text/javascript">
+    //                   document.head.innerHTML = document.head.innerHTML + "<base href='" + document.location.href + "' />";
+    //               </script></body>`
+    //                 )
+    //               );
+    //             }
+    //           });
+    //         }
+    //       });
+    //     }
+    //     return this.portProxies[port](req, res, next);
+    //   } else {
+    //     res.send("Invalid Port");
+    //   }
+    // });
     this.app.use(bodyParser.urlencoded({ extended: true }));
     this.setupControllers();
   }
