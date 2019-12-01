@@ -155,7 +155,7 @@ const AddNew = observer(({ toggleRef, hooks, toggleFirst }: any) => {
         >
           Call REST API
         </Menu.Item>
-        <Menu.Item
+        <Menu.Item 
           icon="satellite"
           onSelect={async () => {
             if (toggleFirst) toggle();
