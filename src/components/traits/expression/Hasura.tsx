@@ -159,7 +159,8 @@ const HasuraForm = observer(({ form, gref }: any) => {
               <GraphiQL.Button
                 onClick={async () => {
                   const res = await promptExpression({
-                    value: form.setVar
+                    value: form.setVar,
+                    local: true
                   });
                   form.setVar = res.expression;
                   form.imports = res.imports;
