@@ -79,6 +79,7 @@ const parseExpoMessage = async (msg: string) => {
       .split("Webpack on port")[1]
       .split("in")[0]
       .trim()}`;
+    window.open(editor.expo.url, "_blank");
   }
 
   if (msg.indexOf("running at exp://") >= 0) {
