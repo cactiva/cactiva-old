@@ -43,15 +43,17 @@ export default () => {
         const auth = meta.form.auth;
         const payload = meta.form.payload;
         const result = {
-          source: ` ${varname} await query(\`${query}\`, {
+          source: `  query(\`${query}\`, {
                    ${payload ? `payload: ${payload},` : ""}
                    ${auth ? `auth: "${auth}",` : ""}
+                }).then(res => {
+                  ${varname} = res;
                 });
             `,
           imports: {
             ...meta.form.imports,
             query: {
-              from: "@src/libs/gql",
+              from: "@src/libs/utils/gql",
               type: "named"
             }
           }
