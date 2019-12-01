@@ -25,5 +25,7 @@ RUN rm -rf res
 RUN mkdir res
 RUN mv ../build res/public
 
+ENV REACT_NATIVE_PACKAGER_HOSTNAME=cactiva.rx.plansys.co
+
 CMD [ "yarn", "start" ]
 EXPOSE 8080
