@@ -33,7 +33,7 @@ export class ProjectController {
           };
         })
         .filter(e => {
-          return e.name.indexOf(".DS_") < 0;
+          return e.name.indexOf(".DS_") < 0 && e.name !== 'raw';
         })
     });
   }
