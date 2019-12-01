@@ -43,11 +43,9 @@ export default () => {
         const auth = meta.form.auth;
         const payload = meta.form.payload;
         const result = {
-          source: `  query(\`${query}\`, {
+          source: ` ${varname} await query(\`${query}\`, {
                    ${payload ? `payload: ${payload},` : ""}
                    ${auth ? `auth: "${auth}",` : ""}
-                }).then(res => {
-                  ${varname} = res;
                 });
             `,
           imports: {

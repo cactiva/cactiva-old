@@ -29,7 +29,7 @@ import { deepObserve } from "mobx-utils";
 
 const processHook = (item: any) => {
   let name = generateSource(item).split("(")[0];
-  if (name.indexOf("useEffect") >= 0) {
+  if (name.indexOf("useAsyncEffect") >= 0) {
     const source = _.get(item, "arguments.0.body.0", {});
     if (source) {
       return ParseExpressionLine(source);
@@ -52,7 +52,7 @@ export default observer(({ children }: any) => {
       meta.hooks = hooks.map((item: any, key: number) => {
         const hook = processHook(item);
 
-        if (hook.name === "Code..." && item.value.indexOf("useEffect") >= 0) {
+        if (hook.name === "Code..." && item.value.indexOf("useAsyncEffect") >= 0) {
           (async () => {
             const res: any = await api.post("morph/parse-exp", {
               value: item.value
@@ -142,10 +142,12 @@ const AddNew = observer(({ toggleRef, hooks, toggleFirst }: any) => {
             if (toggleFirst) toggle();
             const restapi: any = await promptRestApi();
             const res: any = await api.post("morph/parse-exp", {
-              value: `useEffect(() => { ${restapi.source} } ,[])`
+              value: `useAsyncEffect(() => { ${restapi.source} } ,[])`
             });
             if (res && editor.current) {
-              applyImport({ useEffect: { from: "React", type: "named" } });
+              applyImport({
+                useAsyncEffect: { from: "use-async-effect", type: "default" }
+              });
               hooks.push(res);
             }
             toggle();
@@ -159,10 +161,12 @@ const AddNew = observer(({ toggleRef, hooks, toggleFirst }: any) => {
             if (toggleFirst) toggle();
             const restapi: any = await promptHasura();
             const res = await api.post("morph/parse-exp", {
-              value: `useEffect(() => { ${restapi.source} } ,[])`
+              value: `useAsyncEffect(() => { ${restapi.source} } ,[])`
             });
             if (res && editor.current) {
-              applyImport({ useEffect: { from: "React", type: "named" } });
+              applyImport({
+                useAsyncEffect: { from: "use-async-effect", type: "default" }
+              });
               hooks.push(res);
             }
             toggle();
