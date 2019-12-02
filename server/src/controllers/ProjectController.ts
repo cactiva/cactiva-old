@@ -64,7 +64,7 @@ export class ProjectController {
         backend: !!streams[`backend-${name}`] ? "running" : "stopped",
         theme: JSON.parse(
           jetpack.read(path.join(execPath, "app", name, "src", "theme.json")) ||
-            "{}"
+          "{}"
         )
       });
     } catch (e) {
@@ -84,7 +84,7 @@ export class ProjectController {
     const body = req.body.body;
     const settings = JSON.parse(
       jetpack.read(path.join(execPath, "app", name, "settings.json")) ||
-        "{backend: {}}"
+      "{backend: {}}"
     );
     const hasura = settings.hasura;
     const backend = settings.backend;
@@ -137,7 +137,7 @@ export class ProjectController {
         );
       } else {
         const preparedSource = morph.prepareSourceForWrite(
-          source, 
+          source,
           req.body.imports
         );
         sf = morph.project.createSourceFile(
@@ -146,7 +146,7 @@ export class ProjectController {
           {
             overwrite: true
           }
-        ); 
+        );
         morph.processHooks(sf, req.body.hooks);
         sf.fixMissingImports();
         sf.organizeImports();
@@ -162,7 +162,7 @@ export class ProjectController {
     res.status(500).json({
       error: "insufficient query param"
     });
-  } 
+  }
 
   @Get("start-backend")
   private async startBackend(req: Request, res: Response) {
@@ -205,8 +205,12 @@ export class ProjectController {
     const st = stream(`expo-${req.query.project}`);
     st.cli = execa("yarn", ["web"], {
       all: true,
-      cwd: morph.getAppPath()
+      cwd: morph.getAppPath(),
+      env: {
+        REACT_NATIVE_PACKAGER_HOSTNAME: 'cactiva.rx.plansys.co'
+      }
     } as any);
+
     st.cli.all.on(
       "data",
       _.throttle((chunk: any) => {
@@ -365,7 +369,7 @@ export class ProjectController {
         fs.chmod(
           path.join(execPath, "app", req.body.name, "hasura"),
           "755",
-          () => {}
+          () => { }
         );
 
         config.set("app", req.body.name);
