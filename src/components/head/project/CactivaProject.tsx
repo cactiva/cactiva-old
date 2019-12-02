@@ -79,7 +79,7 @@ const parseExpoMessage = async (msg: string) => {
       .split("Webpack on port")[1]
       .split("in")[0]
       .trim()}`;
-  }
+  } 
 
   if (msg.indexOf("running at exp://") >= 0) {
     const host = msg.split("running at exp://")[1].split(":")[0];
