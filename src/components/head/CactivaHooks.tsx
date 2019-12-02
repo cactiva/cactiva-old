@@ -52,7 +52,10 @@ export default observer(({ children }: any) => {
       meta.hooks = hooks.map((item: any, key: number) => {
         const hook = processHook(item);
 
-        if (hook.name === "Code..." && item.value.indexOf("useAsyncEffect") >= 0) {
+        if (
+          hook.name === "Code..." &&
+          item.value.indexOf("useAsyncEffect") >= 0
+        ) {
           (async () => {
             const res: any = await api.post("morph/parse-exp", {
               value: item.value
@@ -142,7 +145,7 @@ const AddNew = observer(({ toggleRef, hooks, toggleFirst }: any) => {
             if (toggleFirst) toggle();
             const restapi: any = await promptRestApi();
             const res: any = await api.post("morph/parse-exp", {
-              value: `useAsyncEffect(() => { ${restapi.source} } ,[])`
+              value: `useAsyncEffect(async () => { ${restapi.source} } ,[])`
             });
             if (res && editor.current) {
               applyImport({
@@ -155,13 +158,13 @@ const AddNew = observer(({ toggleRef, hooks, toggleFirst }: any) => {
         >
           Call REST API
         </Menu.Item>
-        <Menu.Item 
+        <Menu.Item
           icon="satellite"
           onSelect={async () => {
             if (toggleFirst) toggle();
             const restapi: any = await promptHasura();
             const res = await api.post("morph/parse-exp", {
-              value: `useAsyncEffect(() => { ${restapi.source} } ,[])`
+              value: `useAsyncEffect(async () => { ${restapi.source} } ,[])`
             });
             if (res && editor.current) {
               applyImport({

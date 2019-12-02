@@ -2,6 +2,7 @@ import { Server } from "@overnightjs/core";
 import { Logger } from "@overnightjs/logger";
 import * as bodyParser from "body-parser";
 import * as express from "express";
+import * as cors from "cors";
 import { execPath } from "./config";
 import * as controllers from "./controllers";
 import { initWs } from "./controllers/WsRoute";
@@ -14,7 +15,7 @@ class MainServer extends Server {
   constructor() {
     super(true);
     this.app.use(bodyParser.json());
-    // this.app.use(cors());
+    this.app.use(cors());
     // this.app.use("/port/:port", (req, res, next) => {
     //   const port = req.params.port;
     //   if (parseInt(port)) {

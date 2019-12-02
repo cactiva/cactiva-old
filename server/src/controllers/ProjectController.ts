@@ -137,7 +137,7 @@ export class ProjectController {
         );
       } else {
         const preparedSource = morph.prepareSourceForWrite(
-          source,
+          source, 
           req.body.imports
         );
         sf = morph.project.createSourceFile(
@@ -146,9 +146,10 @@ export class ProjectController {
           {
             overwrite: true
           }
-        );
-        sf.organizeImports();
+        ); 
         morph.processHooks(sf, req.body.hooks);
+        sf.fixMissingImports();
+        sf.organizeImports();
       }
 
       sf.saveSync();
@@ -161,7 +162,7 @@ export class ProjectController {
     res.status(500).json({
       error: "insufficient query param"
     });
-  }
+  } 
 
   @Get("start-backend")
   private async startBackend(req: Request, res: Response) {

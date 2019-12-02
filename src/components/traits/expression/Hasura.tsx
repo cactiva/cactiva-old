@@ -78,7 +78,6 @@ export const promptHasura = (data?: {
 }) => {
   editor.modals.hasura = true;
   meta.lastForm = meta.form;
-  console.log(data);
   if (data) {
     _.set(meta, "form.query", data.query);
     _.set(meta, "form.payload", data.payload);
