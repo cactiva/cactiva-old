@@ -8,6 +8,8 @@ import { promptCode } from "./CodeEditor";
 import { update } from "lodash";
 import { promptExpression } from "@src/components/editor/CactivaExpressionDialog";
 
+import typescript from "prettier/parser-typescript";
+import prettier from "prettier/standalone";
 export default ({ source, style, update }: any) => {
   const toggleRef = useRef(null as any);
   return (
@@ -100,7 +102,11 @@ const ButtonMenu = observer(({ toggleRef, source, update }: any) => {
           icon="code"
           onSelect={async () => {
             toggle();
-            const src = await promptCode(generateSource(source));
+            const code = prettier.format(generateSource(source), {
+              parser: "typescript",
+              plugins: [typescript]
+            });
+            const src = await promptCode(code);
             if (src) {
               const res = await api.post("morph/parse-exp", {
                 value: src

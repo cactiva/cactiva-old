@@ -206,9 +206,6 @@ export class ProjectController {
     st.cli = execa("yarn", ["web"], {
       all: true,
       cwd: morph.getAppPath(),
-      env: {
-        REACT_NATIVE_PACKAGER_HOSTNAME: 'cactiva.rx.plansys.co'
-      }
     } as any);
 
     st.cli.all.on(
