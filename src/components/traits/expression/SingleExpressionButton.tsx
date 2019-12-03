@@ -10,6 +10,7 @@ import { promptExpression } from "@src/components/editor/CactivaExpressionDialog
 
 import typescript from "prettier/parser-typescript";
 import prettier from "prettier/standalone";
+import { applyImport } from "@src/components/editor/utility/elements/tools";
 export default ({ source, style, update }: any) => {
   const toggleRef = useRef(null as any);
   return (
@@ -93,7 +94,13 @@ const ButtonMenu = observer(({ toggleRef, source, update }: any) => {
               value: generateSource(source),
               local: true
             });
-            console.log(src);
+            if (src) {
+              const res = await api.post("morph/parse-exp", {
+                value: src.expression
+              });
+              update(res, false);
+              applyImport(src.imports);
+            }
           }}
         >
           Edit Value
