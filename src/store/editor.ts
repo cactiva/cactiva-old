@@ -143,7 +143,6 @@ class EditorStore {
       this.sources[path].project = this;
       this.sources[path].imports = res.data.imports;
       this.sources[path].hooks = (res.data.hooks || []).filter((e: any) => !!e);
-
       this.path = path;
       this.status = "ready";
       localStorage.setItem("cactiva-current-path", path);

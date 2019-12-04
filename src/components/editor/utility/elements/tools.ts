@@ -354,6 +354,13 @@ export const prepareChanges = (editor: any) => {
   editor.prevSource = toJS(editor.source);
 };
 
+export const commitHooks = () => {
+  const current = editor.current;
+  if (current) {
+    current.undoStack.push(toJS(current.hooks));
+  }
+}
+
 export const commitChanges = (editor: any) => {
   if (editor.tempSelected && editor.tempSelected.id) {
     if (findElementById(editor.source, editor.tempSelected.id))
@@ -409,7 +416,7 @@ export const applyImport = (imports: any) => {
       const imfrom = ` from "${im.from}"`;
       const imtext = `import ${
         im.type === "default" ? i : `{ ${i} }`
-      } ${imfrom};`;
+        } ${imfrom};`;
       if (eimports.indexOf(imtext.trim()) < 0) {
         eimports.push(imtext);
       }
@@ -420,7 +427,7 @@ export const applyImport = (imports: any) => {
       const imfrom = ` from "${im.from}"`;
       const imtext = `import ${
         im.type === "default" ? i : `{ ${i} }`
-      } ${imfrom};`;
+        } ${imfrom};`;
       if (eimports.indexOf(imtext.trim()) < 0) {
         eimports.push(imtext);
       }
@@ -601,7 +608,7 @@ export function setProp(source: any, path: string, value: any) {
 
 export const getSelectableParent = (root: any, id: string | string[]) => {
   let anchor = findParentElementById(root, id);
-  if(!anchor) return null;
+  if (!anchor) return null;
   while (
     [
       SyntaxKind.JsxElement,
