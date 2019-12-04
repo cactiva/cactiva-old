@@ -149,56 +149,7 @@ export default observer(() => {
           "backspace",
           "delete"
         ]}
-        onKeyEvent={(key: string, event: any) => {
-          if (editor.isModalOpened) return;
-          switch (key) {
-            case "ctrl+x":
-            case "meta+x":
-              console.log("halo");
-              editor.cut();
-              event.preventDefault();
-              break;
-            case "ctrl+c":
-            case "meta+c":
-              editor.copy();
-              event.preventDefault();
-              break;
-            case "ctrl+v":
-            case "meta+v":
-              editor.paste();
-              event.preventDefault();
-              break;
-            case "ctrl+s":
-            case "meta+s":
-              if (editor.current) {
-                editor.current.save();
-              }
-              event.preventDefault();
-              break;
-            case "ctrl+z":
-            case "meta+z":
-              if (editor.current) editor.current.history.undo();
-              event.preventDefault();
-              break;
-            case "ctrl+shift+z":
-            case "meta+shift+z":
-            case "ctrl+y":
-            case "meta+y":
-              if (editor.current) editor.current.history.redo();
-              event.preventDefault();
-              break;
-            case "backspace":
-            case "delete":
-              const current = editor.current;
-              if (current) {
-                prepareChanges(current);
-                removeElementById(current.source, current.selectedId);
-                commitChanges(current);
-              }
-              event.preventDefault();
-              break;
-          }
-        }}
+        onKeyEvent={shortcutKeyHandler}
       ></KeyboardEventHandler>
       <DndProvider backend={HTML5Backend}>
         <div className="cactiva-container">
@@ -235,6 +186,56 @@ export default observer(() => {
   );
 });
 
+export const shortcutKeyHandler = (key: string, event: any) => {
+  if (editor.isModalOpened) return;
+  switch (key) {
+    case "ctrl+x":
+    case "meta+x":
+      editor.cut();
+      event.preventDefault();
+      break;
+    case "ctrl+c":
+    case "meta+c":
+      editor.copy();
+      event.preventDefault();
+      break;
+    case "ctrl+v":
+    case "meta+v":
+      editor.paste();
+      event.preventDefault();
+      break;
+    case "ctrl+s":
+    case "meta+s":
+      if (editor.current) {
+        editor.current.save();
+      }
+      event.preventDefault();
+      break;
+    case "ctrl+z":
+    case "meta+z":
+      if (editor.current) editor.current.history.undo();
+      event.preventDefault();
+      break;
+    case "ctrl+shift+z":
+    case "meta+shift+z":
+    case "ctrl+y":
+    case "meta+y":
+      if (editor.current) editor.current.history.redo();
+      event.preventDefault();
+      break;
+    case "backspace":
+    case "delete":
+      const current = editor.current;
+      if (current) {
+        prepareChanges(current);
+        removeElementById(current.source, current.selectedId);
+        commitChanges(current);
+      }
+      event.preventDefault();
+      break;
+  }
+}
+
 const CactivaEditorCanvas = observer((props: any) => {
   const { current } = props;
 
@@ -267,20 +268,20 @@ const CactivaTraitsCanvas = observer((props: any) => {
         {activeTraits ? (
           <CactivaTraits editor={current} />
         ) : (
-          <Pane
-            display="flex"
-            flexDirection="column"
-            padding={10}
-            alignItems="center"
-            justifyContent="center"
-          >
-            <img
-              src="/images/reindeer.svg"
-              style={{ width: "50%", margin: 20, opacity: 0.4 }}
-            />
-            <Text size={300}>Please select a component</Text>
-          </Pane>
-        )}
+            <Pane
+              display="flex"
+              flexDirection="column"
+              padding={10}
+              alignItems="center"
+              justifyContent="center"
+            >
+              <img
+                src="/images/reindeer.svg"
+                style={{ width: "50%", margin: 20, opacity: 0.4 }}
+              />
+              <Text size={300}>Please select a component</Text>
+            </Pane>
+          )}
       </div>
     </div>
   );

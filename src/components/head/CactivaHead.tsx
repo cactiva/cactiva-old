@@ -16,6 +16,7 @@ import "./CactivaHead.scss";
 import CactivaProject from "./project/CactivaProject";
 import CactivaStoreEditor from "./store/CactivaStoreEditor";
 import CactivaHooks from "./CactivaHooks";
+import { shortcutKeyHandler } from "@src/App";
 
 export default observer(({ editor }: any) => {
   const current = editor.current;
@@ -45,7 +46,17 @@ export default observer(({ editor }: any) => {
     );
   };
   return (
-    <div className="cactiva-head">
+    <div className="cactiva-head" onKeyDownCapture={(e) => {
+      if ((e.target as HTMLElement).tagName.toUpperCase() === "BUTTON") {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const ctrl = e.ctrlKey ? 'ctrl+' : '';
+        const meta = e.metaKey ? 'ctrl+' : '';
+        const shift = e.shiftKey ? 'shift+' : '';
+        shortcutKeyHandler(`${meta}${ctrl}${shift}${e.key}`, e);
+      }
+    }}>
       <div className="left">
         <Pane
           onClick={() => {

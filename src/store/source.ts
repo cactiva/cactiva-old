@@ -83,9 +83,15 @@ export class SourceStore {
     swap: (source: any[], target: any[]) => {
       if (source.length > 0) {
         const popped = source.pop();
-        const prevSource = toJS(this.source);
-        this.source = toJS(popped);
-        target.push(prevSource);
+        if (!popped.kind && Array.isArray(popped)) { // hooks
+          const prevHooks = this.hooks;
+          this.hooks = toJS(popped) as any;
+          target.push(prevHooks);
+        } else { // source code
+          const prevSource = toJS(this.source);
+          this.source = toJS(popped);
+          target.push(prevSource);
+        }
       }
     },
     undo: () => {
@@ -109,7 +115,7 @@ export class SourceStore {
       if (
         this.undoStack.length - 1 === -1 ||
         this.undoStack[this.undoStack.length - 1] ===
-          this.savedMarker.undoContent
+        this.savedMarker.undoContent
       ) {
         return true;
       }
@@ -206,11 +212,11 @@ export class SourceStore {
   getSelectedSourceCode() {
     const result = _.get(this, "selected.source")
       ? prettier
-          .format(generateSource(this.selected.source), {
-            parser: "typescript",
-            plugins: [typescript]
-          })
-          .trim()
+        .format(generateSource(this.selected.source), {
+          parser: "typescript",
+          plugins: [typescript]
+        })
+        .trim()
       : "";
 
     if (result[result.length - 1] === ";")

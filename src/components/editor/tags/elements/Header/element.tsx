@@ -48,7 +48,10 @@ export default observer((props: any) => {
             {tagProps.leftAction === "true" && (
               <Icon icon="arrow-left" style={{ margin: 5 }} />
             )}
-            <div className="title">{tagProps.title}</div>
+            <div className="title">{({
+              string: tagProps.title,
+              object: tagProps.title.kind ? <CactivaChildren cactiva={{ ...cactiva, source: tagProps.title }} /> : ''
+            } as any)[typeof tagProps.title]}</div>
           </div>
           <CactivaDropMarker
             hover={meta.dropOver}
