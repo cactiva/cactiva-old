@@ -25,6 +25,10 @@ import {
   applyImportAndHook
 } from "@src/components/editor/utility/elements/tools";
 import { toJS } from "mobx";
+import ItemDraggable from "@src/components/head/hooks/ItemDraggable";
+import ItemDroppable from "@src/components/head/hooks/ItemDroppable";
+import { getChilds } from "@src/components/head/hooks/CactivaHooks";
+import { generateExpression } from "@src/components/editor/utility/parser/generateExpression";
 
 export default observer(({ source, children, update, path }: any) => {
   const toggleRef = useRef(null as any);
@@ -107,93 +111,18 @@ const LineItem = observer(({ lines, toggleRef, meta, update, path }: any) => {
     <div className="ctree-menu">
       <Menu>
         {lines.map((item: any, key: number) => {
-          let value = _.get(item, "value", "");
-          if (typeof value !== "string") {
-            value = generateSource(value);
-          }
-          const lineExp = ParseExpressionLine({ ...item, value });
           if (item && item.kind) {
             return (
-              <Menu.Item
+              <RenderDetailItem
                 key={key}
-                onSelect={async e => {
-                  toggle();
-
-                  if (lineExp.name.indexOf("Hasura GraphQL") >= 0) {
-                    const body = _.get(meta.value, path);
-                    const parsed = await EditHasuraLine(lineExp.value);
-                    applyImportAndHook(parsed.imports);
-                    prepareChanges(editor.current);
-                    body[key] = parsed.source;
-                    commitChanges(editor.current);
-                  } else if (lineExp.name.indexOf("Rest API") >= 0) {
-                    const body = _.get(meta.value, path);
-                    const parsed = await EditRestApiLine(lineExp.value);
-                    applyImportAndHook(parsed.imports);
-                    prepareChanges(editor.current);
-                    body[key] = parsed.source;
-                    commitChanges(editor.current);
-                  } else {
-                    const code = await promptCode(generateSource(item));
-                    console.log(code);
-                    if (code !== null) {
-                      const res = await api.post("morph/parse-exp", {
-                        value: code
-                      });
-                      const body = _.get(meta.value, path);
-                      prepareChanges(editor.current);
-                      body[key] = res;
-                      commitChanges(editor.current);
-                    }
-                  }
-                }}
-              >
-                <Pane
-                  style={{
-                    marginLeft: -20,
-                    paddingLeft: 20,
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "flex-start",
-                    alignItems: "center"
-                  }}
-                >
-                  <div
-                    style={{
-                      flexBasis: "27px",
-                      minWidth: "27px"
-                    }}
-                  >{`#${key + 1}`}</div>
-                  <div style={{ flex: 1, fontSize: "11px" }}>
-                    {lineExp.name}
-                  </div>
-                  <IconButton
-                    icon={"trash"}
-                    style={{
-                      boxShadow: "none",
-                      margin: "0 -10px 0 10px",
-                      padding: 0,
-                      width: 24,
-                      height: 24,
-                      minWidth: 0,
-                      minHeight: 0
-                    }}
-                    onClick={(e: any) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      if (confirm("Are you sure ?")) {
-                        prepareChanges(editor.current);
-                        const body = _.get(meta.value, path);
-                        body.splice(key, 1);
-                        commitChanges(editor.current);
-                      }
-                    }}
-                    iconSize={12}
-                    appearance="minimal"
-                    intent="danger"
-                  />
-                </Pane>
-              </Menu.Item>
+                index={key}
+                item={item}
+                toggle={toggle}
+                path={path}
+                meta={meta}
+                lines={lines}
+                update={update}
+              ></RenderDetailItem>
             );
           }
         })}
@@ -208,9 +137,9 @@ const LineItem = observer(({ lines, toggleRef, meta, update, path }: any) => {
           Edit Component Code
         </Menu.Item>
         <Menu.Divider />
-        <Popover
-          position={"left"}
-          minWidth={100}
+        <Tooltip
+          position="left"
+          appearance="card"
           content={
             <AddLine
               toggleRef={ltRef}
@@ -220,48 +149,197 @@ const LineItem = observer(({ lines, toggleRef, meta, update, path }: any) => {
             />
           }
         >
-          {({ toggle, getRef, isShown }: any) => {
-            ltRef.current = toggle;
-            return (
-              <Button
-                innerRef={getRef}
-                onClick={() => {
-                  toggle();
-                }}
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  flexDirection: "row",
-                  boxShadow: "none",
-                  justifyContent: "flex-start"
-                }}
-                appearance="minimal"
-              >
-                <Icon
-                  icon="small-plus"
-                  style={{
-                    flexBasis: "30px",
-                    minWidth: "30px",
-                    marginLeft: "-10px",
-                    marginRight: "8px"
-                  }}
-                />
-                <div style={{ flex: 1, fontSize: "11px", textAlign: "left" }}>
-                  Add Statement
-                </div>
-              </Button>
-            );
-          }}
-        </Popover>
+          <Button
+            style={{
+              display: "flex",
+              width: "100%",
+              flexDirection: "row",
+              boxShadow: "none",
+              justifyContent: "flex-start"
+            }}
+            appearance="minimal"
+          >
+            <Icon
+              icon="small-plus"
+              style={{
+                flexBasis: "30px",
+                minWidth: "30px",
+                marginLeft: "-10px",
+                marginRight: "8px"
+              }}
+            />
+            <div style={{ flex: 1, fontSize: "11px", textAlign: "left" }}>
+              Add Statement
+            </div>
+          </Button>
+        </Tooltip>
       </Menu>
     </div>
   );
 });
 
+const RenderDetailItem = observer(
+  ({ item, toggle, meta, path, index, lines, update }: any) => {
+    // const source = parse
+    const childs = getChilds({ value: item });
+    if (childs) {
+      return (
+        <Tooltip
+          position="left"
+          appearance="card"
+          content={
+            <Pane>
+              <div
+                className="ctree-menu"
+                style={{
+                  margin: "-4px -8px",
+                  borderRadius: 5,
+                  right: 10,
+                  overflow: "hidden"
+                }}
+              >
+                <LineItem
+                  lines={childs}
+                  path={path}
+                  toggleRef={toggle}
+                  meta={meta}
+                  update={update}
+                />
+              </div>
+            </Pane>
+          }
+        >
+          <Menu.Item>
+            <DetailItem
+              index={index}
+              item={item}
+              toggle={toggle}
+              path={path}
+              meta={meta}
+              lines={lines}
+              isChild={true}
+            ></DetailItem>
+          </Menu.Item>
+        </Tooltip>
+      );
+    }
+    return (
+      <Menu.Item>
+        <DetailItem
+          index={index}
+          item={item}
+          toggle={toggle}
+          path={path}
+          meta={meta}
+          lines={lines}
+        ></DetailItem>
+      </Menu.Item>
+    );
+  }
+);
+
+const DetailItem = observer(
+  ({ item, toggle, meta, path, index, lines, isChild = false }: any) => {
+    let value = _.get(item, "value", "");
+    if (typeof value !== "string") {
+      value = generateSource(value);
+    }
+    const lineExp = ParseExpressionLine({ ...item, value });
+    return (
+      <ItemDraggable dragInfo={item} source={lines}>
+        <ItemDroppable dropInfo={item}>
+          <div
+            onClick={async e => {
+              toggle();
+
+              if (lineExp.name.indexOf("Hasura GraphQL") >= 0) {
+                const body = _.get(meta.value, path);
+                const parsed = await EditHasuraLine(lineExp.value);
+                applyImportAndHook(parsed.imports);
+                prepareChanges(editor.current);
+                body[index] = parsed.source;
+                commitChanges(editor.current);
+              } else if (lineExp.name.indexOf("Rest API") >= 0) {
+                const body = _.get(meta.value, path);
+                const parsed = await EditRestApiLine(lineExp.value);
+                applyImportAndHook(parsed.imports);
+                prepareChanges(editor.current);
+                body[index] = parsed.source;
+                commitChanges(editor.current);
+              } else {
+                const code = await promptCode(generateSource(item));
+                if (code !== null) {
+                  const res = await api.post("morph/parse-exp", {
+                    value: code
+                  });
+                  const body = _.get(meta.value, path);
+                  prepareChanges(editor.current);
+                  body[index] = res;
+                  commitChanges(editor.current);
+                }
+              }
+            }}
+            style={{
+              marginLeft: -20,
+              paddingLeft: isChild ? 12 : 20,
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              borderLeft: isChild ? "8px solid #1070ca" : undefined
+            }}
+          >
+            <div
+              style={{
+                flexBasis: "27px",
+                minWidth: "27px"
+              }}
+            >{`#${index + 1}`}</div>
+            <div style={{ flex: 1, fontSize: "11px" }}>{lineExp.name}</div>
+            <IconButton
+              icon={"trash"}
+              style={{
+                boxShadow: "none",
+                margin: "0 -10px 0 10px",
+                padding: 0,
+                width: 24,
+                height: 24,
+                minWidth: 0,
+                minHeight: 0
+              }}
+              onClick={(e: any) => {
+                e.stopPropagation();
+                e.preventDefault();
+                if (confirm("Are you sure ?")) {
+                  prepareChanges(editor.current);
+                  const body = _.get(meta.value, path);
+                  body.splice(index, 1);
+                  commitChanges(editor.current);
+                }
+              }}
+              iconSize={12}
+              appearance="minimal"
+              intent="danger"
+            />
+          </div>
+        </ItemDroppable>
+      </ItemDraggable>
+    );
+  }
+);
+
 const AddLine = observer(({ toggleRef, meta, update, path }: any) => {
   const toggle = _.get(toggleRef, "current");
   return (
-    <div className="ctree-menu">
+    <div
+      className="ctree-menu"
+      style={{
+        margin: "-4px -8px",
+        borderRadius: 5,
+        right: 10,
+        overflow: "hidden"
+      }}
+    >
       <Menu>
         <Menu.Item
           icon="link"

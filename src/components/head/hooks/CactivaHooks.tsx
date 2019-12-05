@@ -41,7 +41,6 @@ export default observer(({ children }: any) => {
     const refreshHooks = () => {
       meta.hooks = hooks.map((item: any, key: number) => {
         const hook = processHook(item);
-
         if (
           hook.name === "Code..." &&
           item.value.indexOf("useAsyncEffect") >= 0
@@ -50,6 +49,7 @@ export default observer(({ children }: any) => {
             const res: any = await api.post("morph/parse-exp", {
               value: item.value
             });
+            console.log(item.value, res);
             meta.hooks[key] = {
               item: res,
               hook: processHook(res)
@@ -475,12 +475,14 @@ const RenderChild = observer(({ childs: items, toggleRef }: any) => {
   );
 });
 
-const getChilds = (item: any) => {
-  if ([202, 198, 192].indexOf(item.value.kind) > -1) {
-    let childs = _.get(item, "value.body", []);
+export const getChilds = (item: any) => {
+  if ([202, 198, 192, 220, 222].indexOf(item.value.kind) > -1) {
+    let childs = _.get(item, "value", []);
+    if ([198].indexOf(item.value.kind) > -1)
+      childs = _.get(item, "value.body", []);
     if ([192].indexOf(item.value.kind) > -1)
       childs = _.get(item, "value.arguments[0].body", []);
-    if ([202].indexOf(item.value.kind) > -1)
+    if ([202, 222].indexOf(item.value.kind) > -1)
       childs = _.get(item, "value.value.arguments[0].body", []);
     if (childs.length > 0) return childs;
   }
