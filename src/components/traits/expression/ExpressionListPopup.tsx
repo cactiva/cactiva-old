@@ -107,7 +107,11 @@ const LineItem = observer(({ lines, toggleRef, meta, update, path }: any) => {
     <div className="ctree-menu">
       <Menu>
         {lines.map((item: any, key: number) => {
-          const lineExp = ParseExpressionLine(item);
+          let value = _.get(item, "value", "");
+          if (typeof value !== "string") {
+            value = generateSource(value);
+          }
+          const lineExp = ParseExpressionLine({ ...item, value });
           if (item && item.kind) {
             return (
               <Menu.Item
@@ -508,6 +512,10 @@ export const ParseExpressionLine = (item: any) => {
       value = item.value;
     } else if (item.value.indexOf("await query") >= 0) {
       name = `${vname} Hasura GraphQL`;
+      value = item.value;
+    } else if (item.value.indexOf(".map(") >= 0) {
+      let splitv = vname.split(".map(");
+      name = `${splitv[0]}.map`;
       value = item.value;
     }
   }

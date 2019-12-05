@@ -30,6 +30,19 @@ export const generateSource = (
       return `const ${node.name} = ${generateSource(node.value)}`;
     case SyntaxKind.PropertyAccessExpression:
       return node.value;
+    case SyntaxKind.ExpressionStatement:
+      return generateSource(node.value);
+    case SyntaxKind.AwaitExpression:
+      return `await ${generateSource(node.value)}`;
+    case SyntaxKind.VariableStatement:
+      return node.value
+        .map((item: any) => {
+          const flags = ["var", "let", "const"];
+          return `${flags[item.flags]} ${item.name} = ${generateSource(
+            item.value
+          )}`;
+        })
+        .join(",");
     case SyntaxKind.ArrayLiteralExpression:
       return `[
         ${_.map(node.value, (e, key) => {

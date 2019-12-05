@@ -46,6 +46,11 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
         kind: kindName,
         value: node.elements.map((e: any) => parseJsx(e))
       };
+    case SyntaxKind.AwaitExpression:
+      return {
+        kind: kindName,
+        value: parseJsx(node.expression)
+      };
     case SyntaxKind.VariableDeclaration:
       return {
         kind: kindName,
@@ -60,6 +65,26 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
           ? kindNames[node.operatorToken.kind]
           : node.operatorToken.kind,
         right: parseJsx(node.right, showKindName)
+      };
+
+    case SyntaxKind.VariableStatement:
+      return (() => {
+        const result: any = [];
+        node.declarationList.declarations.forEach((p: any) => {
+          const name = p.name.escapedText || p.name.text;
+          result.push({
+            name,
+            flags: node.declarationList.flags - node.flags,
+            value: parseJsx(p.initializer, showKindName)
+          });
+        });
+
+        return { kind: kindName, value: result };
+      })();
+    case SyntaxKind.ExpressionStatement:
+      return {
+        kind: kindName,
+        value: parseJsx(node.expression, showKindName)
       };
     case SyntaxKind.ElementAccessExpression:
       return {

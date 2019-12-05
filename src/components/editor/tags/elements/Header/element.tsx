@@ -45,13 +45,23 @@ export default observer((props: any) => {
           }}
         >
           <div className="header">
-            {tagProps.leftAction === "true" && (
+            {tagProps.backBtn === "true" && (
               <Icon icon="arrow-left" style={{ margin: 5 }} />
             )}
-            <div className="title">{({
-              string: tagProps.title,
-              object: tagProps.title.kind ? <CactivaChildren cactiva={{ ...cactiva, source: tagProps.title }} /> : ''
-            } as any)[typeof tagProps.title]}</div>
+            <div className="title">
+              {
+                ({
+                  string: tagProps.title,
+                  object: tagProps.title.kind ? (
+                    <CactivaChildren
+                      cactiva={{ ...cactiva, source: tagProps.title }}
+                    />
+                  ) : (
+                    ""
+                  )
+                } as any)[typeof tagProps.title]
+              }
+            </div>
           </div>
           <CactivaDropMarker
             hover={meta.dropOver}
