@@ -230,4 +230,15 @@ div[role="menuitem"] {
   &:hover {
     background-color: #ececeb !important;
   }
+
+}
+
+.reset-trait-field {
+  width:20px;
+  height:20px;
+  margin-left:2px;
+  svg {
+    width:9px;
+    height:9px;
+  }
 }

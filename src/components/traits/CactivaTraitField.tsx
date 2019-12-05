@@ -1,30 +1,15 @@
-import {
-  Alert,
-  Menu,
-  Pane,
-  Popover,
-  Text,
-  Tooltip,
-  Icon,
-  IconButton
-} from "evergreen-ui";
+import editor from "@src/store/editor";
+import { Pane, Text, Tooltip } from "evergreen-ui";
 import _ from "lodash";
-import { observer, useObservable } from "mobx-react-lite";
+import { observer } from "mobx-react-lite";
 import React, { useRef } from "react";
 import { ICactivaTraitField } from "../editor/utility/classes";
+import { getSelectableParent } from "../editor/utility/elements/tools";
 import { kindNames } from "../editor/utility/kinds";
-import { SyntaxKind } from "../editor/utility/syntaxkinds";
-import kinds from "./tags";
-import { generateSource } from "../editor/utility/parser/generateSource";
-import editor from "@src/store/editor";
-import { toJS } from "mobx";
-import { promptExpression } from "../editor/CactivaExpressionDialog";
-import {
-  applyImportAndHook,
-  getSelectableParent
-} from "../editor/utility/elements/tools";
 import { parseStyle } from "../editor/utility/parser/parser";
+import { SyntaxKind } from "../editor/utility/syntaxkinds";
 import SingleExpressionButton from "./expression/SingleExpressionButton";
+import kinds from "./tags";
 
 export interface ICactivaTraitFieldProps extends ICactivaTraitField {
   editor: any;
@@ -38,7 +23,8 @@ export interface ICactivaTraitFieldProps extends ICactivaTraitField {
   update: (value: any, updatedKind?: SyntaxKind) => void;
 }
 export default observer((trait: ICactivaTraitFieldProps) => {
-  let kindName = kindNames[trait.kind];
+
+  let kindName = kindNames[trait.defaultKind];
   const KindField = kinds[kindName];
 
   const fieldRef = useRef(null);
@@ -90,7 +76,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
               : undefined
           }
         >
-          <Pane style={{ flex: 1 }}>
+          <Pane style={{ flex: 1, display: "flex", flexDirection: "row" }}>
             {KindField ? (
               <KindField
                 {...trait}
@@ -104,12 +90,12 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                 }}
               />
             ) : (
-              <SingleExpressionButton
-                source={trait.rawValue}
-                style={fieldStyle}
-                update={trait.update}
-              />
-            )}
+                <SingleExpressionButton
+                  source={trait.rawValue}
+                  style={fieldStyle}
+                  update={trait.update}
+                />
+              )}
           </Pane>
         </Tooltip>
       </div>

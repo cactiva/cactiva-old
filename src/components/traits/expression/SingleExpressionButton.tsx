@@ -1,16 +1,15 @@
+import { promptExpression } from "@src/components/editor/CactivaExpressionDialog";
+import { applyImportAndHook } from "@src/components/editor/utility/elements/tools";
 import { generateSource } from "@src/components/editor/utility/parser/generateSource";
 import api from "@src/libs/api";
 import editor from "@src/store/editor";
 import { IconButton, Menu, Pane, Popover, Tooltip } from "evergreen-ui";
 import { observer } from "mobx-react-lite";
-import React, { useRef } from "react";
-import { promptCode } from "./CodeEditor";
-import { update } from "lodash";
-import { promptExpression } from "@src/components/editor/CactivaExpressionDialog";
-
 import typescript from "prettier/parser-typescript";
 import prettier from "prettier/standalone";
-import { applyImportAndHook } from "@src/components/editor/utility/elements/tools";
+import React, { useRef } from "react";
+import { promptCode } from "./CodeEditor";
+
 export default ({ source, style, update }: any) => {
   const toggleRef = useRef(null as any);
   return (

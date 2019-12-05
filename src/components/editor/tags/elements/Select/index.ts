@@ -58,6 +58,24 @@ export default class extends CactivaTag {
           }
         },
         {
+          name: "Text Path",
+          path: "textPath",
+          kind: SyntaxKind.JsxExpression,
+          default: 'text',
+          options: {
+            styles: styles
+          }
+        },
+        {
+          name: "Value Path",
+          path: "valuePath",
+          default: 'value',
+          kind: SyntaxKind.JsxExpression,
+          options: {
+            styles: styles
+          }
+        },
+        {
           name: "Placeholder",
           path: "placeholder",
           kind: SyntaxKind.StringLiteral,

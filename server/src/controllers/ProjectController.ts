@@ -138,6 +138,10 @@ export class ProjectController {
     sf.organizeImports();
     const result = morph.formatCactivaSource(sf, false);
     res.status(200).json(result);
+
+    setTimeout(() => {
+      sf.deleteImmediatelySync();
+    }, 500);
     return;
   }
 
