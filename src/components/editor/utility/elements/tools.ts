@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { toJS } from "mobx";
 import { getDiff } from "recursive-diff";
-import { promptExpression } from "../../CactivaExpressionDialog";
+import { promptExpression } from "../../../traits/expression/ExpressionSinglePopup";
 import kinds from "../kinds";
 import { SyntaxKind } from "../syntaxkinds";
 import { isTag } from "../tagmatcher";

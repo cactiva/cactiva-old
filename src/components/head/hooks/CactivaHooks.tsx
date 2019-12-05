@@ -1,21 +1,9 @@
-import {
-  EditHasuraLine,
-  EditRestApiLine,
-  ParseExpressionLine
-} from "@src/components/traits/expression/ExpressionListPopup";
+import { EditHasuraLine, EditRestApiLine, ParseExpressionLine } from "@src/components/traits/expression/ExpressionListPopup";
 import api from "@src/libs/api";
 import editor from "@src/store/editor";
-import {
-  Button,
-  Icon,
-  IconButton,
-  Menu,
-  Pane,
-  Popover,
-  Tooltip
-} from "evergreen-ui";
+import { Button, Icon, IconButton, Menu, Pane, Popover, Tooltip } from "evergreen-ui";
 import _ from "lodash";
-import { observable, toJS } from "mobx";
+import { observable } from "mobx";
 import { observer } from "mobx-react-lite";
 import { deepObserve } from "mobx-utils";
 import typescript from "prettier/parser-typescript";
@@ -23,7 +11,6 @@ import prettier from "prettier/standalone";
 import React, { useEffect, useRef } from "react";
 import { applyImportAndHook } from "../../editor/utility/elements/tools";
 import { generateSource } from "../../editor/utility/parser/generateSource";
-import { SyntaxKind } from "../../editor/utility/syntaxkinds";
 import { promptCode } from "../../traits/expression/CodeEditor";
 import { promptHasura } from "../../traits/expression/Hasura";
 import { promptRestApi } from "../../traits/expression/RestApi";

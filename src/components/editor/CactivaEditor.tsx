@@ -8,7 +8,7 @@ import Split from "react-split";
 import CactivaBreadcrumb from "./CactivaBreadcrumb";
 import CactivaComponentChooser, { toolbar } from "./CactivaComponentChooser";
 import CactivaCustomComponent from "./CactivaCustomComponent";
-import CactivaExpressionDialog from "./CactivaExpressionDialog";
+import CactivaExpressionDialog from "../traits/expression/ExpressionSinglePopup";
 import "./editor.scss";
 import "./tags/kinds/kinds.scss";
 import "./tags/elements/elements.scss";

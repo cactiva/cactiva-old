@@ -1,4 +1,4 @@
-import { promptExpression } from "@src/components/editor/CactivaExpressionDialog";
+import { promptExpression } from "@src/components/traits/expression/ExpressionSinglePopup";
 import api from "@src/libs/api";
 import editor from "@src/store/editor";
 import { Dialog, Spinner } from "evergreen-ui";

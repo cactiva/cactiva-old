@@ -1,0 +1,20 @@
+.expr-dialog {
+  margin: -10px;
+  display: flex;
+  flex-direction: column;
+  .rta {
+    display: flex;
+    flex-direction: column;
+    height: 300px;
+    flex: 1;
+    .code {
+      padding:10px;
+      flex: 1;
+      border-radius: 5px;
+      border:0;
+      background: #333;
+      color: white;
+      outline: none;
+    }
+  }
+}

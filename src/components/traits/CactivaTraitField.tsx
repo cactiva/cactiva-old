@@ -39,7 +39,7 @@ export default observer((trait: ICactivaTraitFieldProps) => {
         {trait.label !== false && (
           <div className="label" style={labelStyle}>
             <Tooltip
-              showDelay={500}
+              position="left"
               content={
                 <Text
                   color={"white"}
@@ -49,7 +49,6 @@ export default observer((trait: ICactivaTraitFieldProps) => {
                   {trait.name}
                 </Text>
               }
-              position="top"
             >
               <Text>{trait.name}</Text>
             </Tooltip>

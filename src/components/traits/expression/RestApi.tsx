@@ -1,4 +1,4 @@
-import { promptExpression } from "@src/components/editor/CactivaExpressionDialog";
+import { promptExpression } from "@src/components/traits/expression/ExpressionSinglePopup";
 import editor from "@src/store/editor";
 import Axios from "axios";
 import {

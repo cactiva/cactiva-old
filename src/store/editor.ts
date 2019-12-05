@@ -33,7 +33,7 @@ class EditorStore {
       footer: null
     },
     project: false,
-    expression: false,
+    expression: true,
     codeEditor: false,
     restApi: false,
     hasura: false

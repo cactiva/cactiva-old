@@ -15,6 +15,7 @@ module.exports = {
     enable: false
   },
   webpack: {
+    externals: { '@microsoft/typescript-etw': 'FakeModule' },
     alias: {},
     plugins: [
       new MonacoWebpackPlugin(),

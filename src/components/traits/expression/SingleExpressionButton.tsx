@@ -1,4 +1,4 @@
-import { promptExpression } from "@src/components/editor/CactivaExpressionDialog";
+import { promptExpression } from "@src/components/traits/expression/ExpressionSinglePopup";
 import { applyImportAndHook } from "@src/components/editor/utility/elements/tools";
 import { generateSource } from "@src/components/editor/utility/parser/generateSource";
 import api from "@src/libs/api";

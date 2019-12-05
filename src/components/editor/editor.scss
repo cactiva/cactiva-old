@@ -539,45 +539,6 @@
     }
   }
 }
-
-.expr-dialog {
-  margin: -10px;
-  display: flex;
-  flex-direction: column;
-
-  .content {
-    flex: 1;
-    background: #ececeb;
-    border-radius: 5px !important;
-    padding: 10px 5px 5px 5px;
-    font-size: 13px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-
-    > [role="combobox"] {
-      width: auto !important;
-    }
-
-    .input {
-      margin-right: 5px;
-      margin-bottom: 5px;
-      &.last {
-        margin-right: 0px;
-      }
-
-      input {
-        border: 0px;
-        padding: 4px;
-        outline: none !important;
-        border-radius: 4px;
-        font-size: 12px;
-      }
-    }
-  }
-}
-
-
 .shortcut {
   float: right;
   font-size: 10px;
