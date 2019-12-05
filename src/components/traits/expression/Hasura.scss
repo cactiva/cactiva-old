@@ -32,6 +32,19 @@
     flex: 1;
     display: flex;
 
+.graphiql-explorer-root {
+  
+  display: flex;
+  flex-direction: column-reverse;
+
+  .variable-editor-title {
+    margin-bottom: 20px !important;
+    border-bottom: 1px solid #ccc !important;
+    padding-bottom:10px !important;
+    margin-left:0px !important;
+  }
+}
+
     .toolbar-button {
       max-width: none;
       text-align: center;

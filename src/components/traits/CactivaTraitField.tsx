@@ -20,7 +20,7 @@ import editor from "@src/store/editor";
 import { toJS } from "mobx";
 import { promptExpression } from "../editor/CactivaExpressionDialog";
 import {
-  applyImport,
+  applyImportAndHook,
   getSelectableParent
 } from "../editor/utility/elements/tools";
 import { parseStyle } from "../editor/utility/parser/parser";

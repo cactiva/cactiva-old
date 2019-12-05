@@ -233,6 +233,7 @@ const CactivaEditorSource = observer((props: any) => {
   useEffect(reloadEditorSource, [
     editor.selectedId,
     editor.rootSelected,
+    editor.source,
     meta.sourceLanguage,
     editor.jsx,
     editor.undoStack.length

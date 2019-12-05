@@ -106,23 +106,21 @@ export class CtreeController {
     
       return ${req.body.value};
     });`;
-    const preparedSource = morph.prepareSourceForWrite(
-      source,
-      req.body.imports
-    );
     const sf = morph.project.createSourceFile(
       morph.getAppPath() + req.query.path,
-      preparedSource,
+      source,
       {
         overwrite: true
       }
     );
+    morph.processImports(sf, req.body.imports);
+    sf.fixMissingImports();
     sf.organizeImports();
     sf.saveSync();
     morph.project.saveSync();
     res.send({ status: "ok" });
   }
-  
+
   @Get("move")
   private move(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);

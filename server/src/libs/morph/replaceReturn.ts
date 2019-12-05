@@ -7,6 +7,5 @@ export const replaceReturn = (sf: SourceFile, replaceWith: string): string => {
   ret.replaceWithText(replaceWith);
 
   const result = sf.getText();
-  sf.refreshFromFileSystemSync();
   return result;
 };

@@ -1,7 +1,5 @@
-import * as _ from "lodash";
 import { SourceFile, SyntaxKind } from "ts-morph";
 import { defaultExportShallow } from "./defaultExport";
-import { parseJsx } from "./parseJsx";
 
 export const cleanHooks = (sf: SourceFile) => {
   const de = defaultExportShallow(sf).getParent();

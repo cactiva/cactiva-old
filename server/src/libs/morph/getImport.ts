@@ -1,6 +1,6 @@
 import { SourceFile } from "ts-morph";
 import * as  _ from "lodash";
-export const getImport = (sf: SourceFile) => {
+export const getImports = (sf: SourceFile) => {
   const imprts = sf.getImportDeclarations();
   const result = {} as any;
   _.map(imprts, (i: any) => {

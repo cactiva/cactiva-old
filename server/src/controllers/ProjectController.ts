@@ -11,7 +11,8 @@ import jetpack = require("fs-jetpack");
 import stream, { streams } from "../stream";
 const { Client } = require("pg");
 import * as _ from "lodash";
-import { getHooks } from "../libs/morph/getHooks";
+import { cleanImports } from "../libs/morph/cleanImports";
+import { getImports } from '../libs/morph/getImport';
 
 @Controller("api/project")
 export class ProjectController {
@@ -121,33 +122,41 @@ export class ProjectController {
     res.status(200).json(result);
   }
 
+  @Post("apply-imports")
+  private applyImports(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
+    const source = JSON.parse(req.body.value);
+    const sf = morph.project.createSourceFile(
+      "__tempfile" + morph.randomDigits() + "__.tsx",
+      source
+    );
+
+    morph.processHooks(sf, req.body.hooks);
+    morph.processImports(sf, req.body.imports);
+
+    sf.fixMissingImports();
+    sf.organizeImports();
+    const result = morph.formatCactivaSource(sf, false);
+    res.status(200).json(result);
+    return;
+  }
+
   @Post("write-source")
   private writeSource(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
     if (!!req.query.path) {
       const source = JSON.parse(req.body.value);
-      let sf = null;
-      if (req.body.raw === "y") {
-        sf = morph.project.createSourceFile(
-          morph.getAppPath() + req.query.path,
-          source,
-          {
-            overwrite: true
-          }
-        );
-      } else {
-        const preparedSource = morph.prepareSourceForWrite(
-          source,
-          req.body.imports
-        );
-        sf = morph.project.createSourceFile(
-          morph.getAppPath() + req.query.path,
-          preparedSource,
-          {
-            overwrite: true
-          }
-        );
+      const sf = morph.project.createSourceFile(
+        morph.getAppPath() + req.query.path,
+        source,
+        {
+          overwrite: true
+        }
+      );
+
+      if (req.body.raw !== "y") {
         morph.processHooks(sf, req.body.hooks);
+        morph.processImports(sf, req.body.imports);
         sf.fixMissingImports();
         sf.organizeImports();
       }
@@ -270,7 +279,6 @@ export class ProjectController {
       path.join(execPath, "app", req.body.name, "settings.json"),
       JSON.stringify(req.body)
     );
-    console.log(r, path.join(execPath, "app", req.body.name, "settings.json"));
     res.status(200).send(req.body);
   }
 

@@ -22,7 +22,7 @@ import { promptRestApi } from "./RestApi";
 import {
   prepareChanges,
   commitChanges,
-  applyImport
+  applyImportAndHook
 } from "@src/components/editor/utility/elements/tools";
 import { toJS } from "mobx";
 
@@ -118,14 +118,14 @@ const LineItem = observer(({ lines, toggleRef, meta, update, path }: any) => {
                   if (lineExp.name.indexOf("Hasura GraphQL") >= 0) {
                     const body = _.get(meta.value, path);
                     const parsed = await EditHasuraLine(lineExp.value);
-                    applyImport(parsed.imports);
+                    applyImportAndHook(parsed.imports);
                     prepareChanges(editor.current);
                     body[key] = parsed.source;
                     commitChanges(editor.current);
                   } else if (lineExp.name.indexOf("Rest API") >= 0) {
                     const body = _.get(meta.value, path);
                     const parsed = await EditRestApiLine(lineExp.value);
-                    applyImport(parsed.imports);
+                    applyImportAndHook(parsed.imports);
                     prepareChanges(editor.current);
                     body[key] = parsed.source;
                     commitChanges(editor.current);

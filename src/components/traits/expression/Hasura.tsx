@@ -93,12 +93,25 @@ export const promptHasura = (data?: {
 };
 
 const graphQLFetcher = async (params: any) => {
+  if (_.get(params, 'operationName') === 'IntrospectionQuery') {
+    if (localStorage['cactiva-hasura-schema']) {
+      const res = JSON.parse(localStorage['cactiva-hasura-schema']);
+      meta.schema = buildClientSchema(res);
+      meta.schemaLoading = false;
+      return res;
+    }
+  }
   const res = await api.post("project/gql-query", {
     body: params
   });
   if (res.data.__schema) {
     meta.schema = buildClientSchema(res.data);
     meta.schemaLoading = false;
+  }
+
+  if (_.get(params, 'operationName') === 'IntrospectionQuery') {
+    localStorage['cactiva-hasura-schema-params'] = JSON.stringify(params);
+    localStorage['cactiva-hasura-schema'] = JSON.stringify(res.data);
   }
 
   return res.data;
@@ -166,10 +179,10 @@ const HasuraForm = observer(({ form, gref }: any) => {
                 }}
                 title={`Set Result To: ${
                   form.setVar === "" ? "[Empty Variable]" : form.setVar
-                }`}
+                  }`}
                 label={`Set Result To: ${
                   form.setVar === "" ? "[Empty Variable]" : form.setVar
-                }`}
+                  }`}
               />
               <GraphiQL.Select>
                 <GraphiQL.SelectOption
@@ -187,6 +200,15 @@ const HasuraForm = observer(({ form, gref }: any) => {
                   }}
                 />
               </GraphiQL.Select>
+              <GraphiQL.Button
+                onClick={() => {
+                  meta.schemaLoading = true;
+                  localStorage['cactiva-hasura-schema'] = '';
+                  graphQLFetcher(JSON.parse(localStorage['cactiva-hasura-schema-params']));
+                }}
+                label="↻"
+                title="Reload Schema"
+              />
             </GraphiQL.Toolbar>
           </GraphiQL>
         </div>

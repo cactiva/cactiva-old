@@ -1,19 +1,15 @@
+import * as _ from "lodash";
 import * as path from "path";
-import { Project as TProject, SourceFile, SyntaxKind } from "ts-morph";
+import { ImportDeclarationStructure, Project as TProject, SourceFile, SyntaxKind, StructureKind } from "ts-morph";
 import { execPath } from "./config";
-import { cleanImports } from "./libs/morph/cleanImports";
-import {
-  defaultExport,
-  defaultExportShallow
-} from "./libs/morph/defaultExport";
+import { cleanHooks } from "./libs/morph/cleanHooks";
+import { defaultExport, defaultExportShallow } from "./libs/morph/defaultExport";
+import { generateSource } from "./libs/morph/generateSource";
 import { getHooks } from "./libs/morph/getHooks";
-import { getImport } from "./libs/morph/getImport";
+import { getImports } from "./libs/morph/getImport";
 import { getEntryPoint, parseJsx } from "./libs/morph/parseJsx";
 import { replaceReturn } from "./libs/morph/replaceReturn";
 import jetpack = require("fs-jetpack");
-import { generateSource } from "./libs/morph/generateSource";
-import { cleanHooks } from "./libs/morph/cleanHooks";
-import * as _ from "lodash";
 
 export class Morph {
   project: TProject = new TProject();
@@ -67,7 +63,6 @@ export class Morph {
       this.reload();
       return this.project.getSourceFileOrThrow(item => {
         const itemName = (!isAbsolutePath ? this.getAppPath() : "") + name;
-        console.log(itemName, item.getFilePath());
         return item.getFilePath() === itemName;
       });
     }
@@ -77,54 +72,6 @@ export class Morph {
     return Math.random()
       .toString()
       .slice(2, 11);
-  }
-
-  prepareSourceForWrite(source: string, imports: any[]) {
-    const sf = this.project.createSourceFile(
-      "__tempfile" + this.randomDigits() + "__.tsx",
-      source
-    );
-    let result = "";
-    try {
-      cleanImports(sf, imports);
-      result = sf.getText();
-      const imresult: any = {};
-      Object.keys(imports).map((i: any) => {
-        const im = imports[i];
-        if (!imresult[im.from]) {
-          imresult[im.from] = {
-            default: null,
-            named: []
-          };
-        }
-
-        if (im.type === "default") {
-          imresult[im.from].default = i;
-        } else {
-          imresult[im.from].named.push(i);
-        }
-      });
-      const importText: string[] = [];
-      Object.keys(imresult).map((i: any) => {
-        const v = imresult[i];
-        const from = i;
-        const imtext = [];
-        if (v.default) {
-          imtext.push(v.default);
-        }
-        if (v.named.length > 0) {
-          imtext.push(`{ ${v.named.join(",")} }`);
-        }
-        importText.push(`import ${imtext.join(",")} from "${from}";`);
-      });
-      result = importText.join("\n") + "\n\n" + result;
-    } catch (e) {
-      console.log(e);
-    } finally {
-      sf.forget();
-    }
-
-    return result;
   }
 
   createTempSource(source: string, callback: any) {
@@ -166,11 +113,15 @@ export class Morph {
   readTsx(filename: string, showKindName = false) {
     const sf = this.getSourceFile(filename);
     sf.refreshFromFileSystemSync();
+    return this.formatCactivaSource(sf, showKindName);
+  }
+
+  formatCactivaSource(sf: SourceFile, showKindName = false) {
     const de = defaultExport(sf);
     const ps = parseJsx(getEntryPoint(de), showKindName);
     return {
       file: replaceReturn(sf, "<<<<cactiva>>>>"),
-      imports: getImport(sf),
+      imports: getImports(sf),
       hooks: getHooks(sf),
       component: ps
     };
@@ -181,9 +132,30 @@ export class Morph {
     this.project.addSourceFilesFromTsConfig(path.join(".", "tsconfig.json"));
   }
 
+
+  processImports(sf: SourceFile, postedImports: any) {
+    const currentImports = getImports(sf)
+    for (let i in postedImports) {
+      if (!currentImports[i]) {
+        const im = postedImports[i];
+        currentImports[i] = im;
+        const imstruct: ImportDeclarationStructure = {
+          kind: StructureKind.ImportDeclaration,
+          moduleSpecifier: im.from
+        };
+        if (im.type === "default") {
+          imstruct.defaultImport = i;
+        } else {
+          imstruct.namedImports = [i];
+        }
+        sf.addImportDeclaration(imstruct);
+      }
+    }
+  }
+
   processHooks(sf: SourceFile, postedHooks: any) {
     const hooks: any = [];
-    const sourceHooks = getHooks(sf);
+    // const sourceHooks = getHooks(sf);
 
     const findExisting = (item: any) => {
       for (let i in hooks) {

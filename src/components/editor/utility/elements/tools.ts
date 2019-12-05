@@ -8,6 +8,8 @@ import { isTag } from "../tagmatcher";
 import tags from "../tags";
 import editor from "@src/store/editor";
 import { promptCustomComponent } from "../../CactivaCustomComponent";
+import api from "@src/libs/api";
+import { generateSource } from "../parser/generateSource";
 
 export const getIds = (id: string | string[]) => {
   if (Array.isArray(id)) return _.clone(id);
@@ -405,65 +407,21 @@ const isUndoStackSimilar = (compare: any, diff: any) => {
   return false;
 };
 
-export const applyImport = (imports: any) => {
-  if (editor.current) {
-    const cimports = editor.current.imports as any;
-    const src = editor.current.rootSource.split("export default ");
-    const eimports = [] as any[];
-
-    Object.keys(cimports).map(i => {
-      const im = cimports[i];
-      const imfrom = ` from "${im.from}"`;
-      const imtext = `import ${
-        im.type === "default" ? i : `{ ${i} }`
-        } ${imfrom};`;
-      if (eimports.indexOf(imtext.trim()) < 0) {
-        eimports.push(imtext);
-      }
-    });
-
-    Object.keys(imports).map(i => {
-      const im = imports[i];
-      const imfrom = ` from "${im.from}"`;
-      const imtext = `import ${
-        im.type === "default" ? i : `{ ${i} }`
-        } ${imfrom};`;
-      if (eimports.indexOf(imtext.trim()) < 0) {
-        eimports.push(imtext);
-      }
-      cimports[i] = im;
-    });
-
-    let prefix = "";
-    let temp1 = "";
-    let ignoring = false;
-    for (let i in src[0] as any) {
-      const c = (src[0] as any)[i];
-      prefix += c;
-
-      if (temp1 === "" && c === "i") temp1 += c;
-      if (temp1 === "i" && c === "m") temp1 += c;
-      if (temp1 === "im" && c === "p") temp1 += c;
-      if (temp1 === "imp" && c === "o") temp1 += c;
-      if (temp1 === "impo" && c === "r") temp1 += c;
-      if (temp1 === "impor" && c === "t") temp1 += c;
-      if (temp1 === "import" && c === " ") {
-        temp1 += c;
-        prefix = prefix.substr(0, prefix.length - "import ".length);
-      }
-      if (temp1 === "import ") {
-        prefix = prefix.substr(0, prefix.length - 1);
-        if (c === ";") {
-          temp1 = "";
-        }
-      }
+export const applyImportAndHook = (imports: any) => {
+  (async () => {
+    if (editor.current) {
+      const res = await api.post(`project/apply-imports`, {
+        raw: "n",
+        value: JSON.stringify(editor.current.getSourceCode()),
+        hooks: editor.current.hooks,
+        imports: _.merge(editor.current.imports, imports)
+      });
+      editor.current.source = res.component;
+      editor.current.rootSource = res.file;
+      editor.current.imports = res.imports;
+      editor.current.hooks = (res.hooks || []).filter((e: any) => !!e);
     }
-
-    editor.current.rootSource = `
-${eimports.join("\n")}
-${prefix}
-export default ${src[1]}`;
-  }
+  })()
 };
 
 export async function createNewElement(componentName: string) {
@@ -477,7 +435,7 @@ export async function createNewElement(componentName: string) {
       returnExp: true
     });
     if (!res.expression) return;
-    applyImport(res.imports);
+    applyImportAndHook(res.imports);
     return {
       kind: SyntaxKind.JsxExpression,
       value: res.expression
@@ -493,7 +451,7 @@ export async function createNewElement(componentName: string) {
       returnExp: true
     });
     if (!res.expression) return;
-    applyImport(res.imports);
+    applyImportAndHook(res.imports);
     return { kind: SyntaxKind.JsxExpression, value: res.expression };
   } else if (name === "if-else") {
     const res = await promptExpression({
@@ -507,7 +465,7 @@ export async function createNewElement(componentName: string) {
       returnExp: true
     });
     if (!res.expression) return;
-    applyImport(res.imports);
+    applyImportAndHook(res.imports);
     return { kind: SyntaxKind.JsxExpression, value: res.expression };
   } else if (name === "switch") {
     const res = await promptExpression({
@@ -521,7 +479,7 @@ export async function createNewElement(componentName: string) {
       returnExp: true
     });
     if (!res.expression) return;
-    applyImport(res.imports);
+    applyImportAndHook(res.imports);
     return { kind: SyntaxKind.JsxExpression, value: res.expression };
   } else if (name === "map") {
     const res = await promptExpression({
@@ -531,14 +489,14 @@ export async function createNewElement(componentName: string) {
       post: ")",
       footer: ".map((item:any, key:number) => <Component />)",
       wrapExp: `
-      [[value]].map((item:any, key: number) => {
-           return (<View style={{flexDirection: "row"}}>Row {key}</View>)
-      })
-    `,
+    [[value]].map((item:any, key: number) => {
+          return (<View style={{flexDirection: "row"}}>Row {key}</View>)
+    })
+  `,
       returnExp: true
     });
     if (!res.expression) return;
-    applyImport(res.imports);
+    applyImportAndHook(res.imports);
     return { kind: SyntaxKind.JsxExpression, value: res.expression };
   }
 
@@ -548,7 +506,7 @@ export async function createNewElement(componentName: string) {
     const componentName = baseName.substr(0, baseName.length - 4);
     const importPath = name.replace("/src", "@src");
 
-    applyImport({
+    applyImportAndHook({
       [componentName]: {
         from: importPath,
         type: "default"

@@ -138,9 +138,9 @@ class EditorStore {
       const res = await Axios.get(`${baseUrl}${apiPath}${path}`);
       this.sources[path] = new SourceStore();
       this.sources[path].path = path;
+      this.sources[path].project = this;
       this.sources[path].source = res.data.component;
       this.sources[path].rootSource = res.data.file;
-      this.sources[path].project = this;
       this.sources[path].imports = res.data.imports;
       this.sources[path].hooks = (res.data.hooks || []).filter((e: any) => !!e);
       this.path = path;

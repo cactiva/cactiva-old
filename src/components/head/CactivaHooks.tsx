@@ -20,7 +20,7 @@ import { observer } from "mobx-react-lite";
 import typescript from "prettier/parser-typescript";
 import prettier from "prettier/standalone";
 import React, { useEffect, useRef } from "react";
-import { applyImport } from "../editor/utility/elements/tools";
+import { applyImportAndHook } from "../editor/utility/elements/tools";
 import { generateSource } from "../editor/utility/parser/generateSource";
 import { promptCode } from "../traits/expression/CodeEditor";
 import { promptHasura } from "../traits/expression/Hasura";
@@ -148,12 +148,12 @@ const AddNew = observer(({ toggleRef, hooks, toggleFirst }: any) => {
               value: `useAsyncEffect(async () => { ${restapi.source} } ,[])`
             });
             if (res && editor.current) {
-              applyImport({
+              applyImportAndHook({
                 useAsyncEffect: { from: "use-async-effect", type: "default" }
               });
               hooks.push(res);
             }
-            toggle();
+            toggle(); 
           }}
         >
           Call REST API
@@ -167,7 +167,7 @@ const AddNew = observer(({ toggleRef, hooks, toggleFirst }: any) => {
               value: `useAsyncEffect(async () => { ${restapi.source} } ,[])`
             });
             if (res && editor.current) {
-              applyImport({
+              applyImportAndHook({
                 useAsyncEffect: { from: "use-async-effect", type: "default" }
               });
               hooks.push(res);
@@ -187,7 +187,7 @@ const AddNew = observer(({ toggleRef, hooks, toggleFirst }: any) => {
                 value: source
               });
               if (editor.current) {
-                applyImport({ useEffect: { from: "React", type: "named" } });
+                applyImportAndHook({ useEffect: { from: "React", type: "named" } });
                 hooks.push(res);
               }
             }
@@ -229,14 +229,14 @@ const HookMenu = observer(({ hooks, toggleRef }: any) => {
                         _.get(item, "arguments.0.body.0", {})
                       );
                       const parsed = await EditRestApiLine(source);
-                      applyImport(parsed.imports);
+                      applyImportAndHook(parsed.imports);
                       _.set(item, "arguments.0.body.0", parsed.source);
                     } else if (h.name.indexOf("Hasura GraphQL") >= 0) {
                       const source = await generateSource(
                         _.get(item, "arguments.0.body.0", {})
                       );
                       const parsed = await EditHasuraLine(source);
-                      applyImport(parsed.imports);
+                      applyImportAndHook(parsed.imports);
                       _.set(item, "arguments.0.body.0", parsed.source);
                     } else {
                       const source = await generateSource(item);
