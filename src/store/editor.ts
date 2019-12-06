@@ -1,14 +1,9 @@
-import {
-  addChildInId,
-  commitChanges,
-  findElementById,
-  insertAfterElementId,
-  prepareChanges,
-  removeElementById
-} from "@src/components/editor/utility/elements/tools";
-import Axios from "axios";
+import { addChildInId, commitChanges, findElementById, insertAfterElementId, prepareChanges, removeElementById } from "@src/components/editor/utility/elements/tools";
+import api from "@src/libs/api";
+import _ from "lodash";
 import { computed, observable, toJS } from "mobx";
 import { SourceStore } from "./source";
+import { generateSource } from "@src/components/editor/utility/parser/generateSource";
 
 interface IEditorSources {
   [key: string]: SourceStore;
@@ -33,10 +28,14 @@ class EditorStore {
       footer: null
     },
     project: false,
-    expression: true,
-    codeEditor: false,
+    expression: false,
     restApi: false,
     hasura: false
+  };
+
+  @observable storeDefinitions: { object: any, text: string } = {
+    object: {},
+    text: ''
   };
 
   @observable theme = {
@@ -126,6 +125,19 @@ class EditorStore {
     }
   }
 
+  async loadStoreDefintions(force?: boolean) {
+    if (this.storeDefinitions.text === '' || force) {
+      const res = await api.get(`store/definition`);
+      const declarations = (Object.keys(res).map((k) => {
+        return `declare var ${k} = ${generateSource(res[k])};`;
+      }).join("\n"));
+      this.storeDefinitions = {
+        object: res,
+        text: declarations
+      }
+    }
+  }
+
   async load(path: string) {
     this.status = "loading";
     if (this.sources[path]) {
@@ -133,19 +145,21 @@ class EditorStore {
       this.status = "ready";
       return;
     }
-    const apiPath = `/project/read-source?project=${this.name}&path=`;
+
     try {
-      const res = await Axios.get(`${baseUrl}${apiPath}${path}`);
+      const res = await api.get(`/project/read-source?path=${path}`);
       this.sources[path] = new SourceStore();
       this.sources[path].path = path;
       this.sources[path].project = this;
-      this.sources[path].source = res.data.component;
-      this.sources[path].rootSource = res.data.file;
-      this.sources[path].imports = res.data.imports;
-      this.sources[path].hooks = (res.data.hooks || []).filter((e: any) => !!e);
+      this.sources[path].source = res.component;
+      this.sources[path].rootSource = res.file;
+      this.sources[path].imports = res.imports;
+      this.sources[path].hooks = (res.hooks || []).filter((e: any) => !!e);
       this.path = path;
       this.status = "ready";
       localStorage.setItem("cactiva-current-path", path);
+      this.loadStoreDefintions();
+      this.sources[path].loadStoreDefintions();
     } catch {
       this.status = "failed";
     }
@@ -154,6 +168,41 @@ class EditorStore {
   @computed
   get current() {
     if (this.path && this.sources[this.path]) return this.sources[this.path];
+  }
+
+  async setupMonaco(monaco: any, opt?: { local?: boolean }) {
+    // compiler options
+    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+      target: monaco.languages.typescript.ScriptTarget.ES2016,
+      allowNonTsExtensions: true,
+      moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+      module: monaco.languages.typescript.ModuleKind.CommonJS,
+      noEmit: true,
+      typeRoots: ["node_modules/@types"],
+      jsx: monaco.languages.typescript.JsxEmit.React,
+      jsxFactory: "JSXAlone.createElement"
+    });
+
+    let declarations = ""
+    if (opt && opt.local && this.current) {
+      declarations = this.current.storeDefinitions.text || '';
+    } else {
+      declarations = this.storeDefinitions.text;
+    }
+
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(
+      `
+      ${declarations}
+      declare module '@src/utils/api';
+      declare module 'mobx';
+       ,`,
+      "filename/meta.d.ts"
+    );
+
+    monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: false,
+      noSyntaxValidation: false
+    });
   }
 }
 

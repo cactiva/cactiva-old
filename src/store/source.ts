@@ -9,6 +9,7 @@ import _ from "lodash";
 import { computed, observable, toJS } from "mobx";
 import typescript from "prettier/parser-typescript";
 import prettier from "prettier/standalone";
+import editor from "./editor";
 
 export class SourceStore {
   project = null as any;
@@ -21,6 +22,11 @@ export class SourceStore {
   @observable rootSourceTemp: string = "";
   @observable imports = {};
   @observable hooks = [];
+
+  @observable storeDefinitions: { object: any, text: string } = {
+    object: {},
+    text: ''
+  };
 
   @observable rootSelected = false;
   @observable selectedId = "";
@@ -124,34 +130,18 @@ export class SourceStore {
     return false;
   }
 
-  setupMonaco(monaco: any) {
-    // compiler options
-    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-      target: monaco.languages.typescript.ScriptTarget.ES2016,
-      allowNonTsExtensions: true,
-      moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
-      module: monaco.languages.typescript.ModuleKind.CommonJS,
-      noEmit: true,
-      typeRoots: ["node_modules/@types"],
-      jsx: monaco.languages.typescript.JsxEmit.React,
-      jsxFactory: "JSXAlone.createElement"
-    });
-
-    // extra libraries
-    monaco.languages.typescript.typescriptDefaults.addExtraLib(
-      `
-      declare var meta:any;
-      declare var Main:any;
-      declare module '@src/utility/api';
-      declare module 'mobx';
-       ,`,
-      "filename/meta.d.ts"
-    );
-
-    monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-      noSemanticValidation: false,
-      noSyntaxValidation: false
-    });
+  async loadStoreDefintions(force?: boolean) {
+    if (this.storeDefinitions.text === '' || force) {
+      let path = `?path=${this.path}`;
+      const res = await api.get(`store/definition${path}`);
+      const declarations = (Object.keys(res).map((k) => {
+        return `declare var ${k} = ${generateSource(res[k])};`;
+      }).join("\n"));
+      this.storeDefinitions = {
+        object: res,
+        text: declarations
+      }
+    }
   }
 
   async save() {

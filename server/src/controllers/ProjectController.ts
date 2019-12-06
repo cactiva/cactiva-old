@@ -112,18 +112,18 @@ export class ProjectController {
   }
 
   @Get("read-source")
-  private readSource(req: Request, res: Response) {
+  private async readSource(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
     if (!req.query.path) {
       res.status(500).end("Read source path is missing");
       return;
     }
-    const result = morph.readTsx(req.query.path, false);
+    const result = await morph.readTsx(req.query.path, false);
     res.status(200).json(result);
   }
 
   @Post("apply-imports")
-  private applyImports(req: Request, res: Response) {
+  private async applyImports(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
     const source = JSON.parse(req.body.value);
     const sf = morph.project.createSourceFile(
@@ -136,17 +136,21 @@ export class ProjectController {
 
     sf.fixMissingImports();
     sf.organizeImports();
-    const result = morph.formatCactivaSource(sf, false);
+    const result = await morph.formatCactivaSource(sf, false);
     res.status(200).json(result);
 
-    setTimeout(() => {
-      sf.deleteImmediatelySync();
-    }, 500);
+    await sf.deleteImmediately();
     return;
   }
 
+  @Get("emit-dts")
+  private async emitdts(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
+    res.send(await morph.getTypes())
+  }
+
   @Post("write-source")
-  private writeSource(req: Request, res: Response) {
+  private async writeSource(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
     if (!!req.query.path) {
       const source = JSON.parse(req.body.value);
@@ -165,10 +169,10 @@ export class ProjectController {
         sf.organizeImports();
       }
 
-      sf.saveSync();
-      morph.project.saveSync();
+      await sf.save();
+      await morph.project.save();
 
-      const result = morph.readTsx(req.query.path, false);
+      const result = await morph.readTsx(req.query.path, false);
       res.status(200).json(result);
       return;
     }

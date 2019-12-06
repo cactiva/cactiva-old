@@ -25,7 +25,7 @@ export class StoreController {
   }
 
   @Get("newfile")
-  private newfile(req: Request, res: Response) {
+  private async newfile(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
     const name = req.query.path
       .split("/")
@@ -43,8 +43,8 @@ export default store("${name}", {
         overwrite: true
       }
     );
-    sf.saveSync();
-    morph.project.saveSync();
+    await sf.save();
+    await morph.project.save();
     res.send({ status: "ok" });
   }
 
@@ -118,7 +118,7 @@ export default store("${name}", {
   }
 
   @Post("writefile")
-  private writefile(req: Request, res: Response) {
+  private async writefile(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
     const sf = morph.project.createSourceFile(
       req.query.path.replace("./", morph.getAppPath() + "/src/stores/"),
@@ -128,8 +128,8 @@ export default store("${name}", {
       }
     );
     sf.organizeImports();
-    sf.saveSync();
-    morph.project.saveSync();
+    await sf.save();
+    await morph.project.save();
     res.send({
       status: "ok"
     });

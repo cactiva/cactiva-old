@@ -149,6 +149,7 @@ export default observer(() => {
                               ) {
                                 meta.mode = "loading";
                                 await api.get(`project/load?name=${item.name}`);
+                                clearInterval(meta.int);
                                 await loadProject();
                                 meta.mode = "choose";
                               }
@@ -162,8 +163,8 @@ export default observer(() => {
                                   },
                                   () => {
                                     item.status = "Loaded";
-                                    loadProject();
                                     clearInterval(meta.int);
+                                    loadProject();
                                   }
                                 );
                               }

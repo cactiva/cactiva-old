@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 import * as path from "path";
+import * as fs from "fs";
 import { ImportDeclarationStructure, Project as TProject, SourceFile, SyntaxKind, StructureKind } from "ts-morph";
 import { execPath } from "./config";
 import { cleanHooks } from "./libs/morph/cleanHooks";
@@ -89,38 +90,19 @@ export class Morph {
     return result;
   }
 
-  parseSource(source: string, showKindName = false) {
-    const sf = this.project.createSourceFile(
-      "__tempfile" + this.randomDigits() + "__.tsx",
-      source
-    );
-    let result = null as any;
-    try {
-      const de = defaultExport(sf);
-      const ps = parseJsx(getEntryPoint(de), showKindName);
-      result = {
-        file: replaceReturn(sf, "<<<<cactiva>>>>"),
-        component: ps
-      };
-    } catch (e) {
-      console.log(e);
-    } finally {
-      sf.forget();
-    }
-
+  async readTsx(filename: string, showKindName = false) {
+    const sf = this.getSourceFile(filename);
+    await sf.refreshFromFileSystem();
+    const result = await this.formatCactivaSource(sf, showKindName);
+    await sf.refreshFromFileSystem();
     return result;
   }
-  readTsx(filename: string, showKindName = false) {
-    const sf = this.getSourceFile(filename);
-    sf.refreshFromFileSystemSync();
-    return this.formatCactivaSource(sf, showKindName);
-  }
 
-  formatCactivaSource(sf: SourceFile, showKindName = false) {
+  async formatCactivaSource(sf: SourceFile, showKindName = false) {
     const de = defaultExport(sf);
     const ps = parseJsx(getEntryPoint(de), showKindName);
     return {
-      file: replaceReturn(sf, "<<<<cactiva>>>>"),
+      file: await replaceReturn(sf, "<<<<cactiva>>>>"),
       imports: getImports(sf),
       hooks: getHooks(sf),
       component: ps
@@ -197,6 +179,16 @@ export class Morph {
     dp.setBodyText(`\n${hookSource}\n\n` + _.trim(de.getText().trim(), "{}"));
   }
 
+  async getTypes() {
+    const typesPath = `${execPath}/app/${this.name}/`;
+    const memory = await this.project.emitToMemory({ emitOnlyDtsFiles: true });
+    const result = {} as any;
+    memory.getFiles().map((item) => {
+      result['@' + item.filePath.substr(typesPath.length)] = item.text;
+    })
+    return result;
+  }
+
   /************************ Singleton  **************************/
   public static instances: { [key: string]: Morph } = {};
   constructor(name: string) {
@@ -218,7 +210,8 @@ export class Morph {
         process.chdir(`${execPath}/app/${name}`);
         console.log(`Project loaded: ${execPath}/app/${name}`);
         Morph.instances[name].project = new TProject({
-          tsConfigFilePath: path.join(".", "tsconfig.json")
+          tsConfigFilePath: path.join(".", "tsconfig.json"),
+          // compilerOptions: { outDir: "types", declaration: true }
         });
         Morph.lastName = name;
       } else {

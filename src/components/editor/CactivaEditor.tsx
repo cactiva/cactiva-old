@@ -1,31 +1,22 @@
-import ed from "@src/store/editor";
+import { default as ed, default as rootEditor } from "@src/store/editor";
 import { Dialog, Icon, Text } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import MonacoEditor from "react-monaco-editor";
 import Split from "react-split";
+import CactivaExpressionDialog from "../traits/expression/ExpressionSinglePopup";
+import Hasura from "../traits/expression/Hasura";
+import RestApi from "../traits/expression/RestApi";
 import CactivaBreadcrumb from "./CactivaBreadcrumb";
 import CactivaComponentChooser, { toolbar } from "./CactivaComponentChooser";
 import CactivaCustomComponent from "./CactivaCustomComponent";
-import CactivaExpressionDialog from "../traits/expression/ExpressionSinglePopup";
 import "./editor.scss";
-import "./tags/kinds/kinds.scss";
 import "./tags/elements/elements.scss";
-import {
-  addChildInId,
-  commitChanges,
-  createNewElement,
-  getParentId,
-  insertAfterElementId,
-  prepareChanges,
-  wrapInElementId
-} from "./utility/elements/tools";
+import "./tags/kinds/kinds.scss";
+import { addChildInId, commitChanges, createNewElement, getParentId, insertAfterElementId, prepareChanges, wrapInElementId } from "./utility/elements/tools";
 import { renderChildren } from "./utility/renderchild";
 import tags from "./utility/tags";
-import CodeEditor from "../traits/expression/CodeEditor";
-import RestApi from "../traits/expression/RestApi";
-import Hasura from "../traits/expression/Hasura";
 
 export default observer(({ editor }: any) => {
   const meta = useObservable({
@@ -91,7 +82,6 @@ export default observer(({ editor }: any) => {
       {editor.addComponentInfo && <CactivaEditorAddComponent editor={editor} />}
       {ed.modals.expression && <CactivaExpressionDialog />}
       {ed.modals.customComponents && <CactivaCustomComponent />}
-      {ed.modals.codeEditor && <CodeEditor />}
       {ed.modals.restApi && <RestApi />}
       {ed.modals.hasura && <Hasura />}
     </div>
@@ -103,7 +93,11 @@ const CactivaEditorRender = observer((props: any) => {
     { name: "--root--", children: [editor.source] },
     editor
   );
-  return <div className="cactiva-canvas">{children}</div>;
+  if (children) {
+    return <div className="cactiva-canvas">{children}</div>;
+  } else {
+    return <div className="cactiva-canvas"></div>;
+  }
 });
 const CactivaEditorSource = observer((props: any) => {
   const { editor, monacoEdRef } = props;
@@ -122,7 +116,7 @@ const CactivaEditorSource = observer((props: any) => {
     }
   };
   const editorWillMount = (monaco: any) => {
-    editor.setupMonaco(monaco);
+    rootEditor.setupMonaco(monaco);
     monacoRef.current = monaco;
   };
   const editorDidMount = (ed: any, monaco: any) => {

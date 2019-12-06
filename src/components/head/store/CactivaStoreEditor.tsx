@@ -252,7 +252,7 @@ export default observer(() => {
                             e.relativePath === meta.current.path
                               ? "selected"
                               : ""
-                          }`}
+                            }`}
                           onContextMenuCapture={(e: any) => {
                             e.preventDefault();
                             e.stopPropagation();
@@ -319,9 +319,7 @@ export default observer(() => {
             options={{ fontSize: 11 }}
             value={meta.current.content}
             editorWillMount={monaco => {
-              if (editor.current) {
-                editor.current.setupMonaco(monaco);
-              }
+              editor.setupMonaco(monaco);
               monacoRef.current = monaco;
             }}
             onChange={value => {
@@ -336,12 +334,15 @@ export default observer(() => {
                 id: "cactiva-save",
                 label: "Save",
                 keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S],
-                run: async function(ed: any) {
-                  const res = await api.post(
+                run: async function (ed: any) {
+                  await api.post(
                     `store/writefile?path=${meta.current.path}`,
                     { value: meta.current.content }
                   );
                   meta.current.unsaved = false;
+                  editor.loadStoreDefintions(true);
+                  if (editor.current)
+                    editor.current.loadStoreDefintions(true);
                   return null;
                 }
               });

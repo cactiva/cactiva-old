@@ -39,7 +39,7 @@ export class CtreeController {
   }
 
   @Get("duplicate")
-  private duplicate(req: Request, res: Response) {
+  private async duplicate(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
     morph.project.resolveSourceFileDependencies();
     const from = path.join(morph.getAppPath(), req.query.path);
@@ -47,24 +47,24 @@ export class CtreeController {
     if (fs.lstatSync(from).isFile()) {
       const sf = morph.getSourceFile(from, true);
       if (sf) {
-        sf.copyImmediatelySync(to);
-        morph.project.saveSync();
+        await sf.copyImmediately(to);
+        await morph.project.save();
         res.send({ status: "ok" });
       }
     }
   }
 
   @Get("newdir")
-  private newdir(req: Request, res: Response) {
+  private async newdir(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
     const to = path.join(morph.getAppPath(), req.query.path);
     morph.project.createDirectory(to);
-    morph.project.saveSync();
+    await morph.project.save();
     res.send({ status: "ok" });
   }
 
   @Get("newfile")
-  private newfile(req: Request, res: Response) {
+  private async newfile(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
     const sf = morph.project.createSourceFile(
       morph.getAppPath() + req.query.path,
@@ -85,13 +85,13 @@ export class CtreeController {
         overwrite: true
       }
     );
-    sf.saveSync();
-    morph.project.saveSync();
+    await sf.save();
+    await morph.project.save();
     res.send({ status: "ok" });
   }
 
   @Post("newfile")
-  private newfilebody(req: Request, res: Response) {
+  private async newfilebody(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
     const source = ` import React from "react";
     import { observer, useObservable } from "mobx-react-lite";
@@ -116,8 +116,8 @@ export class CtreeController {
     morph.processImports(sf, req.body.imports);
     sf.fixMissingImports();
     sf.organizeImports();
-    sf.saveSync();
-    morph.project.saveSync();
+    await sf.save();
+    await morph.project.save();
     res.send({ status: "ok" });
   }
 

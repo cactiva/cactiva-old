@@ -208,10 +208,16 @@ const TraitFieldEl = observer((props: any) => {
 
   const rawValue = _.get(selected.source, path);
   const update = (value: any, updatedKind?: any) => {
-    updateValue(
-      value === undefined ? item.default : value,
-      updatedKind ? updatedKind : _.get(currentValue, "kind", trait.kind)
-    );
+    if (updatedKind === false) {
+      prepareChanges(editor);
+      setProp(selected.source.props, trait.path, value);
+      commitChanges(editor);
+    } else {
+      updateValue(
+        value === undefined ? item.default : value,
+        updatedKind ? updatedKind : _.get(currentValue, "kind", trait.kind)
+      );
+    }
   };
   return (
     <React.Fragment>

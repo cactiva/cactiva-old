@@ -1,14 +1,11 @@
-import { promptExpression } from "@src/components/traits/expression/ExpressionSinglePopup";
 import { applyImportAndHook } from "@src/components/editor/utility/elements/tools";
 import { generateSource } from "@src/components/editor/utility/parser/generateSource";
+import { promptExpression } from "@src/components/traits/expression/ExpressionSinglePopup";
 import api from "@src/libs/api";
 import editor from "@src/store/editor";
 import { IconButton, Menu, Pane, Popover, Tooltip } from "evergreen-ui";
 import { observer } from "mobx-react-lite";
-import typescript from "prettier/parser-typescript";
-import prettier from "prettier/standalone";
 import React, { useRef } from "react";
-import { promptCode } from "./CodeEditor";
 
 export default ({ source, style, update }: any) => {
   const toggleRef = useRef(null as any);
@@ -68,7 +65,16 @@ export default ({ source, style, update }: any) => {
                   appearance={source ? "primary" : undefined}
                   intent={source ? "success" : undefined}
                   onClick={async () => {
-                    toggle();
+                    const src = await promptExpression({
+                      value: generateSource(source),
+                      local: true
+                    });
+                    if (src) {
+                      const res = await api.post("morph/parse-exp", {
+                        value: src.expression
+                      });
+                      update(res, false);
+                    }
                   }}
                 />
               );
@@ -103,25 +109,6 @@ const ButtonMenu = observer(({ toggleRef, source, update }: any) => {
           }}
         >
           Edit Value
-        </Menu.Item>
-        <Menu.Item
-          icon="code"
-          onSelect={async () => {
-            toggle();
-            const code = prettier.format(generateSource(source), {
-              parser: "typescript",
-              plugins: [typescript]
-            });
-            const src = await promptCode(code);
-            if (src) {
-              const res = await api.post("morph/parse-exp", {
-                value: src
-              });
-              update(res, false);
-            }
-          }}
-        >
-          Edit Code
         </Menu.Item>
         <Menu.Item
           icon="edit"
