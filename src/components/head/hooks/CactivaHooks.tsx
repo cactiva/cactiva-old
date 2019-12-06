@@ -90,16 +90,13 @@ export default observer(({ children }: any) => {
         toggleRef.current = toggle;
         return (
           <>
-            <Tooltip appearance="card" content="Component Hooks">
-              <Pane>
-                <IconButton
-                  innerRef={getRef}
-                  onClick={() => toggle()}
-                  className="hook-btn"
-                  icon={"pivot"}
-                />
-              </Pane>
-            </Tooltip>
+            <Pane>
+              <Button
+                innerRef={getRef}
+                onClick={() => toggle()}
+                className="hook-btn"
+              ><Icon icon={"code-block"} />Hooks</Button>
+            </Pane>
             {isShown && (
               <div
                 onClick={() => {

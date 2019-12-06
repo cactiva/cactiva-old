@@ -137,8 +137,17 @@ const ColorEl = observer((props: any) => {
     update();
   };
   const update = () => {
-    trait.update(`"${metaColor.value}"`);
+    if (!metaColor.value) trait.update(undefined)
+    else
+      trait.update(`"${metaColor.value}"`);
   };
+  let bg = metaColor.value;
+  let fg = textColor(metaColor.value || '#fff', "#fff", "#000")
+  if (fg === bg || (bg || '').indexOf('#') !== 0) {
+    bg = '#fff';
+    fg = '#000';
+  }
+
   return (
     <div className="cactiva-trait-color-picker">
       <div
@@ -159,8 +168,8 @@ const ColorEl = observer((props: any) => {
           }}
           value={metaColor.value || ""}
           style={{
-            backgroundColor: metaColor.value,
-            color: textColor(metaColor.value || "#000", "#fff", "#000")
+            backgroundColor: bg,
+            color: fg
           }}
           onChange={(e: any) => {
             metaColor.value = e.target.value;
