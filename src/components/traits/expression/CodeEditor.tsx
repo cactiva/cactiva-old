@@ -1,8 +1,18 @@
 import { promptExpression } from './ExpressionSinglePopup';
 
 export const promptCode = async (value?: string, language = "javascript") => {
-    return (await promptExpression({
+    const res = await promptExpression({
         value,
-        language
-    })).expression
+        language,
+        lineNumbers: "on",
+        size: {
+            w: 600,
+            h: 400
+        }
+    });
+
+    if (res.changed) {
+        return res.expression
+    }
+    return null;
 }

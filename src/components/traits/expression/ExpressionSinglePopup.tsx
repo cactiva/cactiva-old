@@ -16,7 +16,12 @@ interface IPromptOptions {
     wrapExp?: string,
     local?: boolean,
     language?: string,
-    returnExp?: boolean
+    returnExp?: boolean,
+    lineNumbers?: "on" | "off",
+    size?: {
+        w: number,
+        h: number
+    }
 }
 
 const meta = observable({
@@ -27,7 +32,8 @@ const meta = observable({
 })
 export default observer(() => {
     const opt = meta.options;
-    const minHeight = 230;
+    const minHeight = _.get(opt, 'size.h', 230);
+    const minWidth = _.get(opt, 'size.w', 500);
     let height = minHeight - 20;
     if (opt.title) height -= 25;
     if (opt.pre) height -= 25;
@@ -51,7 +57,7 @@ export default observer(() => {
             }
         }}
         minHeightContent={minHeight}
-        width={500}
+        width={minWidth}
     >
         <div className="cactiva-dialog-editor expr-dialog">
             {opt.title && <Text style={{ marginBottom: '5px', marginLeft: 5 }}>
@@ -63,10 +69,10 @@ export default observer(() => {
                 </Text>}
                 {editor.modals.expression && <MonacoEditor
                     theme="vs-light"
-                    width={500 - 10}
+                    width={minWidth - 10}
                     height={height}
                     value={meta.value}
-                    options={{ fontSize: 16, lineNumbers: "off", minimap: { enabled: false } }}
+                    options={{ fontSize: 13, lineNumbers: _.get(opt, 'lineNumbers', 'off'), minimap: { enabled: false } }}
                     language={meta.options.language || 'typescript'}
                     onChange={(e) => {
                         meta.value = e;
@@ -96,7 +102,7 @@ export default observer(() => {
         </div>
     </Dialog>;
 });
-export const promptExpression = (options?: IPromptOptions): Promise<{ expression: string, imports: any }> => {
+export const promptExpression = (options?: IPromptOptions): Promise<{ expression: string, changed: boolean, imports: any }> => {
     editor.modals.expression = true;
     if (options)
         meta.options = options;

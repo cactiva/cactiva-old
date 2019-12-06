@@ -3,7 +3,7 @@ import api from "@src/libs/api";
 import editor from "@src/store/editor";
 import { Button, Icon, IconButton, Menu, Pane, Popover, Tooltip } from "evergreen-ui";
 import _ from "lodash";
-import { observable } from "mobx";
+import { observable, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { deepObserve } from "mobx-utils";
 import typescript from "prettier/parser-typescript";
@@ -49,7 +49,6 @@ export default observer(({ children }: any) => {
             const res: any = await api.post("morph/parse-exp", {
               value: item.value
             });
-            console.log(item.value, res);
             meta.hooks[key] = {
               item: res,
               hook: processHook(res)
@@ -77,8 +76,8 @@ export default observer(({ children }: any) => {
         hooks.length === 0 ? (
           <AddNew hooks={hooks} toggleRef={toggleRef} toggleFirst={true} />
         ) : (
-          <HookMenu hooks={hooks} toggleRef={toggleRef} />
-        )
+            <HookMenu hooks={hooks} toggleRef={toggleRef} />
+          )
       }
     >
       {({ toggle, getRef, isShown }: any) => {
@@ -297,6 +296,11 @@ const RenderHookItem = observer(({ rawItem, index, hooks, toggleRef }: any) => {
 
 const HookItem = observer(
   ({ item, hook, index, hooks, toggleRef, isChild }: any) => {
+    let name = hook.name;
+    if (name === 'Code...') {
+      let source = generateSource(item);
+      name = source.length > 15 ? source.substr(0, 12) + '...' : source;
+    }
     return (
       <ItemDraggable dragInfo={item} source={hooks}>
         <ItemDroppable dropInfo={item}>
@@ -315,23 +319,21 @@ const HookItem = observer(
               toggle();
 
               if (hook.name.indexOf("Rest API") >= 0) {
-                const source = await generateSource(
+                const source = generateSource(
                   _.get(item, "arguments.0.body.0", {})
                 );
                 const parsed = await EditRestApiLine(source);
                 applyImportAndHook(parsed.imports);
                 _.set(item, "arguments.0.body.0", parsed.source);
               } else if (hook.name.indexOf("Hasura GraphQL") >= 0) {
-                console.log(item);
-
-                const source = await generateSource(
+                const source = generateSource(
                   _.get(item, "arguments.0.body.0", {})
                 );
                 const parsed = await EditHasuraLine(source);
                 applyImportAndHook(parsed.imports);
                 _.set(item, "arguments.0.body.0", parsed.source);
               } else {
-                const source = await generateSource(item);
+                const source = generateSource(item);
                 const code = prettier.format(source, {
                   parser: "typescript",
                   plugins: [typescript]
@@ -364,7 +366,7 @@ const HookItem = observer(
                 maxWidth: 120
               }}
             >
-              {hook.name}
+              {name}
             </div>
             <IconButton
               icon={"trash"}
@@ -410,7 +412,7 @@ const RenderChild = observer(({ childs: items, toggleRef }: any) => {
         {Array.isArray(items) &&
           items.map((item: any, key: number) => {
             let value = _.get(item, "value", "");
-            if (typeof value !== "string") {
+            if (typeof value !== "string" && value.kind) {
               value = generateSource(value);
             }
             const lineExp = ParseExpressionLine({ ...item, value });
@@ -476,14 +478,19 @@ const RenderChild = observer(({ childs: items, toggleRef }: any) => {
 });
 
 export const getChilds = (item: any) => {
-  if ([202, 198, 192, 220, 222].indexOf(item.value.kind) > -1) {
-    let childs = _.get(item, "value", []);
-    if ([198].indexOf(item.value.kind) > -1)
-      childs = _.get(item, "value.body", []);
-    if ([192].indexOf(item.value.kind) > -1)
-      childs = _.get(item, "value.arguments[0].body", []);
-    if ([202, 222].indexOf(item.value.kind) > -1)
-      childs = _.get(item, "value.value.arguments[0].body", []);
+  const value = item.value || item;
+  if ([202, 198, 192, 220, 222].indexOf(value.kind) > -1) {
+    let childs = [];
+    if ([198].indexOf(value.kind) > -1)
+      childs = _.get(value, "body", []);
+    if ([192].indexOf(value.kind) > -1) {
+      if (item.arguments && item.arguments.length > 0)
+        childs = _.get(item, "arguments.0.body", []);
+    }
+    if ([202, 222].indexOf(value.kind) > -1) {
+      if (value.arguments && value.arguments.length > 0)
+        childs = _.get(value, "value.arguments.0.body", []);
+    }
     if (childs.length > 0) return childs;
   }
   return null;
