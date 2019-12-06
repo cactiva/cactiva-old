@@ -359,7 +359,9 @@ export const prepareChanges = (editor: any) => {
 export const commitHooks = () => {
   const current = editor.current;
   if (current) {
-    current.undoStack.push(toJS(current.hooks));
+    const hooks = toJS(current.hooks);
+    console.log(hooks);
+    current.undoStack.push(hooks);
   }
 }
 

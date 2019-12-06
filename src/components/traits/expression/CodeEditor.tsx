@@ -6,7 +6,7 @@ export const promptCode = async (value?: string, language = "javascript") => {
         language,
         lineNumbers: "on",
         size: {
-            w: 600,
+            w: 800,
             h: 400
         }
     });

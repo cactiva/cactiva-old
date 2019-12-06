@@ -72,7 +72,12 @@ export default observer(() => {
                     width={minWidth - 10}
                     height={height}
                     value={meta.value}
-                    options={{ fontSize: 13, lineNumbers: _.get(opt, 'lineNumbers', 'off'), minimap: { enabled: false } }}
+                    options={{
+                        fontSize: 13,
+                        wordWrap: "on",
+                        lineNumbers: _.get(opt, 'lineNumbers', 'off'),
+                        minimap: { enabled: false }
+                    }}
                     language={meta.options.language || 'typescript'}
                     onChange={(e) => {
                         meta.value = e;

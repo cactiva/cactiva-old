@@ -21,30 +21,43 @@ export const generateSource = (
     case SyntaxKind.CallExpression:
       return `${node.expression}(
     ${_.map(node.arguments, (e, key) => {
-      if (typeof e === "string") return `'${e}'`;
-      return generateSource(e);
-    }).join(`,`)}
+        if (typeof e === "string") return `'${e}'`;
+        return generateSource(e);
+      }).join(`,`)}
   )`;
     case SyntaxKind.VariableDeclaration:
       return `const ${node.name} = ${generateSource(node.value)}`;
     case SyntaxKind.PropertyAccessExpression:
       return node.value;
+    case SyntaxKind.ExpressionStatement:
+      return generateSource(node.value);
+    case SyntaxKind.AwaitExpression:
+      return `await ${generateSource(node.value)}`;
+    case SyntaxKind.VariableStatement:
+      return node.value
+        .map((item: any) => {
+          const flags = ["var", "let", "const"];
+          return `${flags[item.flags]} ${item.name} = ${generateSource(
+            item.value
+          )}`;
+        })
+        .join(",");
     case SyntaxKind.ArrayLiteralExpression:
       return `[
         ${_.map(node.value, (e, key) => {
-          return `${generateSource(e)}`;
-        }).join(`,\n\t`)}
+        return `${generateSource(e)}`;
+      }).join(`,\n\t`)}
       ]`;
 
     case SyntaxKind.ObjectLiteralExpression:
       return `{
   ${_.map(node.value, (e, key) => {
-    if (key.indexOf("_spread_") === 0) {
-      return `...${generateSource(e)}`;
-    }
+        if (key.indexOf("_spread_") === 0) {
+          return `...${generateSource(e)}`;
+        }
 
-    return `${key}: ${generateSource(e)}`;
-  }).join(`,\n\t`)}
+        return `${key}: ${generateSource(e)}`;
+      }).join(`,\n\t`)}
 }`;
 
     case SyntaxKind.AsExpression:

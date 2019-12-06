@@ -136,37 +136,10 @@ export class Morph {
   }
 
   processHooks(sf: SourceFile, postedHooks: any) {
-    const hooks: any = [];
-    // const sourceHooks = getHooks(sf);
-
-    const findExisting = (item: any) => {
-      for (let i in hooks) {
-        const hook = hooks[i];
-        if (item.kind === hook.kind && item.name === hook.name) {
-          return {
-            value: hook,
-            key: i
-          };
-        }
-      }
-      return false;
-    };
-
-    const process = (item: any, key: number) => {
-      if (!item) return;
-      const existing = findExisting(item);
-      if (!existing) {
-        hooks.push(item);
-      }
-    };
-
-    // (sourceHooks || []).map(process);
-    (postedHooks || []).map(process);
-
     cleanHooks(sf);
     const de = defaultExportShallow(sf);
     const dp = de.getParent();
-    const hookSource = hooks
+    const hookSource = postedHooks
       .map((hook: any, index: number) => {
         const body = generateSource(hook);
         if (typeof body !== "string") {

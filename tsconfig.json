@@ -18,7 +18,7 @@
     "isolatedModules": true,
     "experimentalDecorators": true,
     "noEmit": true,
-    "jsx": "react",
+    "jsx": "react"
   },
   "extends": "./tsconfig.main.json",
   "include": [

@@ -168,6 +168,7 @@ export class ProjectController {
         sf.fixMissingImports();
         sf.organizeImports();
       }
+      sf.formatText();
 
       await sf.save();
       await morph.project.save();

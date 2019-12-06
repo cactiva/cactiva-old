@@ -18,7 +18,13 @@ import ItemDraggable from "./ItemDraggable";
 import ItemDroppable from "./ItemDroppable";
 
 const processHook = (item: any) => {
-  let name = generateSource(item).split("(")[0];
+  let name = generateSource(item);
+  const namesplit = name.split('(')[0];
+  if (namesplit.length < 25) {
+    name = name.substr(0, 30) + '...';
+  } else {
+    name = namesplit;
+  }
   if (name.indexOf("useAsyncEffect") >= 0) {
     const source = _.get(item, "arguments.0.body.0", {});
     if (source) {
@@ -299,7 +305,7 @@ const HookItem = observer(
     let name = hook.name;
     if (name === 'Code...') {
       let source = generateSource(item);
-      name = source.length > 15 ? source.substr(0, 12) + '...' : source;
+      name = source.length > 25 ? source.substr(0, 22) + '...' : source;
     }
     return (
       <ItemDraggable dragInfo={item} source={hooks}>
@@ -361,9 +367,10 @@ const HookItem = observer(
                 flex: 1,
                 fontSize: "11px",
                 whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                maxWidth: 120
+                minWidth: 100,
+                // overflow: "hidden",
+                // textOverflow: "ellipsis",
+                // maxWidth: 120
               }}
             >
               {name}
