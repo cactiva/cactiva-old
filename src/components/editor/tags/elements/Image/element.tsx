@@ -63,7 +63,7 @@ export default observer((props: any) => {
         <CactivaDraggable cactiva={cactiva}>
           <CactivaSelectable cactiva={cactiva} onDoubleClick={onDoubleClick}>
             <img
-              style={tagProps.style}
+              style={typeof tagProps.style === 'object' ? tagProps.style : {}}
               src={meta.source}
               className={`${tagProps.source ? "" : "img-sample"}`}
               onError={onError}
