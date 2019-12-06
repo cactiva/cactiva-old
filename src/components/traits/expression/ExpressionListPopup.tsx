@@ -27,8 +27,6 @@ import {
 import { toJS } from "mobx";
 import ItemDraggable from "@src/components/head/hooks/ItemDraggable";
 import ItemDroppable from "@src/components/head/hooks/ItemDroppable";
-import { getChilds } from "@src/components/head/hooks/CactivaHooks";
-import { generateExpression } from "@src/components/editor/utility/parser/generateExpression";
 
 export default observer(({ source, children, update, path }: any) => {
   const toggleRef = useRef(null as any);
@@ -567,6 +565,21 @@ const AddNew = observer(({ toggleRef, meta, update, path }: any) => {
   );
 });
 
+export const getChilds = (item: any) => {
+  const kind = _.get(item, "value.kind", -1);
+  if ([202, 198, 192, 220, 222].indexOf(kind) > -1) {
+    let childs = _.get(item, "value", []);
+    if ([198].indexOf(item.value.kind) > -1)
+      childs = _.get(item, "value.body", []);
+    if ([192].indexOf(item.value.kind) > -1)
+      childs = _.get(item, "value.arguments[0].body", []);
+    if ([202, 222].indexOf(item.value.kind) > -1)
+      childs = _.get(item, "value.value.arguments[0].body", []);
+    if (childs.length > 0) return childs;
+  }
+  return null;
+};
+
 export const ParseExpressionLine = (item: any) => {
   let name = "Code...";
   let value = "";
@@ -574,11 +587,11 @@ export const ParseExpressionLine = (item: any) => {
     if (item.right.value.indexOf("await api") >= 0) {
       name = `${item.left.value} = Rest API`;
       value = generateSource(item);
-    } else if (item.right.value.indexOf("await query") >= 0) {
+    } else if (item.right.value.indexOf("await queryAll") >= 0) {
       name = `${item.left.value} = Hasura GraphQL`;
       value = generateSource(item);
     }
-  } else if (item.value) {
+  } else if (typeof item.value === "string") {
     const vname =
       item.value.indexOf("=") > 0
         ? item.value.split("=")[0].trim() + " = "
@@ -588,7 +601,7 @@ export const ParseExpressionLine = (item: any) => {
       name = `${vname} Rest API`;
 
       value = item.value;
-    } else if (item.value.indexOf("await query") >= 0) {
+    } else if (item.value.indexOf("await queryAll") >= 0) {
       name = `${vname} Hasura GraphQL`;
       value = item.value;
     } else if (item.value.indexOf(".map(") >= 0) {
@@ -605,7 +618,8 @@ export const ParseExpressionLine = (item: any) => {
 };
 
 export const EditHasuraLine = async (value: string) => {
-  const lts = value.split("await query");
+  console.log(value);
+  const lts = value.split("await queryAll");
   const str = "query" + lts[lts.length - 1];
   const res = await api.post("morph/parse-exp", {
     value: str
