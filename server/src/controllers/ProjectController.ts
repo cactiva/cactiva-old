@@ -1,18 +1,15 @@
 import { Controller, Get, Post } from "@overnightjs/core";
-import { Request, Response } from "express";
-import { Morph } from "../morph";
-import config, { execPath } from "../config";
-import * as execa from "execa";
-import * as path from "path";
-import * as fs from "fs";
-import * as download from "download";
 import axios from "axios";
+import * as download from "download";
+import * as execa from "execa";
+import { Request, Response } from "express";
+import * as fs from "fs";
+import * as path from "path";
+import config, { execPath } from "../config";
+import { Morph } from "../morph";
+import stream from "../stream";
 import jetpack = require("fs-jetpack");
-import stream, { streams } from "../stream";
 const { Client } = require("pg");
-import * as _ from "lodash";
-import { cleanImports } from "../libs/morph/cleanImports";
-import { getImports } from '../libs/morph/getImport';
 
 @Controller("api/project")
 export class ProjectController {
@@ -61,8 +58,6 @@ export class ProjectController {
         app: config.get("app"),
         env: config.get("env"),
         settings,
-        expo: !!streams[`expo-${name}`] ? "running" : "stopped",
-        backend: !!streams[`backend-${name}`] ? "running" : "stopped",
         theme: JSON.parse(
           jetpack.read(path.join(execPath, "app", name, "src", "theme.json")) ||
           "{}"
@@ -181,74 +176,7 @@ export class ProjectController {
       error: "insufficient query param"
     });
   }
-
-  @Get("start-backend")
-  private async startBackend(req: Request, res: Response) {
-    const morph = Morph.getInstance(req.query.project);
-    process.chdir(morph.getAppPath());
-
-    const st = stream(`backend-${req.query.project}`);
-    st.cli = execa("yarn", ["dev"], {
-      all: true,
-      cwd: path.join(morph.getAppPath(), "backend")
-    } as any);
-    st.cli.all.on(
-      "data",
-      _.throttle((chunk: any) => {
-        st.send(chunk.toString());
-      }, 1000)
-    );
-
-    res.status(200).json({
-      status: "ok"
-    });
-  }
-
-  @Get("stop-backend")
-  private async stopBackend(req: Request, res: Response) {
-    const st = streams[`backend-${req.query.project}`];
-    if (st) {
-      st.close();
-    }
-    res.status(200).json({
-      status: "ok"
-    });
-  }
-
-  @Get("start-expo")
-  private async startExpo(req: Request, res: Response) {
-    const morph = Morph.getInstance(req.query.project);
-    process.chdir(morph.getAppPath());
-
-    const st = stream(`expo-${req.query.project}`);
-    st.cli = execa("yarn", ["web"], {
-      all: true,
-      cwd: morph.getAppPath(),
-    } as any);
-
-    st.cli.all.on(
-      "data",
-      _.throttle((chunk: any) => {
-        st.send(chunk.toString());
-      }, 1000)
-    );
-
-    res.status(200).json({
-      status: "ok"
-    });
-  }
-
-  @Get("stop-expo")
-  private async stopExpo(req: Request, res: Response) {
-    const st = streams[`expo-${req.query.project}`];
-    if (st) {
-      st.close();
-    }
-    res.status(200).json({
-      status: "ok"
-    });
-  }
-
+  
   @Get("load")
   private load(req: Request, res: Response) {
     config.set("app", req.query.name);
@@ -265,15 +193,6 @@ export class ProjectController {
       (async () => {
         const name = req.query.name;
         this.deleting.push(name);
-        if (streams[`expo-${name}`]) {
-          streams[`expo-${name}`].close();
-        }
-        if (streams[`hasura-${name}`]) {
-          streams[`hasura-${name}`].close();
-        }
-        if (streams[`backend-${name}`]) {
-          streams[`backend-${name}`].close();
-        }
         await jetpack.removeAsync(p);
         this.deleting.splice(this.deleting.indexOf(name), 1);
       })();

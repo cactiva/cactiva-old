@@ -65,9 +65,7 @@ export const loadProject = async () => {
     return;
   }
   editor.settings = res.settings;
-  editor.expo.status = res.expo;
-  editor.expo.url = "";
-  editor.backend.status = res.backend;
+  editor.previewUrl = "";
   editor.theme = res.theme;
 
   await editor.load(

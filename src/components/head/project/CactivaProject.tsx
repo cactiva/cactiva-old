@@ -2,114 +2,40 @@ import { fontFamily } from "@src/App";
 import CactivaProjectForm from "@src/components/projects/CactivaProjectForm";
 import api from "@src/libs/api";
 import editor from "@src/store/editor";
-import { Button, Dialog, IconButton, Tab, Tablist } from "evergreen-ui";
+import { Button, Dialog, IconButton } from "evergreen-ui";
 import _ from "lodash";
-import { observer, useObservable } from "mobx-react-lite";
+import { observable } from "mobx";
+import { observer } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import CactivaCli from "../CactivaCli";
 import "./CactivaProject.scss";
-import { observable } from "mobx";
-
-const logs = observable({
-  expo: "",
-  backend: ""
-} as any);
-
-const start = async (name: string, ref: any) => {
-  const ed = (editor as any)[name];
-  ed.status = "started";
-  const res = await api.get(`project/start-${name}`);
-  if (res.status === "ok") {
-    api.stream(`${name}-${editor.name}`, processMsg(ed, ref.current, name));
-  }
-};
-
-function padCenter(s: any, max: any) {
-  return s
-    .padStart(s.length + Math.floor((max - s.length) / 2), " ")
-    .padEnd(max, " ");
-}
-
-const processMsg = (ed: any, r: any, name: string) => {
-  return (msg: any) => {
-    let m = msg.data;
-    if (name === "hasura") {
-      m = msg.data
-        .split("\n")
-        .filter((e: string) => !!e)
-        .map((e: string) => {
-          try {
-            const info = JSON.parse(e);
-            return `[${info.timestamp}]-[${padCenter(
-              info.level,
-              10
-            )}]-[${padCenter(info.type, 10)}]-[${padCenter(
-              info.detail.kind,
-              20
-            )}] 
-${JSON.stringify(info.detail.info, null, 1)}\n\n`;
-          } catch (er) {
-            console.log(er);
-          }
-        })
-        .join("\n");
-    }
-    logs[name] += m;
-    if (r) r.write(m);
-
-    if (name === "expo") {
-      parseExpoMessage(logs[name]);
-    }
-  };
-};
-
-const stop = async (name: string, ref: any) => {
-  const ed = (editor as any)[name];
-  const res = await api.get(`project/stop-${name}`);
-  if (res.status === "ok") {
-    ed.status = "stopped";
-    logs[name] = "";
-  }
-};
-
-const parseExpoMessage = async (msg: string) => {
-  editor.expo.url = "";
-  if (msg.indexOf("Webpack on port") >= 0) {
-    editor.expo.url = `http://${window.location.hostname}:${msg
-      .split("Webpack on port")[1]
-      .split("in")[0]
-      .trim()}`;
-  } 
-
-  if (msg.indexOf("running at exp://") >= 0) {
-    const host = msg.split("running at exp://")[1].split(":")[0];
-    if (host) editor.expo.url = editor.expo.url.replace("localhost", host);
-  }
-};
-
+const meta = observable({
+  edit: false,
+  ws: null as any
+});
 export default observer(() => {
-  const meta = useObservable({
-    index: 0,
-    edit: false,
-    services: ["expo", "backend"]
-  });
-  const refs = {
-    expo: useRef(null as any),
-    hasura: useRef(null as any),
-    backend: useRef(null as any)
-  } as any;
-  const service = meta.services[meta.index];
-  const ed = (editor as any)[service];
-
+  const cli = useRef(null as any);
   useEffect(() => {
-    meta.services.forEach(s => {
-      const e = (editor as any)[s];
-      if (e.status !== "stopped") {
-        api.stream(`${s}-${editor.name}`, processMsg(e, refs[s].current, s));
-      }
-    });
-  }, []);
+    const terminal = cli.current;
+    api.wsUrl
+    terminal.clear();
+    if (!meta.ws || (meta.ws && meta.ws.readyState !== meta.ws.OPEN)) {
+      meta.ws = new WebSocket((api.wsUrl + "pty"));
+      meta.ws.onopen = (e: any) => {
+        meta.ws.send("start|1|" + editor.name);
+      };
+    }
+    meta.ws.onmessage = (e: any) => {
+      terminal.writeUtf8(e.data);
+    };
+    terminal.onKey((e: { key: string }) => {
+      meta.ws.send(e.key);
+    })
 
+    return () => {
+      meta.ws.close();
+    }
+  }, []);
   return (
     <div className="cactiva-dialog-editor">
       <div className="cactiva-project" style={{ fontFamily: fontFamily }}>
@@ -121,7 +47,6 @@ export default observer(() => {
               className="small-btn"
               style={{ marginRight: 0, padding: "0px 5px" }}
               onClick={async () => {
-                meta.edit = true;
               }}
             />
             <Button
@@ -133,13 +58,13 @@ export default observer(() => {
             >
               Switch
             </Button>
-            {editor.expo.url !== "" && (
+            {editor.previewUrl !== "" && (
               <Button
                 className="small-btn"
                 onClick={() => {
                   const win = window.open(
-                    editor.expo.url +
-                      editor.path.substr(4, editor.path.length - 8),
+                    editor.previewUrl +
+                    editor.path.substr(4, editor.path.length - 8),
                     "_blank"
                   );
                   if (win) win.focus();
@@ -149,68 +74,9 @@ export default observer(() => {
               </Button>
             )}
           </div>
-          <Tablist>
-            <Button
-              className="small-btn"
-              onClick={() => {
-                if (editor.expo.status === "stopped") {
-                  meta.services.map(name => {
-                    if ((editor as any)[name].status === "stopped")
-                      start(name, refs[name]);
-                  });
-                } else {
-                  meta.services.map(name => {
-                    if ((editor as any)[name].status !== "stopped")
-                      stop(name, refs[name]);
-                  });
-                }
-              }}
-            >
-              {editor.expo.status === "stopped" ? "Start" : "Stop"} All
-            </Button>
-            {meta.services.map((name, key) => {
-              return (
-                <Tab
-                  key={key}
-                  isSelected={meta.index === key}
-                  onSelect={() => (meta.index = key)}
-                >
-                  {_.startCase(name)}
-                  <small>{(editor as any)[name].status}</small>
-                </Tab>
-              );
-            })}
-          </Tablist>
         </div>
         <div className="content">
-          <div className="toolbar">
-            <span>
-              {_.startCase(service)} <small>({ed.status})</small>
-            </span>
-            <Button
-              className="small-btn"
-              onClick={() => {
-                if (ed.status === "stopped") {
-                  start(service, refs[service]);
-                } else {
-                  stop(service, refs[service]);
-                }
-              }}
-            >
-              {ed.status === "stopped" ? "Start" : "Stop"}{" "}
-            </Button>
-          </div>
-          <div className="cli">
-            <div className="cli-content">
-              {service === "expo" && ed.status !== "stopped" && (
-                <CactivaCli cliref={refs.expo} initialText={logs.expo} />
-              )}
-
-              {service === "backend" && ed.status !== "stopped" && (
-                <CactivaCli cliref={refs.backend} initialText={logs.backend} />
-              )}
-            </div>
-          </div>
+          <CactivaCli cliref={cli} style={{ background: 'red', height: 200 }} />
         </div>
       </div>
 

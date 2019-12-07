@@ -17,10 +17,12 @@ class Api {
     const res = await axios.post(this.getUrl(url), body, config);
     return res.data;
   }
+  get wsUrl() {
+    return `${window.location.protocol}//${isDev ? 'localhost:8080' : window.location.hostname}/api/`.replace("http", "ws");
+  }
 
   stream(name: string, onmessage: any, onclose?: any) {
-    const url = `${window.location.protocol}//${isDev ? 'localhost:8080' : window.location.hostname}/api/`;
-    const ws = new WebSocket((url + "ws").replace("http", "ws"));
+    const ws = new WebSocket((this.wsUrl + "ws"));
     ws.onopen = ev => {
       ws.send("start|" + name);
     };

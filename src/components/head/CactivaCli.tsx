@@ -5,7 +5,7 @@ import { FitAddon } from "xterm-addon-fit";
 import { WebLinksAddon } from 'xterm-addon-web-links';
 import "xterm/css/xterm.css";
 
-export default observer(({ cliref, initialText = "" }: any) => {
+export default observer(({ cliref, initialText = "", style }: any) => {
   useEffect(() => {
     const terminal = new Terminal({ fontSize: 10, convertEol: true });
     const fitAddon = new FitAddon();
@@ -25,5 +25,5 @@ export default observer(({ cliref, initialText = "" }: any) => {
     fitAddon.fit();
   }, []);
   const ref = useRef(null as any);
-  return <div ref={ref} style={{ flex: 1, display: "flex" }}></div>;
+  return <div ref={ref} style={{ flex: 1, display: "flex", ...style }}></div>;
 });
