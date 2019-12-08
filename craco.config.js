@@ -7,8 +7,8 @@ const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 const webpack = require("webpack");
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-  .BundleAnalyzerPlugin;
+// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+//   .BundleAnalyzerPlugin;
 
 module.exports = {
   eslint: {
@@ -17,9 +17,33 @@ module.exports = {
   webpack: {
     externals: { '@microsoft/typescript-etw': 'FakeModule' },
     alias: {},
+    optimization: {
+      splitChunks: {
+        chunks: 'async',
+        minSize: 30000,
+        minRemainingSize: 0,
+        maxSize: 0,
+        minChunks: 1,
+        maxAsyncRequests: 6,
+        maxInitialRequests: 4,
+        automaticNameDelimiter: '~',
+        automaticNameMaxLength: 30,
+        cacheGroups: {
+          vendors: {
+            test: /[\\/]node_modules[\\/]/,
+            priority: -10
+          },
+          default: {
+            minChunks: 2,
+            priority: -20,
+            reuseExistingChunk: true
+          }
+        }
+      }
+    },
     plugins: [
       new MonacoWebpackPlugin(),
-      new BundleAnalyzerPlugin(),
+      // new BundleAnalyzerPlugin(),
       new webpack.ContextReplacementPlugin(
         /graphql-language-service-interface[\\/]dist$/,
         new RegExp(`^\\./.*\\.js$`)
