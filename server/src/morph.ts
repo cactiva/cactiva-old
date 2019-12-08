@@ -195,7 +195,7 @@ export class Morph {
         Morph.lastName = name;
       } else {
         delete Morph.instances[name];
-        throw new Error(`Project with name ${name} not found`);
+        console.log(`Project with name ${name} not found`);
       }
     }
 

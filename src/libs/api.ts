@@ -18,7 +18,7 @@ class Api {
     return res.data;
   }
   get wsUrl() {
-    return `${window.location.protocol}//${isDev ? 'localhost:8080' : window.location.hostname}/api/`.replace("http", "ws");
+    return `${window.location.protocol}//${isDev ? 'localhost:8080' : window.location.host}/api/`.replace("http", "ws");
   }
 
   stream(name: string, onmessage: any, onclose?: any) {
