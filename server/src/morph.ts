@@ -61,11 +61,15 @@ export class Morph {
         return item.getFilePath() === itemName;
       });
     } catch (e) {
-      this.reload();
-      return this.project.getSourceFileOrThrow(item => {
-        const itemName = (!isAbsolutePath ? this.getAppPath() : "") + name;
-        return item.getFilePath() === itemName;
-      });
+      try {
+        this.reload();
+        return this.project.getSourceFileOrThrow(item => {
+          const itemName = (!isAbsolutePath ? this.getAppPath() : "") + name;
+          return item.getFilePath() === itemName;
+        });
+      } catch (e) {
+        return null;
+      }
     }
   }
 
@@ -92,10 +96,12 @@ export class Morph {
 
   async readTsx(filename: string, showKindName = false) {
     const sf = this.getSourceFile(filename);
-    await sf.refreshFromFileSystem();
-    const result = await this.formatCactivaSource(sf, showKindName);
-    await sf.refreshFromFileSystem();
-    return result;
+    if (sf) {
+      await sf.refreshFromFileSystem();
+      const result = await this.formatCactivaSource(sf, showKindName);
+      await sf.refreshFromFileSystem();
+      return result;
+    } return null;
   }
 
   async formatCactivaSource(sf: SourceFile, showKindName = false) {
