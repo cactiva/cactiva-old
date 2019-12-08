@@ -5,6 +5,8 @@ RUN apt-get update
 RUN apt-get install software-properties-common -y
 RUN apt-add-repository ppa:fish-shell/release-3 -y
 RUN apt-get install fish -y
+RUN curl -L https://get.oh-my.fish | fish
+RUN omf install scorphish
 ENV TZ=Asia/Jakarta
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN mkdir /usr/src/app
@@ -20,6 +22,7 @@ RUN echo "export const mode = 'production';" > "./src/env.js"
 RUN yarn
 RUN yarn build
 WORKDIR /usr/src/raw/server
+
 RUN yarn
 RUN rm -rf res
 RUN mkdir res
