@@ -15,7 +15,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN mkdir /usr/src/app
 
 # Install all Packages
-RUN apt-get install -y yarn nano vi
+RUN apt-get install -y yarn nano 
 
 RUN mkdir -p /usr/src/raw
 WORKDIR /usr/src/raw
