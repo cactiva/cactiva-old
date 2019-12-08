@@ -6,6 +6,7 @@ RUN apt-get install software-properties-common -y
 RUN apt-add-repository ppa:fish-shell/release-3 -y
 RUN apt-get install fish -y
 RUN curl -L github.com/oh-my-fish/oh-my-fish/raw/master/bin/install > install
+RUN chmod +x install
 RUN ./install --noninteractive
 RUN omf install scorphish
 ENV TZ=Asia/Jakarta
