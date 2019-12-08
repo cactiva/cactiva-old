@@ -11,6 +11,7 @@ export class AssetsController {
   @Post("upload")
   private _upload(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     const images = multer.diskStorage({
       destination: path.join(morph.getAppPath(), "src/assets/images"),
       filename: (req, file, callback) => {
@@ -33,6 +34,7 @@ export class AssetsController {
   @Post("upload-font")
   private _uploadFont(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     const images = multer.diskStorage({
       destination: path.join(morph.getAppPath(), "src/assets/images"),
       filename: (req, file, callback) => {
@@ -67,6 +69,7 @@ export class AssetsController {
   @Get("list")
   private _list(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     const tree = jetpack.inspectTree(
       path.join(morph.getAppPath(), "src/assets/images"),
       {
@@ -80,6 +83,7 @@ export class AssetsController {
   @Get("font-list")
   private _fontList(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     const tree: any = jetpack.inspectTree(
       path.join(morph.getAppPath(), "src/assets/fonts"),
       {
@@ -92,6 +96,7 @@ export class AssetsController {
   @Post("delete")
   private async _delete(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     res.setHeader("Content-Type", "application/json");
     res.statusCode = 200;
     const filename = req.body.filename;

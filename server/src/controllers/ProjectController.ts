@@ -41,6 +41,7 @@ export class ProjectController {
     try {
       const name = config.get("app");
       const morph = Morph.getInstance(name);
+      if (!morph) { res.status(400); return }
       if (morph) {
         morph.reload();
       }
@@ -109,6 +110,7 @@ export class ProjectController {
   @Get("read-source")
   private async readSource(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     if (!req.query.path) {
       res.status(500).end("Read source path is missing");
       return;
@@ -120,6 +122,7 @@ export class ProjectController {
   @Post("apply-imports")
   private async applyImports(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     const source = JSON.parse(req.body.value);
     const sf = morph.project.createSourceFile(
       "__tempfile" + morph.randomDigits() + "__.tsx",
@@ -141,12 +144,14 @@ export class ProjectController {
   @Get("emit-dts")
   private async emitdts(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     res.send(await morph.getTypes())
   }
 
   @Post("write-source")
   private async writeSource(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     if (!!req.query.path) {
       const source = JSON.parse(req.body.value);
       const sf = morph.project.createSourceFile(
@@ -176,7 +181,7 @@ export class ProjectController {
       error: "insufficient query param"
     });
   }
-  
+
   @Get("load")
   private load(req: Request, res: Response) {
     config.set("app", req.query.name);

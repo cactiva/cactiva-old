@@ -7,6 +7,7 @@ export class MorphController {
   @Post("jsx2ast")
   private jsx2ast(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     const result = morph.parseJsxExpression(JSON.parse(req.body.value));
     res.status(200).json(result);
   }
@@ -14,6 +15,7 @@ export class MorphController {
   @Post("parse-exp")
   private parseExp(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     try {
       const result = morph.parseExpression(req.body.value);
       res.status(200).json(result);

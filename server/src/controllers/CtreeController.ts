@@ -10,6 +10,7 @@ export class CtreeController {
   @Get("list")
   private list(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     morph.reload();
     const tree: any = jetpack.inspectTree(
       path.join(morph.getAppPath(), "src"),
@@ -57,6 +58,7 @@ export class CtreeController {
   @Get("newdir")
   private async newdir(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     const to = path.join(morph.getAppPath(), req.query.path);
     morph.project.createDirectory(to);
     await morph.project.save();
@@ -66,6 +68,7 @@ export class CtreeController {
   @Get("newfile")
   private async newfile(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     const sf = morph.project.createSourceFile(
       morph.getAppPath() + req.query.path,
       ` import React from "react";
@@ -93,6 +96,7 @@ export class CtreeController {
   @Post("newfile")
   private async newfilebody(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     const source = ` import React from "react";
     import { observer, useObservable } from "mobx-react-lite";
     import { View } from "react-native";
@@ -124,6 +128,7 @@ export class CtreeController {
   @Get("move")
   private move(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     morph.project.resolveSourceFileDependencies();
     const from = path.join(morph.getAppPath(), req.query.old);
     const to = path.join(morph.getAppPath(), req.query.new);
@@ -147,6 +152,7 @@ export class CtreeController {
   @Get("delete")
   private async delete(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     morph.project.resolveSourceFileDependencies();
     let p = path.join(morph.getAppPath(), req.query.path);
     if (fs.lstatSync(p).isDirectory()) {
@@ -167,3 +173,4 @@ export class CtreeController {
     }
   }
 }
+ 

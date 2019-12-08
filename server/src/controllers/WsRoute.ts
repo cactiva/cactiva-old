@@ -18,8 +18,17 @@ export const initWs = (app: any): any => {
     ws.on("message", (msg: string) => {
       if (msg.indexOf("start") === 0) {
         const s = msg.split("|");
-        const id = s[1];
-        const name = s[2];
+        const name = s[1];
+        let id = "";
+        if (s.length > 2) {
+          id = s[2];
+        } else {
+          id = Math.random().toString(36).substr(2, 9);
+        }
+
+        if (s.length <= 2)
+          ws.send(id);
+
         if (!pty[id]) {
           pty[id] = {
             name,
@@ -56,7 +65,17 @@ export const initWs = (app: any): any => {
           send();
         })
         ws.on("message", (e: string) => {
-          p.process.write(e);
+          if (e === "----!@#!@#-CACTIVA-KILL-PAYLOAD-!@#!@#---") {
+            if (pty[id].process) {
+              pty[id].process.kill()
+            }
+            if (pty[id].ws.readyState === ws.OPEN) {
+              pty[id].ws.close();
+            }
+            delete pty[id];
+          } else {
+            p.process.write(e);
+          }
         })
       }
     });

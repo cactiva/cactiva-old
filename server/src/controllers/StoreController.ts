@@ -13,6 +13,7 @@ export class StoreController {
   @Get("list")
   private list(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     morph.reload();
     const tree: any = jetpack.inspectTree(
       path.join(morph.getAppPath(), "src/stores"),
@@ -27,6 +28,7 @@ export class StoreController {
   @Get("newfile")
   private async newfile(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     const name = req.query.path
       .split("/")
       .pop()
@@ -51,6 +53,7 @@ export default store("${name}", {
   @Get("readfile")
   private readfile(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     const sf = morph.project.getSourceFile(
       req.query.path.replace("./", morph.getAppPath() + "/src/stores/")
     ) as SourceFile;
@@ -61,6 +64,7 @@ export default store("${name}", {
   @Get("definition")
   private definition(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     const files = morph.project.getSourceFiles();
     const result: any = {};
     files
@@ -120,6 +124,7 @@ export default store("${name}", {
   @Post("writefile")
   private async writefile(req: Request, res: Response) {
     const morph = Morph.getInstance(req.query.project);
+    if (!morph) { res.status(400); return }
     const sf = morph.project.createSourceFile(
       req.query.path.replace("./", morph.getAppPath() + "/src/stores/"),
       req.body.value,

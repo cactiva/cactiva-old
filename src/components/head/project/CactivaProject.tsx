@@ -12,35 +12,68 @@ import "./CactivaProject.scss";
 const meta = observable({
   edit: false,
   connected: false,
-  ws: null as any
+  name: '',
+  id: '',
+  ws: null as any,
+  loaded: {} as any,
 });
 const connectWs = _.debounce((terminal: any, onConnectText: string) => {
   meta.connected = true;
+  meta.name = editor.name;
   meta.ws = new WebSocket((api.wsUrl + "pty"));
   meta.ws.onopen = (e: any) => {
-    meta.ws.send("start|1|" + editor.name);
+    meta.ws.send("start|" + editor.name + `${meta.id ? `|${meta.id}` : ''}`);
   };
   meta.ws.onclose = () => {
     meta.connected = false;
   }
   let sent = false;
   meta.ws.onmessage = (e: any) => {
-    if (!sent && onConnectText) {
-      meta.ws.send(onConnectText);
-      sent = true;
+    if (!meta.id) {
+      meta.id = e.data;
+    } else {
+      if (!sent && onConnectText) {
+        meta.ws.send(onConnectText);
+        sent = true;
+      }
+      meta.connected = true;
+      terminal.writeUtf8(e.data);
     }
-    meta.connected = true;
-    terminal.writeUtf8(e.data);
   };
+
 }, 300);
+const disconnectWs = () => {
+  meta.name = '';
+  meta.id = '';
+
+  if (meta.ws) {
+    if (meta.ws) {
+      try {
+        meta.ws.close();
+      } catch (e) { }
+    }
+    meta.ws = null;
+    meta.connected = false;
+
+  }
+}
 
 export default observer(() => {
   const cli = useRef(null as any);
   useEffect(() => {
-    const terminal = cli.current;
-    api.wsUrl
-    terminal.clear();
+    console.log(meta.name, editor.name);
+    if (meta.name !== editor.name) {
+      if (meta.id && meta.name) {
+        meta.loaded[meta.name] = meta.id;
+      }
+      disconnectWs();
+      if (meta.loaded[editor.name]) {
+        meta.id = meta.loaded[editor.name];
+      }
+    }
 
+    const terminal = cli.current;
+    terminal.clear();
     connectWs(terminal, "");
     let tempKey = "";
     terminal.attachCustomKeyEventHandler((e: any) => {
@@ -61,7 +94,9 @@ export default observer(() => {
     })
 
     return () => {
-      meta.ws.close();
+      if (meta.ws && meta.ws.close) {
+        meta.ws.close();
+      }
     }
   }, []);
   return (
@@ -102,6 +137,24 @@ export default observer(() => {
               </Button>
             )}
           </div>
+          <div>
+            <small style={{ fontSize: 11, color: "#ccc", marginRight: 5 }}>{meta.id}</small>
+            <Button
+              className="small-btn"
+              onClick={async () => {
+                if (confirm("Your current process will be killed. Are you sure?")) {
+                  if (meta.ws && meta.ws.send) {
+                    meta.ws.send("----!@#!@#-CACTIVA-KILL-PAYLOAD-!@#!@#---");
+                    disconnectWs();
+                    const terminal = cli.current;
+                    terminal.clear();
+                    connectWs(terminal, "");
+                  }
+                }
+              }}
+            >
+              Reset
+            </Button></div>
         </div>
         <div className="content">
           <CactivaCli cliref={cli} style={{ background: 'red', height: 200 }} />
