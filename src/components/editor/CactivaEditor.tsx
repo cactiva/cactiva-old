@@ -17,6 +17,7 @@ import "./tags/kinds/kinds.scss";
 import { addChildInId, commitChanges, createNewElement, getParentId, insertAfterElementId, prepareChanges, wrapInElementId } from "./utility/elements/tools";
 import { renderChildren } from "./utility/renderchild";
 import tags from "./utility/tags";
+import { toJS } from "mobx";
 
 export default observer(({ editor }: any) => {
   const meta = useObservable({

@@ -7,7 +7,6 @@ import React from "react";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDroppable from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
-import { toJS } from "mobx";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
@@ -59,6 +58,9 @@ export const Expression = observer((props: any) => {
   });
   if (typeof exp === "string") {
     return <span style={{ fontFamily: 'Consolas, "Courier New", monospace', fontSize: '10px' }}>{exp}</span>;
+  }
+  if (Array.isArray(source)) {
+    return <span>{JSON.stringify(source)}</span>;
   }
   return (
     <span>

@@ -2,10 +2,8 @@ import { tree } from "@src/components/ctree/CactivaTree";
 import React from "react";
 import Component from "../tags/elements/Component";
 import kinds, { kindNames } from "./kinds";
-import { SyntaxKind } from "./syntaxkinds";
 import { isTag } from "./tagmatcher";
 import tags from "./tags";
-import { toJS } from "mobx";
 
 export const renderChildren = (
   source: any,
@@ -38,7 +36,7 @@ export const renderChildren = (
   }
 
   const result = children.map((refChild: any, key: number) => {
-    if (typeof refChild === "object") {
+    if (typeof refChild === "object" && !Array.isArray(refChild)) {
       let child = refChild;
       if (!source.child) {
         if (!source.id && !isRoot) {
@@ -96,13 +94,16 @@ const renderKind = (
   if (editor.selectedId === source.id) {
     editor.selected = cactiva;
   }
-  if (source.kind === 11) {
-    if (typeof source.value !== "string") {
-      console.log(source);
+  if (source.kind) {
+    if (source.kind === 11) {
+      if (typeof source.value !== "string") {
+        console.log(source);
+      }
+      return source.value;
     }
-    return source.value;
+    return <Component {...source.props} key={key} _cactiva={cactiva} />;
   }
-  return <Component {...source.props} key={key} _cactiva={cactiva} />;
+  return null;
 };
 
 const renderTag = (

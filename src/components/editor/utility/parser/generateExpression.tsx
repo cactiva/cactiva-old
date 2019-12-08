@@ -1,5 +1,6 @@
 import _ from "lodash";
 import { SyntaxKind } from "../syntaxkinds";
+import { toJS } from "mobx";
 
 export const generateExpression = (node: any): any[] => {
   const rawResult = generateExpressionArray(node);
@@ -141,6 +142,14 @@ export const generateExpressionArray = (node: any): any[] => {
   const kind = node.kind;
 
   switch (kind) {
+    case SyntaxKind.VariableDeclaration:
+      return [`const ${node.name} = `, generateExpressionArray(node.value), `}`];
+    case SyntaxKind.PropertyAccessExpression:
+      return [node.value];
+    case SyntaxKind.ExpressionStatement:
+      return generateExpressionArray(node.value);
+    case SyntaxKind.AwaitExpression:
+      return [`await `, generateExpressionArray(node.value)];
     case SyntaxKind.BinaryExpression:
       if (getToken(node.operator) === "&&") {
         if (node.right.kind === SyntaxKind.JsxElement) {
@@ -154,9 +163,13 @@ export const generateExpressionArray = (node: any): any[] => {
     case SyntaxKind.StringLiteral:
       return [`${node.value}`];
     case SyntaxKind.CallExpression:
-      const args: any[] = node.arguments.map((i: any) => {
-        return generateExpressionArray(i);
+      const args: any[] = [];
+      node.arguments.map((i: any) => {
+        args.push(generateExpressionArray(i));
+        args.push(', ');
       });
+      if (args.length > 0)
+        args.pop();
       return [node.expression, `(`, ...args, `)`];
     case SyntaxKind.PropertyAccessExpression:
       return [node.value];

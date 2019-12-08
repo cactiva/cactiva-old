@@ -49,7 +49,7 @@ export default observer(({ children }: any) => {
         const hook = processHook(item);
         if (
           hook.name === "Code..." &&
-          item.value.indexOf("useAsyncEffect") >= 0
+          item && typeof item.value === 'string' && item.value.indexOf("useAsyncEffect") >= 0
         ) {
           (async () => {
             const res: any = await api.post("morph/parse-exp", {
@@ -66,7 +66,7 @@ export default observer(({ children }: any) => {
           item: item,
           hook
         };
-      });
+      }).filter((e: any) => !!e);
     };
     const disposer = deepObserve(hooks, (change, path) => {
       refreshHooks();

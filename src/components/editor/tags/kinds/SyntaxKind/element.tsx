@@ -3,6 +3,7 @@ import { uuid } from "@src/components/editor/utility/elements/tools";
 import { generateExpressionArray } from "@src/components/editor/utility/parser/generateExpression";
 import { observer } from "mobx-react-lite";
 import React from "react";
+import { toJS } from "mobx";
 
 export default observer((props: any): any => {
   const cactiva = props._cactiva;
