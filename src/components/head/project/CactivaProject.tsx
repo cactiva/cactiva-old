@@ -43,6 +43,14 @@ export default observer(() => {
 
     connectWs(terminal, "");
     let tempKey = "";
+    terminal.attachCustomKeyEventHandler((e: any) => {
+      if (e.key === 'v' && e.ctrlKey) {
+        const paste = prompt("Paste Here:");
+        if (paste) {
+          meta.ws.send(paste);
+        }
+      }
+    });
     terminal.onKey((e: { key: string }) => {
       if (!meta.connected) {
         tempKey += e.key;
