@@ -8,7 +8,7 @@ RUN apt-get install fish -y
 RUN curl -L github.com/oh-my-fish/oh-my-fish/raw/master/bin/install > install
 RUN chmod +x install
 RUN ./install --noninteractive
-RUN omf install scorphish
+RUN /root/.local/share/omf install scorphish
 ENV TZ=Asia/Jakarta
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN mkdir /usr/src/app
