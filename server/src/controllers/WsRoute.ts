@@ -26,8 +26,8 @@ export const initWs = (app: any): any => {
             ws,
             process: nodepty.spawn('fish', [], {
               name: 'xterm-color',
-              cols: 80,
-              rows: 30,
+              cols: 120,
+              rows: 50,
               cwd: path.join(execPath, "app", name),
             }),
             logs: ""
