@@ -5,7 +5,8 @@ RUN apt-get update
 RUN apt-get install software-properties-common -y
 RUN apt-add-repository ppa:fish-shell/release-3 -y
 RUN apt-get install fish -y
-RUN curl -L https://get.oh-my.fish | fish
+RUN curl -L github.com/oh-my-fish/oh-my-fish/raw/master/bin/install > install
+RUN ./install --noninteractive
 RUN omf install scorphish
 ENV TZ=Asia/Jakarta
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
