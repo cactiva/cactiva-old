@@ -41,7 +41,13 @@ export class ProjectController {
     try {
       const name = config.get("app");
       const morph = Morph.getInstance(name);
-      if (!morph) { res.status(400); return }
+      if (!morph) {
+        res.status(200).json({
+          app: "",
+          env: "",
+          status: "stopped"
+        }); return
+      }
       if (morph) {
         morph.reload();
       }
