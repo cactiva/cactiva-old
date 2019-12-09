@@ -409,21 +409,19 @@ const isUndoStackSimilar = (compare: any, diff: any) => {
   return false;
 };
 
-export const applyImportAndHook = (imports: any) => {
-  (async () => {
-    if (editor.current) {
-      const res = await api.post(`project/apply-imports`, {
-        raw: "n",
-        value: JSON.stringify(editor.current.getSourceCode()),
-        hooks: editor.current.hooks,
-        imports: _.merge(editor.current.imports, imports)
-      });
-      editor.current.source = res.component;
-      editor.current.rootSource = res.file;
-      editor.current.imports = res.imports;
-      editor.current.hooks = (res.hooks || []).filter((e: any) => !!e);
-    }
-  })()
+export const applyImportAndHook = async (imports: any) => {
+  if (editor.current) {
+    const res = await api.post(`project/apply-imports`, {
+      raw: "n",
+      value: JSON.stringify(editor.current.getSourceCode()),
+      hooks: editor.current.hooks,
+      imports: _.merge(editor.current.imports, imports)
+    });
+    editor.current.source = res.component;
+    editor.current.rootSource = res.file;
+    editor.current.imports = res.imports;
+    editor.current.hooks = (res.hooks || []).filter((e: any) => !!e);
+  }
 };
 
 export async function createNewElement(componentName: string) {
@@ -437,7 +435,7 @@ export async function createNewElement(componentName: string) {
       returnExp: true
     });
     if (!res.expression) return;
-    applyImportAndHook(res.imports);
+    await applyImportAndHook(res.imports);
     return {
       kind: SyntaxKind.JsxExpression,
       value: res.expression
@@ -453,7 +451,7 @@ export async function createNewElement(componentName: string) {
       returnExp: true
     });
     if (!res.expression) return;
-    applyImportAndHook(res.imports);
+    await applyImportAndHook(res.imports);
     return { kind: SyntaxKind.JsxExpression, value: res.expression };
   } else if (name === "if-else") {
     const res = await promptExpression({
@@ -467,7 +465,7 @@ export async function createNewElement(componentName: string) {
       returnExp: true
     });
     if (!res.expression) return;
-    applyImportAndHook(res.imports);
+    await applyImportAndHook(res.imports);
     return { kind: SyntaxKind.JsxExpression, value: res.expression };
   } else if (name === "switch") {
     const res = await promptExpression({
@@ -481,7 +479,7 @@ export async function createNewElement(componentName: string) {
       returnExp: true
     });
     if (!res.expression) return;
-    applyImportAndHook(res.imports);
+    await applyImportAndHook(res.imports);
     return { kind: SyntaxKind.JsxExpression, value: res.expression };
   } else if (name === "map") {
     const res = await promptExpression({
@@ -498,7 +496,7 @@ export async function createNewElement(componentName: string) {
       returnExp: true
     });
     if (!res.expression) return;
-    applyImportAndHook(res.imports);
+    await applyImportAndHook(res.imports);
     return { kind: SyntaxKind.JsxExpression, value: res.expression };
   }
 
@@ -508,7 +506,7 @@ export async function createNewElement(componentName: string) {
     const componentName = baseName.substr(0, baseName.length - 4);
     const importPath = name.replace("/src", "@src");
 
-    applyImportAndHook({
+    await applyImportAndHook({
       [componentName]: {
         from: importPath,
         type: "default"
