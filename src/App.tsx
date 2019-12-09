@@ -156,7 +156,7 @@ export default observer(() => {
           </div>
           <Split
             sizes={toJS(meta.sizeScreen)}
-            minSize={200}
+            minSize={230}
             expandToMin={false}
             gutterSize={5}
             gutterAlign="center"

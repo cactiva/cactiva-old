@@ -6,6 +6,10 @@ export const getEntryPoint = (node: any): any => {
   if (node && node.compilerNode) {
     node = node.compilerNode;
   }
+
+  if (!node) {
+    return node;
+  }
   if (node.kind === SyntaxKind.SyntaxList) {
     return getEntryPoint(_.get(node, "_children.0"));
   }

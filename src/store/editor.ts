@@ -28,7 +28,7 @@ class EditorStore {
       header: null,
       footer: null
     },
-    project: true,
+    project: false,
     expression: false,
     restApi: false,
     hasura: false
