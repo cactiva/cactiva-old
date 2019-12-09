@@ -20,9 +20,21 @@ export default observer(({ cliref, initialText = "", style }: any) => {
         console.log(e);
       }
     }, 500);
+    
+    setTimeout(() => {
+      try {
+        fitAddon.fit();
+      } catch (e) {
+        console.log(e);
+      }
+    }, 1500);
     cliref.current = terminal;
     terminal.writeUtf8(initialText);
-    fitAddon.fit();
+    try {
+      fitAddon.fit();
+    } catch (e) {
+      console.log(e);
+    }
   }, []);
   const ref = useRef(null as any);
   return <div ref={ref} style={{ flex: 1, display: "flex", ...style }}></div>;

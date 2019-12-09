@@ -2,103 +2,48 @@ import { fontFamily } from "@src/App";
 import CactivaProjectForm from "@src/components/projects/CactivaProjectForm";
 import api from "@src/libs/api";
 import editor from "@src/store/editor";
-import { Button, Dialog, IconButton } from "evergreen-ui";
+import { Button, Dialog, IconButton, Tab } from "evergreen-ui";
 import _ from "lodash";
-import { observable } from "mobx";
+import { observable, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useRef } from "react";
-import CactivaCli from "../CactivaCli";
+import React, { useEffect } from "react";
 import "./CactivaProject.scss";
+import CactivaTerminal, { CactivaTerminalProps } from "./CactivaTerminal";
+
 const meta = observable({
   edit: false,
-  connected: false,
-  name: '',
-  id: '',
-  ws: null as any,
-  loaded: {} as any,
+  tabIndex: 0,
+  tabs: [] as CactivaTerminalProps[],
 });
-const connectWs = _.debounce((terminal: any, onConnectText: string) => {
-  meta.connected = true;
-  meta.name = editor.name;
-  meta.ws = new WebSocket((api.wsUrl + "pty"));
-  meta.ws.onopen = (e: any) => {
-    meta.ws.send("start|" + editor.name + `${meta.id ? `|${meta.id}` : ''}`);
-  };
-  meta.ws.onclose = () => {
-    meta.connected = false;
-  }
-  let sent = false;
-  meta.ws.onmessage = (e: any) => {
-    if (!meta.id) {
-      meta.id = e.data;
-    } else {
-      if (!sent && onConnectText) {
-        meta.ws.send(onConnectText);
-        sent = true;
-      }
-      meta.connected = true;
-      terminal.writeUtf8(e.data);
-    }
-  };
 
-}, 300);
-const disconnectWs = () => {
-  meta.name = '';
-  meta.id = '';
-
-  if (meta.ws) {
-    if (meta.ws) {
-      try {
-        meta.ws.close();
-      } catch (e) { }
-    }
-    meta.ws = null;
-    meta.connected = false;
-
-  }
+const saveTabs = () => {
+  localStorage[`cactiva-terminal-tabs`] = JSON.stringify(meta.tabs.map((t) => {
+    return { id: t.id, name: t.name, buffer: t.buffer };
+  }));
 }
 
 export default observer(() => {
-  const cli = useRef(null as any);
   useEffect(() => {
-    console.log(meta.name, editor.name);
-    if (meta.name !== editor.name) {
-      if (meta.id && meta.name) {
-        meta.loaded[meta.name] = meta.id;
+    if (meta.tabs.length === 0) {
+      try {
+        const existing = JSON.parse(localStorage['cactiva-terminal-tabs']);
+        meta.tabs = existing
+      } catch (e) {
+        console.log(e);
       }
-      disconnectWs();
-      if (meta.loaded[editor.name]) {
-        meta.id = meta.loaded[editor.name];
+      if (meta.tabs.length === 0) {
+        meta.tabs.push({ id: '' } as any);
       }
     }
 
-    const terminal = cli.current;
-    terminal.clear();
-    connectWs(terminal, "");
-    let tempKey = "";
-    terminal.attachCustomKeyEventHandler((e: any) => {
-      if (e.key === 'v' && e.ctrlKey) {
-        const paste = prompt("Paste Here:");
-        if (paste) {
-          meta.ws.send(paste);
-        }
-      }
-    });
-    terminal.onKey((e: { key: string }) => {
-      if (!meta.connected) {
-        tempKey += e.key;
-        connectWs(terminal, tempKey);
-      } else {
-        meta.ws.send(e.key);
-      }
-    })
-
+    const i = setInterval(() => {
+      saveTabs()
+    }, 5000);
     return () => {
-      if (meta.ws && meta.ws.close) {
-        meta.ws.close();
-      }
+      clearInterval(i);
     }
-  }, []);
+  }, [])
+
   return (
     <div className="cactiva-dialog-editor">
       <div className="cactiva-project" style={{ fontFamily: fontFamily }}>
@@ -119,7 +64,7 @@ export default observer(() => {
                 editor.name = "";
               }}
             >
-              Switch
+              Switch {meta.tabIndex}
             </Button>
             {editor.previewUrl !== "" && (
               <Button
@@ -137,27 +82,48 @@ export default observer(() => {
               </Button>
             )}
           </div>
-          <div>
-            <small style={{ fontSize: 11, color: "#ccc", marginRight: 5 }}>{meta.id}</small>
-            <Button
-              className="small-btn"
-              onClick={async () => {
-                if (confirm("Your current process will be killed. Are you sure?")) {
-                  if (meta.ws && meta.ws.send) {
-                    meta.ws.send("----!@#!@#-CACTIVA-KILL-PAYLOAD-!@#!@#---");
-                    disconnectWs();
-                    const terminal = cli.current;
-                    terminal.clear();
-                    connectWs(terminal, "");
+          <div className="tabs">
+            {meta.tabs.map((tab, index) => (
+              <Tab key={tab.id} isSelected={meta.tabIndex === index} onSelect={() => {
+                meta.tabIndex = index;
+              }}>
+                {tab.id ? tab.id : "Loading..."}
+                <IconButton icon="small-cross" onClick={(e: any) => {
+                  if (tab.ws && tab.ws.send) {
+                    try {
+                      tab.ws.send('----!@#!@#-CACTIVA-KILL-PAYLOAD-!@#!@#---');
+                      tab.ws.kill();
+                    } catch (e) {
+
+                    }
                   }
-                }
-              }}
-            >
-              Reset
-            </Button></div>
+                  meta.tabIndex = meta.tabIndex > 0 ? meta.tabIndex - 1 : 0;
+                  meta.tabs.splice(index, 1);
+                  saveTabs();
+                  e.preventDefault();
+                  e.stopPropagation();
+                }} />
+              </Tab>
+            ))}
+
+            <IconButton icon="small-plus" onClick={() => {
+              meta.tabs.push({ id: "" } as any);
+              meta.tabIndex = meta.tabs.length - 1;
+              saveTabs();
+            }} />
+          </div>
         </div>
         <div className="content">
-          <CactivaCli cliref={cli} style={{ background: 'red', height: 200 }} />
+          {meta.tabs.map((tab, index) => {
+            return <CactivaTerminal key={index} saveTabs={(id: string) => {
+              saveTabs();
+            }} meta={tab} style={{
+              minWidth: '784px',
+              height: '400px',
+              opacity: index === meta.tabIndex ? 1 : 0,
+              position: 'absolute'
+            }} />
+          })}
         </div>
       </div>
 

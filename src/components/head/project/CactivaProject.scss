@@ -16,10 +16,28 @@
 
   .header {
     display: flex;
-    flex-direction: row;
+    flex-direction: row-reverse;
     align-items: center;
     flex-basis: 40px;
     justify-content: space-between;
+    .tabs {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      user-select: none;
+      span > button {
+        margin-left: 15px;
+        padding: 0px;
+        width: 20px;
+        height: 20px;
+        margin-right: -2px;
+      }
+      > button {
+        width: 25px;
+        height: 25px;
+        margin-left: 5px;
+      }
+    }
     .project {
       font-size: 18px;
       color: #666;

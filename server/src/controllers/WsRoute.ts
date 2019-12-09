@@ -8,8 +8,7 @@ const pty = {} as {
   [key: string]: {
     name: string
     ws: WebSocket
-    process: any
-    logs: string
+    process: nodepty.IPty
   }
 };
 export const initWs = (app: any): any => {
@@ -38,14 +37,12 @@ export const initWs = (app: any): any => {
               cols: 120,
               rows: 50,
               cwd: path.join(execPath, "app", name),
-            }),
-            logs: ""
+            })
           }
         } else {
           if (pty[id].ws.readyState === pty[id].ws.OPEN) {
             pty[id].ws.close();
-          }
-          ws.send(pty[id].logs);
+          } 
         }
         const p = pty[id];
         let templog = "";
@@ -57,11 +54,7 @@ export const initWs = (app: any): any => {
         }, 10);
         p.process.onData((e: string) => {
           templog += e;
-          p.logs += e;
 
-          if (p.logs.length > 20000) {
-            p.logs = p.logs.substr(p.logs.length - 20000);
-          }
           send();
         })
         ws.on("message", (e: string) => {
