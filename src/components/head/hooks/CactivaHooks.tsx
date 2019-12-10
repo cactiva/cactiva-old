@@ -297,6 +297,22 @@ const RenderHookItem = observer(({ rawItem, index, hooks, toggleRef }: any) => {
   );
 });
 
+const getSource = (item: any) => {
+  let source = generateSource(
+    _.get(item, "value.value", '')
+  );
+  if (source) {
+    return { source, path: "value.value" }
+  }
+  source = generateSource(
+    _.get(item, "arguments.0.body.0", '')
+  );
+  if (source) {
+    return { source, path: "arguments.0.body.0" }
+  }
+  return false;
+} 
+
 const HookItem = observer(
   ({ item, hook, index, hooks, toggleRef, isChild }: any) => {
     let name = hook.name;
@@ -322,19 +338,20 @@ const HookItem = observer(
               toggle();
 
               if (hook.name.indexOf("Rest API") >= 0) {
-                const source = generateSource(
-                  _.get(item, "arguments.0.body.0", {})
-                );
-                const parsed = await EditRestApiLine(source);
-                applyImportAndHook(parsed.imports);
-                _.set(item, "arguments.0.body.0", parsed.source);
+                const gs = getSource(item);
+                if (gs) {
+                  const parsed = await EditRestApiLine(gs.source);
+                  applyImportAndHook(parsed.imports);
+                  _.set(item, gs.path, parsed.source)
+                }
               } else if (hook.name.indexOf("Hasura GraphQL") >= 0) {
-                const source = generateSource(
-                  _.get(item, "arguments.0.body.0", {})
-                );
-                const parsed = await EditHasuraLine(source);
-                applyImportAndHook(parsed.imports);
-                _.set(item, "arguments.0.body.0", parsed.source);
+                const gs = getSource(item);
+                if (gs) {
+                  console.log(gs.source);
+                  const parsed = await EditHasuraLine(gs.source);
+                  applyImportAndHook(parsed.imports);
+                  _.set(item, gs.path, parsed.source)
+                }
               } else {
                 const source = generateSource(item);
                 const code = prettier.format(source, {
@@ -488,8 +505,8 @@ export const getChilds = (item: any) => {
     if ([198].indexOf(value.kind) > -1)
       childs = _.get(value, "body", []);
     if ([192].indexOf(value.kind) > -1) {
-      if (item.arguments && item.arguments.length > 0)
-        childs = _.get(item, "arguments.0.body", []);
+      if (value.arguments && value.arguments.length > 0)
+        childs = _.get(value, "arguments.0.body", []);
     }
     if ([202, 222].indexOf(value.kind) > -1) {
       if (value.arguments && value.arguments.length > 0)

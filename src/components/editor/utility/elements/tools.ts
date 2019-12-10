@@ -411,6 +411,7 @@ const isUndoStackSimilar = (compare: any, diff: any) => {
 
 export const applyImportAndHook = async (imports: any) => {
   if (editor.current) {
+    editor.status = "loading";
     const res = await api.post(`project/apply-imports`, {
       raw: "n",
       value: JSON.stringify(editor.current.getSourceCode()),
@@ -421,6 +422,8 @@ export const applyImportAndHook = async (imports: any) => {
     editor.current.rootSource = res.file;
     editor.current.imports = res.imports;
     editor.current.hooks = (res.hooks || []).filter((e: any) => !!e);
+    editor.status = "ready";
+
   }
 };
 
@@ -432,7 +435,7 @@ export async function createNewElement(componentName: string) {
   } else if (name === "expr") {
     const res = await promptExpression({
       title: "Please type the expression:",
-      returnExp: true
+      returnExp: true,
     });
     if (!res.expression) return;
     await applyImportAndHook(res.imports);

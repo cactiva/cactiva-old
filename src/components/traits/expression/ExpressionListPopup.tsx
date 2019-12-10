@@ -618,7 +618,6 @@ export const ParseExpressionLine = (item: any) => {
 };
 
 export const EditHasuraLine = async (value: string) => {
-  console.log(value);
   const lts = value.split("await queryAll");
   const str = "query" + lts[lts.length - 1];
   const res = await api.post("morph/parse-exp", {
