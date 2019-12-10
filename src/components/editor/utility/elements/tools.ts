@@ -300,6 +300,9 @@ export const wrapInElementId = (
     if (wrapEl.kind === SyntaxKind.JsxExpression) {
       const parentEl = findParentElementById(root, id);
       switch (wrapEl.value.kind) {
+        case SyntaxKind.ElementAccessExpression:
+          _.set(wrapEl, "value.exp.value.value.value.value", currentEl);
+          break;
         case SyntaxKind.CallExpression:
           if (wrapEl.value.expression.indexOf(".map") >= 0) {
             _.set(wrapEl, "value.arguments.0.body.0.value.value", currentEl);
@@ -472,11 +475,11 @@ export async function createNewElement(componentName: string) {
     return { kind: SyntaxKind.JsxExpression, value: res.expression };
   } else if (name === "switch") {
     const res = await promptExpression({
-      title: "Please type the expression you want to switch:",
+      title: "Please type the variable only:",
       pre: "switch (",
-      post: ")",
+      post: `) case "value": <Component /> `,
       local: true,
-      footer: "case  <Component />",
+      footer: `case "anotherValue": <AnotherComponent /> `,
       wrapExp:
         '({"value": <View><Text>When Match</Text></View>} as any)[[[value]]]',
       returnExp: true

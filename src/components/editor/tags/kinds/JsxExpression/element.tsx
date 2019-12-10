@@ -57,7 +57,7 @@ export const Expression = observer((props: any) => {
     canDropAfter: false
   });
   if (typeof exp === "string") {
-    return <span style={{ fontFamily: 'Consolas, "Courier New", monospace', fontSize: '10px' }}>{exp}</span>;
+    return <span style={{ fontFamily: 'Consolas, "Courier New", monospace', fontSize: '10px', whiteSpace: 'pre-wrap' }}>{exp}</span>;
   }
   if (Array.isArray(source)) {
     return <span>{JSON.stringify(source)}</span>;

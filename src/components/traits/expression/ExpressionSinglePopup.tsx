@@ -6,6 +6,7 @@ import MonacoEditor from 'react-monaco-editor';
 import { observable } from 'mobx';
 import _ from 'lodash';
 import "./ExpressionSinglePopup.scss";
+import api from '@src/libs/api';
 
 interface IPromptOptions {
     value?: string,
@@ -46,14 +47,27 @@ export default observer(() => {
         hasFooter={false}
         preventBodyScrolling
         shouldCloseOnEscapePress={false}
-        onCloseComplete={() => {
+        onCloseComplete={async () => {
             editor.modals.expression = false;
             if (meta.resolve) {
-                meta.resolve({
-                    expression: meta.value,
-                    changed: meta.changed,
-                    imports: {}
-                });
+                if (opt.wrapExp && !!meta.value) {
+                    meta.value = opt.wrapExp.replace('[[value]]', meta.value);
+                }
+
+                if (!opt.returnExp || !meta.value) {
+                    meta.resolve({
+                        expression: meta.value,
+                        changed: meta.changed,
+                        imports: {}
+                    });
+                } else {
+                    const res = await api.post("morph/parse-exp", { value: meta.value });
+                    meta.resolve({
+                        expression: res,
+                        changed: meta.changed,
+                        imports: {}
+                    });
+                }
             }
         }}
         minHeightContent={minHeight}

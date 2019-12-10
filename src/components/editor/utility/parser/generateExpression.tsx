@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { SyntaxKind } from "../syntaxkinds";
 import { toJS } from "mobx";
+import { generateSource } from "./generateSource";
 
 export const generateExpression = (node: any): any[] => {
   const rawResult = generateExpressionArray(node);
@@ -202,10 +203,10 @@ export const generateExpressionArray = (node: any): any[] => {
             const isFirstKey = idx === 0;
             const child = generateExpressionArray(node.value[key]);
             result.push(`${!isFirstKey ? "," : ""}${key}:`);
-            child.map(v => result.push(child));
+            child.map(v => result.push(v));
           }
         });
-        return [`{`, ...result, `}`];
+        return [`{\n`, ...result, `\n}`];
       })();
     case SyntaxKind.AsExpression:
       return [...generateExpressionArray(node.value), ` as any`];
@@ -224,12 +225,19 @@ export const generateExpressionArray = (node: any): any[] => {
     case SyntaxKind.JsxExpression:
       return [`{`, ...generateExpressionArray(node.value), `}`];
     case SyntaxKind.ElementAccessExpression:
-      return [
-        ...generateExpressionArray(node.exp),
-        `[`,
-        ...generateExpressionArray(node.argExp),
-        `]`
-      ];
+
+      if (node.exp.value.kind === SyntaxKind.AsExpression) {
+        return [`switch (`, ...generateExpressionArray(node.argExp), `) `,
+          ...generateExpressionArray(node.exp.value.value)
+          ];
+      } else {
+        return [
+          ...generateExpressionArray(node.exp),
+          `[`,
+          ...generateExpressionArray(node.argExp),
+          `]`
+        ];
+      }
     case SyntaxKind.ParenthesizedExpression:
       return [`(`, ...generateExpressionArray(node.value), `)`];
     case SyntaxKind.ReturnStatement:
