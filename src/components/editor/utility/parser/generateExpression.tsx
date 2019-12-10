@@ -1,6 +1,6 @@
 import _ from "lodash";
-import { SyntaxKind } from "../syntaxkinds";
 import { toJS } from "mobx";
+import { SyntaxKind } from "../syntaxkinds";
 import { generateSource } from "./generateSource";
 
 export const generateExpression = (node: any): any[] => {
@@ -137,21 +137,24 @@ export const getToken = (op: number) => {
   return null;
 };
 
-export const generateExpressionArray = (node: any): any[] => {
+export const generateExpressionArray = (node: any, opt?: { conditionOnly?: boolean }): any[] => {
   if (!node) return [""];
-
   const kind = node.kind;
 
   switch (kind) {
     case SyntaxKind.VariableDeclaration:
-      return [`const ${node.name} = `, generateExpressionArray(node.value), `}`];
+      return [`const ${node.name} = `, generateExpressionArray(node.value, opt), `}`];
     case SyntaxKind.PropertyAccessExpression:
       return [node.value];
     case SyntaxKind.ExpressionStatement:
-      return generateExpressionArray(node.value);
+      return generateExpressionArray(node.value, opt);
     case SyntaxKind.AwaitExpression:
-      return [`await `, generateExpressionArray(node.value)];
+      return [`await `, generateExpressionArray(node.value, opt)];
     case SyntaxKind.BinaryExpression:
+      if (opt && opt.conditionOnly) {
+        return [node.left, " && ", generateExpressionArray(node.right, opt)];
+      }
+
       if (getToken(node.operator) === "&&") {
         if (node.right.kind === SyntaxKind.JsxElement) {
           return ["if (", node.left, ") then ", node.right];
@@ -202,34 +205,47 @@ export const generateExpressionArray = (node: any): any[] => {
           } else {
             const isFirstKey = idx === 0;
             const child = generateExpressionArray(node.value[key]);
-            result.push(`${!isFirstKey ? "," : ""}${key}:`);
+            result.push(`${!isFirstKey ? "," : ""}"${key}":`);
             child.map(v => result.push(v));
           }
         });
         return [`{\n`, ...result, `\n}`];
       })();
     case SyntaxKind.AsExpression:
-      return [...generateExpressionArray(node.value), ` as any`];
+      return [...generateExpressionArray(node.value, opt), ` as any`];
     case SyntaxKind.ConditionalExpression:
-      return [
-        "if (",
-        ...generateExpressionArray(node.condition),
-        ") then ",
-        ...generateExpressionArray(node.whenTrue),
-        " else ",
-        ...generateExpressionArray(node.whenFalse),
-        ""
-      ];
+      let result = [];
+
+      if (opt && opt.conditionOnly) {
+        result = [
+          ...generateExpressionArray(node.condition), " && " ,
+          ...generateExpressionArray(node.whenTrue)]
+      } else {
+        result = [
+          "if (",
+          ...generateExpressionArray(node.condition),
+          ") then ",
+          ...generateExpressionArray(node.whenTrue)
+        ]
+      }
+
+      if (_.get(node, "whenFalse.value.kind", 0) === SyntaxKind.BinaryExpression) {
+        result = [...result, " else if ", ...generateExpressionArray(node.whenFalse, { ...opt, conditionOnly: true }), " "];
+      } else {
+        result = [...result, " else ", ...generateExpressionArray(node.whenFalse, opt), " "];
+      }
+
+      return result;
     case SyntaxKind.JsxFragment:
       return [`<>`, ...node.children, `</>`];
     case SyntaxKind.JsxExpression:
-      return [`{`, ...generateExpressionArray(node.value), `}`];
+      return [`{`, ...generateExpressionArray(node.value, opt), `}`];
     case SyntaxKind.ElementAccessExpression:
 
       if (node.exp.value.kind === SyntaxKind.AsExpression) {
         return [`switch (`, ...generateExpressionArray(node.argExp), `) `,
           ...generateExpressionArray(node.exp.value.value)
-          ];
+        ];
       } else {
         return [
           ...generateExpressionArray(node.exp),
@@ -239,9 +255,9 @@ export const generateExpressionArray = (node: any): any[] => {
         ];
       }
     case SyntaxKind.ParenthesizedExpression:
-      return [`(`, ...generateExpressionArray(node.value), `)`];
+      return [`(`, ...generateExpressionArray(node.value, opt), `)`];
     case SyntaxKind.ReturnStatement:
-      return [`return `, ...generateExpressionArray(node.value)];
+      return [`return `, ...generateExpressionArray(node.value, opt)];
     case SyntaxKind.ArrowFunction:
       return (() => {
         const result = [];

@@ -169,6 +169,8 @@ export const replaceElementById = (
     return value;
   }
   const anchor = findParentElementById(root, id);
+
+  // if it is regular element
   let children = anchor.children;
   if (children && children.length > 0) {
     let foundKey = -1;
@@ -213,19 +215,21 @@ const replaceExpValue = (
 
   switch (anchor.kind) {
     case SyntaxKind.BinaryExpression:
-      replaceExpValue(anchor.right, id, value);
+      anchor = replaceExpValue(anchor.right, id, value);
       break;
     case SyntaxKind.ConditionalExpression:
-      replaceExpValue(anchor.whenTrue, id, value);
-      replaceExpValue(anchor.whenFalse, id, value);
+      anchor = replaceExpValue(anchor.whenTrue, id, value);
+      // replaceExpValue(anchor.whenFalse, id, value);
       break;
     default:
       if (anchor.value) {
         if (anchor.value.id === id) {
           anchor.value = value;
         } else {
-          replaceExpValue(anchor.value, id, value);
+          anchor = replaceExpValue(anchor.value, id, value);
         }
+      } else if (anchor.exp) {
+        anchor = replaceExpValue(anchor.exp, id, value);
       }
   }
   return anchor;
@@ -414,19 +418,19 @@ const isUndoStackSimilar = (compare: any, diff: any) => {
 
 export const applyImportAndHook = async (imports: any) => {
   if (editor.current) {
-    editor.status = "loading";
-    const res = await api.post(`project/apply-imports`, {
-      raw: "n",
-      value: JSON.stringify(editor.current.getSourceCode()),
-      hooks: editor.current.hooks,
-      imports: _.merge(editor.current.imports, imports)
-    });
-    editor.current.source = res.component;
-    editor.current.rootSource = res.file;
-    editor.current.imports = res.imports;
-    editor.current.hooks = (res.hooks || []).filter((e: any) => !!e);
-    editor.status = "ready";
-
+    console.log(imports);
+    // editor.status = "loading";
+    // const res = await api.post(`project/apply-imports`, {
+    //   raw: "n",
+    //   value: JSON.stringify(editor.current.getSourceCode()),
+    //   hooks: editor.current.hooks,
+    //   imports: _.merge(editor.current.imports, imports)
+    // });
+    // editor.current.source = res.component;
+    // editor.current.rootSource = res.file;
+    // editor.current.imports = res.imports;
+    // editor.current.hooks = (res.hooks || []).filter((e: any) => !!e);
+    // editor.status = "ready";
   }
 };
 
@@ -489,7 +493,7 @@ export async function createNewElement(componentName: string) {
     return { kind: SyntaxKind.JsxExpression, value: res.expression };
   } else if (name === "map") {
     const res = await promptExpression({
-      title: "Please type the array you want to map:",
+      title: "Please type the variable only:",
       pre: "(",
       local: true,
       post: ")",

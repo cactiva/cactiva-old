@@ -10,6 +10,8 @@ export default observer(({ source = null, cactiva, parentInfo }: any) => {
     parentInfo
   );
 
+  if (!rendered) return null;
+
   if (!rendered.kind) {
     return rendered;
   } else {
