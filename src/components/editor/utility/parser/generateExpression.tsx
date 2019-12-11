@@ -1,7 +1,5 @@
 import _ from "lodash";
-import { toJS } from "mobx";
 import { SyntaxKind } from "../syntaxkinds";
-import { generateSource } from "./generateSource";
 
 export const generateExpression = (node: any): any[] => {
   const rawResult = generateExpressionArray(node);
@@ -137,6 +135,14 @@ export const getToken = (op: number) => {
   return null;
 };
 
+
+const isNodeACondition = (node: any, path: string) => {
+  const v = _.get(node, path);
+  if (v) {
+    return (v.kind === SyntaxKind.BinaryExpression || v.kind === SyntaxKind.ConditionalExpression);
+  } return false;
+}
+
 export const generateExpressionArray = (node: any, opt?: { conditionOnly?: boolean }): any[] => {
   if (!node) return [""];
   const kind = node.kind;
@@ -152,14 +158,14 @@ export const generateExpressionArray = (node: any, opt?: { conditionOnly?: boole
       return [`await `, generateExpressionArray(node.value, opt)];
     case SyntaxKind.BinaryExpression:
       if (opt && opt.conditionOnly) {
-        return [node.left, " && ", generateExpressionArray(node.right, opt)];
+        return [node.left, " " + getToken(node.operator) + " ", generateExpressionArray(node.right, opt)];
       }
 
       if (getToken(node.operator) === "&&") {
         if (node.right.kind === SyntaxKind.JsxElement) {
           return ["if (", node.left, ") then ", node.right];
         } else {
-          return [node.left, " && ", node.right];
+          return [node.left, " && ", generateExpressionArray(node.right, opt)];
         }
       }
       return [node.left, " " + getToken(node.operator) + " ", node.right];
@@ -214,22 +220,33 @@ export const generateExpressionArray = (node: any, opt?: { conditionOnly?: boole
     case SyntaxKind.AsExpression:
       return [...generateExpressionArray(node.value, opt), ` as any`];
     case SyntaxKind.ConditionalExpression:
-      let result = [];
+      let result: any[] = [];
 
       if (opt && opt.conditionOnly) {
         result = [
-          ...generateExpressionArray(node.condition), " && " ,
+          ...generateExpressionArray(node.condition), " && ",
           ...generateExpressionArray(node.whenTrue)]
       } else {
-        result = [
-          "if (",
-          ...generateExpressionArray(node.condition),
-          ") then ",
-          ...generateExpressionArray(node.whenTrue)
-        ]
+        if (isNodeACondition(node, "whenTrue.value")) {
+          result = [
+            "if (",
+            ...generateExpressionArray(node.condition),
+            " && ",
+            ...generateExpressionArray(node.whenTrue, { ...opt, conditionOnly: true }),
+            ")  ",
+          ]
+        } else {
+          result = [
+            "if (",
+            ...generateExpressionArray(node.condition),
+            ") then ",
+            ...generateExpressionArray(node.whenTrue)
+          ]
+        }
+
       }
 
-      if (_.get(node, "whenFalse.value.kind", 0) === SyntaxKind.BinaryExpression) {
+      if (isNodeACondition(node, "whenFalse.value")) {
         result = [...result, " else if ", ...generateExpressionArray(node.whenFalse, { ...opt, conditionOnly: true }), " "];
       } else {
         result = [...result, " else ", ...generateExpressionArray(node.whenFalse, opt), " "];

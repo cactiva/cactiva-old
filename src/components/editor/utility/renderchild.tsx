@@ -4,6 +4,7 @@ import Component from "../tags/elements/Component";
 import kinds, { kindNames } from "./kinds";
 import { isTag } from "./tagmatcher";
 import tags from "./tags";
+import { toJS } from "mobx";
 
 export const renderChildren = (
   source: any,
@@ -65,7 +66,26 @@ export const renderChildren = (
       }
       return renderKind(child, editor, key, isRoot ? child : root, info);
     }
-    return refChild;
+
+    if (Array.isArray(refChild)) {
+      return refChild.map((child, key) => {
+        if (child && child.kind) {
+          const info =
+            parentInfo &&
+            parentInfo({
+              isFirstChild: key === 0,
+              isLastChild: key === children.length - 1,
+              child,
+              editor,
+              key,
+              root: isRoot ? child : root
+            });
+          return renderKind(child, editor, key, isRoot ? child : root, info);
+        }
+        return child;
+      })
+    }
+    return null;
   });
   return result;
 };

@@ -7,7 +7,8 @@ import React from "react";
 import CactivaDraggable from "../../../CactivaDraggable";
 import CactivaDroppable from "../../../CactivaDroppable";
 import CactivaSelectable from "../../../CactivaSelectable";
-
+import ErrorBoundary from 'react-error-boundary';
+import { generateSource } from "@src/components/editor/utility/parser/generateSource";
 export default observer((props: any) => {
   const cactiva = props._cactiva;
   const expressions = generateExpression(cactiva.source.value);
