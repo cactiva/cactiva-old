@@ -19,8 +19,10 @@ export const defaultExport = (sf: SourceFile) => {
           .getFirstChildByKindOrThrow(SyntaxKind.ReturnStatement);
       }
 
-      if (array === null) return null;
-
+      if (array === null) {
+        console.log(expt);
+        return null;
+      }
       return array.getExpression();
     }
   } catch (e) {}

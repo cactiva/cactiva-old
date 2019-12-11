@@ -143,7 +143,7 @@ export class ProjectController {
     const result = await morph.formatCactivaSource(sf, false);
     res.status(200).json(result);
 
-    await sf.deleteImmediately();
+    await sf.delete();
     return;
   }
 
