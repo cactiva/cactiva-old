@@ -23,7 +23,7 @@ const processHook = (item: any) => {
   if (namesplit.length < 25) {
     name = name.substr(0, 30) + '...';
   } else {
-    name = namesplit;
+    name = namesplit.length > 30 ? namesplit.substr(0, 30) + "..." : namesplit;
   }
   if (name.indexOf("useAsyncEffect") >= 0) {
     const source = _.get(item, "arguments.0.body.0", {});
@@ -311,7 +311,7 @@ const getSource = (item: any) => {
     return { source, path: "arguments.0.body.0" }
   }
   return false;
-} 
+}
 
 const HookItem = observer(
   ({ item, hook, index, hooks, toggleRef, isChild }: any) => {
