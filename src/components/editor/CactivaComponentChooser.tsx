@@ -210,8 +210,12 @@ export const toolbar = [
     label: "Header"
   },
   {
-    icon: "segmented-control",
+    icon: "grid",
     label: "SimpleTable"
+  },
+  {
+    icon: "drag-handle-horizontal",
+    label: "SimpleTableColumn"
   },
   {
     icon: "circle",

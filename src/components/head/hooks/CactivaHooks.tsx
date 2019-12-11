@@ -347,7 +347,6 @@ const HookItem = observer(
               } else if (hook.name.indexOf("Hasura GraphQL") >= 0) {
                 const gs = getSource(item);
                 if (gs) {
-                  console.log(gs.source);
                   const parsed = await EditHasuraLine(gs.source);
                   applyImportAndHook(parsed.imports);
                   _.set(item, gs.path, parsed.source)

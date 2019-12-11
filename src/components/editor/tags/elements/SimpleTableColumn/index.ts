@@ -9,42 +9,39 @@ const styles = {
 };
 
 export default class extends CactivaTag {
-  static tagName = "SimpleTable";
+  static tagName = "SimpleTableColumn";
   static from = "@src/libs";
   static structure = {
     kind: SyntaxKind.JsxElement,
-    name: "SimpleTable",
+    name: "SimpleTableColumn",
     props: {},
-    children: [{
-      kind: SyntaxKind.JsxElement,
-      name: "SimpleTableColumn",
-      props: {},
-      children: []
-    }]
+    children: []
   };
   static traits = [
     {
       name: "data",
       fields: [
         {
-          name: "Data",
-          path: "data",
-          kind: SyntaxKind.JsxExpression,
+          name: "Path",
+          path: "path",
+          kind: SyntaxKind.StringLiteral,
+          options: {
+            styles: styles
+          }
         },
         {
-          name: "Column Mode",
-          path: "columnMode",
+          name: "Title",
+          path: "title",
           kind: SyntaxKind.StringLiteral,
-          mode: "select",
-          default: 'auto',
           options: {
-            styles: styles,
-            items: [
-              { value: "auto", label: "Auto Generate" },
-              { value: "manual", label: "Manual Column" },
-            ]
+            styles: styles
           }
-        }
+        },
+        {
+          name: "Width",
+          path: "width",
+          kind: SyntaxKind.NumericLiteral,
+        },
       ]
     },
     ...traitStyle()
