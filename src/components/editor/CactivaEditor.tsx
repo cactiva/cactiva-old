@@ -414,6 +414,7 @@ const CactivaEditorAddComponent = observer((props: any) => {
       <CactivaComponentChooser
         title={title}
         icon={icon}
+        disableCustomItems={status === "add" ? [] : ['generate']}
         items={status === "add" ? [] : meta.toolbar}
         onSelect={(value: any) => {
           if (status === "add") {

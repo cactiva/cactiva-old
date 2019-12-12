@@ -10,6 +10,7 @@ import editor from "@src/store/editor";
 import { promptCustomComponent } from "../../CactivaCustomComponent";
 import api from "@src/libs/api";
 import { generateSource } from "../parser/generateSource";
+import { promptHasura } from "@src/components/traits/expression/Hasura";
 
 export const getIds = (id: string | string[]) => {
   if (Array.isArray(id)) return _.clone(id);
@@ -439,6 +440,11 @@ export async function createNewElement(componentName: string) {
 
   if (name === "custom-component") {
     name = await promptCustomComponent();
+  } else if (name === 'generate-crud') {
+    const res = await promptHasura(undefined, {
+      disable: ['setVar']
+    })
+    console.log(res);
   } else if (name === "expr") {
     const res = await promptExpression({
       title: "Please type the expression:",

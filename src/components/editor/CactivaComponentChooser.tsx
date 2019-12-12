@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { fuzzyMatch } from "../ctree/CactivaTree";
 import { uuid } from "./utility/elements/tools";
 
-export default observer(({ title, icon, onSelect, items = [] }: any) => {
+export default observer(({ title, icon, onSelect, items = [], disableCustomItems = [] }: any) => {
   const meta = useObservable({
     filter: "",
     toolbar: toolbar
@@ -118,6 +118,17 @@ export default observer(({ title, icon, onSelect, items = [] }: any) => {
           >
             <Icon icon={"code-block"} size={14} color={"#999"} /> Map
           </div>
+          {disableCustomItems.indexOf('generate') < 0 &&
+            <>
+              <div style={{ borderTop: '1px solid #ccc' }} />
+              <div
+                className="item"
+                onClick={() => {
+                  if (onSelect) onSelect("generate-crud");
+                }}
+              ><Icon icon={"form"} size={14} color={"#999"} /> Generate CRUD</div>
+            </>
+          }
         </div>
       </div>
     </div>

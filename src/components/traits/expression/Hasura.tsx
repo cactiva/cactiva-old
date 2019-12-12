@@ -25,7 +25,8 @@ const meta = observable({
   schema: undefined as any,
   schemaLoading: true,
   lastForm: null as any,
-  resolve: null as any
+  resolve: null as any,
+  disable: [] as string[]
 });
 export default () => {
   const gref = useRef(null as any);
@@ -75,6 +76,8 @@ export const promptHasura = (data?: {
   payload: string;
   auth: any;
   setVar: string;
+}, options?: {
+  disable?: string[]
 }) => {
   editor.modals.hasura = true;
   meta.lastForm = meta.form;
@@ -85,6 +88,10 @@ export const promptHasura = (data?: {
     _.set(meta, "form.setVar", data.setVar);
   } else {
     meta.form = _.cloneDeep(form);
+  }
+
+  if (options) {
+    meta.disable = options.disable || [];
   }
 
   return new Promise(resolve => {
@@ -168,7 +175,7 @@ const HasuraForm = observer(({ form, gref }: any) => {
                 label="Explorer"
                 title="Show Explorer"
               />
-              <GraphiQL.Button
+              {meta.disable.indexOf('setVar') < 0 && <GraphiQL.Button
                 onClick={async () => {
                   const res = await promptExpression({
                     value: form.setVar,
@@ -179,11 +186,11 @@ const HasuraForm = observer(({ form, gref }: any) => {
                 }}
                 title={`Set Result To: ${
                   form.setVar === "" ? "[Empty Variable]" : form.setVar
-                }`}
+                  }`}
                 label={`Set Result To: ${
                   form.setVar === "" ? "[Empty Variable]" : form.setVar
-                }`}
-              />
+                  }`}
+              />}
               <GraphiQL.Select>
                 <GraphiQL.SelectOption
                   label={"Auth: Logged In"}

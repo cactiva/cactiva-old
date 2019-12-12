@@ -20,6 +20,7 @@ import { toJS } from "mobx";
 import { generateSource } from "./utility/parser/generateSource";
 import api from "@src/libs/api";
 import { reloadTreeList } from "../ctree/CactivaTree";
+import { promptHasura } from "../traits/expression/Hasura";
 export default observer(
   ({
     cactiva,
@@ -293,7 +294,7 @@ export default observer(
             <div
               className={`cactiva-selectable ${
                 classes.selected ? "selected" : ""
-              }`}
+                }`}
             >
               <div
                 ref={ref}
