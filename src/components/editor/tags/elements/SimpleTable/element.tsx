@@ -26,7 +26,6 @@ export default observer((props: any) => {
     sid.pop();
   }
   const columnMode = _.trim(_.get(props, 'columnMode.value', 'auto'), `'"\``);
-  console.log(columnMode);
 
   return (
     <CactivaDropChild
@@ -41,7 +40,7 @@ export default observer((props: any) => {
             direction={direction}
             stretch={hasNoChildren}
           />
-          {columnMode === "auto" ? <span>Auto Column Mode</span> :
+          {columnMode === "auto" ? <div style={{ fontSize: '12px', width: '100%' }}>Auto Column Mode</div> :
             <CactivaChildren cactiva={cactiva} parentInfo={parentInfo} />
           }
         </CactivaSelectable>
