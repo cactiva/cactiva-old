@@ -21,6 +21,7 @@
     "graphiql": "^0.17.5",
     "graphiql-explorer": "^0.4.5",
     "graphql": "^14.5.8",
+    "graphql-tag": "^2.10.1",
     "lodash": "^4.17.15",
     "mobx": "^5.13.0",
     "mobx-react-lite": "^1.5.0",
@@ -80,7 +81,7 @@
   },
   "devDependencies": {
     "@types/jest": "24.0.18",
-    "@types/lodash": "npm:@types/lodash-es",
+    "@types/lodash": "^4.14.149",
     "@types/node": "12.7.7",
     "@types/react": "16.9.3",
     "@types/react-dom": "16.9.1",

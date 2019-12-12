@@ -26,6 +26,7 @@ const meta = observable({
   schemaLoading: true,
   lastForm: null as any,
   resolve: null as any,
+  queryOnly: false,
   disable: [] as string[]
 });
 export default () => {
@@ -45,7 +46,7 @@ export default () => {
         const payload = meta.form.payload;
         const result = {
           source: ` ${varname} await queryAll(\`${query}\`, {
-                   ${payload ? `payload: ${payload},` : ""}
+                   ${payload ? `variable: ${payload},` : ""}
                    ${auth ? `auth: "${auth}",` : ""}
                 });
             `,
@@ -58,6 +59,12 @@ export default () => {
           }
         };
         if (meta.resolve) {
+          if (meta.queryOnly) {
+            meta.resolve({
+              query,
+              variable: payload
+            })
+          }
           meta.resolve(result);
         }
       }}
@@ -77,7 +84,8 @@ export const promptHasura = (data?: {
   auth: any;
   setVar: string;
 }, options?: {
-  disable?: string[]
+  disable?: string[],
+  returnQueryOnly?: boolean
 }) => {
   editor.modals.hasura = true;
   meta.lastForm = meta.form;
@@ -92,6 +100,7 @@ export const promptHasura = (data?: {
 
   if (options) {
     meta.disable = options.disable || [];
+    meta.queryOnly = !!options.returnQueryOnly;
   }
 
   return new Promise(resolve => {

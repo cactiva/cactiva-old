@@ -1,16 +1,19 @@
+import { promptHasura } from "@src/components/traits/expression/Hasura";
+import editor from "@src/store/editor";
 import _ from "lodash";
 import { toJS } from "mobx";
 import { getDiff } from "recursive-diff";
 import { promptExpression } from "../../../traits/expression/ExpressionSinglePopup";
+import { promptCustomComponent } from "../../CactivaCustomComponent";
 import kinds from "../kinds";
 import { SyntaxKind } from "../syntaxkinds";
 import { isTag } from "../tagmatcher";
 import tags from "../tags";
-import editor from "@src/store/editor";
-import { promptCustomComponent } from "../../CactivaCustomComponent";
-import api from "@src/libs/api";
-import { generateSource } from "../parser/generateSource";
-import { promptHasura } from "@src/components/traits/expression/Hasura";
+import gql from "graphql-tag";
+import { generateQueryObject } from "./genQueryObject";
+import { generateQueryString } from "./genQueryString";
+import { generateInsertString } from "./genInsertString";
+import { generateUpdateString } from "./genUpdateString";
 
 export const getIds = (id: string | string[]) => {
   if (Array.isArray(id)) return _.clone(id);
@@ -441,10 +444,11 @@ export async function createNewElement(componentName: string) {
   if (name === "custom-component") {
     name = await promptCustomComponent();
   } else if (name === 'generate-crud') {
-    const res = await promptHasura(undefined, {
-      disable: ['setVar']
-    })
-    console.log(res);
+    const query = await generateQueryObject();
+    if (query) {
+      console.log(generateUpdateString(query, {}, { where: [] }).query);
+    }
+    return null;
   } else if (name === "expr") {
     const res = await promptExpression({
       title: "Please type the expression:",
