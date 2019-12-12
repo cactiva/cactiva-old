@@ -446,7 +446,7 @@ export async function createNewElement(componentName: string) {
   } else if (name === 'generate-crud') {
     const query = await generateQueryObject();
     if (query) {
-      console.log(generateUpdateString(query, {}, { where: [] }).query);
+      console.log(query.table, query.var);
     }
     return null;
   } else if (name === "expr") {

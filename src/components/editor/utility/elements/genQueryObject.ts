@@ -5,7 +5,6 @@ import { ITable, ITableWhere, ITableOrderBy } from "./genQueryString";
 
 export const generateQueryObject = async () => {
     const res: any = await promptHasura(undefined, {
-        disable: ['setVar'],
         returnQueryOnly: true
     })
     let struct = {} as any;
@@ -18,7 +17,7 @@ export const generateQueryObject = async () => {
 
     const root = _.get(struct, 'definitions.0.selectionSet.selections.0');
     const table = parseTable(root);
-    return table
+    return { table, var: res.setVar }
 }
 
 const parseTable = (table: any): ITable => {

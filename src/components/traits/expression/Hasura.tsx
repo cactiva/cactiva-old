@@ -62,6 +62,7 @@ export default () => {
           if (meta.queryOnly) {
             meta.resolve({
               query,
+              setVar: meta.form.setVar,
               variable: payload
             })
           }
