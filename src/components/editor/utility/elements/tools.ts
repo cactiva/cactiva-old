@@ -1,4 +1,3 @@
-import { promptHasura } from "@src/components/traits/expression/Hasura";
 import editor from "@src/store/editor";
 import _ from "lodash";
 import { toJS } from "mobx";
@@ -9,11 +8,7 @@ import kinds from "../kinds";
 import { SyntaxKind } from "../syntaxkinds";
 import { isTag } from "../tagmatcher";
 import tags from "../tags";
-import gql from "graphql-tag";
 import { generateQueryObject } from "./genQueryObject";
-import { generateQueryString } from "./genQueryString";
-import { generateInsertString } from "./genInsertString";
-import { generateUpdateString } from "./genUpdateString";
 
 export const getIds = (id: string | string[]) => {
   if (Array.isArray(id)) return _.clone(id);
@@ -446,9 +441,11 @@ export async function createNewElement(componentName: string) {
   } else if (name === 'generate-crud') {
     const query = await generateQueryObject();
     if (query) {
-      console.log(query.table, query.var);
+      ;
+      // console.log(query.table, query.var);
     }
-    return null;
+    const tag = tags['CrudWrapper'] as any;
+    return tag.structure;
   } else if (name === "expr") {
     const res = await promptExpression({
       title: "Please type the expression:",

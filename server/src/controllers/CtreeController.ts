@@ -27,6 +27,7 @@ export class CtreeController {
       "./api",
       "./.DS_",
       "./components.ts",
+      "./fonts.ts",
       "./theme.json"
     ];
     tree.children = tree.children.filter((e: any) => {
@@ -173,4 +174,3 @@ export class CtreeController {
     }
   }
 }
- 

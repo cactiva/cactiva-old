@@ -5,6 +5,7 @@ import { ITable, ITableWhere, ITableOrderBy } from "./genQueryString";
 
 export const generateQueryObject = async () => {
     const res: any = await promptHasura(undefined, {
+        mustSetVar: true,
         returnQueryOnly: true
     })
     let struct = {} as any;

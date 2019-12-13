@@ -5,7 +5,7 @@ import { Dialog, Spinner } from "evergreen-ui";
 import GraphiQL from "graphiql";
 import GraphiQLExplorer from "graphiql-explorer";
 import "graphiql/graphiql.css";
-import { buildClientSchema } from "graphql";
+import { buildClientSchema, SchemaMetaFieldDef } from "graphql";
 import _ from "lodash";
 import { observable } from "mobx";
 import { observer } from "mobx-react-lite";
@@ -27,6 +27,7 @@ const meta = observable({
   lastForm: null as any,
   resolve: null as any,
   queryOnly: false,
+  mustSetVar: false,
   disable: [] as string[]
 });
 export default () => {
@@ -40,6 +41,19 @@ export default () => {
       shouldCloseOnEscapePress={false}
       onCloseComplete={() => {
         editor.modals.hasura = false;
+        if (meta.mustSetVar) {
+          if (!meta.form.setVar && meta.form.query) {
+            if (confirm("Set Result To cannot be empty, try again?")) {
+              setTimeout(() => {
+                editor.modals.hasura = true;
+              }, 200)
+            } else {
+              meta.resolve(false);
+            }
+          }
+          return;
+        }
+
         const varname = meta.form.setVar ? `${meta.form.setVar} = ` : "";
         const query = meta.form.query;
         const auth = meta.form.auth;
@@ -86,7 +100,8 @@ export const promptHasura = (data?: {
   setVar: string;
 }, options?: {
   disable?: string[],
-  returnQueryOnly?: boolean
+  returnQueryOnly?: boolean,
+  mustSetVar?: boolean
 }) => {
   editor.modals.hasura = true;
   meta.lastForm = meta.form;
@@ -102,6 +117,7 @@ export const promptHasura = (data?: {
   if (options) {
     meta.disable = options.disable || [];
     meta.queryOnly = !!options.returnQueryOnly;
+    meta.mustSetVar = !!options.mustSetVar;
   }
 
   return new Promise(resolve => {
