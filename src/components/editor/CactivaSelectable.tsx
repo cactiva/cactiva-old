@@ -1,26 +1,13 @@
+import api from "@src/libs/api";
+import { default as ceditor } from "@src/store/editor";
 import { Menu, Popover, Text } from "evergreen-ui";
 import _ from "lodash";
 import { observer, useObservable } from "mobx-react-lite";
 import React, { useRef } from "react";
-import { default as ceditor } from "@src/store/editor";
-import {
-  getParentId,
-  addChildInId,
-  removeElementById,
-  prepareChanges,
-  commitChanges,
-  replaceElementById,
-  findElementById,
-  findParentElementById,
-  getSelectableParent,
-  createNewElement
-} from "./utility/elements/tools";
-import { SyntaxKind } from "./utility/syntaxkinds";
-import { toJS } from "mobx";
-import { generateSource } from "./utility/parser/generateSource";
-import api from "@src/libs/api";
 import { reloadTreeList } from "../ctree/CactivaTree";
-import { promptHasura } from "../traits/expression/Hasura";
+import { addChildInId, commitChanges, createNewElement, findElementById, getParentId, getSelectableParent, prepareChanges, removeElementById, replaceElementById } from "./utility/elements/tools";
+import { generateSource } from "./utility/parser/generateSource";
+import { SyntaxKind } from "./utility/syntaxkinds";
 export default observer(
   ({
     cactiva,
