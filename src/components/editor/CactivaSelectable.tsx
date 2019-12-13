@@ -295,7 +295,7 @@ export default observer(
               >
                 {showElementTag && width > 100 && (
                   <div
-                    className={`cactiva-element-tag ${classes.hover} ${classes.selected}`}
+                    className={`cactiva-element-tag ${showElementTag === "always" ? "selected" : classes.hover} ${classes.selected}`}
                   >
                     <Text size={300} color={"white"}>
                       {name}

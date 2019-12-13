@@ -9,11 +9,11 @@ const styles = {
 };
 
 export default class extends CactivaTag {
-  static tagName = "CrudWrapper";
+  static tagName = "TableColumn";
   static from = "@src/libs";
   static structure = {
     kind: SyntaxKind.JsxElement,
-    name: "CrudWrapper",
+    name: "TableColumn",
     props: {},
     children: []
   };
@@ -22,13 +22,29 @@ export default class extends CactivaTag {
       name: "data",
       fields: [
         {
-          name: "Data",
-          path: "data",
-          kind: SyntaxKind.JsxExpression,
-        }
+          name: "Path",
+          path: "path",
+          kind: SyntaxKind.StringLiteral,
+          options: {
+            styles: styles
+          }
+        },
+        {
+          name: "Title",
+          path: "title",
+          kind: SyntaxKind.StringLiteral,
+          options: {
+            styles: styles
+          }
+        },
+        {
+          name: "Width",
+          path: "width",
+          kind: SyntaxKind.NumericLiteral,
+        },
       ]
     },
-    ...traitStyle(["Typography"])
+    ...traitStyle()
   ];
   static element = require("./element").default;
 }

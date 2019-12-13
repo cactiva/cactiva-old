@@ -15,7 +15,7 @@ export default class extends CactivaTag {
     kind: SyntaxKind.JsxElement,
     name: "CheckboxGroup",
     props: {
-      fieldType: { kind: SyntaxKind.StringLiteral, value: `"checkbox-group"` }
+      type: { kind: SyntaxKind.StringLiteral, value: `"checkbox-group"` }
     },
     children: []
   };

@@ -15,7 +15,7 @@ export default class extends CactivaTag {
     kind: SyntaxKind.JsxElement,
     name: "RadioGroup",
     props: {
-      fieldType: { kind: SyntaxKind.StringLiteral, value: `"radio-group"` }
+      type: { kind: SyntaxKind.StringLiteral, value: `"radio-group"` }
     },
     children: [
       {

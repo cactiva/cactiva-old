@@ -9,6 +9,8 @@ import { SyntaxKind } from "../syntaxkinds";
 import { isTag } from "../tagmatcher";
 import tags from "../tags";
 import { generateQueryObject } from "./genQueryObject";
+import { generateCrudTable, generateCrudForm } from "./genCrud";
+import api from "@src/libs/api";
 
 export const getIds = (id: string | string[]) => {
   if (Array.isArray(id)) return _.clone(id);
@@ -439,13 +441,46 @@ export async function createNewElement(componentName: string) {
   if (name === "custom-component") {
     name = await promptCustomComponent();
   } else if (name === 'generate-crud') {
-    const query = await generateQueryObject();
-    if (query) {
-      ;
-      // console.log(query.table, query.var);
+    // const query = await generateQueryObject();
+    // if (query) {
+    //   console.log(query.table, query.var);
+    // }
+    const query = {
+      var: `meta.list`,
+      table: JSON.parse(`{"name":"m_asset","fields":[{"name":"description"},{"name":"id"},{"name":"name"},{"name":"type"}],"where":[],"orderBy":[],"options":{}}`)
     }
-    const tag = tags['CrudWrapper'] as any;
-    return tag.structure;
+
+    if (editor.current) {
+      const res = await api.post("morph/parse-exp", {
+        value: `useEffect(() => { 
+  const resetCrud = () => {
+    ${query.var} = {
+      structure: ${JSON.stringify(query.table, null, 2)},
+      list: [],
+      form: {},
+      sorting: {},
+      paging: {},
+      filter: {}
+    }
+  }
+  resetCrud();
+}, [])`
+      });
+      editor.current.hooks.push(res);
+    }
+
+    const CrudWrapper = tags['CrudWrapper'] as any;
+    const struct = _.clone(CrudWrapper.structure);
+    struct.props.data = {
+      "kind": 271,
+      "value": {
+        "kind": 73,
+        "value": query.var
+      }
+    };
+    struct.children.push(generateCrudTable(query));
+    struct.children.push(generateCrudForm(query));
+    return struct;
   } else if (name === "expr") {
     const res = await promptExpression({
       title: "Please type the expression:",

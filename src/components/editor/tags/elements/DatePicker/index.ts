@@ -16,7 +16,7 @@ export default class extends CactivaTag {
     kind: SyntaxKind.JsxElement,
     name: "DatePicker",
     props: {
-      fieldType: {
+      type: {
         kind: SyntaxKind.StringLiteral,
         value: `"date"`
       }

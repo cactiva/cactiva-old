@@ -16,7 +16,7 @@ export default class extends CactivaTag {
     kind: SyntaxKind.JsxElement,
     name: "Camera",
     props: {
-      fieldType: {
+      type: {
         kind: SyntaxKind.StringLiteral,
         value: `"camera"`
       }

@@ -20,7 +20,7 @@ export default class extends CactivaTag {
         kind: SyntaxKind.StringLiteral,
         value: `"Input"`
       },
-      fieldType: {
+      type: {
         kind: SyntaxKind.StringLiteral,
         value: `"input"`
       },

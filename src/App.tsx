@@ -90,7 +90,6 @@ export default observer(() => {
   const traitPane = current ? current.traitPane : false;
 
   useAsyncEffect(loadProject, []);
-
   useEffect(() => {
     if (status === "failed") {
       editor.load("/src/Home.tsx");

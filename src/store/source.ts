@@ -21,7 +21,7 @@ export class SourceStore {
   @observable rootSource: string = "";
   @observable rootSourceTemp: string = "";
   @observable imports = {};
-  @observable hooks = [];
+  @observable hooks = [] as any[];
 
   @observable storeDefinitions: { object: any, text: string } = {
     object: {},

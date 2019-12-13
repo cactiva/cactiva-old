@@ -222,11 +222,19 @@ export const toolbar = [
   },
   {
     icon: "grid",
-    label: "SimpleTable"
+    label: "Table"
   },
   {
     icon: "drag-handle-horizontal",
-    label: "SimpleTableColumn"
+    label: "TableHead"
+  },
+  {
+    icon: "drag-handle-horizontal",
+    label: "TableRow"
+  },
+  {
+    icon: "drag-handle-vertical",
+    label: "TableColumn"
   },
   {
     icon: "circle",

@@ -50,8 +50,8 @@ export default () => {
             } else {
               meta.resolve(false);
             }
+            return;
           }
-          return;
         }
 
         const varname = meta.form.setVar ? `${meta.form.setVar} = ` : "";

@@ -25,25 +25,31 @@ export default observer((props: any) => {
   if (sid.length > 1) {
     sid.pop();
   }
-  const columnMode = _.trim(_.get(props, 'columnMode.value', 'auto'), `'"\``);
-
+  const path = _.trim(_.get(props, 'path.value', ''), '"`\'')
+  const title = _.trim(_.get(props, 'title.value', ''), '"`\'')
   return (
     <CactivaDropChild
       cactiva={cactiva}
       onDropOver={(value: boolean) => (meta.dropOver = value)}
     >
       <CactivaDraggable cactiva={cactiva}>
-        <div style={{ border: '1px solid orange' }}>
-          <CactivaSelectable cactiva={cactiva} style={{ ...style, flexDirection: 'column' }}>
-            <CactivaDropMarker
-              hover={meta.dropOver}
-              showAdd={showAddInParent(cactiva)}
-              direction={direction}
-              stretch={hasNoChildren}
-            />
-            <CactivaChildren cactiva={cactiva} parentInfo={parentInfo} />
-          </CactivaSelectable>
-        </div>
+        <CactivaSelectable showElementTag="always" cactiva={cactiva} style={style || { minWidth: 100, flexDirection: 'row' }}>
+          <div style={{
+            fontSize: 12,
+            minHeight: 15,
+            textAlign: "center",
+            marginTop: 10,
+          }}>
+            {title || path}
+          </div>
+          <CactivaDropMarker
+            hover={meta.dropOver}
+            showAdd={showAddInParent(cactiva)}
+            direction={direction}
+            stretch={hasNoChildren}
+          />
+          <CactivaChildren cactiva={cactiva} parentInfo={parentInfo} />
+        </CactivaSelectable>
       </CactivaDraggable>
     </CactivaDropChild>
   );
