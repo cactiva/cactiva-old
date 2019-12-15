@@ -25,7 +25,33 @@ export default class extends CactivaTag {
           name: "Data",
           path: "data",
           kind: SyntaxKind.JsxExpression,
-        }
+          options: {
+            styles
+          }
+        },
+        {
+          name: "Template",
+          path: "template",
+          kind: SyntaxKind.CallExpression,
+          options: {
+            styles
+          }
+        },
+        {
+          name: "ID Key",
+          path: "idKey",
+          default: 'id',
+          kind: SyntaxKind.StringLiteral,
+          options: {
+            styles: styles
+          }
+        },
+        {
+          name: "Item Per Page",
+          path: "itemPerPage",
+          default: 25,
+          kind: SyntaxKind.NumericLiteral,
+        },
       ]
     },
     ...traitStyle(["Typography"])

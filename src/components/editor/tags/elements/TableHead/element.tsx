@@ -13,7 +13,7 @@ export default observer((props: any) => {
   const cactiva = props._cactiva;
   const style = parseStyle(props.style, cactiva);
   const meta = useObservable({ dropOver: false });
-  const direction = _.get(style, "flexDirection", "column");
+  const direction = _.get(style, "flexDirection", "row");
   const hasNoChildren = _.get(cactiva.source, "children.length", 0) === 0;
   const parentInfo = (c: any) => ({
     isFirstChild: c.isFirstChild,

@@ -61,7 +61,7 @@ export default () => {
         const result = {
           source: ` ${varname} await queryAll(\`${query}\`, {
                    ${payload ? `variable: ${payload},` : ""}
-                   ${auth ? `auth: "${auth}",` : ""}
+                   ${auth ? `auth: ${auth === "login" ? "true" : "false"},` : ""}
                 });
             `,
           imports: {
@@ -108,7 +108,7 @@ export const promptHasura = (data?: {
   if (data) {
     _.set(meta, "form.query", data.query);
     _.set(meta, "form.payload", data.payload);
-    _.set(meta, "form.auth", data.auth);
+    _.set(meta, "form.auth", data.auth === true ? "login" : "guest");
     _.set(meta, "form.setVar", data.setVar);
   } else {
     meta.form = _.cloneDeep(form);

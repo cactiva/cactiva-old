@@ -9,6 +9,7 @@ export default forwardRef(
       onMouseOver,
       direction,
       style,
+      childStyle,
       stretch = false,
       showAdd = false,
       placement = "child"
@@ -51,7 +52,8 @@ export default forwardRef(
             alignItems: 'center',
             justifyContent: 'center',
             minHeight: '5px',
-            background: bg
+            background: bg,
+            ...childStyle
           }}
         >
           {!hover && showAdd && (

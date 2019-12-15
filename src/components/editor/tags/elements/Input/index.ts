@@ -22,12 +22,8 @@ export default class extends CactivaTag {
       },
       type: {
         kind: SyntaxKind.StringLiteral,
-        value: `"input"`
-      },
-      type: {
-        kind: SyntaxKind.StringLiteral,
         value: `"text"`
-      }
+      },
     },
     children: []
   };

@@ -25,8 +25,6 @@ export default observer((props: any) => {
   if (sid.length > 1) {
     sid.pop();
   }
-  const columnMode = _.trim(_.get(props, 'columnMode.value', 'auto'), `'"\``);
-
   return (
     <CactivaDropChild
       cactiva={cactiva}

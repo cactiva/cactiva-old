@@ -123,7 +123,6 @@ function textColor(bgColor: string, lightColor: string, darkColor: string) {
   return r * 0.299 + g * 0.587 + b * 0.114 > 186 ? darkColor : lightColor;
 }
 
-
 const ColorEl = observer((props: any) => {
   const { meta, trait } = props;
   const metaColor = useObservable({

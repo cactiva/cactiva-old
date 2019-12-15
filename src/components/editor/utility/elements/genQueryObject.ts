@@ -18,7 +18,7 @@ export const generateQueryObject = async () => {
 
     const root = _.get(struct, 'definitions.0.selectionSet.selections.0');
     const table = parseTable(root);
-    return { table, var: res.setVar }
+    return { table, var: res.setVar, auth: res.auth }
 }
 
 const parseTable = (table: any): ITable => {

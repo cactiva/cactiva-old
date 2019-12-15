@@ -9,7 +9,7 @@ import { SyntaxKind } from "../syntaxkinds";
 import { isTag } from "../tagmatcher";
 import tags from "../tags";
 import { generateQueryObject } from "./genQueryObject";
-import { generateCrudTable, generateCrudForm } from "./genCrud";
+import { generateCrudTable, generateCrudForm, generateCrudActions, generateCrudTitle } from "./genCrud";
 import api from "@src/libs/api";
 
 export const getIds = (id: string | string[]) => {
@@ -446,6 +446,7 @@ export async function createNewElement(componentName: string) {
     //   console.log(query.table, query.var);
     // }
     const query = {
+      auth: true,
       var: `meta.list`,
       table: JSON.parse(`{"name":"m_asset","fields":[{"name":"description"},{"name":"id"},{"name":"name"},{"name":"type"}],"where":[],"orderBy":[],"options":{}}`)
     }
@@ -456,6 +457,7 @@ export async function createNewElement(componentName: string) {
   const resetCrud = () => {
     ${query.var} = {
       structure: ${JSON.stringify(query.table, null, 2)},
+      auth: ${query.auth ? 'true' : 'false'},
       list: [],
       form: {},
       sorting: {},
@@ -478,6 +480,8 @@ export async function createNewElement(componentName: string) {
         "value": query.var
       }
     };
+    struct.children.push(generateCrudTitle(query));
+    struct.children.push(generateCrudActions(query));
     struct.children.push(generateCrudTable(query));
     struct.children.push(generateCrudForm(query));
     return struct;

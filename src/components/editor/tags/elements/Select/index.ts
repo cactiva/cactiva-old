@@ -20,10 +20,6 @@ export default class extends CactivaTag {
         kind: SyntaxKind.StringLiteral,
         value: `"Select"`
       },
-      type: {
-        kind: SyntaxKind.StringLiteral,
-        value: `"select"`
-      },
       items: {
         kind: SyntaxKind.ArrayLiteralExpression,
         value: [
