@@ -16,10 +16,6 @@ export default class extends CactivaTag {
     kind: SyntaxKind.JsxElement,
     name: "Input",
     props: {
-      placeholder: {
-        kind: SyntaxKind.StringLiteral,
-        value: `"Input"`
-      },
       type: {
         kind: SyntaxKind.StringLiteral,
         value: `"text"`
@@ -52,7 +48,6 @@ export default class extends CactivaTag {
           name: "Placeholder",
           path: "placeholder",
           kind: SyntaxKind.StringLiteral,
-          default: "TextInput",
           options: {
             styles: styles
           }

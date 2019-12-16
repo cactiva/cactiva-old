@@ -21,7 +21,7 @@ export const generateQueryObject = async () => {
     return { table, var: res.setVar, auth: res.auth }
 }
 
-const parseTable = (table: any): ITable => {
+export const parseTable = (table: any): ITable => {
     const name = _.get(table, 'name.value');
     const fields = _.get(table, 'selectionSet.selections', []).map(
         (e: any) => {

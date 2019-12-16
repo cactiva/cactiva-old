@@ -36,12 +36,16 @@ export default observer((props: any) => {
     >
       <CactivaDraggable cactiva={cactiva}>
         <CactivaSelectable showElementTag={false} cactiva={cactiva} style={style || { minWidth: 100 }}>
-          <div style={{
-            fontSize: 12,
-            minHeight: 15,
-            textAlign: "center",
-            marginTop: 10,
-          }}>
+          <div style={!hasNoChildren ? {
+            fontSize: 8,
+            margin: 0,
+            marginTop: 4,
+          } : {
+              fontSize: 12,
+              minHeight: 15,
+              textAlign: "center",
+              marginTop: 10,
+            }}>
             {title || (path && `<${path}>`)}
           </div>
           <CactivaDropMarker

@@ -16,9 +16,16 @@ import { promptHasura } from "../../traits/expression/Hasura";
 import { promptRestApi } from "../../traits/expression/RestApi";
 import ItemDraggable from "./ItemDraggable";
 import ItemDroppable from "./ItemDroppable";
+import gql from "graphql-tag";
+import { generateQueryString } from "@src/components/editor/utility/elements/genQueryString";
+import { generateQueryObject, parseTable } from "@src/components/editor/utility/elements/genQueryObject";
 
 const processHook = (item: any) => {
   let name = generateSource(item);
+  if (!name || !name.split) {
+    console.log(toJS(name), toJS(item));
+    return { name: '' }
+  }
   const namesplit = name.split('(')[0];
   if (namesplit.length < 25) {
     name = name.substr(0, 30) + '...';
@@ -162,6 +169,7 @@ const AddNew = observer(({ toggleRef, hooks, toggleFirst, title }: any) => {
               applyImportAndHook({
                 useAsyncEffect: { from: "use-async-effect", type: "default" }
               });
+              console.log(res, restapi.source)
               hooks.push(res);
             }
             toggle();
@@ -344,6 +352,35 @@ const HookItem = observer(
                   applyImportAndHook(parsed.imports);
                   _.set(item, gs.path, parsed.source)
                 }
+              } else if (name.indexOf('resetCrud') >= 0) {
+                let table: any = null as any;
+                const structObject = generateSource(_.get(item, 'value.0.value.body.0.value.right'));
+                const setVar = _.get(item, 'value.0.value.body.0.value.left.value');
+                eval(`table = (${structObject});`)
+                const query = generateQueryString(table.structure);
+                const restapi: any = await promptHasura({
+                  query,
+                  payload: '',
+                  auth: table.auth,
+                  setVar
+                }, {
+                  mustSetVar: true,
+                  returnQueryOnly: true
+                });
+
+                let struct = {} as any;
+                try {
+                  struct = gql`${restapi.query}`;
+                } catch (e) {
+                  console.log(e);
+                }
+                const root = _.get(struct, 'definitions.0.selectionSet.selections.0');
+                const parsed = parseTable(root);
+                const res = await api.post("morph/parse-exp", {
+                  value: `const e = ${JSON.stringify(parsed)}`
+                })
+                const newValue = _.get(res, 'value.0.value.value');
+                _.set(item, 'value.0.value.body.0.value.right.value.structure.value', newValue);
               } else if (hook.name.indexOf("Hasura GraphQL") >= 0) {
                 const gs = getSource(item);
                 if (gs) {

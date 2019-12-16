@@ -17,6 +17,10 @@ export const generateCrudTable = (query: { table: ITable, var: string }) => {
             kind: SyntaxKind.JsxElement,
             name: "TableColumn",
             props: {
+                path: {
+                    "kind": 10,
+                    "value": `"${f.name}"`
+                },
                 title: {
                     "kind": 10,
                     "value": `"${_.startCase(f.name)}"`

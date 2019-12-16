@@ -441,15 +441,15 @@ export async function createNewElement(componentName: string) {
   if (name === "custom-component") {
     name = await promptCustomComponent();
   } else if (name === 'generate-crud') {
-    // const query = await generateQueryObject();
-    // if (query) {
-    //   console.log(query.table, query.var);
-    // }
-    const query = {
-      auth: true,
-      var: `meta.list`,
-      table: JSON.parse(`{"name":"m_asset","fields":[{"name":"description"},{"name":"id"},{"name":"name"},{"name":"type"}],"where":[],"orderBy":[],"options":{}}`)
+    const query = await generateQueryObject();
+    if (!query) {
+      return;
     }
+    // const query = {
+    //   auth: true,
+    //   var: `meta.list`,
+    //   table: JSON.parse(`{"name":"m_asset","fields":[{"name":"description"},{"name":"id"},{"name":"name"},{"name":"type"}],"where":[],"orderBy":[],"options":{}}`)
+    // }
 
     if (editor.current) {
       const res = await api.post("morph/parse-exp", {
@@ -472,7 +472,7 @@ export async function createNewElement(componentName: string) {
     }
 
     const CrudWrapper = tags['CrudWrapper'] as any;
-    const struct = _.clone(CrudWrapper.structure);
+    const struct = _.cloneDeep(CrudWrapper.structure);
     struct.props.data = {
       "kind": 271,
       "value": {

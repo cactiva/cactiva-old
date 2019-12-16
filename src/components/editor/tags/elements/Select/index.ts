@@ -16,10 +16,6 @@ export default class extends CactivaTag {
     kind: SyntaxKind.JsxElement,
     name: "Select",
     props: {
-      placeholder: {
-        kind: SyntaxKind.StringLiteral,
-        value: `"Select"`
-      },
       items: {
         kind: SyntaxKind.ArrayLiteralExpression,
         value: [

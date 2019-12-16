@@ -161,6 +161,9 @@ const TraitFieldEl = observer((props: any) => {
     }
   };
   const updateValue = _.debounce((value: any, kind: any) => {
+    if (value === '"undefined"') {
+      return;
+    }
     prepareChanges(editor);
     if (trait.path.indexOf("children") === 0) {
       setProp(selected.source, trait.path, JSON.parse(value));
@@ -177,6 +180,7 @@ const TraitFieldEl = observer((props: any) => {
       if (!isempty) {
         const currentValue = _.get(selected.source.props, trait.path);
 
+
         let valueByKind = null;
         if (value.kind) valueByKind = value;
         else if (typeof value === "function") {
@@ -184,7 +188,6 @@ const TraitFieldEl = observer((props: any) => {
         } else {
           valueByKind = generateValueByKind(kind, value);
         }
-
         setProp(selected.source.props, trait.path, valueByKind);
       } else {
         const tpath = trait.path.split(".");
