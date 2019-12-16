@@ -24,5 +24,11 @@ export const getImports = (sf: SourceFile) => {
       result[imp.default] = { from: imp.from, type: "default" };
     }
   });
+
+  result['useAsyncEffect'] = {
+    from: 'use-async-effect',
+    type: 'default'
+  }
+
   return result;
 };

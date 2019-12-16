@@ -179,8 +179,6 @@ const TraitFieldEl = observer((props: any) => {
         (typeof value === "object" && Object.keys(value).length === 0);
       if (!isempty) {
         const currentValue = _.get(selected.source.props, trait.path);
-
-
         let valueByKind = null;
         if (value.kind) valueByKind = value;
         else if (typeof value === "function") {

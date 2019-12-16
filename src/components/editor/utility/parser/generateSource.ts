@@ -56,7 +56,7 @@ export const generateSource = (
           return `...${generateSource(e)}`;
         }
 
-        return `${key}: ${generateSource(e)}`;
+        return `"${key}": ${generateSource(e)}`;
       }).join(`,\n\t`)}
 }`;
 
