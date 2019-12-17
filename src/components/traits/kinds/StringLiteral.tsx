@@ -122,6 +122,11 @@ function textColor(bgColor: string, lightColor: string, darkColor: string) {
   var b = parseInt(color.substring(4, 6), 16); // hexToB
   return r * 0.299 + g * 0.587 + b * 0.114 > 186 ? darkColor : lightColor;
 }
+function isColor(strColor: string) {
+  var s = new Option().style;
+  s.color = strColor;
+  return s.color;
+}
 
 const ColorEl = observer((props: any) => {
   const { meta, trait } = props;
@@ -141,8 +146,8 @@ const ColorEl = observer((props: any) => {
       trait.update(`"${metaColor.value}"`);
   };
   let bg = metaColor.value;
-  let fg = textColor(metaColor.value || '#fff', "#fff", "#000")
-  if (fg === bg || (bg || '').indexOf('#') !== 0) {
+  let fg = textColor(metaColor.value || '#000', "#fff", "#000")
+  if (fg === bg || (bg || '').indexOf('#') !== 0 || !isColor(metaColor.value)) {
     bg = '#fff';
     fg = '#000';
   }

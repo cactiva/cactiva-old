@@ -4365,7 +4365,7 @@ eventsource@^1.0.7:
   dependencies:
     original "^1.0.0"
 
-evergreen-ui@^4.19.1:
+evergreen-ui@^4.21.5:
   version "4.21.5"
   resolved "https://registry.yarnpkg.com/evergreen-ui/-/evergreen-ui-4.21.5.tgz#6033d29788d0f8a789a0cb53ece896d608e932ef"
   integrity sha512-rJClpJnvpF4ugXLzFIiRjqGJG09OFs4qOo7w0E+MfjNYISy/uEC0KxWSa+3246/74XVWqaw6FlvnD8E/l9pd+w==

@@ -306,17 +306,25 @@ const RenderHookItem = observer(({ rawItem, index, hooks, toggleRef }: any) => {
 });
 
 const getSource = (item: any) => {
-  let source = generateSource(
-    _.get(item, "value.value", '')
-  );
-  if (source) {
-    return { source, path: "value.value" }
+  let source = '';
+  const value = _.get(item, "value.value", '');
+  const body = _.get(item, "arguments.0.body.0", '');
+  if (value) {
+    generateSource(value);
+    if (source) {
+      return { source, path: "value.value" }
+    }
   }
-  source = generateSource(
-    _.get(item, "arguments.0.body.0", '')
-  );
-  if (source) {
-    return { source, path: "arguments.0.body.0" }
+  else if (body) {
+    source = generateSource(body);
+    if (source) {
+      return { source, path: "arguments.0.body.0" }
+    }
+  } else {
+    source = generateSource(item);
+    if (source) {
+      return { source, path: '' }
+    }
   }
   return false;
 }
@@ -344,6 +352,7 @@ const HookItem = observer(
             onClick={async () => {
               const toggle = toggleRef.current;
               toggle();
+
 
               if (hook.name.indexOf("Rest API") >= 0) {
                 const gs = getSource(item);
@@ -383,6 +392,8 @@ const HookItem = observer(
                 _.set(item, 'value.0.value.body.0.value.right.value.structure.value', newValue);
               } else if (hook.name.indexOf("Hasura GraphQL") >= 0) {
                 const gs = getSource(item);
+                console.log(toJS(item));
+
                 if (gs) {
                   const parsed = await EditHasuraLine(gs.source);
                   applyImportAndHook(parsed.imports);

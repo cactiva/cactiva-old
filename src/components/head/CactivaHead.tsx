@@ -159,6 +159,17 @@ export default observer(({ editor }: any) => {
           </Text>
           <CactivaHooks />
         </div>
+        <Tooltip content="Save" position={"bottom"}>
+          <Button
+            style={{ position: 'absolute', right: -30 }}
+            className="btn"
+            onClick={() => {
+              editor.current.save();
+            }}
+          >
+            <Icon icon="floppy-disk" size={12} />
+          </Button>
+        </Tooltip>
       </div>
       <div className="right">
         <Tooltip content="Undo" position={"bottom"}>

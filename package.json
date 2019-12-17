@@ -14,7 +14,7 @@
     "@webscopeio/react-textarea-autocomplete": "^4.6.2",
     "axios": "^0.19.0",
     "craco-babel-loader": "^0.1.4",
-    "evergreen-ui": "^4.19.1",
+    "evergreen-ui": "^4.21.5",
     "execa": "^2.0.4",
     "express-ws": "^4.0.0",
     "fs-jetpack": "^2.2.2",
