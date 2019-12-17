@@ -526,7 +526,7 @@ const TreeItem = observer(({ name, e, selected, editor, level, el }: any) => {
         path.push(newname.replace(/[^0-9a-zA-Z]/g, ""));
         editor.status = "creating";
         try {
-          await api.get(`ctree/newdir?path=${path.join("/")}}`);
+          await api.get(`ctree/newdir?path=${path.join("/")}`);
         } catch (e) {
           console.log(e);
         }
