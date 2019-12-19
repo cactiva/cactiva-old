@@ -28,6 +28,7 @@ const meta = observable({
   resolve: null as any,
   queryOnly: false,
   mustSetVar: false,
+  setVarList: [] as string[],
   disable: [] as string[]
 });
 export default () => {
@@ -101,6 +102,7 @@ export const promptHasura = (data?: {
 }, options?: {
   disable?: string[],
   returnQueryOnly?: boolean,
+  setVarList?: string[],
   mustSetVar?: boolean
 }) => {
   editor.modals.hasura = true;
@@ -118,6 +120,7 @@ export const promptHasura = (data?: {
     meta.disable = options.disable || [];
     meta.queryOnly = !!options.returnQueryOnly;
     meta.mustSetVar = !!options.mustSetVar;
+    meta.setVarList = _.get(options, 'setVarList', []);
   }
 
   return new Promise(resolve => {
@@ -149,6 +152,7 @@ const graphQLFetcher = async (params: any) => {
 
   return res.data;
 };
+
 
 const HasuraForm = observer(({ form, gref }: any) => {
   return (
@@ -201,22 +205,32 @@ const HasuraForm = observer(({ form, gref }: any) => {
                 label="Explorer"
                 title="Show Explorer"
               />
-              {meta.disable.indexOf('setVar') < 0 && <GraphiQL.Button
-                onClick={async () => {
-                  const res = await promptExpression({
-                    value: form.setVar,
-                    local: true
-                  });
-                  form.setVar = res.expression;
-                  form.imports = res.imports;
-                }}
-                title={`Set Result To: ${
-                  form.setVar === "" ? "[Empty Variable]" : form.setVar
-                  }`}
-                label={`Set Result To: ${
-                  form.setVar === "" ? "[Empty Variable]" : form.setVar
-                  }`}
-              />}
+              {meta.disable.indexOf('setVar') < 0 && meta.setVarList.length > 0 ?
+                <GraphiQL.Select>
+                  {meta.setVarList.map((vitem: any, key: number) => <GraphiQL.SelectOption
+                    label={vitem}
+                    key={key}
+                    selected={meta.form.setVar == vitem}
+                    onSelect={(e: any) => {
+                      meta.form.setVar = vitem;
+                    }}
+                  />)}
+                </GraphiQL.Select> : <GraphiQL.Button
+                  onClick={async () => {
+                    const res = await promptExpression({
+                      value: form.setVar,
+                      local: true
+                    });
+                    form.setVar = res.expression;
+                    form.imports = res.imports;
+                  }}
+                  title={`Set Result To: ${
+                    form.setVar === "" ? "[Empty Variable]" : form.setVar
+                    }`}
+                  label={`Set Result To: ${
+                    form.setVar === "" ? "[Empty Variable]" : form.setVar
+                    }`}
+                />}
               <GraphiQL.Select>
                 <GraphiQL.SelectOption
                   label={"Auth: Logged In"}

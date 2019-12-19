@@ -3,11 +3,18 @@ import gql from "graphql-tag";
 import _ from 'lodash';
 import { ITable, ITableWhere, ITableOrderBy } from "./genQueryString";
 
-export const generateQueryObject = async () => {
-    const res: any = await promptHasura(undefined, {
-        mustSetVar: true,
-        returnQueryOnly: true
-    })
+export const generateQueryObject = async (input?: any) => {
+    let res: any = null;
+
+    if (!input) {
+        res = await promptHasura(undefined, {
+            mustSetVar: true,
+            returnQueryOnly: true
+        })
+    } else {
+        res = input;
+    }
+
     let struct = {} as any;
     try {
         struct = gql`${res.query}`;

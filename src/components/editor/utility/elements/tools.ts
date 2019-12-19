@@ -440,16 +440,14 @@ export async function createNewElement(componentName: string) {
 
   if (name === "custom-component") {
     name = await promptCustomComponent();
+  } else if (name === 'generate-sub-crud') {
+    console.log()
+    return;
   } else if (name === 'generate-crud') {
     const query = await generateQueryObject();
     if (!query) {
       return;
     }
-    // const query = {
-    //   auth: true,
-    //   var: `meta.list`,
-    //   table: JSON.parse(`{"name":"m_asset","fields":[{"name":"description"},{"name":"id"},{"name":"name"},{"name":"type"}],"where":[],"orderBy":[],"options":{}}`)
-    // }
 
     if (editor.current) {
       const res = await api.post("morph/parse-exp", {

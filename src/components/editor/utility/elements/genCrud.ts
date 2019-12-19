@@ -2,6 +2,7 @@ import _ from "lodash";
 import { SyntaxKind } from "../syntaxkinds";
 import tags from "../tags";
 import { ITable } from "./genQueryString";
+import { toJS } from "mobx";
 
 export const generateCrudTable = (query: { table: ITable, var: string }) => {
     const Table = tags['Table'] as any;
@@ -13,6 +14,7 @@ export const generateCrudTable = (query: { table: ITable, var: string }) => {
     const columnsHead: any[] = []
     const columnsRow: any[] = []
     _.map(query.table.fields, (f) => {
+        if (f.name === 'id') return;
         columnsHead.push({
             kind: SyntaxKind.JsxElement,
             name: "TableColumn",
@@ -45,7 +47,7 @@ export const generateCrudTable = (query: { table: ITable, var: string }) => {
     return struct;
 }
 
-export const generateCrudForm = (query: { table: ITable, var: string }) => {
+export const generateCrudForm = (query: { table: ITable, var: string }, params?: string[]) => {
     const Form = tags['Form'] as any;
     const struct = _.cloneDeep(Form.structure);
     struct.props.data = {
@@ -55,6 +57,7 @@ export const generateCrudForm = (query: { table: ITable, var: string }) => {
             "value": query.var
         }
     };
+
     const fields: any[] = [];
     _.map(query.table.fields, (f) => {
         fields.push({
@@ -73,13 +76,18 @@ export const generateCrudForm = (query: { table: ITable, var: string }) => {
             children: [_.cloneDeep((tags['Input'] as any).structure)]
         })
     })
-    _.set(struct, "children", fields);
+
+    _.set(struct, "children", fields.filter(e => {
+        if (e.props.path.value === '"id"') return false;
+        return true;
+    }));
     return {
         "kind": 271,
         "value": {
             "kind": 198,
             "params": [
-                "mode: \"create\" | \"update\" | \"filter\""
+                "mode: \"create\" | \"update\" | \"filter\"",
+                ...(params || [])
             ],
             "body": [
                 {

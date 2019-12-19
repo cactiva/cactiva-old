@@ -52,7 +52,7 @@ export default class extends CactivaTag {
         {
           name: "Text Path",
           path: "textPath",
-          kind: SyntaxKind.JsxExpression,
+          kind: SyntaxKind.CallExpression,
           default: 'text',
           options: {
             styles: styles
@@ -62,7 +62,7 @@ export default class extends CactivaTag {
           name: "Value Path",
           path: "valuePath",
           default: 'value',
-          kind: SyntaxKind.JsxExpression,
+          kind: SyntaxKind.CallExpression,
           options: {
             styles: styles
           }

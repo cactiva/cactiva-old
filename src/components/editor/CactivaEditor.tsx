@@ -1,3 +1,5 @@
+import { parseValue } from '@src/components/editor/utility/parser/parser';
+import api from '@src/libs/api';
 import { default as ed, default as rootEditor } from "@src/store/editor";
 import { Dialog, Icon, Text } from "evergreen-ui";
 import _ from "lodash";
@@ -6,7 +8,7 @@ import React, { useEffect, useRef } from "react";
 import MonacoEditor from "react-monaco-editor";
 import Split from "react-split";
 import CactivaExpressionDialog from "../traits/expression/ExpressionSinglePopup";
-import Hasura from "../traits/expression/Hasura";
+import Hasura, { promptHasura } from "../traits/expression/Hasura";
 import RestApi from "../traits/expression/RestApi";
 import CactivaBreadcrumb from "./CactivaBreadcrumb";
 import CactivaComponentChooser, { toolbar } from "./CactivaComponentChooser";
@@ -14,10 +16,12 @@ import CactivaCustomComponent from "./CactivaCustomComponent";
 import "./editor.scss";
 import "./tags/elements/elements.scss";
 import "./tags/kinds/kinds.scss";
-import { addChildInId, commitChanges, createNewElement, getParentId, insertAfterElementId, prepareChanges, wrapInElementId } from "./utility/elements/tools";
+import { generateCrudForm, generateCrudTable } from './utility/elements/genCrud';
+import { generateQueryObject } from './utility/elements/genQueryObject';
+import { addChildInId, commitChanges, createNewElement, findParentElementById, getParentId, insertAfterElementId, prepareChanges, wrapInElementId } from "./utility/elements/tools";
 import { renderChildren } from "./utility/renderchild";
+import { SyntaxKind } from "./utility/syntaxkinds";
 import tags from "./utility/tags";
-
 export default observer(({ editor }: any) => {
   const meta = useObservable({
     onDrag: false,
@@ -367,7 +371,15 @@ const CactivaEditorAddComponent = observer((props: any) => {
     title = compInfo.status === "add" ? "Add Component" : "Wrap in Component";
   }
   const addHandle = async (value: any) => {
-    let newEl = await createNewElement(value);
+    let newEl = null;
+
+
+    if (value === 'generate-sub-crud') {
+      newEl = await addSubCrudHandle(gparent, props, editor);
+    } else {
+      newEl = await createNewElement(value);
+    }
+
     if (newEl) {
       prepareChanges(editor);
       if (compInfo.placement === "after") {
@@ -400,6 +412,9 @@ const CactivaEditorAddComponent = observer((props: any) => {
     meta.toolbar = filterToolbar();
   }, []);
 
+
+  const [disabledCustomItems, gparent] = generateDisabledCustomItems(props);
+
   return (
     <Dialog
       isShown={true}
@@ -413,7 +428,7 @@ const CactivaEditorAddComponent = observer((props: any) => {
       <CactivaComponentChooser
         title={title}
         icon={icon}
-        disableCustomItems={status === "add" ? [] : ['generate']}
+        disableCustomItems={Object.keys(disabledCustomItems)}
         items={status === "add" ? [] : meta.toolbar}
         onSelect={(value: any) => {
           if (status === "add") {
@@ -435,3 +450,101 @@ export const showAddInParent = (cactiva: any) => {
     return cactiva.source.id;
   }
 };
+
+
+const generateDisabledCustomItems = (props: any) => {
+  const disableCustomItems = {
+    'generate': true,
+    'generate-sub-crud': true
+  }
+  const parent = findParentElementById(props.editor.source, props.editor.selectedId);
+  let gparent: any = null;
+  if (parent && parent.name === 'Form') {
+    gparent = findParentElementById(props.editor.source, parent.id);
+    if (gparent && gparent.kind === SyntaxKind.JsxExpression) {
+      if (status === 'add') {
+        delete disableCustomItems['generate-sub-crud'];
+      }
+    }
+  }
+  if (status === 'add') {
+    delete disableCustomItems['generate'];
+  }
+  return [Object.keys(disableCustomItems), gparent];
+}
+
+const addSubCrudHandle = async (gparent: any, props: any, editor: any) => {
+  if (gparent) {
+    const crudWrapper = findParentElementById(props.editor.source, gparent.id);
+    const setVar = _.get(crudWrapper, 'props.data.value');
+    if (setVar) {
+      let table: any = null;
+      editor.hooks.map((e: any) => {
+        if (e.kind === 222) {
+          if (_.get(e, 'value.expression') === 'useEffect') {
+            const arg0 = _.get(e, 'value.arguments.0.body.0.value.0.value.body.0.value');
+            if (arg0) {
+              if (_.get(arg0, 'left.value') === setVar) {
+                table = parseValue(_.get(arg0, 'right'));
+              }
+            }
+          }
+        }
+      })
+      const res: any = await promptHasura({ query: '', payload: '', auth: true, setVar: '' }, {
+        mustSetVar: true,
+        returnQueryOnly: true,
+        setVarList: ['Set Result To: - Empty -', ..._.get(table, 'structure.fields', []).map((e: any) => JSON.parse(e.value.name.value))]
+      });
+      const query = await generateQueryObject(res);
+      if (query) {
+        const field = _.cloneDeep((tags['Field'] as any).structure);
+        field.props = {
+          "label": {
+            "kind": 10,
+            "value": `"${_.startCase(res.setVar)}"`
+          },
+          "path": {
+            "kind": 10,
+            "value": `"${res.setVar}"`
+          }
+        }
+
+        const struct = _.cloneDeep((tags['SubCrudWrapper'] as any).structure);
+        struct.props.data = {
+          "kind": 271,
+          "value": "data"
+        };
+        const r = await api.post("morph/parse-exp", {
+          value: ` const r = ${JSON.stringify(query)}`
+        });
+        struct.props.structure = _.get(r, 'value.0.value');
+
+        struct.children.push(generateCrudTable(query));
+        struct.children.push(generateCrudForm({ ...query, var: 'row' }, ['row:any']));
+        field.children = [
+          {
+            "kind": 271,
+            "value": {
+              "kind": 198,
+              "params": [
+                "data"
+              ],
+              "body": [
+                {
+                  "kind": 231,
+                  "value": {
+                    "kind": 196,
+                    "value": struct
+                  }
+                }
+              ]
+            }
+          }
+        ];
+        return field;
+      }
+      return null;
+    }
+  }
+}

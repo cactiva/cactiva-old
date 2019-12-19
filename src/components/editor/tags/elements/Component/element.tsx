@@ -29,7 +29,6 @@ export default observer((props: any) => {
     }
   };
   const parentInfo = (c: any) => ({
-    
     isLastChild: c.isLastChild,
     afterDirection: direction
   });
