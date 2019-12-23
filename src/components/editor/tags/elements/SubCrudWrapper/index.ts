@@ -30,11 +30,19 @@ export default class extends CactivaTag {
           }
         },
         {
-          name: "Template",
-          path: "template",
-          kind: SyntaxKind.CallExpression,
+          name: "On Change",
+          path: "onChange",
+          kind: SyntaxKind.ArrowFunction,
           options: {
             styles
+          }
+        },
+        {
+          name: "Foreign Key",
+          path: "foreignKey",
+          kind: SyntaxKind.StringLiteral,
+          options: {
+            styles: styles
           }
         },
         {

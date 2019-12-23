@@ -9,31 +9,13 @@ const styles = {
 };
 
 export default class extends CactivaTag {
-  static tagName = "Select";
+  static tagName = "DateTime";
   static from = "@src/libs";
   static insertTo = "";
   static structure = {
     kind: SyntaxKind.JsxElement,
-    name: "Select",
+    name: "DateTime",
     props: {
-      items: {
-        kind: SyntaxKind.ArrayLiteralExpression,
-        value: [
-          {
-            kind: SyntaxKind.ObjectLiteralExpression,
-            value: {
-              text: {
-                kind: SyntaxKind.StringLiteral,
-                value: `"option"`
-              },
-              value: {
-                kind: SyntaxKind.StringLiteral,
-                value: `"option"`
-              }
-            }
-          }
-        ]
-      }
     },
     children: []
   };
@@ -41,39 +23,6 @@ export default class extends CactivaTag {
     {
       name: "attributes",
       fields: [
-        {
-          name: "Items",
-          path: "items",
-          kind: SyntaxKind.JsxExpression,
-          options: {
-            styles: styles
-          }
-        },
-        {
-          name: "Label Path",
-          path: "labelPath",
-          kind: SyntaxKind.CallExpression,
-          options: {
-            styles: styles
-          }
-        },
-        {
-          name: "Value Path",
-          path: "valuePath",
-          kind: SyntaxKind.CallExpression,
-          options: {
-            styles: styles
-          }
-        },
-        {
-          name: "Placeholder",
-          path: "placeholder",
-          kind: SyntaxKind.StringLiteral,
-          default: "TextInput",
-          options: {
-            styles: styles
-          }
-        },
         {
           name: "Value",
           path: "value",

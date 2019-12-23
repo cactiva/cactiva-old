@@ -10,7 +10,7 @@ import CactivaSelectable from "../../../CactivaSelectable";
 import { parseStyle, parseProps } from "../../../utility/parser/parser";
 import { Icon } from "evergreen-ui";
 
-export default observer((props: any) => {
+export default observer((props: any) => { 
   const cactiva = props._cactiva;
   const style = parseStyle(props.style, cactiva);
   const tagProps = parseProps(props);
@@ -50,15 +50,14 @@ export default observer((props: any) => {
             )}
             <div className="title">
               {
+                tagProps.title &&
                 ({
                   string: tagProps.title,
                   object: tagProps.title.kind ? (
                     <CactivaChildren
                       cactiva={{ ...cactiva, source: tagProps.title }}
                     />
-                  ) : (
-                    ""
-                  )
+                  ) : ("")
                 } as any)[typeof tagProps.title]
               }
             </div>

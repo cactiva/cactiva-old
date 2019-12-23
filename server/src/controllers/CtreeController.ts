@@ -26,7 +26,7 @@ export class CtreeController {
       "./stores",
       "./api",
       "./.DS_",
-      "./components.ts",
+      "./components.ts", 
       "./fonts.ts",
       "./theme.json"
     ];

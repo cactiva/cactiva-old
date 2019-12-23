@@ -173,6 +173,10 @@ export const toolbar = [
     label: "TimePicker"
   },
   {
+    icon: "heat-grid",
+    label: "DateTime"
+  },
+  {
     icon: "tick",
     label: "Checkbox"
   },
