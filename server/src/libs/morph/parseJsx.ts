@@ -78,6 +78,7 @@ export const parseJsx = (node: any, showKindName: boolean = false): any => {
           const name = p.name.escapedText || p.name.text;
           result.push({
             name,
+            kind: p.kind,
             flags: node.declarationList.flags - node.flags,
             value: parseJsx(p.initializer, showKindName)
           });
