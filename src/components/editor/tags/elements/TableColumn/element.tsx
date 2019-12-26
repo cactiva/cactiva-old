@@ -13,7 +13,7 @@ import { generateSource } from "@src/components/editor/utility/parser/generateSo
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  const style = parseStyle(props.style, cactiva);
+  const style = parseStyle(cactiva.source.props.style, cactiva);
   const meta = useObservable({ dropOver: false });
   const direction = _.get(style, "flexDirection", "column");
   const hasNoChildren = _.get(cactiva.source, "children.length", 0) === 0;

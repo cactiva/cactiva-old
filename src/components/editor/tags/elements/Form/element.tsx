@@ -11,8 +11,8 @@ import { parseStyle, parseProps } from "../../../utility/parser/parser";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  const style = parseStyle(props.style, cactiva);
-  const tagProps = parseProps(props);
+  const style = parseStyle(cactiva.source.props.style, cactiva);
+  const tagProps = parseProps(cactiva.source.props);
   const meta = useObservable({ dropOver: false });
   const direction = _.get(style, "flexDirection", "column");
   const hasNoChildren = _.get(cactiva.source, "children.length", 0) === 0;

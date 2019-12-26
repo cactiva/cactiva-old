@@ -30,5 +30,10 @@ export const getImports = (sf: SourceFile) => {
     type: 'default'
   }
 
+  result['View'] = {
+    from: '@src/libs',
+    type: 'named'
+  }
+
   return result;
 };

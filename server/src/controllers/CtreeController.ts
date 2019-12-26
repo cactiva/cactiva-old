@@ -81,7 +81,7 @@ export class CtreeController {
     export default observer(() => {
       const dim = useDimensions().window;
       const nav = useNavigation();
-      const meta = useObservable({});
+      const meta = useObservable({}) as any;
 
       return <View></View>;
     });`,

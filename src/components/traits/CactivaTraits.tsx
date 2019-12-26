@@ -19,6 +19,7 @@ import tags from "../editor/utility/tags";
 import CactivaTraitField from "./CactivaTraitField";
 import "./traits.scss";
 import { default as ed } from "@src/store/editor";
+import { toJS } from "mobx";
 
 export default observer(({ editor }: any) => {
   const traits = _.get(editor, "selected.tag.traits", []) as ICactivaTrait[];
@@ -164,6 +165,7 @@ const TraitFieldEl = observer((props: any) => {
     if (value === '"undefined"') {
       return;
     }
+
     prepareChanges(editor);
     if (trait.path.indexOf("children") === 0) {
       setProp(selected.source, trait.path, JSON.parse(value));
@@ -186,6 +188,7 @@ const TraitFieldEl = observer((props: any) => {
         } else {
           valueByKind = generateValueByKind(kind, value);
         }
+ 
         setProp(selected.source.props, trait.path, valueByKind);
       } else {
         const tpath = trait.path.split(".");

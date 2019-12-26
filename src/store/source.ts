@@ -1,15 +1,10 @@
-import {
-  commitChanges,
-  prepareChanges,
-  replaceElementById
-} from "@src/components/editor/utility/elements/tools";
+import { commitChanges, prepareChanges, replaceElementById } from "@src/components/editor/utility/elements/tools";
 import { generateSource } from "@src/components/editor/utility/parser/generateSource";
 import api from "@src/libs/api";
 import _ from "lodash";
 import { computed, observable, toJS } from "mobx";
 import typescript from "prettier/parser-typescript";
 import prettier from "prettier/standalone";
-import editor from "./editor";
 
 export class SourceStore {
   project = null as any;

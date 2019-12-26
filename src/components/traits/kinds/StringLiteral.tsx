@@ -52,12 +52,10 @@ export default observer((trait: ICactivaTraitFieldProps) => {
             value={meta.value || ""}
             onChange={(e: any) => {
               meta.value = e.target.value;
+              trait.update(`"${meta.value}"`);
             }}
             onFocus={(e: any) => {
               e.target.select();
-            }}
-            onBlur={() => {
-              trait.update(`"${meta.value}"`);
             }}
           />
         </div>

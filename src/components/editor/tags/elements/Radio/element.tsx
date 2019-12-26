@@ -17,7 +17,7 @@ import CactivaSelectable from "../../../CactivaSelectable";
 export default observer((props: any) => {
   const cactiva = props._cactiva;
   const style = parseValue(props.style);
-  const tagProps = parseProps(props);
+  const tagProps = parseProps(cactiva.source.props);
   const meta = useObservable({ dropOver: false });
   const body: any = _.get(cactiva.source, "props.text", {});
   const onDoubleClick = (e: any) => {

@@ -9,7 +9,7 @@ import CactivaSelectable from "../../../CactivaSelectable";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  const style = parseStyle(props.style, cactiva);
+  const style = parseStyle(cactiva.source.props.style, cactiva);
   const meta = useObservable({ dropOver: false });
   const body: any = _.get(cactiva.source, "props.renderItem.body", []);
 

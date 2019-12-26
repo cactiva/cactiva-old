@@ -97,7 +97,7 @@ export default () => {
 export const promptHasura = (data?: {
   query: string;
   payload: string;
-  auth: any;
+  auth: boolean;
   setVar: string;
 }, options?: {
   disable?: string[],

@@ -55,6 +55,7 @@ export default observer(() => {
               className="small-btn"
               style={{ marginRight: 0, padding: "0px 5px" }}
               onClick={async () => {
+                meta.edit = true;
               }}
             />
             <Button
@@ -64,7 +65,7 @@ export default observer(() => {
                 editor.name = "";
               }}
             >
-              Switch {meta.tabIndex}
+              Switch
             </Button>
             {editor.previewUrl !== "" && (
               <Button

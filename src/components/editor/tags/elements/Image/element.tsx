@@ -19,7 +19,7 @@ export default observer((props: any) => {
     source: ""
   });
   const cactiva = props._cactiva;
-  const tagProps = parseProps(props);
+  const tagProps = parseProps(cactiva.source.props);
 
   useEffect(() => {
     let sourceImg = "";

@@ -12,7 +12,7 @@ import { parseProps, parseStyle } from "../../../utility/parser/parser";
 
 export default observer((props: any) => {
   const cactiva = props._cactiva;
-  const style = parseStyle(props.style, cactiva);
+  const style = parseStyle(cactiva.source.props.style, cactiva);
   const meta = useObservable({
     dropOver: false,
     edited: false,
@@ -20,7 +20,7 @@ export default observer((props: any) => {
     bg: ""
   });
 
-  const tagProps = parseProps(props);
+  const tagProps = parseProps(cactiva.source.props);
 
   useEffect(() => {
     let sourceImg = "";
