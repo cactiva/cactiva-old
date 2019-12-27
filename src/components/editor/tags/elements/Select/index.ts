@@ -99,8 +99,8 @@ export default class extends CactivaTag {
           }
         },
         {
-          name: "On Change",
-          path: "onChange",
+          name: "On Select",
+          path: "onSelect",
           kind: SyntaxKind.ArrowFunction,
           options: {
             styles: styles
