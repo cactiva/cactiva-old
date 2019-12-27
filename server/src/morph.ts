@@ -190,13 +190,17 @@ export class Morph {
     if (sf) {
       sf.forEachChild((child: any) => {
         if (child.getKindName() === "ExportAssignment") {
-          const flatten = (obj: any[], prev = "") => {
+          const flatten = (obj: any[]) => {
             const res: any[] = [];
             obj.forEach((e: any) => {
-              res.push({ ...e, name: prev + e.name, children: null });
+              if (e.type === 'file') {
+                res.push({ ...e, children: null });
+              }
               if (e.children) {
-                flatten(e.children, prev + e.name + "/").map(f => {
-                  res.push(f);
+                flatten(e.children).map(f => {
+                  if (f.type === 'file') {
+                    res.push(f);
+                  }
                 })
               }
             });
@@ -206,10 +210,11 @@ export class Morph {
           const components: string[] = flatten(tree.children);
           child.getExpression().replaceWithText(`{
 \t${components.map((e: any) => {
-            return `"${e.name}":require("./${e.name}").default`;
+            const path = e.relativePath.replace(".tsx", "");
+            return `"${path.substr(2, e.relativePath.length - 2)}":require("${path}").default`;
           }).join(',\n\t')}
  }`);
-        }
+        } 
       });
 
       await sf.save()

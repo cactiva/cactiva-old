@@ -16,6 +16,13 @@ export class ProjectController {
   deleting: string[] = [];
   creating: string[] = [];
 
+  @Get("refresh-comps")
+  private async duplicate(req: Request, res: Response) {
+    const morph = Morph.getInstance(req.query.project);
+    await morph.reloadComponentDefinitions();
+    res.send({ status: "ok" });
+  }
+  
   @Get("list")
   private list(req: Request, res: Response) {
     res.status(200).json({

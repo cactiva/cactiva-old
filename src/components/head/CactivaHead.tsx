@@ -17,6 +17,7 @@ import CactivaProject from "./project/CactivaProject";
 import CactivaStoreEditor from "./store/CactivaStoreEditor";
 import CactivaHooks from "./hooks/CactivaHooks";
 import { shortcutKeyHandler } from "@src/App";
+import api from "@src/libs/api";
 
 export default observer(({ editor }: any) => {
   const current = editor.current;
@@ -98,6 +99,16 @@ export default observer(({ editor }: any) => {
             className={`btn`}
             onClick={() => {
               editor.modals.store = true;
+            }}
+          />
+        </Tooltip>
+        <Tooltip content="Refresh Component Defintions" position={"bottom"}>
+          <IconButton
+            icon="refresh"
+            iconSize={10}
+            className={`btn`}
+            onClick={() => {
+              api.get('project/refresh-comps');
             }}
           />
         </Tooltip>
