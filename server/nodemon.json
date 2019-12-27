@@ -6,5 +6,5 @@
         "server/**/*.yaml"
     ],
     "ignore": [],
-    "exec": "node --inspect --require ./tshook.js ./src/start.ts"
+    "exec": "node  --require ./tshook.js ./src/start.ts"
 }

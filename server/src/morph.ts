@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import * as path from "path";
 import * as fs from "fs";
-import { ImportDeclarationStructure, Project as TProject, SourceFile, SyntaxKind, StructureKind } from "ts-morph";
+import { ImportDeclarationStructure, Project as TProject, SourceFile, SyntaxKind, StructureKind, Node, ObjectLiteralExpression } from "ts-morph";
 import { execPath } from "./config";
 import { cleanHooks } from "./libs/morph/cleanHooks";
 import { defaultExport, defaultExportShallow } from "./libs/morph/defaultExport";
@@ -158,6 +158,64 @@ export class Morph {
     dp.setBodyText(`\n${hookSource}\n\n` + _.trim(de.getText().trim(), "{}"));
   }
 
+  public getTree() {
+    const tree: any = jetpack.inspectTree(
+      path.join(this.getAppPath(), "src"),
+      {
+        relativePath: true
+      }
+    );
+
+    const exclude = [
+      "./assets",
+      "./libs",
+      "./config",
+      "./stores",
+      "./api",
+      "./.DS_",
+      "./components.ts",
+      "./fonts.ts",
+      "./theme.json"
+    ];
+    tree.children = tree.children.filter((e: any) => {
+      for (let ex of exclude) {
+        if (e.relativePath.indexOf(ex) === 0) return false;
+      }
+      return true;
+    });
+    return tree;
+  }
+  public async reloadComponentDefinitions() {
+    const sf = this.getSourceFile("/src/components.ts");
+    if (sf) {
+      sf.forEachChild((child: any) => {
+        if (child.getKindName() === "ExportAssignment") {
+          const flatten = (obj: any[], prev = "") => {
+            const res: any[] = [];
+            obj.forEach((e: any) => {
+              res.push({ ...e, name: prev + e.name, children: null });
+              if (e.children) {
+                flatten(e.children, prev + e.name + "/").map(f => {
+                  res.push(f);
+                })
+              }
+            });
+            return res;
+          }
+          const tree = this.getTree();
+          const components: string[] = flatten(tree.children);
+          child.getExpression().replaceWithText(`{
+\t${components.map((e: any) => {
+            return `"${e.name}":require("./${e.name}").default`;
+          }).join(',\n\t')}
+ }`);
+        }
+      });
+
+      await sf.save()
+    }
+  }
+
   async getTypes() {
     const typesPath = `${execPath}/app/${this.name}/`;
     const memory = await this.project.emitToMemory({ emitOnlyDtsFiles: true });
@@ -192,6 +250,7 @@ export class Morph {
           tsConfigFilePath: path.join(".", "tsconfig.json"),
           // compilerOptions: { outDir: "types", declaration: true }
         });
+        Morph.instances[name].reloadComponentDefinitions();
         Morph.lastName = name;
       } else {
         delete Morph.instances[name];

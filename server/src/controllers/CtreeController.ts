@@ -12,31 +12,7 @@ export class CtreeController {
     const morph = Morph.getInstance(req.query.project);
     if (!morph) { res.status(400); return }
     morph.reload();
-    const tree: any = jetpack.inspectTree(
-      path.join(morph.getAppPath(), "src"),
-      {
-        relativePath: true
-      }
-    );
-
-    const exclude = [
-      "./assets",
-      "./libs",
-      "./config",
-      "./stores",
-      "./api",
-      "./.DS_",
-      "./components.ts", 
-      "./fonts.ts",
-      "./theme.json"
-    ];
-    tree.children = tree.children.filter((e: any) => {
-      for (let ex of exclude) {
-        if (e.relativePath.indexOf(ex) === 0) return false;
-      }
-      return true;
-    });
-
+    const tree = morph.getTree();
     res.status(200).json(tree);
   }
 
@@ -54,6 +30,7 @@ export class CtreeController {
         res.send({ status: "ok" });
       }
     }
+    morph.reloadComponentDefinitions();
   }
 
   @Get("newdir")
@@ -91,6 +68,7 @@ export class CtreeController {
     );
     await sf.save();
     await morph.project.save();
+    await morph.reloadComponentDefinitions();
     res.send({ status: "ok" });
   }
 
@@ -123,6 +101,7 @@ export class CtreeController {
     sf.organizeImports();
     await sf.save();
     await morph.project.save();
+    await morph.reloadComponentDefinitions();
     res.send({ status: "ok" });
   }
 
@@ -148,6 +127,7 @@ export class CtreeController {
         res.send({ status: "ok" });
       }
     }
+    morph.reloadComponentDefinitions();
   }
 
   @Get("delete")
@@ -172,5 +152,6 @@ export class CtreeController {
         res.send("ok");
       }
     }
+    morph.reloadComponentDefinitions();
   }
 }
