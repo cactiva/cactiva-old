@@ -60,7 +60,7 @@ export class CtreeController {
       const nav = useNavigation();
       const meta = useObservable({}) as any;
 
-      return <View></View>;
+      return <View style={{flexGrow:1}}></View>;
     });`,
       {
         overwrite: true
