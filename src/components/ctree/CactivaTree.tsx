@@ -169,7 +169,7 @@ export default observer(({ editor }: any) => {
                 No item to display.
             </Text>
             )}
-          <div style={{ height: 100 }} />
+          <div style={{ height: 500 }} />
         </div>
       </div>
     </div>
