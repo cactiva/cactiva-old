@@ -440,9 +440,6 @@ export async function createNewElement(componentName: string) {
 
   if (name === "custom-component") {
     name = await promptCustomComponent();
-  } else if (name === 'generate-sub-crud') {
-    console.log()
-    return;
   } else if (name === 'generate-crud') {
     const query = await generateQueryObject();
     if (!query) {

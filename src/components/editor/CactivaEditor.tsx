@@ -373,12 +373,7 @@ const CactivaEditorAddComponent = observer((props: any) => {
   const addHandle = async (value: any) => {
     let newEl = null;
 
-
-    if (value === 'generate-sub-crud') {
-      newEl = await addSubCrudHandle(gparent, props, editor);
-    } else {
-      newEl = await createNewElement(value);
-    }
+    newEl = await createNewElement(value);
 
     if (newEl) {
       prepareChanges(editor);
@@ -455,96 +450,10 @@ export const showAddInParent = (cactiva: any) => {
 const generateDisabledCustomItems = (props: any) => {
   const disableCustomItems = {
     'generate': true,
-    'generate-sub-crud': true
   }
-  const parent = findParentElementById(props.editor.source, props.editor.selectedId);
   let gparent: any = null;
-  if (parent && parent.name === 'Form') {
-    gparent = findParentElementById(props.editor.source, parent.id);
-    if (gparent && gparent.kind === SyntaxKind.JsxExpression) {
-      if (status === 'add') {
-        delete disableCustomItems['generate-sub-crud'];
-      }
-    }
-  }
   if (status === 'add') {
     delete disableCustomItems['generate'];
   }
   return [Object.keys(disableCustomItems), gparent];
-}
-
-const addSubCrudHandle = async (gparent: any, props: any, editor: any) => {
-  if (gparent) {
-    const crudWrapper = findParentElementById(props.editor.source, gparent.id);
-    const setVar = _.get(crudWrapper, 'props.data.value');
-    if (setVar) {
-      let table: any = null;
-      editor.hooks.map((e: any) => {
-        if (e.kind === 222) {
-          if (_.get(e, 'value.expression') === 'useEffect') {
-            const arg0 = _.get(e, 'value.arguments.0.body.0.value.0.value.body.0.value');
-            if (arg0) {
-              if (_.get(arg0, 'left.value') === setVar) {
-                table = parseValue(_.get(arg0, 'right'));
-              }
-            }
-          }
-        }
-      })
-      const res: any = await promptHasura({ query: '', payload: '', auth: true, setVar: '' }, {
-        mustSetVar: true,
-        returnQueryOnly: true,
-        setVarList: ['Set Result To: - Empty -', ..._.get(table, 'structure.fields', []).map((e: any) => JSON.parse(e.value.name.value))]
-      });
-      const query = await generateQueryObject(res);
-      if (query) {
-        const field = _.cloneDeep((tags['Field'] as any).structure);
-        field.props = {
-          "label": {
-            "kind": 10,
-            "value": `"${_.startCase(res.setVar)}"`
-          },
-          "path": {
-            "kind": 10,
-            "value": `"${res.setVar}"`
-          }
-        }
-
-        const struct = _.cloneDeep((tags['SubCrudWrapper'] as any).structure);
-        struct.props.data = {
-          "kind": 271,
-          "value": "data"
-        };
-        const r = await api.post("morph/parse-exp", {
-          value: ` const r = ${JSON.stringify(query)}`
-        });
-        struct.props.structure = _.get(r, 'value.0.value');
-
-        struct.children.push(generateCrudTable(query));
-        struct.children.push(generateCrudForm({ ...query, var: 'row' }, ['row:any']));
-        field.children = [
-          {
-            "kind": 271,
-            "value": {
-              "kind": 198,
-              "params": [
-                "data"
-              ],
-              "body": [
-                {
-                  "kind": 231,
-                  "value": {
-                    "kind": 196,
-                    "value": struct
-                  }
-                }
-              ]
-            }
-          }
-        ];
-        return field;
-      }
-      return null;
-    }
-  }
 }

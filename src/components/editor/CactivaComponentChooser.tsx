@@ -127,14 +127,6 @@ export default observer(({ title, icon, onSelect, items = [], disableCustomItems
                   if (onSelect) onSelect("generate-crud");
                 }}
               ><Icon icon={"form"} size={14} color={"#999"} /> Generate CRUD</div>
-              {disableCustomItems.indexOf('generate-sub-crud') < 0 &&
-                <div
-                  className="item"
-                  onClick={() => {
-                    if (onSelect) onSelect("generate-sub-crud");
-                  }}
-                ><Icon icon={"form"} size={14} color={"#999"} /> Generate Sub-CRUD</div>
-              }
             </>
           }
         </div>
