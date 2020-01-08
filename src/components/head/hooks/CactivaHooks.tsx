@@ -366,7 +366,6 @@ const HookItem = observer(
                 const setVar = _.get(item, 'value.0.value.body.0.value.left.value');
                 eval(`table = (${structObject});`)
                 const query = generateQueryString(table.structure);
-                console.log(table.auth);
                 const restapi: any = await promptHasura({
                   query,
                   payload: '',

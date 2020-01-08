@@ -452,7 +452,7 @@ export async function createNewElement(componentName: string) {
   const resetCrud = () => {
     ${query.var} = {
       structure: ${JSON.stringify(query.table, null, 2)},
-      auth: ${query.auth ? 'true' : 'false'},
+      auth: ${query.auth === undefined || query.auth === true ? 'true' : 'false'},
       list: [],
       form: {},
       sorting: {},
