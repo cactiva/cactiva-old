@@ -1,9 +1,8 @@
 import _ from "lodash";
 import { SyntaxKind } from "../syntaxkinds";
-import { toJS } from "mobx";
 
 export const parseStyle = (node: any, cactiva?: any): any => {
-  if (node.kind !== SyntaxKind.ObjectLiteralExpression) {
+  if (node && node.kind !== SyntaxKind.ObjectLiteralExpression) {
     return {};
   }
   const result = parseValue(node);
