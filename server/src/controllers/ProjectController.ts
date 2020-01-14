@@ -22,7 +22,7 @@ export class ProjectController {
     await morph.reloadComponentDefinitions();
     res.send({ status: "ok" });
   }
-  
+
   @Get("list")
   private list(req: Request, res: Response) {
     res.status(200).json({
@@ -101,8 +101,10 @@ export class ProjectController {
 
     headers["x-hasura-admin-secret"] = hasura.secret;
     try {
+      let url = `${backend.protocol}://${backend.host}:${backend.port}/hasura/v1/graphql`;
+      if (hasura.host) url = `${hasura.host}/v1/graphql`;;
       const gqlres = await axios.post(
-        `${backend.protocol}://${backend.host}:${backend.port}/hasura/v1/graphql`,
+        url,
         body,
         {
           headers

@@ -181,6 +181,9 @@ export class Morph {
       for (let ex of exclude) {
         if (e.relativePath.indexOf(ex) === 0) return false;
       }
+
+      if (e.type === 'file' && e.relativePath.split(".").pop() !== "tsx" ) return false;
+
       return true;
     });
     return tree;
@@ -214,7 +217,7 @@ export class Morph {
             return `"${path.substr(2, e.relativePath.length - 2)}":require("${path}").default`;
           }).join(',\n\t')}
  }`);
-        } 
+        }
       });
 
       await sf.save()

@@ -14,7 +14,7 @@ export const generateCrudTable = (query: { table: ITable, var: string }) => {
     const columnsHead: any[] = []
     const columnsRow: any[] = []
     _.map(query.table.fields, (f) => {
-        if (f.name === 'id') return;
+        if (f.name.indexOf('id') === 0) return;
         columnsHead.push({
             kind: SyntaxKind.JsxElement,
             name: "TableColumn",
@@ -86,7 +86,7 @@ export const generateCrudForm = (query: { table: ITable, var: string }, params?:
         "value": {
             "kind": 198,
             "params": [
-                "mode: \"create\" | \"update\" | \"filter\"",
+                "mode: \"create\" | \"edit\"",
                 ...(params || [])
             ],
             "body": [
