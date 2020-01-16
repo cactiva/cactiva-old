@@ -132,9 +132,14 @@ const graphQLFetcher = async (params: any) => {
   if (_.get(params, "operationName") === "IntrospectionQuery") {
     if (localStorage["cactiva-hasura-schema"]) {
       const res = JSON.parse(localStorage["cactiva-hasura-schema"]);
-      meta.schema = buildClientSchema(res);
-      meta.schemaLoading = false;
-      return res;
+      if (typeof res === 'object' && res) {
+        meta.schema = buildClientSchema(res);
+        meta.schemaLoading = false;
+        return res;
+      }
+      else {
+        alert(res);
+      }
     }
   }
   const res = await api.post("project/gql-query", {

@@ -14,7 +14,7 @@ export const generateCrudTable = (query: { table: ITable, var: string }) => {
     const columnsHead: any[] = []
     const columnsRow: any[] = []
     _.map(query.table.fields, (f) => {
-        if (f.name.indexOf('id') === 0) return;
+        if (f.name === 'id') return;
         columnsHead.push({
             kind: SyntaxKind.JsxElement,
             name: "TableColumn",

@@ -110,12 +110,16 @@ export class ProjectController {
           headers
         }
       );
+      let result = gqlres.data.data;
+      if (!result && gqlres.data.errors) {
+        result = gqlres.data.errors[0].message;
+      }
 
       res.status(200).json({
         status: gqlres.status,
         statusText: gqlres.statusText,
         headers: gqlres.headers,
-        data: gqlres.data.data || "No Response"
+        data: result || "No Response"
       });
     } catch (e) {
       return res.status(200).json({ ...e, body: e.request.body });
