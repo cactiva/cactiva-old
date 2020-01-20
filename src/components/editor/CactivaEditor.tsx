@@ -1,5 +1,3 @@
-import { parseValue } from '@src/components/editor/utility/parser/parser';
-import api from '@src/libs/api';
 import { default as ed, default as rootEditor } from "@src/store/editor";
 import { Dialog, Icon, Text } from "evergreen-ui";
 import _ from "lodash";
@@ -8,7 +6,7 @@ import React, { useEffect, useRef } from "react";
 import MonacoEditor from "react-monaco-editor";
 import Split from "react-split";
 import CactivaExpressionDialog from "../traits/expression/ExpressionSinglePopup";
-import Hasura, { promptHasura } from "../traits/expression/Hasura";
+import Hasura from "../traits/expression/Hasura";
 import RestApi from "../traits/expression/RestApi";
 import CactivaBreadcrumb from "./CactivaBreadcrumb";
 import CactivaComponentChooser, { toolbar } from "./CactivaComponentChooser";
@@ -16,11 +14,8 @@ import CactivaCustomComponent from "./CactivaCustomComponent";
 import "./editor.scss";
 import "./tags/elements/elements.scss";
 import "./tags/kinds/kinds.scss";
-import { generateCrudForm, generateCrudTable } from './utility/elements/genCrud';
-import { generateQueryObject } from './utility/elements/genQueryObject';
-import { addChildInId, commitChanges, createNewElement, findParentElementById, getParentId, insertAfterElementId, prepareChanges, wrapInElementId } from "./utility/elements/tools";
+import { addChildInId, commitChanges, createNewElement, getParentId, insertAfterElementId, prepareChanges, wrapInElementId } from "./utility/elements/tools";
 import { renderChildren } from "./utility/renderchild";
-import { SyntaxKind } from "./utility/syntaxkinds";
 import tags from "./utility/tags";
 export default observer(({ editor }: any) => {
   const meta = useObservable({

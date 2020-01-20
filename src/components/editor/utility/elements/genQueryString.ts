@@ -23,7 +23,8 @@ export interface ITable {
     name: string,
     fields?: ITable[],
     where?: ITableWhere[],
-    orderBy?: ITableOrderBy[]
+    orderBy?: ITableOrderBy[],
+    args?: any,
     options?: ITableOptions
 }
 
@@ -81,6 +82,14 @@ const genOrderBy = (orderBy: ITableOrderBy[], level = 0): string => {
     return '';
 }
 
+export const genArgs = (table: ITable) => {
+    if (table.args && Object.keys(table.args).length > 0) {
+        const keys = Object.keys(table.args);
+        return `args: {${keys.map(e => {
+            return `${e}: ${typeof table.args[e] === 'string' ? `"${table.args[e]}"` : table.args[e]}`;
+        }).join(',')}}`;
+    }
+}
 
 export const genFields = (table: ITable, options?: {
     showArgs?: boolean
@@ -89,6 +98,11 @@ export const genFields = (table: ITable, options?: {
     const fields = _.get(table, "fields", []) as ITable[];
 
     const args = [];
+
+    const dargs = genArgs(table);
+    if (dargs) {
+        args.push(dargs);
+    }
 
     if (_.get(options, 'showArgs', true)) {
         if (table.where) {
@@ -115,7 +129,6 @@ export const genFields = (table: ITable, options?: {
             }
             return `${tabs(level + 1)}${f.name}`;
         }).join('\n');
-
     }
 
     return `${tabs(level)}${table.name}${args.length > 0 ? `(${args.join(', ')})` : ''} {

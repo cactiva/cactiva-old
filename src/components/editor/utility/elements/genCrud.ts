@@ -12,7 +12,6 @@ export const generateCrudTable = (query: { table: ITable, var: string }) => {
         "value": `"manual"`
     };
     const columnsHead: any[] = []
-    const columnsRow: any[] = []
     _.map(query.table.fields, (f) => {
         if (f.name === 'id') return;
         columnsHead.push({
@@ -30,20 +29,8 @@ export const generateCrudTable = (query: { table: ITable, var: string }) => {
             },
             children: []
         })
-        columnsRow.push({
-            kind: SyntaxKind.JsxElement,
-            name: "TableColumn",
-            props: {
-                path: {
-                    "kind": 10,
-                    "value": `"${f.name}"`
-                },
-            },
-            children: []
-        })
     })
     _.set(struct, "children.0.children", columnsHead);
-    _.set(struct, "children.1.children", columnsRow);
     return struct;
 }
 

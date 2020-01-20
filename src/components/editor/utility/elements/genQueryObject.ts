@@ -7,7 +7,12 @@ export const generateQueryObject = async (input?: any) => {
     let res: any = null;
 
     if (!input) {
-        res = await promptHasura(undefined, {
+        res = await promptHasura({
+            query: '',
+            payload: '',
+            auth: true,
+            setVar: 'meta.crud'
+        }, {
             mustSetVar: true,
             returnQueryOnly: true
         })
@@ -43,6 +48,7 @@ export const parseTable = (table: any): ITable => {
     const where = [] as ITableWhere[];
     const orderBy = [] as ITableOrderBy[];
     const options = {} as any;
+    const args = {} as any;
 
     const parseWhere = (e: any) => {
         return _.get(e, 'value.fields').map((w: any) => {
@@ -74,7 +80,11 @@ export const parseTable = (table: any): ITable => {
 
     _.get(table, 'arguments', []).map((e: any) => {
         const argType = _.get(e, 'name.value');
-        if (argType === 'where') {
+        if (argType === 'args') {
+            _.get(table, 'arguments.0.value.fields', []).map((a: any) => {
+                args[_.get(a, 'name.value')] = _.get(a, 'value.value')
+            });
+        } else if (argType === 'where') {
             parseWhere(e).map((w: any) => where.push(w));
         } else if (argType === 'order_by') {
             parseOrderBy(e).map((w: any) => orderBy.push(w));
@@ -91,6 +101,7 @@ export const parseTable = (table: any): ITable => {
         name,
         fields,
         where,
+        args,
         orderBy,
         options
     }
