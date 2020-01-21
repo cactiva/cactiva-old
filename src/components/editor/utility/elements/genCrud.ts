@@ -31,6 +31,7 @@ export const generateCrudTable = (query: { table: ITable, var: string }) => {
         })
     })
     _.set(struct, "children.0.children", columnsHead);
+    delete struct.children[1];
     return struct;
 }
 

@@ -22,6 +22,6 @@ if (!isDev) {
     open("http://127.0.0.1:8080");
   }, 1500);
 }
-
+console.log('http://localhost:3000')
 const server = new MainServer();
 server.start(config.get("port"));
