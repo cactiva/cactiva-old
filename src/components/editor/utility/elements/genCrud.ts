@@ -75,9 +75,77 @@ export const generateCrudForm = (query: { table: ITable, var: string }, params?:
             "kind": 198,
             "params": [
                 "mode: \"create\" | \"edit\"",
+                "events",
                 ...(params || [])
             ],
             "body": [
+                {
+                    "kind": 222,
+                    "value": {
+                        "kind": 205,
+                        "left": {
+                            "kind": 190,
+                            "value": "events.afterLoad",
+                        },
+                        "operator": 60,
+                        "right": {
+                            "kind": 198,
+                            "params": [
+                                "form"
+                            ],
+                            "body": [],
+                            "modifiers": [],
+                        }
+                    }
+                },
+                {
+                    "kind": 222,
+                    "value": {
+                        "kind": 205,
+                        "left": {
+                            "kind": 190,
+                            "value": "events.beforeSubmit",
+                        },
+                        "operator": 60,
+                        "right": {
+                            "kind": 198,
+                            "params": [
+                                "form",
+                                "errors"
+                            ],
+                            "body": [
+                                {
+                                    "kind": 231,
+                                    "value": {
+                                        "kind": 103,
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "modifiers": [],
+                        }
+                    }
+                },
+                {
+                    "kind": 222,
+                    "value": {
+                        "kind": 205,
+                        "left": {
+                            "kind": 190,
+                            "value": "events.afterSubmit",
+                        },
+                        "operator": 60,
+                        "right": {
+                            "kind": 198,
+                            "params": [
+                                "form",
+                                "lastInsertId"
+                            ],
+                            "body": [],
+                            "modifiers": [],
+                        }
+                    }
+                },
                 {
                     "kind": 231,
                     "value": struct
