@@ -41,7 +41,13 @@ export const parseTable = (table: any): ITable => {
                 let childTable = parseTable(e);
                 return childTable;
             }
-            return { name: _.get(e, 'name.value') }
+            const result = { name: _.get(e, 'name.value') } as any;
+            const alias = _.get(e, 'alias.value')
+            if (alias) {
+                result.originalName = _.get(e, 'name.value');
+                result.name = alias;
+            }
+            return result;
         }
     );
 
