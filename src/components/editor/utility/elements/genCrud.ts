@@ -94,7 +94,9 @@ export const generateCrudForm = (query: { table: ITable, var: string }, params?:
                                 "form"
                             ],
                             "body": [],
-                            "modifiers": [],
+                            "modifiers": [
+                              122
+                            ],
                         }
                     }
                 },
@@ -122,7 +124,9 @@ export const generateCrudForm = (query: { table: ITable, var: string }, params?:
                                     }
                                 }
                             ],
-                            "modifiers": [],
+                            "modifiers": [
+                              122
+                            ],
                         }
                     }
                 },
@@ -150,7 +154,9 @@ export const generateCrudForm = (query: { table: ITable, var: string }, params?:
                                     }
                                 }
                             ],
-                            "modifiers": [],
+                            "modifiers": [
+                              122
+                            ],
                         }
                     }
                 },
