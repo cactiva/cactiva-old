@@ -141,7 +141,15 @@ export const generateCrudForm = (query: { table: ITable, var: string }, params?:
                                 "form",
                                 "lastInsertId"
                             ],
-                            "body": [],
+                            "body": [
+                                {
+                                    "kind": 231,
+                                    "value": {
+                                        "kind": 103,
+                                        "value": "true"
+                                    }
+                                }
+                            ],
                             "modifiers": [],
                         }
                     }
