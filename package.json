@@ -12,7 +12,7 @@
     "@types/webpack-env": "^1.14.0",
     "@types/webscopeio__react-textarea-autocomplete": "^2.3.1",
     "@webscopeio/react-textarea-autocomplete": "^4.6.2",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "craco-babel-loader": "^0.1.4",
     "evergreen-ui": "^4.21.5",
     "execa": "^2.0.4",
