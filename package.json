@@ -22,7 +22,7 @@
     "graphiql-explorer": "^0.4.5",
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "mobx": "^5.13.0",
     "mobx-react-lite": "^1.5.0",
     "mobx-utils": "^5.5.2",
